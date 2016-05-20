@@ -1,0 +1,37 @@
+<h1>Users Index</h1>
+
+<div style="border:1px solid black">
+<h3>Retailer Sign Up:</h3>
+<%= form_for User.new do |f| %>
+  <%= f.label :email %>
+  <%= f.text_field :email %> <br>
+  <%= f.label :password %>
+  <%= f.password_field :password %> <br>
+  <%= f.hidden_field :user_type, :value => 'retailer' %>
+  <%= f.submit "Sign Up" %>
+<% end %>
+</div>
+<br><br>
+<div style="border:1px solid black">
+  <h3>Wholesaler Sign Up:</h3>
+  <%= form_for User.new do |f| %>
+    <%= f.label :email %>
+    <%= f.text_field :email %> <br>
+    <%= f.label :password %>
+    <%= f.password_field :password %> <br>
+    <%= f.hidden_field :user_type, :value => 'wholesaler' %>
+    <%= f.submit "Sign Up" %>
+  <% end %>
+</div>
+
+<br/><br/>
+<div style="border:1px solid black">
+<h3>Login</h3>
+  <%= form_tag sessions_path do %>
+  <%= label_tag :email %>
+  <%= text_field_tag :email %> <br>
+  <%= label_tag :password %>
+  <%= password_field_tag :password %> <br>
+  <%= submit_tag "Log In" %>
+  <% end %>
+</div>
