@@ -3,12 +3,16 @@ Rails.application.routes.draw do
   # See how all your routes lay out with "rake routes".
 
   resources :users
+  resources :batches
   resources :products
   resources :milestones
   resources :commits
 
+  get '/batches/:id/complete_batch' => 'batches#complete_batch'
+
   get '/wholesaler' => 'wholesalers#index', as: :wholesaler
   get '/retailer' => 'retailers#index', as: :retailer
+  get '/shop' => 'welcome#shop', as: :shop
 
   post '/sessions' => 'sessions#create'
   delete '/sessions' => 'sessions#destroy'

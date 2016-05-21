@@ -1,17 +1,29 @@
+<%= button_to "Shop", shop_path, method: :get %>
+<%= button_to "Log Out", sessions_path, method: :delete %>
+
 <h2>Hello <%= current_user.email %>!</h2>
 
-<h3>Your Commits: </h3>
+<h3>Your Pending Purchase Orders: </h3>
 <% current_user.commits.each do |commit| %>
   <div style="border:1px solid black; text-align:center">
+    <h3>This product has up until <%= commit.product.batch.end_time.strftime('%l:%M %P') %> on <%= commit.product.batch.end_time.strftime('%B %d, %Y') %> to get enough purchase orders for your discount!</h3>
     <h3> <%= commit.product.title %> </h3>
     <h4> <%= commit.product.description %> </h4>
     <h3> Original wholesale price: $<%= commit.product.price %> </h3>
-    <h4> <%= commit.product.user.email %> is looking to reach $<%= commit.product.milestones[0].goal %> for a discount of <%= commit.product.milestones[0].discount %>! </h4>
-    <h4> You committed to purchase $<%= commit.amount %> worth of <%= commit.product.title %> </h4>
+    <h4> <%= commit.product.batch.user.email %> is looking to reach <%= commit.product.batch.milestones[0].goal %> purchase orders to reach your discount of $<%= commit.product.discount %>! </h4>
+    <h4> You committed to purchase <%= commit.amount %> orders worth of <%= commit.product.title %> </h4>
+
+    <% total_batch_commits_amount = 0 %>
+    <% commit.product.batch.products.each do |product| %>
+      <% product.commits.each do |commit| %>
+        <% total_batch_commits_amount += commit.amount.to_i %>
+      <% end %>
+    <% end %>
+
     <% total_commit_amount = 0 %>
     <% commit.product.commits.each do |commit| %>
       <% total_commit_amount += commit.amount.to_i %>
     <% end %>
-    <h4> So far there has been <%= commit.product.commits.length %> total <% if commit.product.commits.length == 1 %> commit <% else %> commits <% end %> to make $<%= total_commit_amount %> committed towards the total goal of $<%= commit.product.milestones[0].goal %> </h4>
+    <h4>So far this batch has generated <%= total_batch_commits_amount %> purchase orders towards it's goal of <%= commit.product.batch.milestones[0].goal %> </h4>
   </div>
 <% end %>

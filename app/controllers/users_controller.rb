@@ -3,12 +3,16 @@ class UsersController < ApplicationController
   def index
   end
 
+  def show
+    @user = User.find(params[:id])
+  end
+
   def create
     user = User.create(user_params)
     if user.save
       session[:user_id] = user.id
       if user.user_type == 'retailer'
-        redirect_to products_path
+        redirect_to shop_path
       elsif user.user_type == 'wholesaler'
         redirect_to wholesaler_path
       end

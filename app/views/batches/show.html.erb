@@ -1,0 +1,61 @@
+<% total_commits = 0 %>
+<% total_commit_amount = 0 %>
+<% @batch.products.each do |product| %>
+  <% product.commits.each do |commit| %>
+    <% total_commits += 1 %>
+    <% total_commit_amount += commit.amount.to_i %>
+  <% end %>
+<% end %>
+
+<%= button_to "Home Page", shop_path, method: :get %>
+<% if current_user.user_type == 'retailer' %>
+  <%= button_to "Profile", retailer_path, method: :get %>
+<% elsif current_user.user_type == 'wholesaler' %>
+  <%= button_to "Profile", wholesaler_path, method: :get %>
+<% end %>
+<%= button_to "Logout", sessions_path, method: :delete %>
+
+<div id="store-front-div" style="text-align:center">
+  <h2>Welcome to <%= @batch.user.email %>'s batch, they have a goal to reach <%= @batch.milestones[0].goal %> products sold</h2>
+  <h3>If they reach that before <%= @batch.end_time.strftime('%l:%M %P') %> on <%= @batch.end_time.strftime('%B %d, %Y') %> you will get your product's discount! </h3>
+  <h3>If they don't reach their goal, no need to worry, you will not be asked to follow through with your purchase order (but your're certainly still welcome to!)</h3>
+</div>
+
+<% @batch.products.each do |product| %>
+  <%= link_to product_path(product.id) do %>
+    <div id="batch-product">
+      <h2><%= product.title %></h2>
+      <h2>Original Wholesale Price: $<%= product.price %></h2>
+      <h2>Potential Discounted Price: $<%= product.discount %> </h2>
+      <h4><%= product.description %></h4>
+
+      <% product_commits = 0 %>
+      <% product_commit_amount = 0 %>
+      <% product.commits.each do |commit| %>
+        <% product_commits += 1 %>
+        <% product_commit_amount += commit.amount.to_i %>
+      <% end %>
+      <h4><%= product.title %> has had <%= product_commits %> purchase <% if product_commits == 1 %> order <%else %> orders <% end %> so far </h4>
+      <h4> We are <%= '%.2f' % (100*(product_commit_amount.to_f/product.batch.milestones[0].goal.to_f)) %>% on the way to your product's discount!</h4>
+      <h2>$<%= product_commit_amount %> out of $<%= product.batch.milestones[0].goal %> </h2>
+
+      <% if product.batch.user_id != current_user.id %>
+        <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, product.id) %>
+        <% if users_commit.length == 0 %>
+          <%= form_for Commit.new do |f| %>
+            <%= f.hidden_field :user_id, :value => current_user.id %>
+            <%= f.hidden_field :product_id, :value => product.id %>
+            <%= f.label "Amount to commit ($)" %>
+            <%= f.text_field :amount %> <br>
+            <%= f.submit "Make Purchase Order" %>
+          <% end %>
+        <% else %>
+          <h4>You have already committed to a purchase order of $<%= users_commit.amount %> </h4>
+          <!-- Closese if you have commit -->
+        <% end %>
+        <!-- Closes if our product -->
+      <% end %>
+    </div>
+    <!-- Closes link_to -->
+  <% end %>
+<% end %>

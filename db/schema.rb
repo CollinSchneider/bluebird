@@ -11,17 +11,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160520032428) do
+ActiveRecord::Schema.define(version: 20160521012717) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
+  create_table "batches", force: :cascade do |t|
+    t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.string   "duration"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string   "status"
+  end
+
+  add_index "batches", ["user_id"], name: "index_batches_on_user_id", using: :btree
+
   create_table "commits", force: :cascade do |t|
     t.integer  "user_id"
     t.integer  "product_id"
-    t.string   "amount"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer  "amount"
+    t.string   "status"
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
@@ -32,9 +45,10 @@ ActiveRecord::Schema.define(version: 20160520032428) do
     t.datetime "updated_at", null: false
     t.string   "goal"
     t.integer  "product_id"
-    t.string   "discount"
+    t.integer  "batch_id"
   end
 
+  add_index "milestones", ["batch_id"], name: "index_milestones_on_batch_id", using: :btree
   add_index "milestones", ["product_id"], name: "index_milestones_on_product_id", using: :btree
 
   create_table "products", force: :cascade do |t|
@@ -44,8 +58,13 @@ ActiveRecord::Schema.define(version: 20160520032428) do
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.integer  "user_id"
+    t.integer  "batch_id"
+    t.string   "discount"
+    t.integer  "quantity"
+    t.string   "status"
   end
 
+  add_index "products", ["batch_id"], name: "index_products_on_batch_id", using: :btree
   add_index "products", ["user_id"], name: "index_products_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
@@ -56,6 +75,7 @@ ActiveRecord::Schema.define(version: 20160520032428) do
     t.datetime "updated_at",      null: false
   end
 
+  add_foreign_key "batches", "users"
   add_foreign_key "commits", "products"
   add_foreign_key "commits", "users"
 end

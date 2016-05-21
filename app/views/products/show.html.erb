@@ -1,6 +1,42 @@
-<%= link_to "Products Home", products_path %>
+<%= link_to "Shop", shop_path %>
 
+
+<div style="border:1px solid black; text-align: center">
+<h1>This product and the rest of its batch will end at <%= @product.batch.end_time.strftime('%l:%M %P') %> on <%= @product.batch.end_time.strftime('%B %d, %Y') %> </h1>
+<h4>Being sold by: <%= @product.batch.user.email %> </h4>
 <h2> <%= @product.title %> </h2>
-<h3> <%= @product.price %> </h3>
+<h3>Original Wholesale Price: $<%= @product.price %> </h3>
+<h3>Potential Discounted Price: $<%= @product.discount %></h3>
 <h5> <%= @product.description %> </h5>
-<%= @product.user.email %>
+
+
+<% milestone_goal = nil %>
+<% @product.batch.milestones.each do |milestone| %>
+  <h5>Goal: <%= milestone_goal = milestone.goal %> purchase orders</h5>
+<% end %>
+<% total_commits = 0 %>
+<% @product.commits.each do |commit| %>
+  <% total_commits += commit.amount.to_i %>
+<% end %>
+<h4> There has been <%= total_commits %> purchase <% if total_commits == 1 %>order <%else %>orders <%end%>made </h4>
+<% percent_there = ('%.3f' % (total_commits.to_f/@product.batch.milestones[0].goal.to_i.to_f)) %>
+<h4> We're only <%= '%.2f' % ((1 - percent_there.to_f)*100) %>% away from your deal! </h4>
+<% if current_user.user_type == 'retailer' %>
+  <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, @product.id) %>
+  <% if users_commit != [] %>
+    <h3>You have already commited to <%= users_commit[0].amount %> purchase orders, would you like to <%= link_to "edit that?", commit_path(users_commit[0].id) %> </h3>
+  <% else %>
+    <%= form_for Commit.new do |f| %>
+      <%= f.hidden_field :user_id, :value => current_user.id %>
+      <%= f.hidden_field :product_id, :value => @product.id %>
+      <%= f.label :amount %>
+      <%= f.number_field :amount %> <br>
+      <%= f.button "Commit to purchase #{@product.title}" %>
+    <% end %>
+    <!-- Closes users_commit if -->
+  <% end %>
+  <!-- Closes if user == retailer -->
+<% end %>
+
+
+</div>

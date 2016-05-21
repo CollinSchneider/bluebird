@@ -7,7 +7,6 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find(params[:id])
-    authenticate_wholesaler_product(@product)
   end
 
   def edit
@@ -18,17 +17,24 @@ class ProductsController < ApplicationController
   def update
     product = Product.find(params[:id])
     product.update(product_params)
-    redirect_to product_path(product.id)
+    redirect_to batch_product_path(product.batch_id, product.id)
+    # redirect_to product_path(product.id)
   end
 
   def create
     product = Product.create(product_params)
-    redirect_to edit_product_path(product.id)
+    redirect_to request.referrer
+  end
+
+  def destroy
+    product = Product.find(params[:id])
+    product.delete
+    redirect_to request.referrer
   end
 
   private
   def product_params
-    params.require(:product).permit(:user_id, :title, :price, :description)
+    params.require(:product).permit(:user_id, :batch_id, :title, :price, :description, :discount, :quantity, :status)
   end
 
 end

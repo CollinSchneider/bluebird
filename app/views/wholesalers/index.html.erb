@@ -1,31 +1,65 @@
 <%= button_to "Logout", sessions_path, method: :delete %>
-<%= button_to "Home", products_path, method: :get %>
+<%= button_to "Shop", shop_path, method: :get %>
 
 <h1>Hello <%= current_user.email %> Wholesaler!</h1>
 
-<div style="border: 1px solid black">
-  <%= form_for Product.new do |f| %>
-    <%= f.hidden_field :user_id, :value => current_user.id %>
-    <%= f.label :title %>
-    <%= f.text_field :title %> <br>
-    <%= f.label :description %>
-    <%= f.text_field :description %> <br>
-    <%= f.label :price %>
-    <%= f.number_field :price %> <br>
-    <%= f.submit "Create Product!" %>
-  <% end %>
-</div>
-<br><br>
-
-<h3> Products you are listing: </h3>
-<% current_user.products.each do |product| %>
- <div style ="border: 1px solid black">
-    <h3><%= link_to product.title, edit_product_path(product.id) %></h3>
-    <h3>$<%= product.price %></h3>
-    <h4><%= product.description %></h4>
-    <% product.milestones.each do |milestone| %>
-      <h5> Goal: <%= milestone.goal %> </h5>
-      <h5> Discount: <%= milestone.discount %> </h5>
+<% if current_user.batches.length == 0 %>
+  <h3>You currently do not have a batch in process, would you like to start one?</h3>
+  <div id="new-batch" class="border:1px solid black; text-align: center">
+    <%= form_for Batch.new do |f| %>
+      <%= f.hidden_field :user_id, :value => current_user.id %>
+      <%= f.label :duration %>
+      <%= f.select :duration, :required => true do %>
+        <% ['1 Day', '7 Days', '30 Days'].each do |a| %>
+          <%= content_tag(:option, a, value: a,) %>
+          <!-- Ends duration array -->
+        <% end %>
+        <!-- Ends select -->
+      <% end %>
+      <%= f.submit "Create New Batch!" %>
+      <!-- Ends Form -->
     <% end %>
+    <button id="cancel-batch" type="button">Cancel</button>
   </div>
+  <button id="start-batch" type="button">Start New Batch</button>
+<% else %>
+  <h3>You have a batch currently on sale </h3>
+  <% current_user.batches.each do |batch| %>
+    <h4> This batch will expire at <%= batch.end_time.strftime('%l:%M %P') %> on <%= batch.end_time.strftime('%B %d, %Y') %></h4>
+    <% batch.products.each do |product| %>
+      <div style="border:1px solid black">
+        <div class="row">
+          <div class="col-xs-3">
+            <img src="/images/placeholder.png" alt="" />
+          </div>
+          <div class="col-xs-9">
+
+          <h2><%= product.title %></h2>
+          <h3>Original Wholesale Price: $<%= product.price %></h3>
+          <h3>Offered Discount Price: $<%= product.discount %></h3>
+          <h3>You have set a goal to sell <%= product.batch.milestones[0].goal %> products in this batch</h3>
+          <% total_commit_amount = 0 %>
+          <% product.commits.each do |commit| %>
+            <% total_commit_amount += commit.amount.to_i %>
+          <% end %>
+          <h3>You have sold <%= total_commit_amount %> products so far in a timeframe of <%= (Time.now - product.batch.start_time) %> seconds (CONVERT LATER)</h3>
+          <h4>This amounts to $<%= total_commit_amount * product.discount.to_i %> in revenue at the discounted price</h4>
+        </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+<!-- Ends if batches.length == 0 -->
 <% end %>
+
+<script>
+  $('#start-batch').click(function(){
+    console.log('click');
+    $('#new-batch').toggle();
+    $('#start-batch').toggle();
+  })
+  $('#cancel-batch').click(function(){
+    $('#start-batch').toggle();
+    $('#new-batch').toggle();
+  })
+</script>

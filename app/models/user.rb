@@ -6,4 +6,5 @@ class User < ActiveRecord::Base
 
   has_many :products
   has_many :commits
+  has_many :batches
 end

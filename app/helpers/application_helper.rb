@@ -31,4 +31,18 @@ module ApplicationHelper
     end
   end
 
+  def authenticate_retailer_commit(commit)
+    redirect_to root_path unless current_user
+    if current_user
+      redirect_to retailer_path unless current_user.id == commit.user_id
+    end
+  end
+
+  def authenticate_batch_wholesaler(batch)
+    redirect_to root_path unless current_user
+    if current_user
+      redirect_to root_path unless current_user.id == batch.user_id
+    end
+  end
+
 end

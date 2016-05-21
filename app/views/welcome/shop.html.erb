@@ -1,0 +1,84 @@
+<%= button_to "Log out", sessions_path, method: :delete %>
+<% if current_user.user_type == 'wholesaler' %>
+  <%= button_to "Profile", wholesaler_path, method: :get %>
+<% elsif current_user.user_type == 'retailer' %>
+  <%= button_to "Profile", retailer_path, method: :get %>
+<% end %>
+
+<h3> Hello <%= current_user.email %>! </h3>
+<h1>Products...</h1>
+
+<% if flash[:error] %>
+  <h1 style="color:red"><%= flash[:error] %></h1>
+<% end %>
+
+<% @products.each do |product| %>
+  <div id="product" class="col-xs-4">
+    <h2><%= link_to product.title, product_path(product.id) %></h2>
+    <h3>$<%= product.discount %> (<%= product.price.to_i/product.discount.to_i%>% off)</h3>
+    <h4><%= product.description %></h4>
+
+    <% goal = product.batch.milestones[0].goal.to_i %>
+    <% status = 0 %>
+    <% product.batch.products.each do |product| %>
+      <% product.commits.each do |commit| %>
+        <% status += commit.amount.to_i %>
+      <% end %>
+    <% end %>
+    <% total_progress = ('%.4f' % (status.to_f/goal.to_f)) %>
+    <% if total_progress.to_i > 1 %>
+      <% total_progress = 1 %>
+    <% else %>
+      <% total_progress = total_progress %>
+    <% end %>
+
+    <div class="col-xs-12">
+      <img class="responsive-img" src="/images/placeholder.png" alt="" />
+    </div>
+    <div class="row">
+      <div id="status-bar" class="col-xs-12">
+        <div id="batch-progress" style="width:<%= '%.2f' % (total_progress.to_f*100)%>%; background:rgb(0, <%=('%.0f' % ((total_progress.to_f*2.55)*100)).to_i%>, 0)">
+          <h5><%= '%.0f' % (total_progress.to_f*100) %>%</h5>
+        </div>
+      </div>
+    </div>
+      <br>
+    <% if product.batch.user.email == current_user.email %>
+      <h4>Your product!</h4>
+    <% else %>
+      <h4>Product for sale by: <%= link_to product.batch.user.email, user_path(product.batch.user.id) %> </h4>
+    <% end %>
+    <% milestone_goal = nil %>
+    <% product.milestones.each do |milestone| %>
+      <h5>Goal: $<%= milestone_goal = milestone.goal %></h5>
+    <% end %>
+    <% total_commit_amount = 0 %>
+    <% product.commits.each do |commit| %>
+      <% total_commit_amount += commit.amount.to_i %>
+    <% end %>
+    <h1><%= product.batch.milestones[0].goal %> GOAL</h1>
+    <h4> There has been <%= total_commit_amount %> purchase orders already committed to this product! </h4>
+    <h4>There is <%= product.quantity %> products left in inventory!</h4>
+    <% percent_there = ('%.3f' % (total_commit_amount.to_f/product.batch.milestones[0].goal.to_i.to_f)) %>
+    <!-- <h4> We're only <#%= '%.2f' % total_commit_amount.to_i/product.batch.milestones[0].goal.to_i %>% away from your deal! </h4> -->
+    <% if current_user.user_type == 'retailer' %>
+      <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, product.id) %>
+      <% if users_commit != [] %>
+        <h3> <span class="glyphicon glyphicon-ok"></span> <%= link_to "#{users_commit[0].amount} purchase orders", commit_path(users_commit[0].id) %> </h3>
+      <% else %>
+        <%= form_for Commit.new do |f| %>
+          <%= f.hidden_field :status, :value => 'live' %>
+          <%= f.hidden_field :user_id, :value => current_user.id %>
+          <%= f.hidden_field :product_id, :value => product.id %>
+          <%= f.label :amount %>
+          <%= f.number_field :amount %> <br>
+          <%= f.button "Commit to purchase #{product.title}" %>
+        <% end %>
+        <!-- Closes users_commit if -->
+      <% end %>
+      <!-- Closes if user == retailer -->
+    <% end %>
+  </div>
+    <!-- <div id="status-bar" class="col-xs-10 col-xs-offset-1">
+    </div> -->
+<% end %>

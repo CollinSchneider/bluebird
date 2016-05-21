@@ -7,7 +7,7 @@ class MilestonesController < ApplicationController
 
   private
   def milestone_params
-    params.require(:milestone).permit(:goal, :discount, :product_id)
+    params.require(:milestone).permit(:goal, :product_id, :batch_id)
   end
 
 end
