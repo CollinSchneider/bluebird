@@ -3,7 +3,8 @@
 
 <h1>Hello <%= current_user.email %> Wholesaler!</h1>
 
-<% if current_user.batches.length == 0 %>
+
+<% if @current_batch %>
   <h3>You currently do not have a batch in process, would you like to start one?</h3>
   <div id="new-batch" class="border:1px solid black; text-align: center">
     <%= form_for Batch.new do |f| %>
@@ -52,7 +53,81 @@
 <!-- Ends if batches.length == 0 -->
 <% end %>
 
+<% @past_batches.each do |past_batch| %>
+  <% if past_batch.completed_status.nil? %>
+    <% total_purchase_orders = 0 %>
+    <% past_batch.products.each do |product| %>
+      <% product.commits.each do |commit| %>
+        <% total_purchase_orders += commit.amount.to_i %>
+      <% end %>
+    <% end %>
+    <div class="row text-center">
+      <h3>Batch for: <%= past_batch.start_time %> to <%= past_batch.end_time %></h3>
+      <h3>Set a goal of <%= past_batch.milestones[0].goal %> in purchase orders </h3>
+      <h3>You reached <%= total_purchase_orders %> total purchase orders</h3>
+    </div>
+    <% past_batch.products.each do |product| %>
+      <div class="col-xs-6 text-center border">
+        <h4><%= product.title %></h4>
+        <h4> Original Wholesale Price: $<%= product.price %></h4>
+        <h4> Potential Discount Price: $<%= product.discount %></h4>
+        <% product_orders = 0 %>
+        <% product.commits.each do |commit| %>
+          <% product_orders += commit.amount.to_i %>
+        <% end %>
+        <h5> Total Purchase Orders: <%= product_orders %> </h5>
+      </div>
+      <!-- Closes products.each -->
+    <% end %>
+    <div class="col-xs-12 text-center row">
+      <!-- If you didn't reach your goal -->
+      <% if total_purchase_orders < past_batch.milestones[0].goal.to_i %>
+        <button id="cancel-batch-button" data="<%= past_batch.id %>" type="button">Cancel Batch</button>
+        <button id="grant-discount" data="<%= past_batch.id %>" type="button">Give Discount</button>
+      <!-- If you did reach your goal -->
+      <% else %>
+        <h4>Congrats, you reached your goal of <%= past_batch.milestones[0].goal %>!</h4>
+        <!-- Mark batch as goal reached -->
+        <%
+          past_batch.completed_status = 'goal_reached'
+          past_batch.save
+        %>
+      <% end %>
+    </div>
+  <% else %>
+    <h3><%= past_batch.end_time %>: <%= past_batch.completed_status %></h3>
+  <!-- Closes if past_batch.completed_status.nil? -->
+  <% end %>
+  <!-- Closes past_batches.each -->
+<% end %>
+
 <script>
+  $('#cancel-batch-button').click(function(){
+    var batchId = $(this).attr('data');
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+      if(xhttp.readyState == 4 && xhttp.status == 200){
+        JSON.parse(xhttp.responseText);
+      }
+    }
+    xhttp.open("GET", "/batches/" + batchId + "/cancel_batch");
+    xhttp.send();
+    location.reload();
+  })
+
+  $('#grant-discount').click(function(){
+    var batchId = $(this).attr('data');
+    var xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function(){
+      if(xhttp.readyState == 4 && xhttp.status == 200){
+        JSON.parse(xhttp.responseText);
+      }
+    }
+    xhttp.open("GET", "/batches/" + batchId + "/grant_discount");
+    xhttp.send();
+    location.reload();
+  })
+
   $('#start-batch').click(function(){
     console.log('click');
     $('#new-batch').toggle();

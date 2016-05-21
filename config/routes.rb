@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   resources :commits
 
   get '/batches/:id/complete_batch' => 'batches#complete_batch'
+  get '/batches/:id/cancel_batch' => 'batches#cancel_batch'
+  get '/batches/:id/grant_discount' => 'batches#grant_discount'
 
   get '/wholesaler' => 'wholesalers#index', as: :wholesaler
   get '/retailer' => 'retailers#index', as: :retailer

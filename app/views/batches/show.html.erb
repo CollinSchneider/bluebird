@@ -50,7 +50,7 @@
             <%= f.submit "Make Purchase Order" %>
           <% end %>
         <% else %>
-          <h4>You have already committed to a purchase order of $<%= users_commit.amount %> </h4>
+          <h4>You have already committed to a purchase order of $<%= users_commit[0].amount %> </h4>
           <!-- Closese if you have commit -->
         <% end %>
         <!-- Closes if our product -->

@@ -2,12 +2,16 @@ class CommitsController < ApplicationController
 
   def create
     commit = Commit.create(commit_params)
-    if commit.amount <= commit.product.quantity
-      commit.product.quantity -= commit.amount
-      commit.product.save
+    if Time.now < Batch.end_time
+      if commit.amount <= commit.product.quantity
+        commit.product.quantity -= commit.amount
+        commit.product.save
+      else
+        commit.delete
+        flash[:error] = "Sorry, only #{commit.product.quantity} in inventory!"
+      end
     else
-      commit.delete
-      flash[:error] = "Sorry, only #{commit.product.quantity} in inventory!"
+      flash[:error] = "Sorry, this batch has just ended!"
     end
     redirect_to request.referrer
   end

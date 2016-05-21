@@ -13,10 +13,20 @@
 <% end %>
 
 <% @products.each do |product| %>
+  <% if product.batch.end_time < Time.now %>
+    <%
+      product.batch.status = 'past'
+      product.status = 'past'
+      product.batch.save
+      product.save
+    %>
+  <% else %>
   <div id="product" class="col-xs-4">
+    <h1><%= product.batch.end_time %></h1>
+    <h1><%= Time.now %></h1>
     <h2><%= link_to product.title, product_path(product.id) %></h2>
     <h3>$<%= product.discount %> (<%= product.price.to_i/product.discount.to_i%>% off)</h3>
-    <h4><%= product.description %></h4>
+    <!-- <h4><#%= product.description %></h4> -->
 
     <% goal = product.batch.milestones[0].goal.to_i %>
     <% status = 0 %>
@@ -39,14 +49,18 @@
       <div id="status-bar" class="col-xs-12">
         <div id="batch-progress" style="width:<%= '%.2f' % (total_progress.to_f*100)%>%; background:rgb(0, <%=('%.0f' % ((total_progress.to_f*2.55)*100)).to_i%>, 0)">
           <h5><%= '%.0f' % (total_progress.to_f*100) %>%</h5>
+          <h6 style="color:white"> <%= status %>/<%= product.batch.milestones[0].goal %> orders in this batch</h6>
         </div>
+      </div>
+      <div class="col-xs-12 text-right" style="padding: 0 0 0 0">
+        <h6><%= product.batch.milestones[0].goal %> products <span class="glyphicon glyphicon-arrow-up"/></h6>
       </div>
     </div>
       <br>
     <% if product.batch.user.email == current_user.email %>
       <h4>Your product!</h4>
     <% else %>
-      <h4>Product for sale by: <%= link_to product.batch.user.email, user_path(product.batch.user.id) %> </h4>
+      <h4>Product for sale by: <%= link_to product.batch.user.email, batch_path(product.batch.id) %> </h4>
     <% end %>
     <% milestone_goal = nil %>
     <% product.milestones.each do |milestone| %>
@@ -56,15 +70,14 @@
     <% product.commits.each do |commit| %>
       <% total_commit_amount += commit.amount.to_i %>
     <% end %>
-    <h1><%= product.batch.milestones[0].goal %> GOAL</h1>
-    <h4> There has been <%= total_commit_amount %> purchase orders already committed to this product! </h4>
+    <h4> <%= total_commit_amount %> orders on this product </h4>
     <h4>There is <%= product.quantity %> products left in inventory!</h4>
     <% percent_there = ('%.3f' % (total_commit_amount.to_f/product.batch.milestones[0].goal.to_i.to_f)) %>
     <!-- <h4> We're only <#%= '%.2f' % total_commit_amount.to_i/product.batch.milestones[0].goal.to_i %>% away from your deal! </h4> -->
     <% if current_user.user_type == 'retailer' %>
       <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, product.id) %>
       <% if users_commit != [] %>
-        <h3> <span class="glyphicon glyphicon-ok"></span> <%= link_to "#{users_commit[0].amount} purchase orders", commit_path(users_commit[0].id) %> </h3>
+        <h3> <span class="glyphicon glyphicon-ok-circle"></span> <%= link_to "#{users_commit[0].amount} purchase orders", commit_path(users_commit[0].id) %> </h3>
       <% else %>
         <%= form_for Commit.new do |f| %>
           <%= f.hidden_field :status, :value => 'live' %>
@@ -79,6 +92,6 @@
       <!-- Closes if user == retailer -->
     <% end %>
   </div>
-    <!-- <div id="status-bar" class="col-xs-10 col-xs-offset-1">
-    </div> -->
+  <!-- Closes batch.end_time -->
+  <% end %>
 <% end %>
