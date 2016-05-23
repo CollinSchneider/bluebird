@@ -2,7 +2,7 @@ class CommitsController < ApplicationController
 
   def create
     commit = Commit.create(commit_params)
-    if Time.now < Batch.end_time
+    if Time.now < commit.product.batch.end_time
       if commit.amount <= commit.product.quantity
         commit.product.quantity -= commit.amount
         commit.product.save

@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   get '/batches/:id/complete_batch' => 'batches#complete_batch'
   get '/batches/:id/cancel_batch' => 'batches#cancel_batch'
   get '/batches/:id/grant_discount' => 'batches#grant_discount'
+  get '/batches/:id/mark_batch_as_past' => 'batches#mark_batch_as_past'
 
   get '/wholesaler' => 'wholesalers#index', as: :wholesaler
   get '/retailer' => 'retailers#index', as: :retailer

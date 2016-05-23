@@ -43,12 +43,12 @@
   <h4>You haven't set up any purchase milestones yet, before we proceed you must do so.</h4>
   <%= form_for Milestone.new do |f| %>
     <%= f.hidden_field :batch_id, :value => @batch.id %>
-    <%= f.label "How Many Products Would You Like To Sell" %>
+    <%= f.label "Sales Goal   $" %>
     <%= f.number_field :goal %> <br>
     <%= f.submit "Create Your Goal For This Batch!" %>
   <% end %>
 <% else %>
-  <h4>You have set up a goal to sell <%= @batch.milestones[0].goal %> products </h4>
+  <h4>You have set up a goal to sell $<%= @batch.milestones[0].goal %> worth of product </h4>
   <% if @batch.products.length == 0 %>
     <h4> You haven't added any products to this batch yet, let's get on that!</h4>
   <% else %>
@@ -74,11 +74,11 @@
 
 <br>
 
-<% total_products_for_sale = 0 %>
-
+<% total_sales_price = 0 %>
 <% @batch.products.each do |product| %>
   <div style="border: 1px solid black; text-align:center">
-    <% total_products_for_sale += product.quantity.to_i %>
+    <% total_sales_price += product.quantity.to_i*product.discount.to_i %>
+
     <h4><%= product.title %> </h4>
     <h4>Original Price $<%= product.price %></h4>
     <h4>Discounted Price $<%= product.discount %></h4>
@@ -87,7 +87,7 @@
     <%= button_to "Remove Product From Batch?", product_path(product.id), method: :delete %>
   </div>
 <% end %>
-<% if @batch.milestones.length > 0 && @batch.products.length > 0 && total_products_for_sale >= @batch.milestones[0].goal.to_i %>
+<% if @batch.milestones.length > 0 && @batch.products.length > 0 && total_sales_price >= @batch.milestones[0].goal.to_i %>
   <button id="complete-batch" data="<%=@batch.id %>" type="button">Complete and Post Batch</button>
 <% end %>
 <% end %>

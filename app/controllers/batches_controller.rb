@@ -1,5 +1,15 @@
 class BatchesController < ApplicationController
 
+  def time_difference(start_time, end_time)
+      seconds_diff = (start_time - end_time).to_i.abs
+      hours = seconds_digg/3600
+      seconds_diff -= hours*3600
+      minutes = seconds_diff/60
+      seconds_diff -= minutes*60
+      seconds = seconds_diff
+      "#{hours.to_s.rjust(2, '0')}:#{minutes.to_s.rjust(2, '0')}:#{seconds.to_s.rjust(2, '0')}"
+    end
+
   def index
   end
 
@@ -38,15 +48,15 @@ class BatchesController < ApplicationController
       product.status = 'live'
       product.save
     end
-    # batch.start_time = Time.now
-    batch.end_time = Time.now + 1.minute
-    # if batch.duration == '1 Day'
-    #   batch.end_time = Time.now + 1.day
-    # elsif batch.duration == '7 Days'
-    #   batch.end_time = Time.now + 7.days
-    # elsif batch.duration == '30 Days'
-    #   batch.end_time == Time.now + 30.days
-    # end
+    batch.start_time = Time.now
+    # batch.end_time = Time.now + 1.minute
+    if batch.duration == '1 Day'
+      batch.end_time = Time.now + 1.day
+    elsif batch.duration == '7 Days'
+      batch.end_time = Time.now + 7.days
+    elsif batch.duration == '30 Days'
+      batch.end_time = Time.now + 30.days
+    end
     batch.save
     redirect_to batch_path(batch.id)
   end
@@ -63,6 +73,12 @@ class BatchesController < ApplicationController
     batch.completed_status = 'granted_discount'
     batch.save
     # redirect_to request.referrer
+  end
+
+  def mark_batch_as_past
+    batch = Batch.find(params[:id])
+    batch.status = 'past'
+    batch.save
   end
 
   private

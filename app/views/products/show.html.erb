@@ -1,42 +1,145 @@
-<%= link_to "Shop", shop_path %>
+<div class="border col-xs-12">
+  <div class="row">
+    <%= link_to "Shop", shop_path %>
+  </div>
 
+  <div class="row text-center">
+    <h4>Expires <%= @product.batch.end_time.strftime('%l:%M %P') %> on <%= @product.batch.end_time.strftime('%B %d, %Y') %></h4>
+    <div id="timer" class="col-xs-2 col-xs-offset-5">
+      <h1 id ="time-left"><%= @product.batch.time_difference(Time.now, @product.batch.end_time) %></h1>
+    </div>
+  </div>
 
-<div style="border:1px solid black; text-align: center">
-<h1>This product and the rest of its batch will end at <%= @product.batch.end_time.strftime('%l:%M %P') %> on <%= @product.batch.end_time.strftime('%B %d, %Y') %> </h1>
-<h4>Being sold by: <%= @product.batch.user.email %> </h4>
-<h2> <%= @product.title %> </h2>
-<h3>Original Wholesale Price: $<%= @product.price %> </h3>
-<h3>Potential Discounted Price: $<%= @product.discount %></h3>
-<h5> <%= @product.description %> </h5>
-
-
-<% milestone_goal = nil %>
-<% @product.batch.milestones.each do |milestone| %>
-  <h5>Goal: <%= milestone_goal = milestone.goal %> purchase orders</h5>
-<% end %>
-<% total_commits = 0 %>
-<% @product.commits.each do |commit| %>
-  <% total_commits += commit.amount.to_i %>
-<% end %>
-<h4> There has been <%= total_commits %> purchase <% if total_commits == 1 %>order <%else %>orders <%end%>made </h4>
-<% percent_there = ('%.3f' % (total_commits.to_f/@product.batch.milestones[0].goal.to_i.to_f)) %>
-<h4> We're only <%= '%.2f' % ((1 - percent_there.to_f)*100) %>% away from your deal! </h4>
-<% if current_user.user_type == 'retailer' %>
-  <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, @product.id) %>
-  <% if users_commit != [] %>
-    <h3>You have already commited to <%= users_commit[0].amount %> purchase orders, would you like to <%= link_to "edit that?", commit_path(users_commit[0].id) %> </h3>
-  <% else %>
-    <%= form_for Commit.new do |f| %>
-      <%= f.hidden_field :user_id, :value => current_user.id %>
-      <%= f.hidden_field :product_id, :value => @product.id %>
-      <%= f.label :amount %>
-      <%= f.number_field :amount %> <br>
-      <%= f.button "Commit to purchase #{@product.title}" %>
+  <% batch_sales = 0 %>
+  <% @product.batch.products.each do |product| %>
+    <% product.commits.each do |commit| %>
+      <% batch_sales += commit.amount.to_f*commit.product.discount.to_f %>
     <% end %>
-    <!-- Closes users_commit if -->
   <% end %>
-  <!-- Closes if user == retailer -->
-<% end %>
+  <% if batch_sales > @product.batch.milestones[0].goal.to_i %>
+    <% batch_sales = @product.batch.milestones[0].goal.to_i %>
+  <% end %>
 
+  <div class="row">
+    <div id="status-bar" class="border col-xs-6 col-xs-offset-3">
+      <div id="batch-progress" style="width:<%=100*(batch_sales/@product.batch.milestones[0].goal.to_f) %>%; background:green"></div>
+    </div>
+    <div class="col-xs-1">
+      <h5><%= '%.2f' % (100-(100*(batch_sales/@product.batch.milestones[0].goal.to_f))) %>% away from discount</h5>
+    </div>
+  </div>
+
+  <div class="border col-xs-10 col-xs-offset-1 text-center">
+
+    <h1>This product and the rest of its batch will end at <%= @product.batch.end_time.strftime('%l:%M %P') %> on <%= @product.batch.end_time.strftime('%B %d, %Y') %> </h1>
+    <h4>Being sold by: <%= @product.batch.user.email %> </h4>
+    <h2> <%= @product.title %> </h2>
+    <h3>Original Wholesale Price: $<%= @product.price %> </h3>
+    <h3>Potential Discounted Price: $<%= @product.discount %></h3>
+    <h5> <%= @product.description %> </h5>
+
+    <% total_commits = 0 %>
+    <% @product.commits.each do |commit| %>
+      <% total_commits += commit.amount.to_i %>
+    <% end %>
+
+    <h4> There has been <%= total_commits %> purchase <% if total_commits == 1 %>order <%else %>orders <%end%>made </h4>
+    <% percent_there = ('%.3f' % (total_commits.to_f/@product.batch.milestones[0].goal.to_i.to_f)) %>
+    <h4><%= '%.2f' % (100-(100*(batch_sales/@product.batch.milestones[0].goal.to_f))) %>% away from discount</h4>
+    <% if current_user.user_type == 'retailer' %>
+      <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, @product.id) %>
+      <% if users_commit != [] %>
+        <h3>You have already commited to <%= users_commit[0].amount %> purchase orders, would you like to <%= link_to "edit that?", commit_path(users_commit[0].id) %> </h3>
+      <% else %>
+        <%= form_for Commit.new do |f| %>
+          <%= f.hidden_field :user_id, :value => current_user.id %>
+          <%= f.hidden_field :product_id, :value => @product.id %>
+          <%= f.label :amount %>
+          <%= f.number_field :amount %> <br>
+          <%= f.button "Commit to purchase #{@product.title}" %>
+        <% end %>
+        <!-- Closes users_commit if -->
+      <% end %>
+      <!-- Closes if user == retailer -->
+    <% end %>
+  </div>
 
 </div>
+
+<script>
+var time = $('#time-left').text().split('')
+var days = time[0] + time[1]
+var hours = time[3] + time[4]
+var minutes = time[6] + time[7]
+var seconds = time[9] + time[10]
+function setTime(){
+  $('#time-left').text(days+ ":" + hours + ":" + minutes + ":" +seconds)
+}
+
+function setSeconds(){
+  if(seconds > 0){
+    seconds -= 1
+    if(seconds < 10){
+      seconds = "0" + seconds
+    }
+  } else {
+    seconds = 59
+    getMinutes()
+    checkTime()
+  }
+  setTime()
+}
+
+function getMinutes(){
+  if(minutes > 0){
+    minutes -= 1
+    if(minutes < 10){
+      minutes = "0" + minutes
+    }
+  } else {
+    minutes = 59
+    getHours()
+  }
+  setTime()
+}
+
+function getHours(){
+  if(hours > 0){
+    hours -= 1
+    if(hours < 10){
+      hours = "0" + hours
+    }
+  } else {
+    hours = 23
+    getDays()
+  }
+  setTime()
+}
+
+function getDays(){
+  if(days > 0){
+    days -= 1
+    if(days < 10){
+      days = "0" + days
+    }
+  }
+  setTime()
+}
+
+function checkTime(){
+  if(seconds == '00' && minutes == '00' && hours == '00' && days == '00'){
+      // var batchId = $(this).attr('data');
+      // var xhttp = new XMLHttpRequest();
+      // xhttp.onreadystatechange = function(){
+      //   if(xhttp.readyState == 4 && xhttp.status == 200){
+      //     JSON.parse(xhttp.responseText);
+      //   }
+      // }
+      // xhttp.open("GET", "/batches/" + batchId + "/mark_batch_as_past");
+      // xhttp.send();
+      // location.reload();
+  }
+}
+
+setInterval(setSeconds, 1000)
+</script>
