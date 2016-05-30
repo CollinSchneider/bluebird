@@ -1,0 +1,47 @@
+<h1>Past Batches: </h1>
+
+<% @past_batches.each do |batch| %>
+  <% if batch.completed_status != nil %>
+
+  <% batch_sales = 0 %>
+  <% batch.products.each do |product| %>
+    <% product.commits.each do |commit| %>
+      <% batch_sales += commit.amount.to_f*commit.product_item.product.discount.to_f %>
+    <% end %>
+  <% end %>
+
+    <div class="row text-center">
+      <h3> Batch ended at <%= batch.end_time.strftime('%l:%M %P') %> on <%= batch.end_time.strftime('%B %d, %Y') %></h3>
+      <% if batch.completed_status == 'goal_met' %>
+        <h4>You exceed your goal of $<%= batch.milestones[0].goal %> with a total of $<%= batch_sales %> in sales </h4>
+      <% elsif batch.completed_status == 'granted_discount' %>
+        <h4>You did $<%= batch_sales %> in sales and did not meet your goal of $<%= batch.milestones[0].goal %>, but decided to grant the retailers the discount anyway!</h4>
+      <% elsif batch.completed_status == 'not_met' %>
+        <h4>You did $<%= batch_sales %> in sales and did not meet your goal of $<%= batch.milestones[0].goal %></h4>
+      <% end %>
+    </div>
+    <% batch.products.each_slice(3) do |slice| %>
+      <div class="row border">
+        <% slice.each do |product| %>
+
+        <% total_orders = 0 %>
+        <% product.commits.each do |commit| %>
+          <% total_orders += commit.amount.to_f %>
+        <% end %>
+
+          <div class="col-xs-3 border">
+            <h3> <%= product.title %> </h3>
+            <h4> Original Wholesale Price: <%= product.price %></h4>
+            <h4> Discount Offered: <%= product.discount %> </h4>
+            <h4> $<%= '%.2f' % (total_orders*product.price.to_f) %> in <%= total_orders %> total orders </h4>
+          </div>
+          <!-- Ends product.each -->
+        <% end %>
+        <!-- Ends row -->
+      </div>
+      <!-- Ends slice.each -->
+    <% end %>
+    <!-- ends if completed_status != nil -->
+  <% end %>
+  <!-- Ends past_batches.each -->
+<% end %>

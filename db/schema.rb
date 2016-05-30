@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160521141723) do
+ActiveRecord::Schema.define(version: 20160530194329) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,14 +31,13 @@ ActiveRecord::Schema.define(version: 20160521141723) do
 
   create_table "commits", force: :cascade do |t|
     t.integer  "user_id"
-    t.integer  "product_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.integer  "amount"
     t.string   "status"
+    t.integer  "product_item_id"
   end
 
-  add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
   add_index "commits", ["user_id"], name: "index_commits_on_user_id", using: :btree
 
   create_table "milestones", force: :cascade do |t|
@@ -52,17 +51,47 @@ ActiveRecord::Schema.define(version: 20160521141723) do
   add_index "milestones", ["batch_id"], name: "index_milestones_on_batch_id", using: :btree
   add_index "milestones", ["product_id"], name: "index_milestones_on_product_id", using: :btree
 
+  create_table "product_items", force: :cascade do |t|
+    t.string   "description"
+    t.integer  "quantity"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "product_id"
+  end
+
+  add_index "product_items", ["product_id"], name: "index_product_items_on_product_id", using: :btree
+
   create_table "products", force: :cascade do |t|
     t.string   "title"
     t.string   "price"
     t.string   "description"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
     t.integer  "user_id"
     t.integer  "batch_id"
     t.string   "discount"
-    t.integer  "quantity"
     t.string   "status"
+    t.string   "category"
+    t.string   "main_image_file_name"
+    t.string   "main_image_content_type"
+    t.integer  "main_image_file_size"
+    t.datetime "main_image_updated_at"
+    t.string   "photo_two_file_name"
+    t.string   "photo_two_content_type"
+    t.integer  "photo_two_file_size"
+    t.datetime "photo_two_updated_at"
+    t.string   "photo_three_file_name"
+    t.string   "photo_three_content_type"
+    t.integer  "photo_three_file_size"
+    t.datetime "photo_three_updated_at"
+    t.string   "photo_four_file_name"
+    t.string   "photo_four_content_type"
+    t.integer  "photo_four_file_size"
+    t.datetime "photo_four_updated_at"
+    t.string   "photo_five_file_name"
+    t.string   "photo_five_content_type"
+    t.integer  "photo_five_file_size"
+    t.datetime "photo_five_updated_at"
   end
 
   add_index "products", ["batch_id"], name: "index_products_on_batch_id", using: :btree
@@ -72,11 +101,11 @@ ActiveRecord::Schema.define(version: 20160521141723) do
     t.string   "email"
     t.string   "password_digest"
     t.string   "user_type"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.string   "stripe_customer_id"
   end
 
   add_foreign_key "batches", "users"
-  add_foreign_key "commits", "products"
   add_foreign_key "commits", "users"
 end

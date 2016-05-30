@@ -23,7 +23,7 @@ class BatchesController < ApplicationController
     if @batch.end_time < Time.now
       @batch.status = 'past'
       @batch.products.each do |product|
-        product.status == 'past'
+        product.status = 'past'
         product.save
       end
       @batch.save
@@ -44,12 +44,13 @@ class BatchesController < ApplicationController
   def complete_batch
     batch = Batch.find(params[:id])
     batch.status = 'live'
+    batch.completed_status = 'live'
     batch.products.each do |product|
       product.status = 'live'
       product.save
     end
     batch.start_time = Time.now
-    # batch.end_time = Time.now + 1.minute
+    # batch.end_time = Time.now + 5.minutes
     if batch.duration == '1 Day'
       batch.end_time = Time.now + 1.day
     elsif batch.duration == '7 Days'
@@ -65,20 +66,56 @@ class BatchesController < ApplicationController
     batch = Batch.find(params[:id])
     batch.completed_status = 'not_met'
     batch.save
+    batch.products.each do |product|
+      product.status = 'not_met'
+      product.save
+      product.commits.each do |commit|
+        commit.status = 'not_met'
+        commit.save
+      end
+    end
     # redirect_to request.referrer
   end
 
   def grant_discount
     batch = Batch.find(params[:id])
     batch.completed_status = 'granted_discount'
+    batch.products.each do |product|
+      product.status = 'granted_discount'
+      product.save
+      product.commits.each do |commit|
+        commit.status = 'granted_discount'
+        commit.save
+      end
+    end
     batch.save
     # redirect_to request.referrer
+  end
+
+  def confirm_goal
+    batch = Batch.find(params[:id])
+    batch.completed_status = 'goal_reached'
+    batch.save
+    batch.products.each do |product|
+      product.status = 'goal_reached'
+      product.save
+      product.commits.each do |commit|
+        commit.status = 'goal_reached'
+        commit.save
+      end
+    end
   end
 
   def mark_batch_as_past
     batch = Batch.find(params[:id])
     batch.status = 'past'
+    batch.completed_status = 'needs_attention'
+    batch.products.each do |product|
+      product.status = 'past'
+      product.save
+    end
     batch.save
+    flash[:error] = "This batch has officially ended!"
   end
 
   private

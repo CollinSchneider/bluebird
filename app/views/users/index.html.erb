@@ -10,6 +10,7 @@
   <%= f.hidden_field :user_type, :value => 'retailer' %>
   <%= f.submit "Sign Up" %>
 <% end %>
+<p style="color:red"> <%= flash[:error] %> </p>
 </div>
 <br><br>
 <div style="border:1px solid black">
@@ -22,6 +23,7 @@
     <%= f.hidden_field :user_type, :value => 'wholesaler' %>
     <%= f.submit "Sign Up" %>
   <% end %>
+  <p style="color:red"> <%= flash[:error] %> </p>
 </div>
 
 <br/><br/>
@@ -34,4 +36,5 @@
   <%= password_field_tag :password %> <br>
   <%= submit_tag "Log In" %>
   <% end %>
+  <p style="color:red"> <%= flash[:error] %> </p>
 </div>

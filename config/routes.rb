@@ -7,15 +7,23 @@ Rails.application.routes.draw do
   resources :products
   resources :milestones
   resources :commits
+  resources :product_items
 
+  # TODO: move these to API methods
   get '/batches/:id/complete_batch' => 'batches#complete_batch'
   get '/batches/:id/cancel_batch' => 'batches#cancel_batch'
   get '/batches/:id/grant_discount' => 'batches#grant_discount'
   get '/batches/:id/mark_batch_as_past' => 'batches#mark_batch_as_past'
 
+  # API Methods:
+  get '/api/create_credit_card/:token' => 'api#create_credit_card'
+  get '/api/charge_credit_card' => 'api#charge_credit_card'
+
   get '/wholesaler' => 'wholesalers#index', as: :wholesaler
+  get '/past-batches' => 'wholesalers#past_batches', as: :past_batches
   get '/retailer' => 'retailers#index', as: :retailer
   get '/shop' => 'welcome#shop', as: :shop
+  get '/accounts' => 'users#accounts', as: :accounts
 
   post '/sessions' => 'sessions#create'
   delete '/sessions' => 'sessions#destroy'

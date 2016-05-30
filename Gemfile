@@ -28,6 +28,13 @@ gem 'bcrypt', '~> 3.1.7'
 
 gem 'bootstrap-sass', '~> 3.3.6'
 
+# gem 'delayed_job_active_record'
+gem 'whenever', :require => false
+
+gem 'stripe'
+
+gem 'paperclip'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

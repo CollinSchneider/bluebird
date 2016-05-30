@@ -7,6 +7,7 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find(params[:id])
+    @batch_products = Product.where('batch_id = ? AND id != ?', @product.batch_id, @product.id).limit(3)
   end
 
   def edit
@@ -23,6 +24,15 @@ class ProductsController < ApplicationController
 
   def create
     product = Product.create(product_params)
+    current_batches = Batch.where('user_id = ? AND status = ?', current_user.id, 'live')
+    current_batches.each do |batch|
+      batch.products.each do |batch_product|
+        if batch_product.title == product.title
+          product.delete
+          flash[:error] = "You have another batch currently in progress with this product"
+        end
+      end
+    end
     redirect_to request.referrer
   end
 
@@ -34,7 +44,7 @@ class ProductsController < ApplicationController
 
   private
   def product_params
-    params.require(:product).permit(:user_id, :batch_id, :title, :price, :description, :discount, :quantity, :status)
+    params.require(:product).permit(:user_id, :batch_id, :title, :price, :description, :discount, :status, :category, :main_image, :photo_two, :photo_three, :photo_four, :photo_five)
   end
 
 end

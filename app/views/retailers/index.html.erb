@@ -1,29 +1,38 @@
 <%= button_to "Shop", shop_path, method: :get %>
 <%= button_to "Log Out", sessions_path, method: :delete %>
+<%= button_to "Manage Payments", accounts_path, method: :get %>
 
-<h2>Hello <%= current_user.email %>!</h2>
-
-<h3>Your Pending Purchase Orders: </h3>
-<% current_user.commits.each do |commit| %>
+<div class="text-center">
+  <h2>Hello <%= current_user.email %>!</h2>
+  <h3>Your Pending Purchase Orders: </h3>
+</div>
+<% @pending_orders.each do |commit| %>
   <div style="border:1px solid black; text-align:center">
-    <h3>This product has up until <%= commit.product.batch.end_time.strftime('%l:%M %P') %> on <%= commit.product.batch.end_time.strftime('%B %d, %Y') %> to get enough purchase orders for your discount!</h3>
-    <h3> <%= commit.product.title %> </h3>
-    <h4> <%= commit.product.description %> </h4>
-    <h3> Original wholesale price: $<%= commit.product.price %> </h3>
-    <h4> <%= commit.product.batch.user.email %> is looking to reach <%= commit.product.batch.milestones[0].goal %> purchase orders to reach your discount of $<%= commit.product.discount %>! </h4>
-    <h4> You committed to purchase <%= commit.amount %> orders worth of <%= commit.product.title %> </h4>
 
-    <% total_batch_commits_amount = 0 %>
-    <% commit.product.batch.products.each do |product| %>
+    <% batch_sales = 0 %>
+    <% commit.product_item.product.batch.products.each do |product| %>
       <% product.commits.each do |commit| %>
-        <% total_batch_commits_amount += commit.amount.to_i %>
+        <% batch_sales += commit.amount.to_f*commit.product_item.product.discount.to_f %>
       <% end %>
     <% end %>
-
-    <% total_commit_amount = 0 %>
-    <% commit.product.commits.each do |commit| %>
-      <% total_commit_amount += commit.amount.to_i %>
+    <% percent_away = '%.2f' % (100-(100*(batch_sales/commit.product_item.product.batch.milestones[0].goal.to_f))) %>
+    <% if percent_away.to_f < 0 %>
+      <% percent_away = 0 %>
     <% end %>
-    <h4>So far this batch has generated <%= total_batch_commits_amount %> purchase orders towards it's goal of <%= commit.product.batch.milestones[0].goal %> </h4>
+    <div class="row">
+      <div id="status-bar" class="border col-xs-6 col-xs-offset-3">
+        <div id="batch-progress" style="width:<%=100-percent_away.to_f %>%; background:green"></div>
+      </div>
+      <div class="col-xs-1">
+        <h5><%= percent_away %>% away from your discount</h5>
+      </div>
+    </div>
+
+    <h3>This product has up until <%= commit.product_item.product.batch.end_time.strftime('%l:%M %P') %> on <%= commit.product_item.product.batch.end_time.strftime('%B %d, %Y') %> to get enough purchase orders for your discount!</h3>
+    <h3> <%= commit.amount %> orders(s) of <%= commit.product_item.description %> <%= commit.product_item.product.title %> </h3>
+    <h4> <%= commit.product_item.product.description %> </h4>
+    <h3> Original wholesale price: $<%= commit.product_item.product.price %> </h3>
+    <h3>Potential Discount: $<%= commit.product_item.product.discount %></h3>
+    <h4> You committed to purchase <%= commit.amount %> orders worth of <%= commit.product_item.product.title %> </h4>
   </div>
 <% end %>

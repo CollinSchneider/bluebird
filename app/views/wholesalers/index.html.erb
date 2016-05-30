@@ -1,126 +1,242 @@
+
 <%= button_to "Logout", sessions_path, method: :delete %>
 <%= button_to "Shop", shop_path, method: :get %>
-
+<%= button_to "Manage Accounts", accounts_path, method: :get %>
 
 <h1 class="text-center">Hello <%= current_user.email %> Wholesaler!</h1>
+<%= link_to "Past Batches", past_batches_path %><script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
 
-<% if @current_batch %>
+<% if @stripe_customer.default_source.nil? %>
   <div class="text-center">
-    <h3>You currently do not have a batch in process, would you like to start one?</h3>
-    <div id="new-batch" class="border:1px solid black; text-align: center">
-      <%= form_for Batch.new do |f| %>
-        <%= f.hidden_field :user_id, :value => current_user.id %>
-        <%= f.label :duration %>
-        <%= f.select :duration, :required => true do %>
-          <% ['1 Day', '7 Days', '30 Days'].each do |a| %>
-            <%= content_tag(:option, a, value: a,) %>
-            <!-- Ends duration array -->
-          <% end %>
-          <!-- Ends select -->
-        <% end %>
-        <%= f.submit "Create New Batch!" %>
-        <!-- Ends Form -->
-      <% end %>
-      <button id="cancel-batch" type="button">Cancel</button>
-    </div>
-    <button id="start-batch" type="button">Start New Batch</button>
+    <h3>You need your payment info before we can get to selling!</h3>
+    <!-- <input id="stripe-customer" type="hidden" value="<%=current_user.stripe_customer_id %>"> -->
+    <label>Card Holder Name</label>
+    <input id="card-name" type="text" value="" placeholder="John Smith">
+    <label>Credit Card Number</label>
+    <input id="card-number" type="text" value="" placeholder="**** **** **** ****"> <br>
+    <label>CVC</label>
+    <input id="card-cvc" type="text" value="" placeholder="123"> <br>
+    <label>Exp Month</label>
+    <input id="exp-month" type="number" value="" placeholder="01">
+    <label>Exp Year</label>
+    <input id="exp-year" type="number" value="" placeholder="2020"> <br>
+    <label>Billing Zip Code</label>
+    <input id="billing-zip" type="text" value="">
+    <span id="payment-errors"></span> <br>
+    <button id="create-card" name="button">Add Credit Card</button>
   </div>
+
 <% else %>
-  <h3>You have a batch currently on sale </h3>
-  <% current_user.batches.each do |batch| %>
-    <h4> This batch will expire at <%= batch.end_time.strftime('%l:%M %P') %> on <%= batch.end_time.strftime('%B %d, %Y') %></h4>
+
+  <% if @batches_need_attention.length > 0 %>
+    <h1 class="text-center">You have a batch that requires your attention! </h1>
+    <% @batches_need_attention.each do |batch| %>
+
+    <% attention_batch_sales = 0 %>
     <% batch.products.each do |product| %>
-      <div style="border:1px solid black">
-        <div class="row">
-          <div class="col-xs-3">
-            <img src="/images/placeholder.png" alt="" />
-          </div>
-          <div class="col-xs-9">
-
-          <h2><%= product.title %></h2>
-          <h3>Original Wholesale Price: $<%= product.price %></h3>
-          <h3>Offered Discount Price: $<%= product.discount %></h3>
-          <h3>You have set a goal to sell <%= product.batch.milestones[0].goal %> products in this batch</h3>
-          <% total_commit_amount = 0 %>
-          <% product.commits.each do |commit| %>
-            <% total_commit_amount += commit.amount.to_i %>
-          <% end %>
-          <h3>You have sold <%= total_commit_amount %> products so far in a timeframe of <%= (Time.now - product.batch.start_time) %> seconds (CONVERT LATER)</h3>
-          <h4>This amounts to $<%= total_commit_amount * product.discount.to_i %> in revenue at the discounted price</h4>
-        </div>
-        </div>
-      </div>
-    <% end %>
-  <% end %>
-<!-- Ends if batches.length == 0 -->
-<% end %>
-
-<h1 class="text-center">Past Batches:</h1>
-<% @past_batches.each do |past_batch| %>
-  <% if past_batch.completed_status.nil? %>
-    <% total_sales = 0 %>
-    <% past_batch.products.each do |product| %>
       <% product.commits.each do |commit| %>
-        <% total_sales += commit.amount.to_i*commit.product.price.to_i %>
+        <% attention_batch_sales += commit.amount.to_f*commit.product_item.product.discount.to_f %>
       <% end %>
     <% end %>
+
     <div class="row text-center">
-      <h3>Batch for: <%= past_batch.time_frame(past_batch.start_time, past_batch.end_time) %></h3>
-      <h3>Set a goal of $<%= past_batch.milestones[0].goal %> in sales </h3>
-      <h3>You reached $<%= total_sales %> in sales</h3>
-    </div>
-    <% past_batch.products.each do |product| %>
-      <div class="col-xs-6 text-center border">
-        <h4><%= product.title %></h4>
-        <h4> Original Wholesale Price: $<%= product.price %></h4>
-        <h4> Potential Discount Price: $<%= product.discount %></h4>
-        <% product_sales = 0 %>
+      <h3>This batch ended at <%= batch.end_time.strftime('%l:%M %P') %> on <%= batch.end_time.strftime('%B %d, %Y') %></h3>
+      <h4> You did $<%= attention_batch_sales %> in sales and did not reach your goal of $<%= batch.milestones[0].goal %> </h4>
+      <% batch.products.each_slice(3) do |slice| %>
+      <div class="row">
+        <% slice.each do |product| %>
+
+        <% product_attention_sales = 0 %>
         <% product.commits.each do |commit| %>
-          <% product_sales += commit.amount.to_i*commit.product.discount.to_i %>
+          <% product_attention_sales += commit.amount.to_f*commit.product.discount.to_f %>
         <% end %>
-        <h5> Total Purchase Orders: <%= product_sales %> </h5>
+          <div class="col-xs-12 col-sm-3 border">
+            <h4><%= product.title %></h4>
+            <h4>Wholesale Price: $<%= product.price %></h4>
+            <h4>Discount Price Offered: $<%= product.discount %></h4>
+            <h4> $<%= product_attention_sales %> in sales</h4>
+          </div>
+          <!-- closes slice.each -->
+          <% end %>
       </div>
       <!-- Closes products.each -->
-    <% end %>
-    <div class="col-xs-12 text-center row">
-      <!-- If you didn't reach your goal -->
-      <% if total_sales < past_batch.milestones[0].goal.to_i %>
-        <button id="cancel-batch-button" data="<%= past_batch.id %>" type="button">Cancel Batch</button>
-        <button id="grant-discount" data="<%= past_batch.id %>" type="button">Give Discount</button>
-      <!-- If you did reach your goal -->
-      <% else %>
-        <h4>Congrats, you reached your goal of <%= past_batch.milestones[0].goal %>!</h4>
-        <!-- Mark batch as goal reached -->
-        <%
-          past_batch.completed_status = 'goal_reached'
-          past_batch.save
-        %>
       <% end %>
+      <div class="text-center">
+        <div class="row">
+          <h3>You can do one of two things:</h3>
+        </div>
+        <div class="row text-center">
+          <div class="col-xs-3 col-xs-offset-3">
+            <button style="width:100%" id="cancel-batch-button" data="<%= batch.id %>" type="button" name="button">End the batch</button>
+          </div>
+          <div class="col-xs-3 col-xs-offset-0">
+            <button style="width:100%" id="grant-discount" data="<%= batch.id %>" type="button" name="button">Grant the discount anyways.</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <% end %>
+  <!-- If you don't have any batches that need attention -->
+  <% else %>
+
+  <% if @current_batches[0] == nil %>
+    <div class="text-center">
+      <h3>You currently do not have a batch in process, would you like to start one?</h3>
+      <div id="new-batch" class="border:1px solid black; text-align: center">
+        <%= form_for Batch.new do |f| %>
+          <%= f.hidden_field :user_id, :value => current_user.id %>
+          <%= f.label :duration %>
+          <%= f.select :duration, :required => true do %>
+            <% ['1 Day', '7 Days', '30 Days'].each do |a| %>
+              <%= content_tag(:option, a, value: a,) %>
+              <!-- Ends duration array -->
+            <% end %>
+            <!-- Ends select -->
+          <% end %>
+          <%= f.submit "Create New Batch!" %>
+          <!-- Ends Form -->
+        <% end %>
+        <button id="cancel-batch" type="button">Cancel</button>
+      </div>
+      <button id="start-batch" type="button">Start New Batch</button>
     </div>
   <% else %>
-    <div class="col-xs-6 border text-center">
-      <h4>Batch for <%= past_batch.time_frame(past_batch.start_time, past_batch.end_time) %></h4>
-      <% completed_status =  past_batch.completed_status.gsub("_", " ").split(" ") %>
-      <h4> <%= completed_status[0].capitalize %> <%= completed_status[1].capitalize %> </h4>
-      <% batch_orders = 0 %>
-      <% batch_revenue = 0 %>
-      <% past_batch.products.each do |product| %>
-        <% product.commits.each do |commit| %>
-          <% batch_orders += commit.amount.to_i %>
-          <% batch_revenue += (commit.amount.to_i*commit.product.discount.to_i) %>
+    <div class="text-center">
+      <h3>You have a batch currently on sale </h3>
+      <h4>Would you like to start another?</h4>
+      <div id="new-batch" class="border:1px solid black; text-align: center">
+        <%= form_for Batch.new do |f| %>
+          <%= f.hidden_field :user_id, :value => current_user.id %>
+          <%= f.label :duration %>
+          <%= f.select :duration, :required => true do %>
+            <% ['1 Day', '7 Days', '30 Days'].each do |a| %>
+              <%= content_tag(:option, a, value: a,) %>
+              <!-- Ends duration array -->
+            <% end %>
+            <!-- Ends select -->
+          <% end %>
+          <%= f.submit "Create New Batch!" %>
+          <!-- Ends Form -->
         <% end %>
-      <% end %>
-      <h4> Set a goal of <%= past_batch.milestones[0].goal %> orders </h4>
-      <h4> Made $<%= batch_revenue %> in sales</h4>
+        <button id="cancel-batch" type="button">Cancel</button>
+      </div>
+      <button id="start-batch" type="button">Start New Batch</button>
     </div>
-  <!-- Closes if past_batch.completed_status.nil? -->
+
+      <% @current_batches.each do |batch| %>
+        <% if batch.end_time < Time.now %>
+        <%
+        batch.status = 'past'
+        batch.save
+        batch.products do |product|
+          product.status = 'past'
+          product.save
+        end
+        redirect_to request.referrer
+        %>
+        <% end %>
+      <div class="row">
+        <% batch_sales = 0 %>
+        <% batch.products.each do |product| %>
+          <% product.commits.each do |commit| %>
+            <% batch_sales += commit.amount.to_f*commit.product_item.product.discount.to_f %>
+          <% end %>
+        <% end %>
+
+        <h4> This batch will expire at <%= batch.end_time.strftime('%l:%M %P') %> on <%= batch.end_time.strftime('%B %d, %Y') %></h4>
+        <h4>You set a goal to do $<%= batch.milestones[0].goal %> of sales in <%= batch.duration.downcase %> </h4>
+        <h4>So far you have done $<%= batch_sales %> in sales </h4>
+
+        <% percent_away = '%.2f' % (100-(100*(batch_sales/batch.milestones[0].goal.to_f))) %>
+        <% if percent_away.to_f < 0 %>
+          <% percent_away = 0 %>
+        <% end %>
+        <div class="row">
+          <div id="status-bar" class="border col-xs-6 col-xs-offset-3">
+            <div id="batch-progress" style="width:<%=100-percent_away.to_f %>%; background:green"></div>
+          </div>
+          <div class="col-xs-1">
+            <h5><%= percent_away %>% away from goal</h5>
+          </div>
+        </div>
+
+        <% batch.products.each do |product| %>
+          <div style="border:1px solid black">
+            <div class="row">
+              <div class="col-xs-3">
+                <img src="/images/placeholder.png" alt="" />
+              </div>
+              <div class="col-xs-9">
+                <h2><%= product.title %></h2>
+                <h3>Original Wholesale Price: $<%= product.price %></h3>
+                <h3>Offered Discount Price: $<%= product.discount %></h3>
+                <h3>You have set a goal to sell <%= product.batch.milestones[0].goal %> products in this batch</h3>
+                <% total_commit_amount = 0 %>
+                <% product.commits.each do |commit| %>
+                  <% total_commit_amount += commit.amount.to_i %>
+                <% end %>
+                <h3>You have sold <%= total_commit_amount %> products so far </h3>
+                <h4>This amounts to $<%= total_commit_amount * product.discount.to_i %> in revenue at the discounted price</h4>
+              </div>
+            </div>
+          </div>
+          <!-- Ends batch.products.each -->
+        <% end %>
+          <!-- Ends current_batch.each -->
+        <% end %>
+      </div>
+      <!-- closess current_batches.each -->
+    <% end %>
+
+  <!--  Closes if you have any batches that need attention -->
   <% end %>
-  <!-- Closes past_batches.each -->
+<!-- Closes if they don't have payment info -->
 <% end %>
 
 <script>
+
+  $('#create-card').click(function(){
+      $("create-card").prop("disabled", true)
+      $(this).text('One moment...')
+      // var stripeCustomer = $('#stripe-customer').val();
+      var cardName = $('#card-name').val();
+      var cardNumber = $('#card-number').val();
+      var cardCvc = $('#card-cvc').val();
+      var expMonth = $('#exp-month').val();
+      var expYear = $('#exp-year').val();
+      var billingZip = $('#billing-zip').val()
+      Stripe.card.createToken({
+        // customer: stripeCustomer,
+        name: cardName,
+        number: cardNumber,
+        cvc: cardCvc,
+        exp_month: expMonth,
+        exp_year: expYear,
+        address_zip: billingZip
+      }, stripeResponseHandler);
+  })
+
+  function stripeResponseHandler(status, response){
+    if(response.error){
+      $('#payment-errors').text(response.error.message)
+      $('#create-card').prop("disabled", false)
+    } else {
+      var token = response.id;
+      console.log(token);
+      var xhttp = new XMLHttpRequest()
+      // xhttp.onreadystatechange = function() {
+      //   if (xhttp.readyState == 4 && xhttp.status == 200) {
+      //     var json = JSON.parse(xhttp.responseText);
+      //   }
+      // }
+      xhttp.open("GET", "/api/create_credit_card/" + token, true);
+      xhttp.send();
+      location.reload();
+    }
+  }
   $('#cancel-batch-button').click(function(){
+    console.log('cancelling...');
     var batchId = $(this).attr('data');
     var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function(){

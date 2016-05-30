@@ -1,5 +1,6 @@
 <div style="text-align:center">
   <h2> <%= @batch.user.email %>'s batch! </h2>
+  <h4 style="color: red"><%= flash[:error] %></h4>
   <% if @batch.start_time && @batch.end_time %>
     <h2>This batch is now live! You can no longer edit the contents</h2>
     <%= button_to "View Batch", batch_path(@batch.id), method: :get %>
@@ -63,10 +64,20 @@
     <%= f.number_field :price %> <br>
     <%= f.label "Discounted Price" %>
     <%= f.number_field :discount %> <br>
-    <%= f.label "Inventory For Sale" %>
-    <%= f.number_field :quantity %> <br>
     <%= f.label :description %>
     <%= f.text_field :description %> <br>
+    <%= f.label :category %>
+    <%= f.text_field :category %> <br>
+    <%= f.label "Main Photo" %>
+    <%= f.file_field :main_image %> <br>
+    <%= f.label "Photo Two" %>
+    <%= f.file_field :photo_two %> <br>
+    <%= f.label "Photo Three" %>
+    <%= f.file_field :photo_three %> <br>
+    <%= f.label "Photo Four" %>
+    <%= f.file_field :photo_four %> <br>
+    <%= f.label "Photo Five" %>
+    <%= f.file_field :photo_five %> <br>
     <%= f.submit "Create Product" %>
   <% end %>
 <% end %>
@@ -77,13 +88,33 @@
 <% total_sales_price = 0 %>
 <% @batch.products.each do |product| %>
   <div style="border: 1px solid black; text-align:center">
-    <% total_sales_price += product.quantity.to_i*product.discount.to_i %>
-
     <h4><%= product.title %> </h4>
+    <%= image_tag product.main_image.url(:medium) %>
     <h4>Original Price $<%= product.price %></h4>
     <h4>Discounted Price $<%= product.discount %></h4>
-    <h4>Inventory For Sale: <%= product.quantity %> </h4>
     <h4><%= product.description %></h4>
+    <h4><%= product.category %></h4>
+
+    <% product.product_items.each do |product_item| %>
+      <% total_sales_price += product_item.quantity*product.discount.to_f %>
+      <h4> <%= product_item.description %>: <%= product_item.quantity %> products </h4>
+    <% end %>
+
+    <%= form_for ProductItem.new do |f| %>
+      <%= f.hidden_field :product_id, :value => product.id %>
+      <div class="row">
+        <%= f.label "Product Item Description (optional)" %>
+        <%= f.text_field :description %>
+      </div>
+      <div class="row">
+        <%= f.label "Quantity for sale" %>
+        <%= f.number_field :quantity %>
+      </div>
+      <div class="row">
+        <%= f.submit "Create Inventory" %>
+      </div>
+    <% end %>
+
     <%= button_to "Remove Product From Batch?", product_path(product.id), method: :delete %>
   </div>
 <% end %>
