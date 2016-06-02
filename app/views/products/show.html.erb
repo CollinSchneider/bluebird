@@ -13,7 +13,7 @@
   <% batch_sales = 0 %>
   <% @product.batch.products.each do |product| %>
     <% product.commits.each do |commit| %>
-      <% batch_sales += commit.amount.to_f*commit.product_item.product.discount.to_f %>
+      <% batch_sales += commit.amount.to_f*commit.product.discount.to_f %>
     <% end %>
   <% end %>
   <% if batch_sales > @product.batch.milestones[0].goal.to_i %>
@@ -44,34 +44,31 @@
         <h3>Discounted Price: $<%= @product.discount %> (<%= '%.0f' % (100*(1-(@product.discount.to_f/@product.price.to_f)))%>% discount)</h3>
 
         <% if current_user.user_type == 'retailer' %>
-          <% @product.product_items.each do |product| %>
-            <% users_commit = Commit.where('user_id = ? AND product_item_id = ?', current_user.id, product.id) %>
-            <% if users_commit != [] %>
-              <div id="already-ordered">
-                <h3>You have already commited to <%= users_commit[0].amount %> purchase orders, would you like to <a id="edit-that">edit that?</a> </h3>
-              </div>
-              <div id="edit-order">
-                <%= form_for users_commit[0] do |f| %>
-                  <%= f.hidden_field :user_id, :value => current_user.id %>
-                  <%= f.hidden_field :product_id, :value => product.id %>
-                  <%= f.label :amount %>
-                  <%= f.number_field :amount %> <br>
-                  <%= f.button "Update #{product.description} #{@product.title} Order" %>
-                <% end %>
-                <%= button_to "Delete Order", users_commit[0], method: :delete %> <br>
-                <button id="cancel-edit">Cancel</button>
-              </div>
-            <% else %>
-              <%= form_for Commit.new do |f| %>
+          <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, @product.id) %>
+          <% if users_commit != [] %>
+            <div id="already-ordered">
+              <h3>You have already commited to <%= users_commit[0].amount %> purchase orders, would you like to <a id="edit-that">edit that?</a> </h3>
+            </div>
+            <div id="edit-order">
+              <%= form_for users_commit[0] do |f| %>
                 <%= f.hidden_field :user_id, :value => current_user.id %>
-                <%= f.hidden_field :product_id, :value => product.id %>
+                <%= f.hidden_field :product_id, :value => @product.id %>
                 <%= f.label :amount %>
                 <%= f.number_field :amount %> <br>
-                <%= f.button "Commit to purchase #{product.description} #{@product.title}" %>
+                <%= f.button "Update #{product.description} #{@product.title} Order" %>
               <% end %>
-              <!-- Closes users_commit if -->
+              <%= button_to "Delete Order", users_commit[0], method: :delete %> <br>
+              <button id="cancel-edit">Cancel</button>
+            </div>
+          <% else %>
+            <%= form_for Commit.new do |f| %>
+              <%= f.hidden_field :user_id, :value => current_user.id %>
+              <%= f.hidden_field :product_id, :value => @product.id %>
+              <%= f.label :amount %>
+              <%= f.number_field :amount %> <br>
+              <%= f.button "Commit to purchase #{@product.title}" %>
             <% end %>
-            <!--  Closes product_items.each -->
+            <!-- Closes users_commit if -->
           <% end %>
           <!-- Closes if user == retailer -->
         <% end %>

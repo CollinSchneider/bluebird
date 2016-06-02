@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160530194329) do
+ActiveRecord::Schema.define(version: 20160602021539) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -31,13 +31,14 @@ ActiveRecord::Schema.define(version: 20160530194329) do
 
   create_table "commits", force: :cascade do |t|
     t.integer  "user_id"
-    t.datetime "created_at",      null: false
-    t.datetime "updated_at",      null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.integer  "amount"
     t.string   "status"
-    t.integer  "product_item_id"
+    t.integer  "product_id"
   end
 
+  add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
   add_index "commits", ["user_id"], name: "index_commits_on_user_id", using: :btree
 
   create_table "milestones", force: :cascade do |t|
@@ -50,16 +51,6 @@ ActiveRecord::Schema.define(version: 20160530194329) do
 
   add_index "milestones", ["batch_id"], name: "index_milestones_on_batch_id", using: :btree
   add_index "milestones", ["product_id"], name: "index_milestones_on_product_id", using: :btree
-
-  create_table "product_items", force: :cascade do |t|
-    t.string   "description"
-    t.integer  "quantity"
-    t.datetime "created_at",  null: false
-    t.datetime "updated_at",  null: false
-    t.integer  "product_id"
-  end
-
-  add_index "product_items", ["product_id"], name: "index_product_items_on_product_id", using: :btree
 
   create_table "products", force: :cascade do |t|
     t.string   "title"
@@ -92,6 +83,7 @@ ActiveRecord::Schema.define(version: 20160530194329) do
     t.string   "photo_five_content_type"
     t.integer  "photo_five_file_size"
     t.datetime "photo_five_updated_at"
+    t.integer  "quantity"
   end
 
   add_index "products", ["batch_id"], name: "index_products_on_batch_id", using: :btree
@@ -101,9 +93,10 @@ ActiveRecord::Schema.define(version: 20160530194329) do
     t.string   "email"
     t.string   "password_digest"
     t.string   "user_type"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
-    t.string   "stripe_customer_id"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.string   "retailer_stripe_id"
+    t.string   "wholesaler_stripe_id"
   end
 
   add_foreign_key "batches", "users"

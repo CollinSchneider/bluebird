@@ -1,18 +1,48 @@
-<%= button_to "Log out", sessions_path, method: :delete %>
-<% if current_user.user_type == 'wholesaler' %>
-  <%= button_to "Profile", wholesaler_path, method: :get %>
-<% elsif current_user.user_type == 'retailer' %>
-  <%= button_to "Profile", retailer_path, method: :get %>
-<% end %>
-
-<h3> Hello <%= current_user.email %>! </h3>
+<!-- Begin Navbar -->
+<nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="#">Homepage</a></li>
+        <% if current_user.user_type == 'retailer' %>
+          <li><%= link_to "Profile", retailer_path %></li>
+        <% elsif current_user.user_type == 'wholesaler' %>
+          <li><%= link_to "Profile", wholesaler_path %></li>
+        <% end %>
+        <li><%= link_to "Logout", sessions_path, method: :delete %></li>
+      </ul>
+    </div>
+  </div>
+</nav>
 
 <% if flash[:error] %>
   <h1 style="color:red"><%= flash[:error] %></h1>
 <% end %>
 
+<div class="container">
 
-<div class="col-xs-12 no-padding text-center">
+  <div class="row">
+  <div class="col-md-12">
+    <div class="page-header">
+      <h1>Brand <small>Marketplace</small></h1>
+    </div>
+    <div class="btn-group" role="group" aria-label="...">
+      <button type="button" class="btn btn-default active">All</button>
+      <button type="button" class="btn btn-default">Unfullfilled</button>
+      <button type="button" class="btn btn-default">Fullfilled</button>
+    </div>
+  </div>
+</div>
 
 <% if @products %>
   <% @products.each_slice(3) do |slice| %>
@@ -26,138 +56,136 @@
         product.save
       %>
     <% else %>
-    <div id="product" class="col-xs-12 col-sm-3 no-padding text-center">
-      <h2><%= link_to product.title, product_path(product.id) %></h2>
-      <h3>$<%= product.discount %> (<%= '%.2f' % (100*(1 - (product.discount.to_f/product.price.to_f))) %>% discount) </h3>
-      <!-- <h4><#%= product.description %></h4> -->
-      <div class="col-xs-12 no-padding no-margin">
-        <%= image_tag product.main_image.url(:medium), :class => "responsive-img" %>
-        <!-- <img class="responsive-img" src="/images/placeholder.png" alt="" /> -->
-      </div>
-
-      <% goal = product.batch.milestones[0].goal.to_i %>
-      <% status = 0 %>
-      <% product.batch.products.each do |product| %>
-        <% product.product_items.each do |item| %>
-          <% item.commits.each do |commit| %>
-            <% status += commit.amount.to_i*commit.product_item.product.discount.to_i %>
-          <% end %>
-        <% end %>
-      <% end %>
-      <% total_progress = ('%.4f' % (status.to_f/goal.to_f)) %>
-      <% if total_progress.to_f > 1 %>
-        <% total_progress = 1 %>
-      <% else %>
-        <% total_progress = total_progress %>
-      <% end %>
-
-      <!-- <div class="row"> -->
-        <div id="status-bar" class="col-xs-10 col-xs-offset-1 border">
-          <div id="batch-progress" style="width:<%= '%.2f' % (total_progress.to_f*100)%>%; background:rgb(0, <%=('%.0f' % ((total_progress.to_f*2.55)*100)).to_i%>, 0)">
-            <h5><%= '%.0f' % (total_progress.to_f*100) %>%</h5>
-          </div>
+    <div class="col-md-4 col-s-12">
+      <div class="product-box">
+        <div class="product-header">
+          <!-- <img src="https://placekitten.com/300/300" alt=""> -->
+          <%= image_tag product.main_image.url(:medium), :class => "responsive-img" %>
+          <h4><%= product.title %></h4>
+          <p><%= link_to product.batch.user.email, batch_path(product.batch.id) %></p>
+          <p><span class="wholesale-price">$<%= product.discount %></span> <span class="price">$<%= product.price %></span></p>
         </div>
 
-        <h4>Expires at <%= product.batch.end_time.strftime('%l:%M %P') %> on <%= product.batch.end_time.strftime('%B %d, %Y') %></h4>
-        <!-- <div class="col-xs-12 text-right" style="padding: 0 0 0 0">
-          <h6><%= product.batch.milestones[0].goal %> products <span class="glyphicon glyphicon-arrow-up"/></h6>
-        </div> -->
-      <!-- </div> -->
-        <br>
-      <% if product.batch.user.email == current_user.email %>
-        <h4>Your product!</h4>
-      <% else %>
-        <h4>Product for sale by: <%= link_to product.batch.user.email, batch_path(product.batch.id) %> </h4>
-      <% end %>
-      <% milestone_goal = nil %>
-      <% product.milestones.each do |milestone| %>
-        <h5>Goal: $<%= milestone_goal = milestone.goal %></h5>
-      <% end %>
-      <% total_commit_amount = 0 %>
-      <% product.product_items.each do |item| %>
-        <% item.commits.each do |commit| %>
-          <% total_commit_amount += commit.amount.to_i %>
+        <% product_orders = 0 %>
+        <% product_sales = 0 %>
+        <% product.commits.each do |commit| %>
+          <% product_sales += commit.amount.to_i*commit.product.discount.to_f %>
+          <% product_orders += commit.amount.to_i %>
         <% end %>
-      <% end %>
-      <% product.product_items.each do |item| %>
-        <h4><%= item.description %>: <%= item.quantity %></h4>
-        <% if current_user.user_type == 'retailer' %>
-          <% users_commit = Commit.where('user_id = ? AND product_item_id = ?', current_user.id, item.id) %>
-            <% if users_commit != [] %>
-              <h3 style="border-top:1px solid black"> <span class="glyphicon glyphicon-ok-circle"></span> <%= link_to "#{users_commit[0].amount} purchase orders", commit_path(users_commit[0].id) %> </h3>
-            <% else %>
-            <% if @stripe_customer.default_source %>
-              <input type="text" placeholder="<%= item.description %> <%= item.product.title %>">
-              <!-- <#%= form_for Commit.new do |f| %>
-                <#%= f.hidden_field :product_item_id, :value => item.id %>
-                <#%= f.hidden_field :user_id, :value => current_user.id %>
-                <#%= f.label "Purchase Order Quantity" %>
-                <#%= f.number_field :amount %> <br>
-                <#%= f.button "Make Order" %>
-              <#% end %> -->
-            <% else %>
-            <!-- Button trigger modal -->
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
-              Make Purchase Order
-            </button>
+        <div class="product-footer">
+          <p><%= product_orders %> Orders for this Product</p>
+          <!-- <h6><#%= product_sales %> out of <#%= product.batch.milestones[0].goal %></h6> -->
+        </div>
 
-            <!-- Modal -->
-            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-              <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title" id="myModalLabel">Add Payment Info</h4>
-                  </div>
-                  <div class="modal-body">
-                    <div class="text-center">
-                      <div class="row">
-                        <label>Card Holder Name</label>
-                        <input id="card-name" type="text" value="" placeholder="John Smith">
-                      </div>
-                      <div class="row">
-                        <label>Credit Card Number</label>
-                        <input id="card-number" type="text" value="" placeholder="**** **** **** ****"> <br>
-                      </div>
-                      <div class="row">
-                        <label>CVC</label>
-                        <input id="card-cvc" type="text" value="" placeholder="123"> <br>
-                      </div>
-                      <div class="row">
-                        <label>Exp Month</label>
-                        <input id="exp-month" type="number" value="" placeholder="01">
-                      </div>
-                      <div class="row">
-                        <label>Exp Year</label>
-                        <input id="exp-year" type="number" value="" placeholder="2020"> <br>
-                      </div>
-                      <div class="row">
-                        <label>Billing Zip Code</label>
-                        <input id="billing-zip" type="text" value="" placeholder ="12345">
-                      </div>
-                      <div class="row">
-                        <span id="payment-errors"></span> <br>
+        <% goal = product.batch.milestones[0].goal.to_i %>
+        <% status = 0 %>
+        <% product.batch.products.each do |product| %>
+          <% product.commits.each do |commit| %>
+            <% status += commit.amount.to_i*commit.product.discount.to_i %>
+          <% end %>
+        <% end %>
+        <% total_progress = ('%.4f' % (status.to_f/goal.to_f)) %>
+        <% if total_progress.to_f > 1 %>
+          <% total_progress = 1 %>
+        <% else %>
+          <% total_progress = total_progress %>
+        <% end %>
+
+        <div class="product-body">
+          <div class="progress">
+            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: <%= '%.2f' % (total_progress.to_f*100)%>%">
+              <span class="sr-only"><%= '%.2f' % (total_progress.to_f*100)%>% Complete (success)</span>
+            </div>
+          </div>
+          <p>Expires at <%= product.batch.end_time.strftime('%l:%M %P') %> <%= product.batch.end_time.strftime('%B %d, %Y') %></p>
+          <!-- <form class="form-inline">
+            <div class="form-group">
+              <input type="number" min='0' step='10' data-bind="value:replyNumber" class="form-control" id="exampleInputEmail2" placeholder="Enter Amount">
+            </div>
+            <button type="submit" class="btn btn-default">Commit</button>
+          </form> -->
+          <% users_orders = [] %>
+          <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, product.id) %>
+          <% current_user.commits.where('product_id = ?', product.id).each do |commit| %>
+            <% users_orders.push(commit) %>
+          <% end %>
+          <% current_users_purchase_order = 0 %>
+          <% users_orders.each do |commit| %>
+            <% current_users_purchase_order += commit.amount.to_i %>
+          <% end %>
+          <% if current_users_purchase_order > 0 %>
+            <h4><i class="fa fa-check" aria-hidden="true"></i> Ordered <%= current_users_purchase_order %>!</h4>
+          <% else %>
+            <% if current_user.user_type == 'retailer' %>
+              <% if @stripe_customer.default_source %>
+                <%= form_for Commit.new do |f| %>
+                  <%= f.hidden_field :user_id, :value => current_user.id %>
+                  <%= f.hidden_field :product_id, :value => product.id %>
+                  <%= f.label "Order Amount" %>
+                  <%= f.number_field :amount %>
+                  <%= f.button "Make Purchase Order", :class => "btn btn-primary" %>
+                <% end %>
+              <% else %>
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                Make Purchase Order
+              </button>
+              <!-- Modal -->
+              <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                      <h4 class="modal-title" id="myModalLabel">Add Payment Info</h4>
+                    </div>
+                    <div class="modal-body">
+                      <div class="text-center">
+                        <div class="row">
+                          <label>Card Holder Name</label>
+                          <input id="card-name" type="text" value="" placeholder="John Smith">
+                        </div>
+                        <div class="row">
+                          <label>Credit Card Number</label>
+                          <input id="card-number" type="text" value="" placeholder="**** **** **** ****"> <br>
+                        </div>
+                        <div class="row">
+                          <label>CVC</label>
+                          <input id="card-cvc" type="text" value="" placeholder="123"> <br>
+                        </div>
+                        <div class="row">
+                          <label>Exp Month</label>
+                          <input id="exp-month" type="number" value="" placeholder="01">
+                        </div>
+                        <div class="row">
+                          <label>Exp Year</label>
+                          <input id="exp-year" type="number" value="" placeholder="2020"> <br>
+                        </div>
+                        <div class="row">
+                          <label>Billing Zip Code</label>
+                          <input id="billing-zip" type="text" value="" placeholder ="12345">
+                        </div>
+                        <div class="row">
+                          <span id="payment-errors"></span> <br>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button data="<%=product.id%>" class="create-credit-card btn btn-primary">Save Credit Card</button>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <button data="<%=product.id%>" class="create-credit-card btn btn-primary">Save Credit Card</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <!-- Closes users_commit if -->
+              <!-- Closes if stripe_customer_id.default_source -->
+              <% end %>
+            <!-- Closes if current_user.user_type == 'retailer' -->
+            <% end %>
+            <!-- Closes if users purchase orders > 0 -->
           <% end %>
-        <% end %>
-      <% end %>
-
-      <h4> <%= total_commit_amount %> orders on this product </h4>
-      <% percent_there = ('%.3f' % (total_commit_amount.to_f/product.batch.milestones[0].goal.to_i.to_f)) %>
-      <!-- <h4> We're only <#%= '%.2f' % total_commit_amount.to_i/product.batch.milestones[0].goal.to_i %>% away from your deal! </h4> -->
-        <!-- Closes if user == retailer -->
-      <% end %>
+        </div>
+      </div>
     </div>
+
     <!-- Closes batch.end_time -->
     <% end %>
   <% end %>
@@ -166,3 +194,10 @@
 <!-- If there are products -->
 <% end %>
 </div>
+
+<!-- Begin Footer -->
+<!-- <footer class="footer navbar-fixed-bottom">
+  <div class="container">
+    <p class="text-muted">Place sticky footer content here.</p>
+  </div>
+</footer> -->

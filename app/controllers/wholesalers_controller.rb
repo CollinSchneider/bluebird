@@ -3,7 +3,7 @@ class WholesalersController < ApplicationController
   def index
     authenticate_wholesaler
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    @stripe_customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+    # @stripe_customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
     @current_batches = Batch.where('user_id = ? AND status = ?', current_user.id, 'live')
     # get_current_sales(@current_batches[0])
     @batches_need_attention = Batch.where('user_id = ? AND completed_status = ?', current_user.id, 'needs_attention')

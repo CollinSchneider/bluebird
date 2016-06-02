@@ -1,6 +1,6 @@
 <h1>Users Index</h1>
 
-<div style="border:1px solid black">
+<div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4" style="border:1px solid black">
 <h3>Retailer Sign Up:</h3>
 <%= form_for User.new do |f| %>
   <%= f.label :email %>
@@ -13,7 +13,7 @@
 <p style="color:red"> <%= flash[:error] %> </p>
 </div>
 <br><br>
-<div style="border:1px solid black">
+<div class="col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4" style="border:1px solid black">
   <h3>Wholesaler Sign Up:</h3>
   <%= form_for User.new do |f| %>
     <%= f.label :email %>
@@ -27,7 +27,7 @@
 </div>
 
 <br/><br/>
-<div style="border:1px solid black">
+<div class="text-center col-xs-8 col-xs-offset-2 col-sm-4 col-sm-offset-4" style="border:1px solid black">
 <h3>Login</h3>
   <%= form_tag sessions_path do %>
   <%= label_tag :email %>

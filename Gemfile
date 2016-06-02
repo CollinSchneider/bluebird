@@ -35,6 +35,9 @@ gem 'stripe'
 
 gem 'paperclip'
 
+gem 'omniauth-stripe-connect'
+# gem 'OAuth2'
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 
@@ -44,6 +47,8 @@ gem 'paperclip'
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
+
+  gem 'pry-rails'
 end
 
 group :development do

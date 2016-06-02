@@ -20,6 +20,9 @@ class BatchesController < ApplicationController
 
   def show
     @batch = Batch.find(params[:id])
+    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+    @stripe_account = Stripe::Account.retrieve(@batch.user.wholesaler_stripe_id)
+    # @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     if @batch.end_time < Time.now
       @batch.status = 'past'
       @batch.products.each do |product|

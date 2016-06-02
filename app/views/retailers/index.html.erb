@@ -10,12 +10,12 @@
   <div style="border:1px solid black; text-align:center">
 
     <% batch_sales = 0 %>
-    <% commit.product_item.product.batch.products.each do |product| %>
+    <% commit.product.batch.products.each do |product| %>
       <% product.commits.each do |commit| %>
-        <% batch_sales += commit.amount.to_f*commit.product_item.product.discount.to_f %>
+        <% batch_sales += commit.amount.to_f*commit.product.discount.to_f %>
       <% end %>
     <% end %>
-    <% percent_away = '%.2f' % (100-(100*(batch_sales/commit.product_item.product.batch.milestones[0].goal.to_f))) %>
+    <% percent_away = '%.2f' % (100-(100*(batch_sales/commit.product.batch.milestones[0].goal.to_f))) %>
     <% if percent_away.to_f < 0 %>
       <% percent_away = 0 %>
     <% end %>
@@ -28,11 +28,11 @@
       </div>
     </div>
 
-    <h3>This product has up until <%= commit.product_item.product.batch.end_time.strftime('%l:%M %P') %> on <%= commit.product_item.product.batch.end_time.strftime('%B %d, %Y') %> to get enough purchase orders for your discount!</h3>
-    <h3> <%= commit.amount %> orders(s) of <%= commit.product_item.description %> <%= commit.product_item.product.title %> </h3>
-    <h4> <%= commit.product_item.product.description %> </h4>
-    <h3> Original wholesale price: $<%= commit.product_item.product.price %> </h3>
-    <h3>Potential Discount: $<%= commit.product_item.product.discount %></h3>
-    <h4> You committed to purchase <%= commit.amount %> orders worth of <%= commit.product_item.product.title %> </h4>
+    <h3>This product has up until <%= commit.product.batch.end_time.strftime('%l:%M %P') %> on <%= commit.product.batch.end_time.strftime('%B %d, %Y') %> to get enough purchase orders for your discount!</h3>
+    <h3> <%= commit.amount %> orders(s) of <%= commit.product.title %> </h3>
+    <h4> <%= commit.product.description %> </h4>
+    <h3> Original wholesale price: $<%= commit.product.price %> </h3>
+    <h3>Potential Discount: $<%= commit.product.discount %></h3>
+    <h4> You committed to purchase <%= commit.amount %> orders worth of <%= commit.product.title %> </h4>
   </div>
 <% end %>

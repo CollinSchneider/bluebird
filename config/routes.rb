@@ -18,6 +18,8 @@ Rails.application.routes.draw do
   # API Methods:
   get '/api/create_credit_card/:token' => 'api#create_credit_card'
   get '/api/charge_credit_card' => 'api#charge_credit_card'
+  get '/api/create_stripe_connect/:scope/:code' => 'api#create_stripe_connect'
+  get '/api/send_money' => 'api#send_money'
 
   get '/wholesaler' => 'wholesalers#index', as: :wholesaler
   get '/past-batches' => 'wholesalers#past_batches', as: :past_batches
@@ -28,7 +30,7 @@ Rails.application.routes.draw do
   post '/sessions' => 'sessions#create'
   delete '/sessions' => 'sessions#destroy'
 
-  root 'users#index'
+  root 'welcome#shop'
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'

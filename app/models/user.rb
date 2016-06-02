@@ -3,8 +3,8 @@ require 'stripe'
 class User < ActiveRecord::Base
   has_secure_password
 
-  validates :password, presence: true
-  validates :email, presence: true, uniqueness: true
+  # validates :password, presence: true
+  # validates :email, presence: true, uniqueness: true
 
   has_many :products
   has_many :commits
@@ -15,7 +15,7 @@ class User < ActiveRecord::Base
     customer = Stripe::Customer.create(
       :description => "Customer for #{self.email}"
     )
-    self.stripe_customer_id = customer.id
+    self.retailer_stripe_id = customer.id
     self.save
   end
 

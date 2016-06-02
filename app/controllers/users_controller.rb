@@ -22,13 +22,18 @@ class UsersController < ApplicationController
         user.make_stripe_customer
         redirect_to shop_path
       elsif user.user_type == 'wholesaler'
-        user.make_stripe_customer
         redirect_to wholesaler_path
       end
     else
       flash[:error] = user.errors.full_messages
       redirect_to request.referrer
     end
+  end
+
+  def update
+    user = User.find(params[:id])
+    user.update(user_params)
+    redirect_to request.referrer
   end
 
   def retailer
@@ -39,12 +44,12 @@ class UsersController < ApplicationController
 
   def accounts
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    @stripe_customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+    @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
   end
 
   private
   def user_params
-    params.require(:user).permit(:email, :password, :user_type, :stripe_customer_id)
+    params.require(:user).permit(:email, :password, :user_type, :wholesaler_stripe_id, :retailer_stripe_id)
   end
 
 end

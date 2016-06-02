@@ -2,15 +2,54 @@
 <%= button_to "Logout", sessions_path, method: :delete %>
 <%= button_to "Shop", shop_path, method: :get %>
 <%= button_to "Manage Accounts", accounts_path, method: :get %>
+<% if current_user.wholesaler_stripe_id == nil %>
+  <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write">Connect with Stripe</a>
+<% end %>
+
+<h1><%= current_user.wholesaler_stripe_id %></h1>
+
+<script>
+$(document).ready(function(){
+  var code = getParams('code'),
+    scope = getParams('scope');
+
+
+    console.log(code);
+    console.log(scope);
+    if(code){
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "/api/create_stripe_connect/" + scope + "/" + code, true);
+      xhttp.send();
+      window.location = "/wholesaler"
+    } else {
+      console.log('No sign up!');
+    }
+})
+
+function getParams(param) {
+  var vars = {};
+  window.location.href.replace( location.hash, '' ).replace(
+    /[?&]+([^=&]+)=?([^&]*)?/gi, // regexp
+    function( m, key, value ) { // callback
+      vars[key] = value !== undefined ? value : '';
+    }
+  );
+
+  if ( param ) {
+    return vars[param] ? vars[param] : null;
+  }
+  return vars;
+}
+</script>
 
 <h1 class="text-center">Hello <%= current_user.email %> Wholesaler!</h1>
-<%= link_to "Past Batches", past_batches_path %><script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+<%= link_to "Past Batches", past_batches_path %>
+<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
 
 
-<% if @stripe_customer.default_source.nil? %>
-  <div class="text-center">
+<!-- <#% if @stripe_customer.default_source.nil? %> -->
+  <!-- <div class="text-center">
     <h3>You need your payment info before we can get to selling!</h3>
-    <!-- <input id="stripe-customer" type="hidden" value="<%=current_user.stripe_customer_id %>"> -->
     <label>Card Holder Name</label>
     <input id="card-name" type="text" value="" placeholder="John Smith">
     <label>Credit Card Number</label>
@@ -25,9 +64,9 @@
     <input id="billing-zip" type="text" value="">
     <span id="payment-errors"></span> <br>
     <button id="create-card" name="button">Add Credit Card</button>
-  </div>
+  </div> -->
 
-<% else %>
+<!-- <#% else %> -->
 
   <% if @batches_need_attention.length > 0 %>
     <h1 class="text-center">You have a batch that requires your attention! </h1>
@@ -36,7 +75,7 @@
     <% attention_batch_sales = 0 %>
     <% batch.products.each do |product| %>
       <% product.commits.each do |commit| %>
-        <% attention_batch_sales += commit.amount.to_f*commit.product_item.product.discount.to_f %>
+        <% attention_batch_sales += commit.amount.to_f*commit.product.discount.to_f %>
       <% end %>
     <% end %>
 
@@ -140,7 +179,7 @@
         <% batch_sales = 0 %>
         <% batch.products.each do |product| %>
           <% product.commits.each do |commit| %>
-            <% batch_sales += commit.amount.to_f*commit.product_item.product.discount.to_f %>
+            <% batch_sales += commit.amount.to_f*commit.product.discount.to_f %>
           <% end %>
         <% end %>
 
@@ -191,8 +230,9 @@
 
   <!--  Closes if you have any batches that need attention -->
   <% end %>
+
 <!-- Closes if they don't have payment info -->
-<% end %>
+<!-- <#% end %> -->
 
 <script>
 

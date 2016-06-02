@@ -3,9 +3,9 @@ class CommitsController < ApplicationController
   def create
     commit = Commit.create(commit_params)
     # if Time.now < commit.product.batch.end_time
-      if commit.amount <= commit.product_item.quantity
-        commit.product_item.quantity -= commit.amount
-        commit.product_item.save
+      if commit.amount <= commit.product.quantity
+        commit.product.quantity -= commit.amount
+        commit.product.save
         commit.status = 'live'
         commit.save
       else
@@ -40,7 +40,7 @@ class CommitsController < ApplicationController
 
   private
   def commit_params
-    params.require(:commit).permit(:user_id, :product_item_id, :amount, :status)
+    params.require(:commit).permit(:user_id, :product_id, :amount, :status)
   end
 
 end
