@@ -1,215 +1,95 @@
-<div class="col-xs-12">
-  <div class="row">
-    <%= link_to "Shop", shop_path %>
+
+<div class="center-align row">
+  <div class="col s8 offset-s2 m4 offset-m4 border">
+    <h2 id="timer"><%= @product.end_time - Time.now %></h2>
   </div>
-
-  <div class="row text-center">
-    <h4>Expires <%= @product.batch.end_time.strftime('%l:%M %P') %> on <%= @product.batch.end_time.strftime('%B %d, %Y') %></h4>
-    <div id="timer" class="col-xs-2 col-xs-offset-5">
-      <h1 id ="time-left"><%= @product.batch.time_difference(Time.now, @product.batch.end_time) %></h1>
-    </div>
-  </div>
-
-  <% batch_sales = 0 %>
-  <% @product.batch.products.each do |product| %>
-    <% product.commits.each do |commit| %>
-      <% batch_sales += commit.amount.to_f*commit.product.discount.to_f %>
-    <% end %>
-  <% end %>
-  <% if batch_sales > @product.batch.milestones[0].goal.to_i %>
-    <% batch_sales = @product.batch.milestones[0].goal.to_i %>
-  <% end %>
-
-  <% percent_away = '%.2f' % (100-(100*(batch_sales/@product.batch.milestones[0].goal.to_f))) %>
-  <div class="row">
-    <div id="status-bar" class="border col-xs-6 col-xs-offset-3">
-      <div id="batch-progress" style="width:<%=100*(batch_sales/@product.batch.milestones[0].goal.to_f) %>%; background:green"></div>
-    </div>
-    <div class="col-xs-1">
-      <h5><%= percent_away %>% away from discount</h5>
-    </div>
-  </div>
-
-  <div class="row col-xs-10 col-xs-offset-1 text-center">
-    <h1> <%= @product.title %> </h1>
-    <div class="row">
-      <div class="row col-xs-4 no-margin no-padding">
-        <%= image_tag @product.main_image.url(:large), :class => "responsive-img" %>
-      </div>
-      <div class="col-xs-8">
-        <% if percent_away == '0.00' %>
-          <h2>This batch has reached it's goal, place your order for a guaranteed discount!</h2>
-        <% end %>
-        <h3>Original Wholesale Price: $<%= @product.price %> </h3>
-        <h3>Discounted Price: $<%= @product.discount %> (<%= '%.0f' % (100*(1-(@product.discount.to_f/@product.price.to_f)))%>% discount)</h3>
-
-        <% if current_user.user_type == 'retailer' %>
-          <% users_commit = Commit.where('user_id = ? AND product_id = ?', current_user.id, @product.id) %>
-          <% if users_commit != [] %>
-            <div id="already-ordered">
-              <h3>You have already commited to <%= users_commit[0].amount %> purchase orders, would you like to <a id="edit-that">edit that?</a> </h3>
-            </div>
-            <div id="edit-order">
-              <%= form_for users_commit[0] do |f| %>
-                <%= f.hidden_field :user_id, :value => current_user.id %>
-                <%= f.hidden_field :product_id, :value => @product.id %>
-                <%= f.label :amount %>
-                <%= f.number_field :amount %> <br>
-                <%= f.button "Update #{product.description} #{@product.title} Order" %>
-              <% end %>
-              <%= button_to "Delete Order", users_commit[0], method: :delete %> <br>
-              <button id="cancel-edit">Cancel</button>
-            </div>
-          <% else %>
-            <%= form_for Commit.new do |f| %>
-              <%= f.hidden_field :user_id, :value => current_user.id %>
-              <%= f.hidden_field :product_id, :value => @product.id %>
-              <%= f.label :amount %>
-              <%= f.number_field :amount %> <br>
-              <%= f.button "Commit to purchase #{@product.title}" %>
-            <% end %>
-            <!-- Closes users_commit if -->
-          <% end %>
-          <!-- Closes if user == retailer -->
-        <% end %>
-
-      </div>
-    </div>
-      <div class="row col-xs-4" style="margin-top: 1em">
-        <% if @product.photo_two != nil %>
-          <div class="col-xs-4 no-padding; margin-left: 0.1em">
-            <%= image_tag @product.photo_two.url(:small), :class => "responsive-img" %>
-          </div>
-        <% end %>
-        <% if @product.photo_three != nil %>
-          <div class="col-xs-4 no-padding; margin-left: 0.1em">
-            <%= image_tag @product.photo_three.url(:small), :class => "responsive-img" %>
-          </div>
-        <% end %>
-        <% if @product.photo_four != nil %>
-          <div class="col-xs-4 no-padding; margin-left: 0.1em">
-            <%= image_tag @product.photo_four.url(:small), :class => "responsive-img" %>
-          </div>
-        <% end %>
-        <% if @product.photo_five != nil %>
-          <div class="col-xs-4 no-padding; margin-left: 0.1em">
-            <%= image_tag @product.photo_five.url(:small), :class => "responsive-img" %>
-          </div>
-        <% end %>
-      </div>
-    <h4>Being sold by: <%= @product.batch.user.email %> </h4>
-    <h5> <%= @product.description %> </h5>
-
-    <% total_commits = 0 %>
-    <% @product.commits.each do |commit| %>
-      <% total_commits += commit.amount.to_i %>
-    <% end %>
-
-    <h4> There has been <%= total_commits %> total purchase <% if total_commits == 1 %>order <%else %>orders <%end%>made </h4>
-
-    <% if percent_away != '0.00' %>
-      <h4><%= percent_away %>% away from discount</h4>
-    <% end %>
-  </div>
-  <!-- Products in this batch -->
-  <div class="col-xs-12 row text-center">
-    <h2>Other products for sale in this <%= link_to "batch:", batch_path(@product.batch.id) %></h2>
-    <% @batch_products.each do |product| %>
-      <div id="product" class="col-xs-3 no-padding text-center">
-        <h3><%= link_to product.title, product_path(product.id) %></h3>
-        <%= image_tag product.main_image.url(:large), :class => "responsive-img" %>
-        <h4>$<%= product.discount %></h4>
-        <h5><%= '%.2f' % (100*(1 - (product.discount.to_f/product.price.to_f))) %>% discount</h5>
-      </div>
-    <% end %>
-  </div>
-
 </div>
 
 <script>
-$('#edit-that').click(function(){
-  $('#already-ordered').toggle()
-  $('#edit-order').toggle()
+$(document).ready(function(){
+  setInterval(countDown, 1000)
 })
-
-$('#cancel-edit').click(function(){
-  $('#already-ordered').toggle()
-  $('#edit-order').toggle()
-})
-
-var time = $('#time-left').text().split('')
-var days = time[0] + time[1]
-var hours = time[3] + time[4]
-var minutes = time[6] + time[7]
-var seconds = time[9] + time[10]
-function setTime(){
-  $('#time-left').text(days+ ":" + hours + ":" + minutes + ":" +seconds)
-}
-
-function setSeconds(){
-  if(seconds > 0){
-    seconds -= 1
-    if(seconds < 10){
-      seconds = "0" + seconds
-    }
-  } else {
-    seconds = 59
-    getMinutes()
-    checkTime()
+  function countDown(){
+    var timeInSeconds = $('#timer').text()
+    $('#timer').text(Math.floor(timeInSeconds - 1))
   }
-  setTime()
-}
+</script>
 
-function getMinutes(){
-  if(minutes > 0){
-    minutes -= 1
-    if(minutes < 10){
-      minutes = "0" + minutes
-    }
-  } else {
-    minutes = 59
-    getHours()
+<div class="row col s10 offset-s1 center-align valign-wrapper" style="padding: 5em">
+  <div class="col s4 valign">
+    <%= image_tag @product.main_image, :class => 'responsive-img main-image' %>
+    <div class="row">
+      <div class="col s3">
+        <% if @product.photo_two.exists? %>
+          <%= image_tag @product.photo_two, :class => 'responsive-img alternate-image' %>
+        <% end %>
+      </div>
+      <div class="col s3">
+        <% if @product.photo_three.exists? %>
+          <%= image_tag @product.photo_three, :class => 'responsive-img alternate-image' %>
+        <% end %>
+      </div>
+      <div class="col s3">
+        <% if @product.photo_four.exists? %>
+          <%= image_tag @product.photo_four, :class => 'responsive-img alternate-image' %>
+        <% end %>
+      </div>
+      <div class="col s3">
+        <% if @product.photo_five.exists? %>
+          <%= image_tag @product.photo_five, :class => 'responsive-img alternate-image' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col s8">
+    <h3>Product expires at <%= @product.calc_end_time %></h3>
+    <% total_orders = Commit.where('product_id = ?', @product.id).sum(:amount).to_i %>
+    <% total_sales = total_orders*@product.discount.to_f %>
+    <% percentage = ((total_sales/@product.milestones[0].goal.to_i)*100) %>
+    <% if percentage >= 100 %>
+      <% percentage = 100 %>
+    <% end %>
+    <div class="row">
+      <h4><%= '%.2f' % percentage %>% of the way to the discount!</h4>
+      <div class="progress-bar-outline col s8 offset-s2 no-padding">
+        <div class="progress-fill no-margin" style="width: <%= percentage %>%">
+        </div>
+      </div>
+    </div>
+    <h2><%= @product.title %></h2>
+    <h4 class='was-price'>Was $<%= @product.price %></h4>
+    <h4>Now being offered for $<%= @product.discount %></h4>
+    <h5><%= @product.description %></h5>
+    <% users_orders = current_user.commits.where('product_id = ?', @product.id) %>
+    <% if users_orders == [] && current_user.user_type != 'wholesaler' %>
+      <div class="col s8 offset-s2">
+        <%= form_for Commit.new do |f| %>
+        <%= f.hidden_field :product_id, :value => @product.id %>
+        <div class="input-field">
+          <%= f.label "Order Quantity" %>
+          <%= f.number_field :amount %>
+        </div>
+        <%= f.button "Make Order", :class => 'btn' %>
+        <% end %>
+      </div>
+    <% elsif users_orders != [] %>
+      <h4><%= link_to "Ordered #{users_orders[0].amount}", commit_path(users_orders[0].id) %> </h4>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  $(document).ready(function(){
+    alternateImage()
+  })
+
+  function alternateImage(){
+    $('.alternate-image').click(function(){
+      console.log('click');
+      var makeMain = $(this).attr('src')
+      var makeAlternate = $('.main-image').attr('src')
+      $('.main-image').attr('src', makeMain)
+      $(this).attr('src', makeAlternate)
+    })
   }
-  setTime()
-}
-
-function getHours(){
-  if(hours > 0){
-    hours -= 1
-    if(hours < 10){
-      hours = "0" + hours
-    }
-  } else {
-    hours = 23
-    getDays()
-  }
-  setTime()
-}
-
-function getDays(){
-  if(days > 0){
-    days -= 1
-    if(days < 10){
-      days = "0" + days
-    }
-  }
-  setTime()
-}
-
-function checkTime(){
-  if(seconds == '00' && minutes == '00' && hours == '00' && days == '00'){
-      // var batchId = $(this).attr('data');
-      // var xhttp = new XMLHttpRequest();
-      // xhttp.onreadystatechange = function(){
-      //   if(xhttp.readyState == 4 && xhttp.status == 200){
-      //     JSON.parse(xhttp.responseText);
-      //   }
-      // }
-      // xhttp.open("GET", "/batches/" + batchId + "/mark_batch_as_past");
-      // xhttp.send();
-      // location.reload();
-  }
-}
-
-setInterval(setSeconds, 1000)
 </script>

@@ -1,32 +1,50 @@
-<%= button_to "Shop", shop_path, method: :get %>
-<h2> <%= @commit.user.email %>'s commit to <%= @commit.product.title %> </h2>
 
-<div style="border: 1px solid black; text-align: center">
-  <h2>This product's batch will end at <%= @commit.product.batch.end_time.strftime('%l:%M %P') %> on <%= @commit.product.batch.end_time.strftime('%B %d, %Y') %></h2>
-  <h3>Original Wholesale Price: $<%= @commit.product.price %></h3>
-  <h3>Potential Discounted Price: $<%= @commit.product.discount %></h3>
-  <h4><%= @commit.product.description %> </h4>
-  <h4><%= @commit.product.batch.user.email %> is looking to get <%= @commit.product.batch.milestones[0].goal %> purchase orders and in return will give your product's discount </h4>
+<h4 class="center-align"> <%= @commit.user.email %>'s commit to <%= @commit.product.title %> </h4>
 
-  <% total_commit_amount = 0 %>
-  <% @commit.product.commits.each do |commit| %>
-    <% total_commit_amount += commit.amount.to_i %>
-  <% end %>
-  <h4> There has been <%= total_commit_amount %> purchase orders already committed to this product! </h4>
-  <h4> We're only <%= '%.2f' % (total_commit_amount/@commit.product.batch.milestones[0].goal.to_i) %> away from your deal! </h4>
+<div class="col s10 offset-s1 center-align border">
+  <h4>Expires at <%= @commit.product.calc_end_time %></h4>
+  <div class="row">
+    <div class="col s4">
+      <%= image_tag @commit.product.main_image, :class => 'responsive-img'%>
+    </div>
+    <div class="col s8">
+      <h3><%= @commit.product.title %></h3>
+      <h4>Original Wholesale Price: $<%= @commit.product.price %></h4>
+      <h4>Potential Discounted Price: $<%= @commit.product.discount %></h4>
+      <h5><%= @commit.product.description %> </h5>
 
-  <h3>You have committed <%= @commit.amount %> purchase orders so far <button id ="edit-commit">Edit</button></h3>
-  <div id="edit-commit-div">
-    <%= form_for @commit do |f| %>
-      <%= f.label :amount %>
-      <%= f.text_field :amount, :value => @commit.amount %><br>
-      <%= f.button "Update Purchase Order" %> <br>
+      <% total_orders = Commit.where('product_id = ?', @commit.product.id).sum(:amount).to_i %>
+      <% total_sales = total_orders*@commit.product.discount.to_f %>
+      <% percentage = ((total_sales/@commit.product.milestones[0].goal.to_i)*100) %>
+      <% if percentage >= 100 %>
+        <% percentage = 100 %>
       <% end %>
-      <%= button_to "Cancel Purchase Order", commit_path(@commit.id), method: :delete %> <br>
-      <button id ="cancel-commit-update">Cancel</button>
+      <h4><%= '%.2f' % percentage %>% of the way to the discount!</h4>
+      <div class="row">
+        <div class="progress col s4 offset-s4 no-padding">
+          <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: <%= percentage %>%">
+            <span class="sr-only"><%= percentage %>% Complete (success)</span>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <h5>You have a pending purchase order of <%= @commit.amount %> <%= @commit.product.title.pluralize %></h5>
+        <button class="btn" id ="edit-commit">Edit</button>
+        <div id="edit-commit-div" class="col s4 offset-s4">
+          <%= form_for @commit do |f| %>
+          <div class="input-field">
+            <%= f.label "Order Amount" %>
+            <%= f.text_field :amount, :value => @commit.amount %><br>
+          </div>
+          <%= f.button "Update Purchase Order", :class => 'btn' %> <br>
+          <% end %>
+          <%= button_to "Remove Purchase Order", commit_path(@commit.id), method: :delete, :class => 'btn red' %> <br>
+          <button class="btn" id ="cancel-commit-update">Cancel</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
 
 <script>
   $('#edit-commit').click(function(){

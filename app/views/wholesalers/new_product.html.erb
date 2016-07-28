@@ -1,0 +1,81 @@
+
+<h3 class="center-align">List a New Product!</h3>
+
+<% if !params[:goal] %>
+  <div class="row">
+    <div class="col s4 offset-s4 center-align">
+      <h4>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h4>
+      <form action="/new_product?duration=<%=params[:duration]%>" method="get">
+        <input type="hidden" name="duration" value="<%= params[:duration] %>">
+        <div class="row">
+          <div class="col s1 right-align">
+            <h6>$</h6>
+          </div>
+          <div class="col s11 left-align">
+            <input type="text" name="goal" placeholder="Sales Goal ($)">
+          </div>
+        </div>
+        <input type="submit" value="Set Sales Goal" class="btn">
+      </form>
+    </div>
+  </div>
+<% end %>
+
+<% if params[:goal] && params[:duration] %>
+  <div class="row center-align">
+    <h4>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h4>
+    <h4>Sales Goal: $<%= params[:goal] %></h4>
+    <div class="col s4 offset-s4">
+      <%= form_for Product.new do |f| %>
+        <%= f.hidden_field :duration, :value => params[:duration] %>
+        <%= f.hidden_field :goal, :value => params[:goal] %>
+        <div class="input-field">
+          <%= f.label 'Product Title' %>
+          <%= f.text_field :title %> <br>
+        </div>
+        <div class="input-field">
+          <p class="center-align"> Main Image: </p>
+          <!-- <#%= f.label 'Product Main Image' %> -->
+          <%= f.file_field :main_image %> <br>
+        </div>
+        <div class="input-field">
+          <p class="center-align"> Image Two: </p>
+          <!-- <#%= f.label 'Image Two' %> -->
+          <%= f.file_field :photo_two %> <br>
+        </div>
+        <div class="input-field">
+          <p class="center-align"> Image Three: </p>
+          <!-- <#%= f.label 'Image Three' %> -->
+          <%= f.file_field :photo_three %> <br>
+        </div>
+        <div class="input-field">
+          <p class="center-align"> Image Four: </p>
+          <!-- <#%= f.label 'Image Four' %> -->
+          <%= f.file_field :photo_four %> <br>
+        </div>
+        <div class="input-field">
+          <p class="center-align"> Image Five: </p>
+          <!-- <#%= f.label 'Image Five' %> -->
+          <%= f.file_field :photo_five %> <br>
+        </div>
+        <div class="input-field">
+          <%= f.label 'Product Description' %>
+          <%= f.text_field :description %> <br>
+        </div>
+        <div class="input-field">
+          <%= f.label 'Product Full Wholesale Price' %>
+          <%= f.number_field :price %> <br>
+        </div>
+        <div class="input-field">
+          <%= f.label 'Product Discounted Wholesale Price' %>
+          <%= f.number_field :discount %> <br>
+        </div>
+        <div class="input-field">
+          <%= f.label 'Product Inventory For Sale' %>
+          <%= f.number_field :quantity %> <br>
+        </div>
+        <%= f.submit 'Create Product', :class => 'btn' %>
+      <% end %>
+    </div>
+  </div>
+<% end %>

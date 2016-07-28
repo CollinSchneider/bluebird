@@ -1,0 +1,26 @@
+<div class="navbar-fixed">
+  <ul id="dropdown1" class="dropdown-content">
+    <li><%= link_to "Past Products", '/past_products' %></li>
+    <li><%= link_to "Manage Accounts", wholesaler_accounts_path, method: :get %></li>
+    <li><%= link_to "Manage Shipping", '/manage_shipping' %></li>
+    <li><%= link_to "Analytics", '/analytics' %></li>
+    <li><%= link_to "Logout", sessions_path, method: :delete %></li>
+  </ul>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/shop" class="brand-logo">BlueBird.club</a>
+      <ul class="right hide-on-med-and-down">
+          <li><%= link_to "Home", shop_path %></li>
+          <li><%= link_to "Profile", wholesaler_path %></li>
+        <!-- Dropdown Trigger -->
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown1">Account<i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+    </div>
+  </nav>
+</div>
+
+<script>
+  $(document).ready(function(){
+    $('select').material_select()
+  })
+</script>

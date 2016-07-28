@@ -1,0 +1,32 @@
+
+<h3>Order History:</h3>
+
+<% @past_orders.each do |order| %>
+  <div class="border">
+    <div class="row valign-wrapper">
+      <div class="col s3">
+        <%= image_tag order.product.main_image.url(:medium), :class => 'responsive-img valign' %>
+      </div>
+      <div class="col s6 text-center">
+        <h5>Order #<%= order.id %></h5>
+        <h5><%= order.product.title %></h5>
+        <h5><%= order.product.description %></h5>
+        <h4>Quantity: <%= order.amount %>x </h4>
+        <%
+        EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+        shipment = EasyPost::Tracker.retrieve(order.shipping_id)
+        %>
+        <h4>Shipment is <%= shipment.status.gsub('_', ' ') %></h4>
+        <h4>Estimated Arrival: <%= DateTime.parse(shipment.est_delivery_date).strftime('%l:%M %P on %b %d, %Y') %></h4>
+        <% last_tracked = shipment.tracking_details[shipment.tracking_details.length-1] %>
+        <h4>Currently in: <%= last_tracked.tracking_location.city.capitalize %>, <%= last_tracked.tracking_location.state %> at <%= DateTime.parse(last_tracked.datetime).strftime('%l:%M %P on %b %d, %Y') %></h4>
+      </div>
+      <div class="col s2 text-right">
+        <h4>$<%= order.product.discount.to_f*order.amount.to_f %></h4>
+        <h4>+ $<%= '%.2f' % shipment.fees[0].amount %> Shipping</h4>
+        <strong><hr></strong>
+        <h4><strong>$<%= '%.2f' % (order.product.discount.to_f*order.amount.to_f + shipment.fees[0].amount.to_f) %></strong></h4>
+      </div>
+    </div>
+  </div>
+<% end %>

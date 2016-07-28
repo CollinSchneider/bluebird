@@ -11,31 +11,19 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160602021539) do
+ActiveRecord::Schema.define(version: 20160727224756) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "batches", force: :cascade do |t|
-    t.integer  "user_id"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-    t.string   "duration"
-    t.datetime "start_time"
-    t.datetime "end_time"
-    t.string   "status"
-    t.string   "completed_status"
-  end
-
-  add_index "batches", ["user_id"], name: "index_batches_on_user_id", using: :btree
-
   create_table "commits", force: :cascade do |t|
     t.integer  "user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
     t.integer  "amount"
     t.string   "status"
     t.integer  "product_id"
+    t.string   "shipping_id"
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
@@ -59,7 +47,6 @@ ActiveRecord::Schema.define(version: 20160602021539) do
     t.datetime "created_at",               null: false
     t.datetime "updated_at",               null: false
     t.integer  "user_id"
-    t.integer  "batch_id"
     t.string   "discount"
     t.string   "status"
     t.string   "category"
@@ -84,10 +71,22 @@ ActiveRecord::Schema.define(version: 20160602021539) do
     t.integer  "photo_five_file_size"
     t.datetime "photo_five_updated_at"
     t.integer  "quantity"
+    t.string   "duration"
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string   "slug"
   end
 
-  add_index "products", ["batch_id"], name: "index_products_on_batch_id", using: :btree
   add_index "products", ["user_id"], name: "index_products_on_user_id", using: :btree
+
+  create_table "shipping_addresses", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "address_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "shipping_addresses", ["user_id"], name: "index_shipping_addresses_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email"
@@ -99,6 +98,6 @@ ActiveRecord::Schema.define(version: 20160602021539) do
     t.string   "wholesaler_stripe_id"
   end
 
-  add_foreign_key "batches", "users"
   add_foreign_key "commits", "users"
+  add_foreign_key "shipping_addresses", "users"
 end

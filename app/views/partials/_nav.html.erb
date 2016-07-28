@@ -1,0 +1,7 @@
+<% if !current_user.nil? %>
+  <% if current_user.user_type == 'retailer' %>
+    <%= render partial: 'partials/retailer_nav' %>
+  <% elsif current_user.user_type == 'wholesaler' %>
+    <%= render partial: 'partials/wholesaler_nav' %>
+  <% end %>
+<% end %>

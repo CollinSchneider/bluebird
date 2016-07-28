@@ -1,0 +1,18 @@
+
+<h3 class="center-align">Manage Shipping Addresses</h3>
+
+<% @users_addresses.each do |address| %>
+  <div class="row">
+    <div class="center-align col s6 offset-s3 border">
+      <h5><%= address.company %></h5>
+      <h5><%= address.street1 %></h5>
+      <% if address.street2 != "" %>
+        <h5><%= address.street2 %></h5>
+      <% end %>
+      <h5><%= address.city %>, <%= address.state %> </h5>
+      <h5><%= address.zip %></h5>
+      <h5><%= address.country %></h5>
+      <h5><%= address.phone %></h5>
+    </div>
+  </div>
+<% end %>

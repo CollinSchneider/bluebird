@@ -1,29 +1,73 @@
+require 'easypost'
 class WholesalersController < ApplicationController
+
+  def signup
+  end
 
   def index
     authenticate_wholesaler
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    # @stripe_customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
-    @current_batches = Batch.where('user_id = ? AND status = ?', current_user.id, 'live')
-    # get_current_sales(@current_batches[0])
-    @batches_need_attention = Batch.where('user_id = ? AND completed_status = ?', current_user.id, 'needs_attention')
-    @past_batches = Batch.where('user_id = ? AND status = ?', current_user.id, 'past')
-    # @past_batches = Batch.where('user_id = ? AND status = ? AND completed_status = ?', current_user.id, 'past', nil)
+    @currently_selling = current_user.products.where('status = ?', 'live')
+    @needs_attention = current_user.products.where('status = ?', 'needs_attention')
+    @needs_shipping = current_user.products.where('
+                                              products.status = ? OR products.status = ?',
+                                              'goal_met', 'discount_granted').joins(:commits).where('
+                                                shipping_id IS NULL
+                                              ')
   end
 
-  def get_current_sales(batches)
-    if batches > 0
-      @current_sales = 0
-      batch.products.each do |product|
-        product.commits.each do |commit|
-          @current_sales += commit.amount.to_f*commit.product.discount.to_f
-        end
+  def new_product
+    @product = Product.new
+  end
+
+  def past_products
+    @products = current_user.products.where('status != ? AND status != ?', 'live', 'needs_attention')
+  end
+
+  def analytics
+  end
+
+  def needs_attention
+    @products = current_user.products.where('status = ?', 'needs_attention')
+  end
+
+  def manage_shipping
+    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+    @users_addresses = []
+    current_user.shipping_addresses.each do |address|
+      easy_post_address = EasyPost::Address.retrieve(address.address_id)
+      @users_addresses.push(easy_post_address)
+    end
+  end
+
+  def ship_batch
+    @batch = Batch.find(params[:id])
+  end
+
+  def accounts
+    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+    @stripe_customer = Stripe::Account.retrieve(current_user.wholesaler_stripe_id)
+  end
+
+  def needs_shipping
+    @needs_shipping = current_user.products.where('
+                                              products.status = ? OR products.status = ?',
+                                              'goal_met', 'discount_granted').joins(:commits).where('
+                                                shipping_id IS NULL
+                                              ')
+    respond_to do |format|
+      format.html
+      format.pdf do
+        pdf = OrderPdf.new(current_user)
+        send_data pdf.render,
+            filename: "#{Time.now.strftime('%B/%d/%Y')}-Order.pdf",
+            type: 'application/pdf'
+
       end
     end
   end
 
-  def past_batches
-    @past_batches = Batch.where('user_id = ? AND status = ?', current_user.id, 'past').order(end_time: :asc)
+  def show_needs_shipping
+    @product = Product.find(params[:product_id])
   end
-
 end

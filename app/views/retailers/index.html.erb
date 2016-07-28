@@ -1,38 +1,96 @@
-<%= button_to "Shop", shop_path, method: :get %>
-<%= button_to "Log Out", sessions_path, method: :delete %>
-<%= button_to "Manage Payments", accounts_path, method: :get %>
 
-<div class="text-center">
-  <h2>Hello <%= current_user.email %>!</h2>
-  <h3>Your Pending Purchase Orders: </h3>
-</div>
-<% @pending_orders.each do |commit| %>
-  <div style="border:1px solid black; text-align:center">
-
-    <% batch_sales = 0 %>
-    <% commit.product.batch.products.each do |product| %>
-      <% product.commits.each do |commit| %>
-        <% batch_sales += commit.amount.to_f*commit.product.discount.to_f %>
-      <% end %>
-    <% end %>
-    <% percent_away = '%.2f' % (100-(100*(batch_sales/commit.product.batch.milestones[0].goal.to_f))) %>
-    <% if percent_away.to_f < 0 %>
-      <% percent_away = 0 %>
-    <% end %>
-    <div class="row">
-      <div id="status-bar" class="border col-xs-6 col-xs-offset-3">
-        <div id="batch-progress" style="width:<%=100-percent_away.to_f %>%; background:green"></div>
-      </div>
-      <div class="col-xs-1">
-        <h5><%= percent_away %>% away from your discount</h5>
-      </div>
-    </div>
-
-    <h3>This product has up until <%= commit.product.batch.end_time.strftime('%l:%M %P') %> on <%= commit.product.batch.end_time.strftime('%B %d, %Y') %> to get enough purchase orders for your discount!</h3>
-    <h3> <%= commit.amount %> orders(s) of <%= commit.product.title %> </h3>
-    <h4> <%= commit.product.description %> </h4>
-    <h3> Original wholesale price: $<%= commit.product.price %> </h3>
-    <h3>Potential Discount: $<%= commit.product.discount %></h3>
-    <h4> You committed to purchase <%= commit.amount %> orders worth of <%= commit.product.title %> </h4>
+<% if current_user.shipping_addresses.length == 0 %>
+  <div class="row text-center">
+    <form id="address-form">
+      <input id="street-line-one" type="text" placeholder="Street Address One">
+      <input id="street-line-two" type="text" placeholder="Street Address Two">
+      <input id="city" type="text" placeholder="city">
+      <input id="state" type="text" placeholder="State">
+      <input id="zip" type="text" placeholder="Zip Code">
+      <input id="company" type="text" placeholder="Company Name">
+      <input id="phone-number" type="number" placeholder="Phone Number">
+      <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
+    </form>
   </div>
+<% else %>
+  <% @users_addresses.each do |address| %>
+    <div class="text-center">
+      <h4><%= address.company %></h4>
+      <h4><%= address.street1 %></h4>
+      <% if address.street2 != "" %>
+        <h4><%= address.street2 %></h4>
+      <% end %>
+      <h4><%= address.city %>, <%= address.state %> </h4>
+      <h4><%= address.zip %></h4>
+      <h4><%= address.country %></h4>
+      <h4><%= address.phone %></h4>
+    </div>
+  <% end %>
 <% end %>
+
+<div class="row">
+  <div class="text-center">
+    <h3>Your Pending Purchase Orders: </h3>
+  </div>
+  <% @pending_orders.each_slice(3) do |slice| %>
+    <div class="row">
+      <% slice.each do |commit| %>
+        <div class="border col-xs-3 text-center">
+          <h4>Expires at <%= commit.product.calc_end_time %></h4>
+          <%= link_to product_path(commit.product.id) do %>
+            <h1><%= commit.product.title %></h1>
+            <%= image_tag commit.product.main_image, :style => 'width: 100%' %>
+          <% end %>
+          <h2><%= commit.amount %> orders</h2>
+          <h3>$<%= commit.product.discount %></h3>
+          <% total_orders = Commit.where('product_id = ?', commit.product.id).sum(:amount).to_i %>
+          <% total_sales = total_orders*commit.product.discount.to_f %>
+          <% percentage = ((total_sales/commit.product.milestones[0].goal.to_i)*100) %>
+          <% if percentage >= 100 %>
+            <% percentage = 100 %>
+          <% end %>
+          <h4><%= '%.2f' % percentage %>% of the way to the discount!</h4>
+          <div class="progress">
+            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: <%= percentage %>%">
+              <span class="sr-only"><%= percentage %>% Complete (success)</span>
+            </div>
+          </div>
+          <% users_orders = current_user.commits.where('product_id = ?', commit.product.id) %>
+          <h4><%= link_to "You made a purchase order of #{users_orders[0].amount} #{commit.product.title.pluralize}", commit_path(users_orders[0].id) %></h4>
+        </div>
+      <% end %>
+    </div>
+<% end %>
+</div>
+
+<script>
+  $('#address-form').submit(function(e){
+    e.preventDefault()
+    var streetOne = $('#street-line-one').val()
+    var streetTwo = $('#street-line-two').val()
+    var city = $('#city').val()
+    var state = $('#state').val()
+    var zip = $('#zip').val()
+    var company = $('#company').val()
+    var phone = $('#phone-number').val()
+    $.ajax({
+      method: "POST",
+      url: "/api/create_shipping_address?street_one=" + streetOne + "&street_two=" + streetTwo + "&city=" + city +
+            "&state=" + state + "&zip=" + zip + "&company=" + company + "&phone=" + phone,
+      success: function(data){
+        console.log(data);
+        saveShippingAddress(data.address.id)
+      }
+    })
+  })
+
+  function saveShippingAddress(addressId){
+    $.ajax({
+      method: "POST",
+      url: "/api/save_shipping_id/" + addressId,
+      success: function(data){
+        console.log(data);
+      }
+    })
+  }
+</script>

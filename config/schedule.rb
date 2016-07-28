@@ -18,13 +18,15 @@
 # end
 
 # Learn more: http://github.com/javan/whenever
+set :environment, :development
+set :output, "cron.log"
 
-# job_type :expire_batch, '/usr/bin/check_past_batches'
+hour_array = [
+  '12am', '1am', '2am', '3am', '4am', '5am', '6am', '7am', '8am', '9am', '10am', '11am',
+  '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm', '8pm', '9pm', '10pm', '11pm']
 
-every 1.minute do
-  runner "Util.expire_batch"
-end
-
-every 1.day, :at => '10:30am' do
-  runner "Util.expire_batch"
+hour_array.each do |this_time|
+  every 1.day, :at => this_time do
+    runner "Product.expire_product"
+  end
 end

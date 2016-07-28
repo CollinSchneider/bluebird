@@ -7,6 +7,7 @@ class CommitsController < ApplicationController
         commit.product.quantity -= commit.amount
         commit.product.save
         commit.status = 'live'
+        commit.user_id = current_user.id
         commit.save
       else
         commit.delete
@@ -23,6 +24,10 @@ class CommitsController < ApplicationController
     authenticate_retailer_commit(@commit)
   end
 
+  def edit
+    commit = Commit.find(params[:id])
+  end
+
   def update
     commit = Commit.find(params[:id])
     commit.update(commit_params)
@@ -36,7 +41,6 @@ class CommitsController < ApplicationController
     commit.destroy
     redirect_to shop_path
   end
-
 
   private
   def commit_params

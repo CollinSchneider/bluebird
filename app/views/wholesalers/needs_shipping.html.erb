@@ -1,0 +1,19 @@
+
+<div class="row">
+  <% @needs_shipping.each do |product| %>
+    <div class="col-xs-4 text-center border">
+      <h3><%= product.title %></h3>
+      <%= image_tag product.main_image, :style => 'width: 100%' %>
+      <% total_orders = product.commits.all.sum(:amount) %>
+      <% total_sales = '%.2f' % (total_orders.to_i*product.discount.to_f) %>
+      <h4><%= total_orders %> items to be shipped to <%= product.commits.all.count %> retailer(s)</h4>
+      <h4>Amounts to $<%= total_sales %> in sales</h4>
+      <h4>That's $<%= '%.2f' % (total_sales.to_f - product.milestones[0].goal.to_f) %> over your goal! </h4>
+      <h4>After generating your receipts and packaging your shipments, <%= link_to "let's get to shipping", "needs_shipping/#{product.id}" %></h4>
+    </div>
+  <% end %>
+</div>
+
+<div class="row">
+<%= link_to "PRAWN", '/needs_shipping.pdf', :class => 'btn btn-primary generate-receipts' %>
+</div>

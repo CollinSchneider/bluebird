@@ -7,7 +7,6 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find(params[:id])
-    @batch_products = Product.where('batch_id = ? AND id != ?', @product.batch_id, @product.id).limit(3)
   end
 
   def edit
@@ -18,22 +17,31 @@ class ProductsController < ApplicationController
   def update
     product = Product.find(params[:id])
     product.update(product_params)
-    redirect_to batch_product_path(product.batch_id, product.id)
-    # redirect_to product_path(product.id)
+    redirect_to product_path(product.id)
+    # redirect_to batch_product_path(product.batch_id, product.id)
   end
 
   def create
     product = Product.create(product_params)
-    current_batches = Batch.where('user_id = ? AND status = ?', current_user.id, 'live')
-    current_batches.each do |batch|
-      batch.products.each do |batch_product|
-        if batch_product.title == product.title
-          product.delete
-          flash[:error] = "You have another batch currently in progress with this product"
-        end
-      end
+    product.user_id = current_user.id
+    product.status = 'live'
+    if product.duration == '1_day'
+      product.end_time = (Time.now + 1.hour).beginning_of_hour + 1.day
+    elsif product.duration == '7_days'
+      product.end_time = (Time.now + 1.hour).beginning_of_hour + 7.days
+    elsif product.duration == '10_days'
+      product.end_time = (Time.now + 1.hour).beginning_of_hour + 10.days
+    elsif product.duration == '14_days'
+      product.end_time = (Time.now + 1.hour).beginning_of_hour + 14.days
+    elsif product.duration == '30_days'
+      product.end_time = (Time.now + 1.hour).beginning_of_hour + 30.days
+    elsif product.duration = '5_minutes'
+      product.end_time = (Time.now + 2.minutes)
     end
-    redirect_to request.referrer
+    product.save
+    Milestone.create(:goal => params[:product][:goal], :product_id => product.id)
+    current_products = current_user.products.where('status = live')
+    redirect_to product_path(product.id)
   end
 
   def destroy
@@ -44,7 +52,7 @@ class ProductsController < ApplicationController
 
   private
   def product_params
-    params.require(:product).permit(:user_id, :batch_id, :title, :price, :description, :discount, :status, :category, :quantity, :main_image, :photo_two, :photo_three, :photo_four, :photo_five)
+    params.require(:product).permit(:user_id, :duration, :title, :price, :description, :discount, :status, :category, :quantity, :main_image, :photo_two, :photo_three, :photo_four, :photo_five)
   end
 
 end

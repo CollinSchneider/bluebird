@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class BatchTest < ActiveSupport::TestCase
+class ShippingAddressTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end
