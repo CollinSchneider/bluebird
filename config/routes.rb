@@ -61,8 +61,7 @@ Rails.application.routes.draw do
               #///////////////////#
               # WHOLESALER ROUTES #
               #///////////////////#
-  get '/wholesaler' => 'wholesalers#index', as: :wholesaler
-  get '/wholesaler_signup' => 'wholesalers#signup'
+  get '/wholesaler/profile' => 'wholesalers#index', as: :wholesaler
   get '/wholesaler/accounts' => 'wholesalers#accounts', as: :wholesaler_accounts
   get '/new_product' => 'wholesalers#new_product'
   get '/approve_product/:id' => 'wholesalers#approve_product'
@@ -74,7 +73,7 @@ Rails.application.routes.draw do
   get '/account_verify' => 'users#accounts_verify', as: :accounts_verify
   get '/needs_shipping' => 'wholesalers#needs_shipping', as: :needs_shipping
   get '/needs_shipping/:product_id' => 'wholesalers#show_needs_shipping'
-  get '/settings/wholesaler' => 'wholesalers#settings'
+  get '/wholesaler/settings' => 'wholesalers#settings'
   get '/settings/wholesaler/change_password' => 'wholesalers#change_password'
   put '/settings/wholesaler/change_password' => 'wholesalers#change_password'
   get '/wholesaler/product/:id' => 'products#wholesaler_show'
@@ -86,12 +85,11 @@ Rails.application.routes.draw do
                 #  RETAILER ROUTES  #
                 #///////////////////#
   get '/retailer/pending_orders' => 'retailers#index', as: :retailer
-  get '/retailer_signup' => 'retailers#signup'
-  get '/retailers/accounts' => 'retailers#accounts', as: :retailer_accounts
+  get '/retailer/accounts' => 'retailers#accounts', as: :retailer_accounts
   get '/retailer/order_history' => 'retailers#order_history', as: :retailer_order_history
   get '/retailer/settings' => 'retailers#settings'
-  get '/settings/retailer/change_password' => 'retailers#change_password'
-  put '/settings/retailer/change_password' => 'retailers#change_password'
+  get '/retailer/settings/change_password' => 'retailers#change_password'
+  put '/retailer/settings/change_password' => 'retailers#change_password'
 
                 #///////////////////#
                 #  PRODUCT ROUTES   #

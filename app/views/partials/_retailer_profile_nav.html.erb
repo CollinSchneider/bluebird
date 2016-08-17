@@ -5,7 +5,9 @@
         items = {
           'Pending Orders' => '/retailer/pending_orders',
           'Order History' => '/retailer/order_history',
-          'Settings' => '/retailer/settings'
+          'Manage Payments' => '/retailer/accounts',
+          'Settings' => '/retailer/settings',
+          'Logout' => '/logout'
         }
         items.each do |name, url|
           liclass = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'

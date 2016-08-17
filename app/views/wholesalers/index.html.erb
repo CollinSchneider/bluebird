@@ -2,7 +2,7 @@
 
 <%= render partial: 'partials/wholesaler_profile_nav' %>
 
-<div class="col s12 m9">
+<div class="col s12 m9 offset-m2">
   <h4 class="center-align">Welcome, <%= current_user.full_name %>!</h4>
 
   <% if current_user.needs_stripe_connect? %>

@@ -1,25 +1,10 @@
 
+<div class="row">
 <%= render partial: 'partials/wholesaler_profile_nav' %>
 
-<div class="center-align row">
-  <div class="col s12 m8">
+  <div class="col s12 m10 offset-m2 offset-l1 center-align">
 
   <h4>Analytics</h4>
-
-  <div class="row">
-    <% commits = Commit.where('product_id in (
-      select id from products where user_id = ?
-    )', current_user.id) %>
-    <div class="col s8 offset-s2">
-      <h4>Orders</h4>
-      <%= line_chart commits.group_by_day(:created_at).count, max: commits.count + 5 %>
-    </div>
-    <div class="col s8 offset-s2">
-      <h4>Users</h4>
-      <%= line_chart User.all.group_by_day(:created_at).count %>
-    </div>
-  </div>
-
   <div class="row">
     <div class="col s6">
       <h5>Total Purchase Orders:</h5>
@@ -34,17 +19,28 @@
   <h5>Top Earners:</h5>
   <div class="row col s12 offset-s1">
     <% @top_sellers.each do |product| %>
-      <a href="/wholesaler/product/<%= product.id %>">
-        <div class="col s10 offset-s1 m2">
-          <div class="product">
-            <h5 class="truncate"><%= product.title %></h5>
-            <%= image_tag product.main_image.url(:thumb), :class => 'responsive-img' %>
-            <h5>$<%= product.current_sales %></h5>
-          </div>
+    <a href="/wholesaler/product/<%= product.id %>">
+      <div class="col s10 offset-s1 m2">
+        <div class="product">
+          <h5 class="truncate"><%= product.title %></h5>
+          <%= image_tag product.main_image.url(:thumb), :class => 'responsive-img' %>
+          <h5>$<%= product.current_sales %></h5>
         </div>
-      </a>
+      </div>
+    </a>
     <% end %>
   </div>
+
+  <div class="row">
+    <% commits = Commit.where('product_id in (
+      select id from products where user_id = ?
+    )', current_user.id) %>
+    <div class="col s8 offset-s2">
+      <h4>Orders</h4>
+      <%= line_chart commits.group_by_day(:created_at).count, max: commits.count + 5 %>
+    </div>
+  </div>
+
 
   </div>
 </div>

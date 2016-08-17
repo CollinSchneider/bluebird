@@ -1,13 +1,21 @@
 <div class="col m2">
   <div class="profile-nav">
     <ul>
-      <li><a href="/wholesaler">Profile</a></li>
-      <li><a href="/current_sales">Current Sales</a></li>
-      <li><a href="/past_products">Past Products</a></li>
-      <li><a href="http://Stripe.com/dashboard">Manage Bank Account</a></li>
-      <li><a href="/current_sales">Current Sales</a></li>
-      <li><a href="/analytics">Analytics</a></li>
-      <li><a href="/settings/wholesaler">Settings</a></li>
+      <%
+        items = {
+          'Profile' => '/wholesaler/profile',
+          'Current Sales' => '/current_sales',
+          'Past Products' => '/past_products',
+          'Analytics' => '/analytics',
+          'Settings' => '/wholesaler/settings',
+        }
+        items.each do |name, url|
+          liclass = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
+      %>
+        <li><a class="<%=liclass %>" href="<%= url %>"><%= name %></a></li>
+      <% end %>
+      <li><a class="black-text" href="http://Stripe.com/dashboard" target="_blank">Manage Bank Account</a></li>
+      <li><a class="black-text" href="/logout">Logout</a></li>
     </ul>
   </div>
 </div>

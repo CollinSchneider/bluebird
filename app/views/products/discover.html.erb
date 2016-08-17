@@ -38,22 +38,3 @@
   </div>
 
 </div>
-
-<script>
-  var movedText;
-
-  $('.discover-div').mouseover(function(){
-    var discoverText = $(this).find($('.discover-text'))
-    movedText = discoverText
-    discoverText.animate({
-      marginTop: 300
-    })
-    // discoverText.text('hover!')
-  })
-  $('.discover-div').mouseout(function(){
-    var discoverText = $(this).find($('.discover-text'))
-    discoverText.animate({
-      marginTop: 0
-    })
-  })
-</script>

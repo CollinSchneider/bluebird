@@ -1,17 +1,16 @@
+<div class="row">
 <%= render partial: 'partials/wholesaler_profile_nav' %>
 
-<!-- <div class="container"> -->
-  <div class="col s12 m8">
+  <div class="col s12 m9 offset-m2">
 
-  <%= render partial: 'partials/products_header' %>
-  <div id ="products">
-    <%= render partial: 'partials/products' %>
-  </div>
+    <div id ="products">
+      <%= render partial: 'partials/products' %>
+    </div>
 
-  <%= will_paginate @products %>
+    <%= will_paginate @products %>
 
   </div>
-<!-- </div> -->
+</div>
 
 <script>
 $(document).ready(function(){

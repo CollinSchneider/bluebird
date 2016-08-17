@@ -51,9 +51,15 @@
       <% percentage = 100 %>
     <% end %>
     <div class="row">
-      <div class="meter animate col s8 offset-s2 no-padding">
-        <span style="width: <%= percentage %>%"><span></span></span>
-      </div>
+      <% if percentage >= 100 %>
+        <div class="meter animate col s8 offset-s2 no-padding">
+          <span style="width: <%= percentage %>%"><span></span></span>
+        </div>
+      <% else %>
+        <div class="meter col s8 offset-s2 no-padding">
+          <span style="width: <%= percentage %>%"><span></span></span>
+        </div>
+      <% end %>
       <div class="row">
         <div class="col s4 offset-s2">
           <h6><%= '%.0f' % percentage %>% of goal</h6>
@@ -74,7 +80,7 @@
 </div>
 
 <div class="row">
-  <%= line_chart @product.commits.group_by_day(:created_at).count %>
+  <%= line_chart @product.commits.group_by_day(:created_at).sum(:amount), ytitle: '# Purchase Orders' %>
 </div>
 
 </div>
