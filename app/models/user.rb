@@ -27,7 +27,6 @@ class User < ActiveRecord::Base
 
   def make_stripe_customer
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    # Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
     customer = Stripe::Customer.create(
       :description => "Customer for #{self.email}"
     )
@@ -37,7 +36,6 @@ class User < ActiveRecord::Base
 
   def collect_payment(commit, shipping_cost)
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    # Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
     customer_stripe_id = commit.user.retailer_stripe_id
     customer_card = Stripe::Customer.retrieve(customer_stripe_id).default_source
 
@@ -90,7 +88,6 @@ class User < ActiveRecord::Base
 
   def needs_credit_card?
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    # Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
     customer = Stripe::Customer.retrieve(self.retailer_stripe_id)
     return customer.default_source.nil?
   end

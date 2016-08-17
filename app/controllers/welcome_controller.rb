@@ -35,7 +35,7 @@ class WelcomeController < ApplicationController
     else
       @products = Product.where('status = ?', 'live').page(params[:page]).per_page(3)
     end
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     if current_user.retailer_stripe_id
       @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     end
@@ -63,7 +63,7 @@ class WelcomeController < ApplicationController
     else
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.now).order(end_time: :asc).page(params[:page]).per_page(3)
     end
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     if current_user.retailer_stripe_id
       @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     end
@@ -91,7 +91,7 @@ class WelcomeController < ApplicationController
     else
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.now).order(start_time: :asc).page(params[:page]).per_page(3)
     end
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     if current_user.retailer_stripe_id
       @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     end
@@ -147,7 +147,7 @@ class WelcomeController < ApplicationController
     else
       @products = Product.where('status = ? AND category = ?', 'live', 'Tech').page(params[:page]).per_page(3)
     end
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     if current_user.retailer_stripe_id
       @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     end
@@ -177,7 +177,7 @@ class WelcomeController < ApplicationController
     else
       @products = Product.where('status = ? AND category = ?', 'live', 'Accessories').page(params[:page]).per_page(3)
     end
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     if current_user.retailer_stripe_id
       @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     end
@@ -208,7 +208,7 @@ class WelcomeController < ApplicationController
     else
       @products = Product.where('status = ? AND category = ?', 'live', 'Home Goods').page(params[:page]).per_page(3)
     end
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     if current_user.retailer_stripe_id
       @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     end
@@ -239,7 +239,7 @@ class WelcomeController < ApplicationController
     else
       @products = Product.where('status = ? AND category = ?', 'live', 'Apparel').page(params[:page]).per_page(3)
     end
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     if current_user.retailer_stripe_id
       @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     end

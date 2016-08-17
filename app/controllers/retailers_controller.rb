@@ -26,7 +26,7 @@ class RetailersController < ApplicationController
     #     @pending_orders.push(commit)
     #   end
     # end
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+    EasyPost.api_key = ENV['EASYPOST_API_KEY']
     @users_addresses = []
     current_user.shipping_addresses.each do |address|
       easy_post_address = EasyPost::Address.retrieve(address.address_id)
@@ -39,7 +39,7 @@ class RetailersController < ApplicationController
   end
 
   def accounts
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     if @stripe_customer.default_source
       @default_card = @stripe_customer.sources.retrieve(@stripe_customer.default_source)

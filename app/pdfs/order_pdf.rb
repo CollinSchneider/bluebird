@@ -51,7 +51,7 @@ class OrderPdf < Prawn::Document
 
   def buyer_info(user)
     move_down 15
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+    EasyPost.api_key = ENV['EASYPOST_API_KEY']
     address = EasyPost::Address.retrieve(user.shipping_addresses[0].address_id)
     text "Buyer: #{user.full_name} \n
     #{address.company} \n

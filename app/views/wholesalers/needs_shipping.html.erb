@@ -3,7 +3,7 @@
   <h3>Orders to be shipped:</h3>
 </div>
 <%
-  EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+  EasyPost.api_key = ENV['EASYPOST_API_KEY']
 %>
 <% @need_to_ship.each_slice(3) do |slice| %>
   <div class="row">

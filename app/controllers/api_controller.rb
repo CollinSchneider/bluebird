@@ -50,7 +50,6 @@ class ApiController < ApplicationController
     tracking_code = params[:tracking_number]
     amount = params[:amount]
     EasyPost.api_key = ENV["EASYPOST_API_KEY"]
-    # EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
     tracker = EasyPost::Tracker.create({
       tracking_code: tracking_code
     })
@@ -103,7 +102,6 @@ class ApiController < ApplicationController
     company = params[:company]
     phone = params[:phone]
     EasyPost.api_key = ENV["EASYPOST_API_KEY"]
-    # EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
     verifiable_address = EasyPost::Address.create(
       verify: ["delivery"],
       street1: street_one,
@@ -137,7 +135,6 @@ class ApiController < ApplicationController
     shipment_id = params[:shipment_id]
     rate = params[:rate].to_i
     EasyPost.api_key = ENV["EASYPOST_API_KEY"]
-    # EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
     shipment = EasyPost::Shipment.retrieve(shipment_id)
     shipment_return = shipment.buy(rate: shipment.rates[rate])
     render :json => {:shipment => shipment_return}

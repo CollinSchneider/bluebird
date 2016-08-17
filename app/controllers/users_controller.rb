@@ -121,7 +121,7 @@ class UsersController < ApplicationController
     credential.user_id = current_user.id
     credential.save!
 
-    Stripe.api_key = "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn"
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     customer = Stripe::Customer.create(
       {:description => "Customer for: #{current_user.email}"},
       {:stripe_account => credential.stripe_user_id}
