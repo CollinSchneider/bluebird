@@ -1,0 +1,13 @@
+
+Congrats, <%= @user.first_name %>!
+
+You did it! Your sale of <%= @product.title %> has surpassed your goal of $<%= '%.2f' % @product.goal %>
+and did $<%= '%.2f' % @product.current_sales %> in sales.
+
+Last step is to ship out your orders, once you enter the tracking code of each order,
+your funds will transfer to your Stripe account.
+
+As always, feel free to reach out for any help.
+
+Your friends,
+BlueBird.club

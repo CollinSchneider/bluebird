@@ -1,0 +1,102 @@
+<div class="container">
+
+<div class="center-align">
+  <h4><strong><%= @product.title %></strong></h4>
+  <% if @product.status == 'goal_met' || @product.status == 'discount_granted' %>
+    <% if @products_to_ship > 0 %>
+      <h5> <a href="/needs_shipping">You still have <%= @products_to_ship %> <%= @product.title.pluralize %> to ship!</a></h5>
+    <% else %>
+      <h5>You have shipped all of <%= @product.title %>'s orders </h5>
+    <% end %>
+  <% end %>
+</div>
+<div class="row col s10 offset-s1 center-align valign-wrapper">
+  <div class="col s6 valign">
+    <%= image_tag @product.main_image.url(:large), :class => 'responsive-img main-image materialboxed' %>
+    <div class="row">
+      <div class="col s3">
+        <% if @product.photo_two.exists? %>
+          <%= image_tag @product.photo_two.url(:large), :class => 'responsive-img alternate-image' %>
+        <% end %>
+      </div>
+      <div class="col s3">
+        <% if @product.photo_three.exists? %>
+          <%= image_tag @product.photo_three.url(:large), :class => 'responsive-img alternate-image' %>
+        <% end %>
+      </div>
+      <div class="col s3">
+        <% if @product.photo_four.exists? %>
+          <%= image_tag @product.photo_four.url(:large), :class => 'responsive-img alternate-image' %>
+        <% end %>
+      </div>
+      <div class="col s3">
+        <% if @product.photo_five.exists? %>
+          <%= image_tag @product.photo_five.url(:large), :class => 'responsive-img alternate-image' %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+  <div class="col s8">
+    <h5>
+      <span class='was-price'>$<%= @product.price %></span>
+      <span class='now-price'><strong>$<%= @product.discount %></strong></span>
+    </h5>
+    <div class="row">
+      <h5><%= @product.description %></h6>
+      </div>
+    <% total_orders = Commit.where('product_id = ?', @product.id).sum(:amount).to_i %>
+    <% total_sales = total_orders*@product.discount.to_f %>
+    <% percentage = ((total_sales/@product.goal.to_f)*100) %>
+    <% if percentage >= 100 %>
+      <% percentage = 100 %>
+    <% end %>
+    <div class="row">
+      <div class="meter animate col s8 offset-s2 no-padding">
+        <span style="width: <%= percentage %>%"><span></span></span>
+      </div>
+      <div class="row">
+        <div class="col s4 offset-s2">
+          <h6><%= '%.0f' % percentage %>% of goal</h6>
+        </div>
+        <div class="col s4">
+          <h6><%= @product.time_to_expiration %></h6>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row center-align">
+  <% if @product.status == 'goal_met' || @product.status == 'discount_granted' %>
+  <h5>Collected $<%= '%.2f' % @product.current_sales %> in sales from <%= @product.commits.sum(:amount) %> orders from <%= @product.commits.length %> customers</h5>
+
+  <% end %>
+</div>
+
+<div class="row">
+  <%= line_chart @product.commits.group_by_day(:created_at).count %>
+</div>
+
+</div>
+
+<script>
+  $(document).ready(function(){
+    alternateImage()
+    $('.product').mouseover(function(){
+      $(this).attr('class', 'col s12 m4 center-align product no-padding z-depth-4')
+    })
+    $('.product').mouseout(function(){
+      $(this).attr('class', 'col s12 m4 center-align product no-padding')
+    })
+  })
+
+  function alternateImage(){
+    $('.alternate-image').mouseover(function(){
+      console.log('click');
+      var makeMain = $(this).attr('src')
+      var makeAlternate = $('.main-image').attr('src')
+      $('.main-image').attr('src', makeMain)
+      $(this).attr('src', makeAlternate)
+    })
+  }
+</script>

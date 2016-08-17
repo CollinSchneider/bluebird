@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BlueBird.club</title>
+  <link rel="icon" type="image/png" sizes="196x196" href="/favicon-192.png">
+  <%= stylesheet_link_tag    'application', media: 'all' %>
+  <%= javascript_include_tag 'application' %>
+  <%= javascript_include_tag "//www.google.com/jsapi", "chartkick" %>
+  <%= csrf_meta_tags %>
+  <meta name="google-site-verification" content="9lh3o5kbrFWSBA-EVoExbUbaOOt5J_LW2WM-D-zzOd4" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+  <script>
+    Stripe.setPublishableKey('pk_test_A1E9FwserSpqc63UDg09WWo2');
+  </script>
+</head>
+<body>
+<div class="row">
+
+<%= render partial: 'partials/nav' %>
+
+    <%= yield %>
+
+</div>
+</body>
+</html>

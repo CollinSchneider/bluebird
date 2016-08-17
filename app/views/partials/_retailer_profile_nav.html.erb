@@ -1,0 +1,24 @@
+<div class="col m2">
+  <div class="profile-nav">
+    <ul>
+      <%
+        items = {
+          'Pending Orders' => '/retailer/pending_orders',
+          'Order History' => '/retailer/order_history',
+          'Settings' => '/retailer/settings'
+        }
+        items.each do |name, url|
+          liclass = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
+      %>
+        <li><a class="<%= liclass %>" href="<%= url %>"><%= name %></a></li>
+      <% end %>
+      <!-- <li><a href="/retailer">Pending Orders</a></li>
+      <li><a href="/current_sales">Order History</a></li>
+      <li><a href="/past_products">Past Products</a></li>
+      <li><a href="http://Stripe.com/dashboard">Manage Bank Account</a></li>
+      <li><a href="/current_sales">Current Sales</a></li>
+      <li><a href="/analytics">Analytics</a></li>
+      <li><a href="/settings/wholesaler">Settings</a></li> -->
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,59 @@
+<div class="container">
+  <div class="row center-align">
+    <h5>Discover the best of BlueBird.club and get a leg up on your competitors</h5>
+  </div>
+
+  <div class="row">
+    <div class="col s6">
+      <a href="/best_sellers">
+        <div class="discover-div best-sellers valign-wrapper valign-wrapper">
+          <h5 class="discover-text valign center-block">Best Sellers</h5>
+        </div>
+      </a>
+    </div>
+    <div class="col s6">
+      <a href="/ending_soon ending-soon">
+        <div class="discover-div valign-wrapper">
+          <h5 class="discover-text valign center-block">Ending Soon</h5>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col s6">
+      <a href="/new_arrivals">
+        <div class="discover-div new-arrival valign-wrapper">
+          <h5 class="discover-text valign center-block">New Arrivals</h5>
+        </div>
+      </a>
+    </div>
+    <div class="col s6">
+      <a href="/bluebird_choice">
+        <div class="discover-div bluebird-choice valign-wrapper">
+          <h5 class="discover-text valign center-block">BlueBird's Favorites</h5>
+        </div>
+      </a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  var movedText;
+
+  $('.discover-div').mouseover(function(){
+    var discoverText = $(this).find($('.discover-text'))
+    movedText = discoverText
+    discoverText.animate({
+      marginTop: 300
+    })
+    // discoverText.text('hover!')
+  })
+  $('.discover-div').mouseout(function(){
+    var discoverText = $(this).find($('.discover-text'))
+    discoverText.animate({
+      marginTop: 0
+    })
+  })
+</script>

@@ -2,20 +2,20 @@ class CommitsController < ApplicationController
 
   def create
     commit = Commit.create(commit_params)
-    # if Time.now < commit.product.batch.end_time
+    if Time.now < commit.product.end_time
       if commit.amount <= commit.product.quantity
         commit.product.quantity -= commit.amount
+        commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
         commit.product.save
         commit.status = 'live'
         commit.user_id = current_user.id
+        commit.create_uuid
         commit.save
       else
         commit.delete
         flash[:error] = "Sorry, only #{commit.product.quantity} in inventory!"
       end
-    # else
-      # flash[:error] = "Sorry, this batch has just ended!"
-    # end
+    end
     redirect_to request.referrer
   end
 
@@ -31,6 +31,11 @@ class CommitsController < ApplicationController
   def update
     commit = Commit.find(params[:id])
     commit.update(commit_params)
+    # if commit.amount >= commit.product.quantity
+    #   if commit.save(verify: false)
+    #     commit.product.quantity
+    #   end
+    # end
     redirect_to product_path(commit.product_id)
   end
 
@@ -44,7 +49,7 @@ class CommitsController < ApplicationController
 
   private
   def commit_params
-    params.require(:commit).permit(:user_id, :product_id, :amount, :status)
+    params.require(:commit).permit(:user_id, :product_id, :amount, :status, :uuid)
   end
 
 end

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h4>Congrats, <%= @user.first_name %>!</h4>
+
+    <div class="center-align">
+      <div class="row">
+        <p>
+          <strong>You did it!</strong> Your sale of <%= @product.title %> has surpassed your goal of $<%= '%.2f' % @product.goal %>
+          and did $<%= '%.2f' % @product.current_sales %> in sales.
+        </p>
+      </div>
+      <div class="row">
+        <p>
+          Last step is to ship out your orders, once you enter the tracking code of each order,
+          your funds will transfer to your <a href="http://stripe.com/dashboard">Stripe</a> account.
+        </p>
+      </div>
+      <div class="row">
+        <h5>
+          As always, feel free to reach out for any help.
+        </h5>
+      </div>
+      <div class="row">
+        Your friends, <br>
+        BlueBird.club
+      </div>
+    </div>
+
+
+  </body>
+</html>

@@ -1,7 +1,8 @@
 class SessionsController < ApplicationController
+  skip_before_filter :verify_authenticity_token
 
   def create
-  user = User.find_by_email(params[:email])
+  user = User.find_by_email(params[:email].downcase)
     if !user
       flash[:error] = "No users found with this email"
       redirect_to users_path

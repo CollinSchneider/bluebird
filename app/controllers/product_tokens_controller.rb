@@ -1,0 +1,2 @@
+class ProductTokensController < ApplicationController
+end

@@ -1,19 +1,74 @@
 
-<div class="row">
-  <% @needs_shipping.each do |product| %>
-    <div class="col-xs-4 text-center border">
-      <h3><%= product.title %></h3>
-      <%= image_tag product.main_image, :style => 'width: 100%' %>
-      <% total_orders = product.commits.all.sum(:amount) %>
-      <% total_sales = '%.2f' % (total_orders.to_i*product.discount.to_f) %>
-      <h4><%= total_orders %> items to be shipped to <%= product.commits.all.count %> retailer(s)</h4>
-      <h4>Amounts to $<%= total_sales %> in sales</h4>
-      <h4>That's $<%= '%.2f' % (total_sales.to_f - product.milestones[0].goal.to_f) %> over your goal! </h4>
-      <h4>After generating your receipts and packaging your shipments, <%= link_to "let's get to shipping", "needs_shipping/#{product.id}" %></h4>
-    </div>
-  <% end %>
+<div class="center-align">
+  <h3>Orders to be shipped:</h3>
 </div>
+<%
+  EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+%>
+<% @need_to_ship.each_slice(3) do |slice| %>
+  <div class="row">
+    <% slice.each do |commit| %>
+      <div class="col s12 m4 border center-align">
+        <h4><%= commit.product.title %></h4>
+        <%= image_tag commit.product.main_image.url(:medium), :class => 'responsive-img' %>
+        <h5><%= commit.amount %> Orders</h5>
+        <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.discount.to_f*commit.amount.to_f) %></h5>
+        <% address = EasyPost::Address.retrieve(commit.user.shipping_addresses[0].address_id) %>
+        <h6>Ship to:</h6>
+        <h6><%= commit.user.email %></h6>
+        <h6><%= address.street1 %></h6>
+        <% if address.street2 != '' %>
+          <h6><%= address.street2 %></h6>
+        <% end %>
+        <h6><%= address.city %>, <%= address.state %></h6>
+        <h6><%= address.zip %></h6>
+        <div class="submit-tracking">
+          <form class="tracking-form">
+            <div class="input-field">
+              <input type="hidden" class="sale-amount" value="<%= sale_amount %>">
+              <label>Tracking Number</label>
+              <input class="tracking-number" data="<%= commit.id %>" type="text">
+            </div>
+            <input type="submit" value="Enter Tracking Number" class='btn submit-tracking'>
+          </form>
+        </div>
+        <!-- <button class='submit-tracker btn'>Enter Tracking Number</button> -->
+      </div>
+    <% end %>
+  </div>
+<% end %>
 
-<div class="row">
-<%= link_to "PRAWN", '/needs_shipping.pdf', :class => 'btn btn-primary generate-receipts' %>
-</div>
+<script>
+$(document).ready(function(){
+  console.log('script loadeddd');
+
+  $('.tracking-form').submit(function(e){
+      e.preventDefault()
+      var div = $(this).parent()
+      var form = $(this)
+      var trackingInput = form.find($('.tracking-number'))
+      var trackingNumber = trackingInput.val()
+      var commitId = trackingInput.attr('data')
+      var saleAmount = form.find($('.sale-amount')).val()
+
+      console.log(saleAmount + ', ' + trackingNumber + ', ' + commitId);
+      createTracking(commitId, trackingNumber, form, saleAmount, div)
+      $(this).replaceWith($("<h6 class='button-replacement'>").text("Sending tracking info"))
+    })
+  })
+
+  function createTracking(commitId, trackingNumber, form, saleAmount, div) {
+    console.log(commitId);
+    console.log(trackingNumber);
+    $.ajax({
+      method: 'POST',
+      url: '/api/create_tracking_and_charge?commit_id=' + commitId + '&tracking_number=' + trackingNumber,
+      success: function(data){
+        var shippedText = $('<h4>').text('Item shipped$!')
+        div.find($('.button-replacement')).remove()
+        div.replaceWith(shippedText)
+        Materialize.toast("$" + saleAmount, 4000)
+      }
+    })
+  }
+</script>

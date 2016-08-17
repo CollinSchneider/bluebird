@@ -1,0 +1,10 @@
+
+<%= @user.first_name %>,
+
+Looks like your purchase order of <%= @product.title %> didn't hit its sales goal.
+
+You now have 7 days to purchase <%= @product.title %> for the full wholesale price of $<%= @product.price %> by folling the link below.
+localhost:3000/full_price/<%= @product.product_token.token %>/<%= @product.slug %>
+
+Your friends,
+BlueBird.club

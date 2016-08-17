@@ -5,67 +5,94 @@ require 'easypost'
 require 'prawn'
 class ApiController < ApplicationController
 
-  def create_tracking
-    commit = params[:commit_id]
+  def make_purchase_order
+    commit = Commit.new
+    product = Product.find(params[:product_id])
+    if params[:amount].to_f <= product.quantity.to_f
+
+      commit.product_id = params[:product_id]
+      commit.amount = params[:amount]
+      commit.user_id = current_user.id
+      commit.status = 'live'
+      product.current_sales = product.current_sales.to_f + commit.amount.to_f*product.discount.to_f
+      product.quantity -= commit.amount.to_f
+      product.save
+      if commit.save
+        render :json => {
+          :success => true,
+          :commit => commit
+        }
+      else
+        render :json => {
+          :success => false,
+          :error => commit.errors
+        }
+      end
+
+    else
+      render :json => {
+        :success => false,
+        :error => "Not enough inventory",
+        :inventory_left => product.inventory
+      }
+    end
+  end
+
+  def stripe_connect_charge
+    commit_id = params[:commit_id]
+    commit = Commit.find(commit_id)
+
+    stripe_charge = current_user.collect_payment(commit)
+    render :json => stripe_charge
+  end
+
+  def create_tracking_and_charge
     tracking_code = params[:tracking_number]
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
-    binding.pry
+    amount = params[:amount]
+    EasyPost.api_key = ENV["EASYPOST_API_KEY"]
+    # EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
     tracker = EasyPost::Tracker.create({
-      tracking_code: tracking_code,
-      carrier: "USPS"
+      tracking_code: tracking_code
     })
-    render :json => {:shipment => tracker}
+    commit = Commit.find(params[:commit_id])
+    commit.shipping_id = tracker.id
+    commit.save!
+    shipping_cost = 0
+    tracker.fees.each do |fee|
+      shipping_cost += fee.amount.to_f
+    end
+
+    charge = current_user.collect_payment(commit, shipping_cost)
+    render :json => {
+      :charge => charge,
+      :shipment => tracker
+    }
+    Mailer.retailer_sale_shipped(commit.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url).deliver_later
   end
 
   def create_credit_card
     token = params[:token]
     customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
     customer.sources.create(:source => token)
+    redirect_to request.referrer
   end
 
-  def charge_credit_card
-    customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
-    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    Stripe::Charge.create(
-      :amount => 100000,
-      :customer => customer.id,
-      :currency => 'usd'
-    )
+  def delete_credit_card
+    card_id = params[:card_id]
+    customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    card = customer.sources.retrieve(card_id).delete
+    redirect_to request.referrer
   end
 
-  def create_stripe_connect
-    auth_code = params[:code]
-    uri = URI.parse("https://connect.stripe.com/oauth/token")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.set_form_data({
-      "client_secret" => ENV["STRIPE_SECRET_KEY"],
-      "code" => auth_code,
-      "grant_type" => "authorization_code"
-    })
-    response = http.request(request)
-    data = JSON.parse(response.body)
-    current_user.update(:wholesaler_stripe_id => data["stripe_user_id"])
-    # current_user.wholesaler_stripe_id = data['stripe_user_id']
-    current_user.save!
-    render :json => {:data => data}
-    redirect_to wholesaler_path
-  end
-
-  def send_money
-    connected_stripe_account = params[:wholesaler_stripe_id]
-    stripe_customer = params[:stripe_customer]
-    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    charge = Stripe::Charge.create({
-      :amount => 1000,
-      :currency => "usd",
-      :customer => stripe_customer,
-      :destination => connected_stripe_account,
-      :application_fee => 200
-    })
-    render :json => {:charge => charge}
-  end
+  # def charge_credit_card
+  #   customer = Stripe::Customer.retrieve(current_user.stripe_customer_id)
+  #   Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+  #   Stripe::Charge.create(
+  #     :amount => 100000,
+  #     :customer => customer.id,
+  #     :currency => 'usd'
+  #   )
+  # end
 
   def create_shipping_address
     street_one = params[:street_one]
@@ -75,7 +102,8 @@ class ApiController < ApplicationController
     zip = params[:zip]
     company = params[:company]
     phone = params[:phone]
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+    EasyPost.api_key = ENV["EASYPOST_API_KEY"]
+    # EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
     verifiable_address = EasyPost::Address.create(
       verify: ["delivery"],
       street1: street_one,
@@ -96,7 +124,7 @@ class ApiController < ApplicationController
     else
       flash[:error] = verifiable_address.verifications.delivery.errors.each
     end
-    binding.pry
+    redirect_to request.referrer
   end
 
   def save_shipping_id
@@ -108,67 +136,11 @@ class ApiController < ApplicationController
   def purchase_shipment
     shipment_id = params[:shipment_id]
     rate = params[:rate].to_i
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+    EasyPost.api_key = ENV["EASYPOST_API_KEY"]
+    # EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
     shipment = EasyPost::Shipment.retrieve(shipment_id)
     shipment_return = shipment.buy(rate: shipment.rates[rate])
     render :json => {:shipment => shipment_return}
-  end
-
-  def create_shipment
-    binding.pry
-    shipping_to = params[:to_address]
-    length = params[:length]
-    width = params[:width]
-    height = params[:height]
-    weight = params[:weight]
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
-    to_address = EasyPost::Address.retrieve(shipping_to)
-    from_address = EasyPost::Address.retrieve(current_user.shipping_addresses[0].address_id)
-    shipment = EasyPost::Shipment.create(
-      to_address: to_address,
-      from_address: from_address,
-      parcel: {
-        length: height,
-        width: width,
-        height: height,
-        weight: weight
-      }
-    )
-    render :json => {:shipment => shipment}
-  end
-
-  def ship_batch
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
-    shipment_details = EasyPost::Shipment.create(
-      to_address: {
-        name: 'Dr. Steve Brule',
-        street1: '179 N Harbor Dr',
-        city: 'Redondo Beach',
-        state: 'CA',
-        zip: '90277',
-        country: 'US',
-        phone: '4155559999',
-        email: 'dr_steve_brule@gmail.com'
-      },
-      from_address: {
-        name: 'EasyPost',
-        street1: '118 2nd St',
-        city: 'San Francisco',
-        state: 'CA',
-        zip: '94105',
-        country: 'US',
-        phone: '4155559999',
-        email: 'support@easypost.com'
-      },
-      parcel: {
-        length: 20.2,
-        width: 10.9,
-        height: 5,
-        weight: 65.9
-      },
-    )
-    binding.pry
-    render :json => {shipping_details: shipment_details}
   end
 
   def save_shipment
@@ -179,27 +151,49 @@ class ApiController < ApplicationController
     render :json => {commit: commit}
   end
 
-  def get_shipping_label
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
-    shipping_id = params[:shipping_id]
-    shipment = EasyPost::Shipment.retrieve(shipping_id)
-    # binding.pry
-    # shipping = shipment.buy(rate: shipment.rates.first)
-    render :json => {shipping: shipment}
-  end
-
   def grant_discount
     product = Product.find(params[:product_id])
     product.status = 'discount_granted'
     product.save
     render :json => {:product => product}
+    product.commits.each do |commit|
+      Mailer.retailer_discount_hit(commit.user, commit, product).deliver_later
+      commit.status = 'discount_granted'
+      commit.save(validate: false)
+    end
   end
 
   def expire_product
     product = Product.find(params[:product_id])
-    product.status = 'not_met'
-    product.save
+    product.status = 'full_price'
+    product.current_sales = 0
+    product.save(validate: false)
+    pt = ProductToken.new
+    pt.product_id = product.id
+    pt.token = SecureRandom.uuid
+    pt.expiration_datetime = Time.now + 7.days
+    pt.save
     render :json => {:product => product}
+    product.commits.each do |commit|
+      Mailer.retailer_discount_missed(commit.user, product).deliver_later
+      commit.status = 'past'
+      commit.save(validate: false)
+    end
+  end
+
+  def send_password_reset
+    email = params[:email]
+    user = User.find_by_email(email)
+    if user
+      token = SecureRandom.uuid
+      user.password_reset_token = token
+      user.password_reset_expiration = Time.now + 30.minutes
+      user.save(validate: false)
+      Mailer.forgot_password(user).deliver_later
+      render :json => {message: "Instructions has been sent to #{email}, you have 30 minutes to reset your password."}
+    else
+      render :json => {message: "No users found with the email of #{email}."}
+    end
   end
 
 end

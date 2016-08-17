@@ -1,0 +1,16 @@
+<%= @user.first_name %>,
+
+Your product <%= @product.title %> on BlueBird.club has expired and you finished
+your sale with $<%= @product.current_sales %> in sales, missing your goal of
+$<%= @product.goal %>.
+
+At this point you have two choices:
+Expire the product, receive no sales
+Grant the discount of $<%= @product.discount %>, and receive $<%= @product.current_sales %> in sales
+
+Follow this link to do so: localhost:3000/users?redirect=/needs_attention
+
+If you need any help with the process, don't hesitate to reach out to us.
+
+Your friends,
+BlueBird.club

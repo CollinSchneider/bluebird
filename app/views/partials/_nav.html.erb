@@ -1,7 +1,115 @@
-<% if !current_user.nil? %>
-  <% if current_user.user_type == 'retailer' %>
-    <%= render partial: 'partials/retailer_nav' %>
-  <% elsif current_user.user_type == 'wholesaler' %>
-    <%= render partial: 'partials/wholesaler_nav' %>
-  <% end %>
+<div class="navigation row no-margin z-depth-1" style="padding-top: 10px; padding-bottom: 10px">
+  <div class="col s12">
+    <div class="col s12 m2">
+      <a href="/shop">
+        <img src="/images/bluebird-blue-text.png" alt="" class="responsive-img"/>
+      </a>
+    </div>
+    <div class="col s7 left-align" style="margin-top: 2.25vh">
+        <h6>
+          <div data="Best Sellers:/best_sellers, New Arrivals:/new_arrivals, Ending Soon:/ending_soon, Regular Wholesale Price:regularly_priced" class="" style="display: inline-block">
+            <span class="nav-category"><a href="/discover">DISCOVER</a></span>
+          </div>
+          <div style="display: inline-block">
+            <span class="nav-category"><a href="/accessories">ACCSSORIES</a></span>
+          </div>
+          <div style="display: inline-block">
+            <span class="nav-category"><a href="/home_goods">HOME GOODS</a></span>
+          </div>
+          <div style="display: inline-block">
+            <span class="nav-category"><a href="/apparel">APPAREL</a></span>
+          </div>
+          <div style="display: inline-block">
+            <span class="nav-category"><a href="/tech">TECH</a></span>
+          </div>
+        </h6>
+      </div>
+    <div class="col m2 hidden-sm">
+      <form>
+        <input type="text" name="query" placeholder="Search" class="no-margin">
+      </form>
+    </div>
+    <% if current_user.is_retailer? %>
+      <div class="col s1 " style="height: 100%; margin-top: 2.25vh">
+        <!-- <a href="#" data-activates="slide-out" class="button-collapse">Account</a> -->
+        <a href="/retailer">
+          <h6>Account</h6>
+        </a>
+      </div>
+    <% elsif current_user.is_wholesaler? %>
+        <a href="/wholesaler">
+          <!-- <a href="#" data-activates="slide-out" class="button-collapse">Account</a> -->
+          <a href="/wholesaler">Wholesaler</a>
+        </a>
+      </div>
+    <% end %>
+    <a href="/logout">Logout</a>
+    <!-- <#%= link_to "Logout", sessions_path, method: :delete %> -->
+  </div>
+</div>
+
+<% if current_user.user_type == 'retailer' %>
+  <ul id="slide-out" class="side-nav">
+    <h4>RETAILER</h4>
+    <li><div class="userView">
+      <img class="background" src="images/office.jpg">
+      <a href="#!user"><img class="circle" src="images/yuna.jpg"></a>
+      <a href="#!name"><span class="white-text name">John Doe</span></a>
+      <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
+    </div></li>
+    <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+    <li><a href="#!">Second Link</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="subheader">Subheader</a></li>
+    <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+  </ul>
+<% else %>
+  <ul id="slide-out" class="side-nav white-text center-align">
+    <h4><%= current_user.first_name %></h4>
+    <!-- <$%
+    items = {
+      "Profile" => "/wholesaler",
+      "Analytics" => "/analytics",
+      "Settings" => 'settings/wholesaler'
+    }
+    items.each do |name, link|
+      if
+    %> -->
+    <li><a class="white-text" href="/wholesaler">Profile</a></li>
+    <li><a class="white-text" href="/analytics">Analytics</a></li>
+    <li><a class="white-text" href="/settings/wholesaler">Settings</a></li>
+    <li><div class="divider"></div></li>
+    <li><a class="white-text" href="/logout">Logout</a></li>
+  </ul>
 <% end %>
+
+<script>
+  $(".button-collapse").sideNav();
+
+  $('.activate-dropdown').mouseover(function(){
+    var data= $(this).attr('data');
+    var links = data.split(',')
+    for (var i = 0; i < links.length; i++) {
+      var link = links[i]
+      var name = link.split(':')[0]
+      var url = link.split(':')[1]
+      console.log(name + ': ' + url);
+      var href = $('<a href=' +url+ '>' +name+ '</a><br>')
+      $('.nav-dropdown').append(href)
+    }
+    console.log(links);
+    var pos = $(this).offset()
+    $('.nav-dropdown').css({
+      marginTop: pos.top + 60,
+      marginLeft: pos.left - 45,
+      display: 'inherit'
+    })
+  })
+  $('.activate-dropdown').mouseout(function(){
+    console.log('out');
+    $('.nav-dropdown').text('')
+    $('.nav-dropdown').css({
+      display: 'none'
+    })
+  })
+</script>

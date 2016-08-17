@@ -1,0 +1,35 @@
+
+<% if flash[:error] %>
+  <h1 style="color:red"><%= flash[:error] %></h1>
+<% end %>
+
+
+<div class="container">
+
+  <%= render partial: 'partials/products_header' %>
+  <div id ="products">
+    <%= render partial: 'partials/products' %>
+  </div>
+
+  <%= will_paginate @products %>
+</div>
+
+<script>
+$(document).ready(function(){
+  infiniteScroll()
+})
+
+function infiniteScroll(){
+  if($('.pagination').length){
+    // console.log('pagination present...');
+    $(window).scroll(function(){
+      var url = $('.pagination .next_page').attr('href')
+      if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
+        $('.pagination').text("Loading...")
+        // console.log('getting?');
+        $.getScript(url)
+      }
+    })
+  }
+}
+</script>

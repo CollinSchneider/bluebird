@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h6><%= @user.first_name %>,</h6>
+
+    <div class="center-align col s8 offset-s2">
+      <div class="row">
+        <p>
+          You're purchase order of <%= @product.title %> has a new life! <%= @product.user.company_name %> has decided to extend
+          the product another 10 days in hopes of reaching their goal.
+        </p>
+        <p>
+          You can keep an eye on it <a href="localhost:3000/products/<%=@product.id %>-<%=@product.slug %>">here</a>
+        </p>
+      </div>
+      <div class="row">
+        Your friends, <br>
+        BlueBird.club
+      </div>
+    </div>
+
+
+  </body>
+</html>

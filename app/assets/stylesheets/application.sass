@@ -15,21 +15,76 @@
  */
 @import "materialize"
 
+@font-face
+  font-family: AsapBold
+  src: url('/fonts/AsapBold.ttf')
+  src: local('Raleway'), url('/fonts/AsapBold.ttf') format('embedded-opentype')
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000
+
 body
   color: black
+  font-family: AsapBold
+
+input
+  color: black
+
+.bluebird-text
+  color: rgb(0, 186, 255)
 
 .btn
   background: rgb(0, 186, 255)
 
+.link:hover
+  text-decoration: underline
+
+.active-nav-link
+  text-decoration: underline
+  font-size: 115%
+  color: rgb(0, 148, 255)
+
+.pointer
+  cursor: pointer
+
 nav
   background: rgb(0, 186, 255)
   padding-left: 25px
+  ::-webkit-input-placeholder
+    color: white
+  :-ms-input-placeholder
+    color: white
+  ::-moz-placeholder
+    color: white
+    opacity: 1
+  :-moz-placeholder
+    color: white
+    opacity: 1
+  textarea
+    border: 1px solid white
+  textarea:focus
+    border-bottom: 1px solid white
+    -webkit-box-shadow: 0 1px 0 0 white
+    -moz-box-shadow: 0 1px 0 0 white
+    box-shadow: 0 1px 0 0 white
+
+.nav-category
+  margin-left: 10px
+
+.nav-category:hover
+  text-decoration: underline
+
+.side-nav
+  background: rgb(0, 186, 255)
+  height: 100vh
+  // position: fixed
 
 .border
   border: 1px solid black
 
 .no-padding
   padding: 0 0 0 0
+
+.content-div
+  padding: 15px
 
 .no-margin
   margin: 0 0 0 0
@@ -38,5 +93,113 @@ nav
   width: 100%
 
 .was-price
-  color: red
+  color: rgb(157, 157, 157)
   text-decoration: line-through
+
+.now-price
+  color: rgb(17, 214, 0)
+
+.active-nav
+  background: rgb(26, 145, 189)
+
+.nav-dropdown
+  padding: 10px
+  position: absolute
+  margin-top: 100px
+  display: none
+
+.product
+  border-radius: 10px
+  border: 1px solid rgb(217, 217, 217)
+  margin-left: 2em
+  width: 80%
+  img
+    border-top-left-radius: 10px
+    border-top-right-radius: 10px
+  a
+    text-decoration: none
+    color: black
+  .description
+    height: 65px
+
+
+.percent-box
+  background: rgba(0, 0, 0, .4)
+  position: absolute
+  border-radius: 10px
+
+
+.meter
+  height: 20px
+  position: relative
+  background: #555
+  -moz-border-radius: 25px
+  -webkit-border-radius: 25px
+  border-radius: 25px
+  padding: 10px
+  box-shadow: inset 0 -1px 1px rgba(255,255,255,0.3)
+
+.meter
+  span
+    display: block
+    height: 100%
+    border-radius: 20px
+    background-color: rgb(43,194,83)
+    background-image: linear-gradient(center bottom, rgb(43,194,83) 37%, rgb(84,240,84) 69%)
+    box-shadow: inset 0 2px 9px  rgba(255,255,255,0.3), inset 0 -2px 6px rgba(0,0,0,0.4)
+    position: relative
+    overflow: hidden
+
+.animate span:after
+  display: none
+
+.meter span:after, .animate span span
+  content: ""
+  position: absolute
+  top: 0
+  left: 0
+  bottom: 0
+  right: 0
+  // background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent)
+  z-index: 1
+  background-size: 50px 50px
+  animation: move 2s linear infinite
+  border-top-right-radius: 8px
+  border-bottom-right-radius: 8px
+  border-top-left-radius: 20px
+  border-bottom-left-radius: 20px
+  overflow: hidden
+
+.striped span:after, .animate span span
+  background-image: linear-gradient(-45deg, rgba(255, 255, 255, .2) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, .2) 50%, rgba(255, 255, 255, .2) 75%, transparent 75%, transparent)
+
+@keyframes move
+  0%
+    background-position: 0 0
+  100%
+    background-position: 50px 50px
+
+.meter span:after, .animate span span
+  animation: move 2s linear infinite
+
+.products-nav
+  margin-top: 15px
+
+.active-nav-box
+  background: rgb(0, 186, 255)
+  color: white
+  border: 1px solid rgb(193, 193, 193)
+  padding-top: 15px
+  padding-bottom: 15px
+  border-radius: 5px
+
+.nav-box
+  color: black
+  border: 1px solid rgb(193, 193, 193)
+  padding-top: 15px
+  padding-bottom: 15px
+  border-radius: 5px
+
+.nav-box:hover
+  color: white
+  background: rgb(0, 186, 255)

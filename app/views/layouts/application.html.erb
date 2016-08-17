@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>LowBid</title>
+  <title>BlueBird.club</title>
+  <link rel="icon" type="image/png" sizes="196x196" href="/favicon-192.png">
   <%= stylesheet_link_tag    'application', media: 'all' %>
   <%= javascript_include_tag 'application' %>
   <%= csrf_meta_tags %>
+  <meta name="google-site-verification" content="9lh3o5kbrFWSBA-EVoExbUbaOOt5J_LW2WM-D-zzOd4" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
   <script>
@@ -13,7 +15,9 @@
 </head>
 <body>
 
-<%= render partial: 'partials/nav' %>
+<% if !current_user.nil? %>
+  <%= render partial: 'partials/nav' %>
+<% end %>
 
   <%= yield %>
 

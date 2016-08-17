@@ -1,9 +1,13 @@
-
-<h3 class="center-align">List a New Product!</h3>
+<div class="row center-align">
+  <div class="right-align">
+    <a href="/wholesaler" class="btn-flat waves-effect border">Cancel</a>
+  </div>
+  <h4>List a New Product!</h4>
+</div>
 
 <% if !params[:goal] %>
   <div class="row">
-    <div class="col s4 offset-s4 center-align">
+    <div class="col s8 offset-s2 center-align">
       <h4>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h4>
       <form action="/new_product?duration=<%=params[:duration]%>" method="get">
         <input type="hidden" name="duration" value="<%= params[:duration] %>">
@@ -11,8 +15,13 @@
           <div class="col s1 right-align">
             <h6>$</h6>
           </div>
-          <div class="col s11 left-align">
-            <input type="text" name="goal" placeholder="Sales Goal ($)">
+          <div class="col s11 left-align valign-wrapper">
+            <div class="col s11">
+              <input type="text" name="goal" placeholder="Sales Goal ($)">
+            </div>
+            <div class="col s1 valign">
+              <a class="tooltipped" data-position="right" data-delay="0" data-tooltip="I am tooltip<br> Me too">?</a>
+            </div>
           </div>
         </div>
         <input type="submit" value="Set Sales Goal" class="btn">
@@ -23,10 +32,15 @@
 
 <% if params[:goal] && params[:duration] %>
   <div class="row center-align">
-    <h4>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h4>
-    <h4>Sales Goal: $<%= params[:goal] %></h4>
-    <div class="col s4 offset-s4">
-      <%= form_for Product.new do |f| %>
+    <h5>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h5>
+    <h5>Sales Goal: $<%= params[:goal] %></h5>
+    <% if flash.now[:error] %>
+      <% flash.now[:error].each do |err, msg| %>
+        <h6 class="red-text error-field"> <%= msg.first %></h6>
+      <% end %>
+    <% end %>
+    <div class="col s6 offset-s3">
+      <%= form_for Product.new, :html => {:class => 'new-product-form'} do |f| %>
         <%= f.hidden_field :duration, :value => params[:duration] %>
         <%= f.hidden_field :goal, :value => params[:goal] %>
         <div class="input-field">
@@ -35,32 +49,35 @@
         </div>
         <div class="input-field">
           <p class="center-align"> Main Image: </p>
-          <!-- <#%= f.label 'Product Main Image' %> -->
           <%= f.file_field :main_image %> <br>
         </div>
         <div class="input-field">
           <p class="center-align"> Image Two: </p>
-          <!-- <#%= f.label 'Image Two' %> -->
           <%= f.file_field :photo_two %> <br>
         </div>
         <div class="input-field">
           <p class="center-align"> Image Three: </p>
-          <!-- <#%= f.label 'Image Three' %> -->
           <%= f.file_field :photo_three %> <br>
         </div>
         <div class="input-field">
           <p class="center-align"> Image Four: </p>
-          <!-- <#%= f.label 'Image Four' %> -->
           <%= f.file_field :photo_four %> <br>
         </div>
         <div class="input-field">
           <p class="center-align"> Image Five: </p>
-          <!-- <#%= f.label 'Image Five' %> -->
           <%= f.file_field :photo_five %> <br>
         </div>
         <div class="input-field">
-          <%= f.label 'Product Description' %>
-          <%= f.text_field :description %> <br>
+          <%= f.text_area :description, :placeholder => "Product Description" %> <br>
+        </div>
+        <div class="input-field">
+          <select name="product[category]">
+            <option selected="selected" disabled>Choose Category</option>
+            <option value="Home Goods">Home Goods</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Apparel">Apparel</option>
+            <option value="Tech">Tech</option>
+          </select>
         </div>
         <div class="input-field">
           <%= f.label 'Product Full Wholesale Price' %>
@@ -68,14 +85,26 @@
         </div>
         <div class="input-field">
           <%= f.label 'Product Discounted Wholesale Price' %>
-          <%= f.number_field :discount %> <br>
+          <%= f.number_field :discount, :class => 'product-discount' %> <br>
         </div>
         <div class="input-field">
           <%= f.label 'Product Inventory For Sale' %>
-          <%= f.number_field :quantity %> <br>
+          <%= f.number_field :quantity, :class => 'product-quantity' %> <br>
         </div>
         <%= f.submit 'Create Product', :class => 'btn' %>
       <% end %>
     </div>
   </div>
 <% end %>
+
+<script>
+  $(document).ready(function() {
+    $('select').material_select()
+    $('.tooltipped').tooltip({html: true});
+    $('.tooltipped').each(function(index, element) {
+      var span = $('#' + $(element).attr('data-tooltip-id') + '>span:first-child');
+      span.before($(element).attr('data-tooltip'));
+      span.remove();
+    });
+  });
+</script>

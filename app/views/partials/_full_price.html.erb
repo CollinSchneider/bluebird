@@ -1,0 +1,49 @@
+<% @products.each_slice(3) do |slice| %>
+  <div class="row">
+    <% slice.each do |product| %>
+      <div class="col s12 m4 center-align no-padding">
+        <div class="product">
+          <a href="/products/<%= product.product_token.token %>/<%= product.slug %>">
+            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+            <div class="content-div">
+              <h5 class="truncate"><strong><%= product.title.upcase %></strong></h5>
+              <h6>From <%= product.user.company_name %></h6>
+              <h6>
+                <span class="now-price"><strong>$<%= product.price %></strong></span>
+              </h6>
+            </div>
+            <div class="row col s12">
+              <div class="description">
+                <p>
+                  <%= product.description %>
+                </p>
+              </div>
+            </div>
+          </a>
+
+          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
+          <% total_sales = total_orders*product.discount.to_f %>
+          <% percentage = ((total_sales/product.goal.to_f)*100) %>
+          <% if percentage >= 100 %>
+            <% percentage = 100 %>
+          <% end %>
+          <div class="row content-div" style="padding-bottom: 0px; margin-bottom: 0px">
+            <div class="row">
+              <h6>Expires <%= product.product_token.expiration_datetime.strftime('%b %d, %Y at %l:%M %P') %></h6>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+  $('.product').mouseover(function(){
+    $(this).attr('class', 'product z-depth-5')
+  })
+  $('.product').mouseout(function(){
+    $(this).attr('class', 'product')
+  })
+
+</script>

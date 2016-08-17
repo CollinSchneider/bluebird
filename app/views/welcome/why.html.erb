@@ -1,0 +1,78 @@
+<%= render partial: 'partials/signed_out_nav' %>
+
+<div class="col s12">
+  <div id="first-div" class="section-white border valign-wrapper">
+    <div class="row no-margin">
+      <div class="col s8 offset-s2 valign center-align">
+        <div class="col s4 offset-s4 border button-fade">
+          <a href="/signup" class="black-text"><h5>Sign Up</h5></a>
+        </div>
+        <img src="/images/main-bluebird.png" class="responsive-img"/>
+        <h4 class="bluebird-text"><stronger>Sign Up. Reach Goals.</stronger></h4>
+        <!-- <h5><a href="#" class="find-out-how">Find out how</a></h5> -->
+      </div>
+      <div class="row">
+        <div class="col s5 offset-s2 center-align">
+          <div class="col s6 button-fade wholesaler">
+            <h5>Wholesalers</h5>
+          </div>
+          <!-- <h4><a href="#" class="wholesaler link bluebird-text">Wholesalers</a></h4> -->
+        </div>
+        <div class="col s5 center-align">
+          <div class="col s6 button-fade retailer">
+            <h5>Retailers</h5>
+          </div>
+          <!-- <h4><a href="#" class="retailer link bluebird-text">Retailers</a></h4> -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row no-margin col s12">
+    <div class="retailers-div section-blue center-align white-text col s12" style="padding-top: 25vh">
+      <div class="row">
+        <h1><strong>Retailers</strong></h1>
+      </div>
+      <div class="row col s10 offset-s1">
+        <h4>Sign up, get amazing deals, never have to pay full price.</h4>
+        <h5>Sound too good be to true? Well it's not; sign up today.</h5>
+      </div>
+      <a href="/signup" class="btn white black-text">Sign Up Today</a>
+    </div>
+  </div>
+  <div class="row no-margin">
+    <div class="wholesalers-div section-white center-align col s12" style="padding-top: 25vh">
+      <div class="row">
+        <div class="col s12">
+          <h1><strong>Wholesalers</strong></h1>
+        </div>
+      </div>
+      <div class="row col s10 offset-s1">
+        <h4>If you've made it this far, chances are you're looking to take your business to the next step.</h4>
+        <h5>BlueBird.club is your answer to reaching those new sales goals.</h5>
+      </div>
+      <a href="/signup" class="btn">Sign Up Today</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  var height = $('.section-white').height()
+  var navHeight = $('.navigation').height()
+  $('#first-div').css({
+    height: height - navHeight
+  })
+
+  $('.wholesaler').click(function(){
+    animateScrollTo($('.wholesalers-div'))
+  })
+
+  $('.retailer').click(function(){
+    animateScrollTo($('.retailers-div'))
+  })
+
+  function animateScrollTo(div) {
+    $('html, body').animate({
+      scrollTop: div.offset().top
+    }, 700)
+  }
+</script>

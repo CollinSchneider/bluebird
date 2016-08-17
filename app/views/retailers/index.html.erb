@@ -1,66 +1,53 @@
 
-<% if current_user.shipping_addresses.length == 0 %>
-  <div class="row text-center">
-    <form id="address-form">
-      <input id="street-line-one" type="text" placeholder="Street Address One">
-      <input id="street-line-two" type="text" placeholder="Street Address Two">
-      <input id="city" type="text" placeholder="city">
-      <input id="state" type="text" placeholder="State">
-      <input id="zip" type="text" placeholder="Zip Code">
-      <input id="company" type="text" placeholder="Company Name">
-      <input id="phone-number" type="number" placeholder="Phone Number">
-      <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
-    </form>
-  </div>
-<% else %>
-  <% @users_addresses.each do |address| %>
-    <div class="text-center">
-      <h4><%= address.company %></h4>
-      <h4><%= address.street1 %></h4>
-      <% if address.street2 != "" %>
-        <h4><%= address.street2 %></h4>
-      <% end %>
-      <h4><%= address.city %>, <%= address.state %> </h4>
-      <h4><%= address.zip %></h4>
-      <h4><%= address.country %></h4>
-      <h4><%= address.phone %></h4>
+<%= render partial: 'partials/retailer_profile_nav' %>
+
+<div class="col s12 m10">
+
+  <% if current_user.shipping_addresses.length == 0 %>
+    <div class="row center-align">
+      <div class="col s12 m4 offset-m4">
+        <%= form_tag('/api/create_shipping_address', method: :post) do %>
+          <div class="input-field">
+            <label>Street Address One</label>
+            <input id="street-line-one" type="text" name="street_one">
+          </div>
+          <div class="input-field">
+            <label>Street Address Two</label>
+            <input id="street-line-two" type="text" name="street_two">
+          </div>
+          <div class="input-field">
+            <label>City</label>
+            <input id="city" type="text" name="city">
+          </div>
+          <div class="input-field">
+            <label>State</label>
+            <input id="state" type="text" name="state">
+          </div>
+          <div class="input-field">
+            <label>Zip</label>
+            <input id="zip" type="text" name="zip">
+          </div>
+          <div class="input-field">
+            <label>Company Name</label>
+            <input id="company" type="text" name="company">
+          </div>
+          <div class="input-field">
+            <label>Phone Number</label>
+            <input id="phone-number" type="number" name="phone">
+          </div>
+          <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
+        <% end %>
+      </div>
     </div>
   <% end %>
-<% end %>
 
-<div class="row">
-  <div class="text-center">
-    <h3>Your Pending Purchase Orders: </h3>
-  </div>
-  <% @pending_orders.each_slice(3) do |slice| %>
-    <div class="row">
-      <% slice.each do |commit| %>
-        <div class="border col-xs-3 text-center">
-          <h4>Expires at <%= commit.product.calc_end_time %></h4>
-          <%= link_to product_path(commit.product.id) do %>
-            <h1><%= commit.product.title %></h1>
-            <%= image_tag commit.product.main_image, :style => 'width: 100%' %>
-          <% end %>
-          <h2><%= commit.amount %> orders</h2>
-          <h3>$<%= commit.product.discount %></h3>
-          <% total_orders = Commit.where('product_id = ?', commit.product.id).sum(:amount).to_i %>
-          <% total_sales = total_orders*commit.product.discount.to_f %>
-          <% percentage = ((total_sales/commit.product.milestones[0].goal.to_i)*100) %>
-          <% if percentage >= 100 %>
-            <% percentage = 100 %>
-          <% end %>
-          <h4><%= '%.2f' % percentage %>% of the way to the discount!</h4>
-          <div class="progress">
-            <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: <%= percentage %>%">
-              <span class="sr-only"><%= percentage %>% Complete (success)</span>
-            </div>
-          </div>
-          <% users_orders = current_user.commits.where('product_id = ?', commit.product.id) %>
-          <h4><%= link_to "You made a purchase order of #{users_orders[0].amount} #{commit.product.title.pluralize}", commit_path(users_orders[0].id) %></h4>
-        </div>
-      <% end %>
+  <div class="row left-align">
+    <h4>Pending Orders</h4>
+    <div id="products">
+      <%= render partial: 'partials/products' %>
     </div>
-<% end %>
+  </div>
+
 </div>
 
 <script>

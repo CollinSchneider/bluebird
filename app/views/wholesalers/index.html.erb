@@ -1,34 +1,22 @@
+<div class="row">
 
-<!-- <#% flash[:error].each do |error| %>
-  <h3 style="color:red"><#%= error %></h3>
-<#% end %> -->
+<%= render partial: 'partials/wholesaler_profile_nav' %>
 
-<h3 class="center-align">Hello <%= current_user.email %> Wholesaler!</h3>
+<div class="col s12 m9">
+  <h4 class="center-align">Welcome, <%= current_user.full_name %>!</h4>
 
-<% if current_user.wholesaler_stripe_id == nil %>
-
-  <h3>First let's get you connected to our trusty payment processor; Stripe, so you can get paid!</h3>
-  <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write">Connect with Stripe</a>
-<% elsif current_user.shipping_addresses.length == 0 %>
-  <div class="row text-center">
-    <h3>Lastly, can you please input your shipping information</h3>
-    <%= form_tag('/api/create_shipping_address', method: :post) do %>
-      <input id="street-line-one" type="text" name="street_one" placeholder="Street Address One">
-      <input id="street-line-two" type="text" name="street_two" placeholder="Street Address Two">
-      <input id="city" type="text" name="city" placeholder="city">
-      <input id="state" type="text" name="state" placeholder="State">
-      <input id="zip" type="text" name="zip" placeholder="Zip Code">
-      <input id="company" type="text" name="company" placeholder="Company Name">
-      <input id="phone-number" type="number" name="phone" placeholder="Phone Number">
-      <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
-    <% end %>
+  <% if current_user.needs_stripe_connect? %>
+  <div class="center-align">
+    <h5>Ready to take <%= current_user.company_name %> to the next level?</h5>
+    <h5>First let's get you connected to our trusty payment processor; Stripe, so you can get paid!</h5>
+    <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Connect with Stripe</a>
   </div>
 
 <% else %>
 
   <% if @needs_shipping.empty? && @needs_attention.empty? %>
     <div class="row center-align">
-      <h4>Post a new product?</h4>
+      <h5>What are you waiting for? Post a new product</h5>
       <div class="col s4 offset-s4">
         <label>Duration</label>
         <select id="duration-select">
@@ -46,59 +34,32 @@
 
   <% else %>
 
-    <div class="center-align col s8">
-      <h5>Before you can post another product, you have to satisfy some products that need your attention!</h5>
-      <% if @needs_shipping.count > 0 %>
-      <h4><%= link_to 'You need to ship some orders!', '/needs_shipping' %></h4>
-      <% end %>
+    <div class="center-align col s8 offset-s2">
       <% if @needs_attention.count > 0 %>
-      <h4><%= link_to 'You have products that need your attention!', '/needs_attention' %></h4>
+        <h5>Before you can post another product, you have to satisfy some products that need your attention!</h5>
+        <h4><%= link_to 'Need Attention', '/needs_attention', :class => 'btn' %></h4>
+      <% elsif @needs_shipping.count > 0 %>
+      <div class="row">
+        <% if !@receipts_to_generate.nil? %>
+        <h5>Let's ship these orders and get paid!</h5>
+        <h6>You cannot list any more sales until these items are shipped.</h6>
+        <!-- <#%= link_to "Generate Receipts", '/needs_shipping.pdf', :class => 'btn btn-primary generate-receipts' %> -->
+        <%= link_to "Generate Receipts", '/already_printed.pdf', :class => 'btn btn-primary generate-receipts' %>
+        <h4><%= link_to 'Ship Orders', '/needs_shipping', :class => 'btn' %></h4>
+        <% else %>
+          <h6>You have already generated all of your receipts, would you like to print them again?</h6>
+          <h6>You must double check not to ship the same package twice</h6>
+          <h6>These orders all have not yet been shipped</h6>
+        <% end %>
+      </div>
       <% end %>
     </div>
 
   <% end %>
-  </div>
 <% end %>
 
-  <%# TODO: refine needs_shipping method %>
-  <!-- <#% if !@needs_shipping.nil? %>
-    <#%= link_to "You need to ship orders!", '/needs_shipping', :class => "btn btn-primary" %>
-  <#% end %> -->
-
-<div class='container'>
-  <h3 class="center-align">Your Current Sales:</h3>
-  <% @currently_selling.each_slice(3) do |slice| %>
-    <div class="row">
-      <% slice.each do |product| %>
-        <div class="border col s4 center-align product">
-          <h5>Expires at <%= product.calc_end_time %></h5>
-          <%= link_to product_path(product.id) do %>
-            <h4><%= product.title %></h4>
-            <%= image_tag product.main_image, :class => 'responsive-img' %>
-          <% end %>
-          <h5 class="was-price">Was $<%= product.price %></h5>
-          <h4>Now $<%= product.discount %></h4>
-          <h5><%= product.description %></h5>
-          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
-          <% total_sales = total_orders*product.discount.to_f %>
-          <% percentage = ((total_sales/product.milestones[0].goal.to_i)*100) %>
-          <% if percentage >= 100 %>
-            <% percentage = 100 %>
-          <% end %>
-          <h5><%= product.quantity %> left in inventory</h5>
-          <h5>$<%= '%.2f' % total_sales %> in sales so far</h5>
-          <h5><%= '%.2f' % percentage %>% of the way to your goal!</h5>
-          <div class="progress-bar-outline col s8 offset-s2 no-padding">
-            <div class="progress-fill no-margin" style="width: <%= percentage %>%">
-            </div>
-          </div>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-
 </div>
-
+</div>
 
 <script>
   $('#duration-select').change(function(){

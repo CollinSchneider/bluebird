@@ -7,41 +7,34 @@ module ApplicationHelper
   end
 
   def authenticate_anybody
-    redirect_to root_path unless current_user
+    redirect_to "/users" unless !current_user.nil?
   end
 
-  def authneticate_retailer
-    redirect_to root_path unless current_user
+  def authenticate_retailer
+    redirect_to "/users" unless !current_user.nil?
     if current_user
       redirect_to wholesaler_path unless current_user.user_type == 'retailer'
     end
   end
 
   def authenticate_wholesaler
-    redirect_to root_path unless current_user
+    redirect_to "/users" unless !current_user.nil?
     if current_user
-      redirect_to products_path unless current_user.user_type == 'wholesaler'
+      redirect_to shop_path unless current_user.user_type == 'wholesaler'
     end
   end
 
   def authenticate_wholesaler_product(product)
-    redirect_to root_path unless current_user
+    redirect_to "/users" unless !current_user.nil?
     if current_user
       redirect_to wholesaler_path unless product.user.email == current_user.email
     end
   end
 
   def authenticate_retailer_commit(commit)
-    redirect_to root_path unless current_user
+    redirect_to "/users" unless !current_user.nil?
     if current_user
       redirect_to retailer_path unless current_user.id == commit.user_id
-    end
-  end
-
-  def authenticate_batch_wholesaler(batch)
-    redirect_to root_path unless current_user
-    if current_user
-      redirect_to root_path unless current_user.id == batch.user_id
     end
   end
 

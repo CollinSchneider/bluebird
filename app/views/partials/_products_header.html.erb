@@ -1,0 +1,52 @@
+<div class="row col s12 valign-wrapper">
+  <!-- <div class="col s5" style="margin-top: 2em">
+    <img src="images/main-bluebird.png" alt="" class="responsive-img" />
+  </div> -->
+  <!-- <div class="col s4 offset-s3"> -->
+  <div class="col s4 valign">
+    <% if params[:query] %>
+      <h6>Search results for:</h6>
+      <h6><strong>"<%= params[:query] %>"</strong></h6>
+    <% end %>
+  </div>
+  <div class="row col s4 offset-s8 valign">
+    <h6>Filter Products:</h6>
+    <form class="product-filter-form" method="get">
+      <select class="product-filter" name="products">
+        <% if !params[:products] || params[:products] == 'all' %>
+          <option value="all" selected="selected">Relevance</option>
+        <% else %>
+          <option value="all">Relevance</option>
+        <% end %>
+        <% if params[:products] == 'discounted' %>
+          <option value="discounted" selected="selected">Discount Met</option>
+        <% else %>
+          <option value="discounted">Discount Met</option>
+        <% end %>
+        <% if params[:products] == 'percent_off' %>
+          <option value="percent_off" selected="selected">Largest Discount</option>
+        <% else %>
+          <option value="percent_off">Largest Discount</option>
+        <% end %>
+        <% if params[:products] == 'low_high' %>
+          <option value="low_high" selected="selected">Price: Lowest-Highest</option>
+        <% else %>
+          <option value="low_high">Price: Lowest-Highest</option>
+        <% end %>
+        <% if params[:products] == 'high_low' %>
+          <option value="high_low" selected="selected">Price: Highest-Lowest</option>
+        <% else %>
+          <option value="high_low">Price: Highest-Lowest</option>
+        <% end %>
+      </select>
+    </form>
+  </div>
+</div>
+
+<script>
+  $('select').material_select()
+
+  $('.product-filter').change(function(){
+    $('.product-filter-form').submit()
+  })
+</script>

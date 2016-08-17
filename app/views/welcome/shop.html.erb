@@ -1,82 +1,31 @@
-
-<% if flash[:error] %>
-  <h1 style="color:red"><%= flash[:error] %></h1>
-<% end %>
-
+<!-- <#%= render partial: 'partials/shop_header' %> -->
+<!-- <#%= render partial: 'partials/product_nav' %> -->
 <div class="container">
 
-  <div class="row">
-  <div class="col s8">
-    <div class="row valign-wrapper">
-      <div class="col s4 valign">
-        <img src="images/blue-bird.jpg" alt="" class="responsive-img" />
-      </div>
-      <div class="col s8 valign">
-        <h3>Blue Bird</h3>
-      </div>
-    </div>
-    <div class="row">
-      <a href="/shop" class="btn">All Products</a>
-      <a class="btn" href="?products=fulfilled">Discount Met</a>
-    </div>
-    <div class="row">
-      <form method="get">
-        <input type="text" name="query" placeholder="Search">
-        <input type="submit" value="Search">
-      </form>
-    </div>
+  <%= render partial: 'partials/products_header' %>
+  <div id ="products">
+    <%= render partial: 'partials/products' %>
   </div>
+
+  <%= will_paginate @products %>
 </div>
 
-<% if @products %>
-  <% @products.each_slice(3) do |slice| %>
-    <div class="row">
-      <% slice.each do |product| %>
-        <div class="col s12 m4 center-align product border">
-          <h5>Expires at <%= product.calc_end_time %></h5>
-          <%= link_to "/products/#{product.id}-#{product.slug}" do %>
-            <h3><%= product.title %></h3>
-            <%= image_tag product.main_image, :style => 'width: 100%' %>
-          <% end %>
-          <h5 class="was-price">Was $<%= product.price %></h5>
-          <h4 class="now-price">Now $<%= product.discount %></h4>
-          <h5><%= product.description %></h5>
-          <h5>Inventory: <%= product.quantity %></h5>
-          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
-          <% total_sales = total_orders*product.discount.to_f %>
-          <% percentage = ((total_sales/product.milestones[0].goal.to_i)*100) %>
-          <% if percentage >= 100 %>
-            <% percentage = 100 %>
-          <% end %>
-          <h5><%= '%.2f' % percentage %>% of the way to the discount!</h5>
-          <div class="row">
-            <div class="progress-bar-outline col s8 offset-s2 no-padding">
-              <div class="progress-fill no-margin" style="width: <%= percentage %>%">
-              </div>
-            </div>
-          </div>
-          <!-- <#% if current_user.is_retailer? %> -->
-          <% if current_user.user_type == 'retailer' %>
-            <% users_order = current_user.commits.where('product_id = ?', product.id) %>
-            <% if users_order == [] %>
-            <div class="row">
-              <%= form_for Commit.new do |f| %>
-              <%= f.hidden_field :product_id, :value => product.id %>
-              <div class = "input-field col s10 offset-s1">
-                <%= f.label "Order Quantity" %>
-                <%= f.number_field :amount %>
-              </div>
-              <%= f.button "Make Order", :class => 'btn' %>
-              <% end %>
-            </div>
-            <% else %>
-            <div class="row">
-              <h5><%= link_to "You Ordered #{users_order[0].amount}", commit_path(users_order[0].id) %></h5>
-            </div>
-            <% end %>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
-<% end %>
+<script>
+$(document).ready(function(){
+  infiniteScroll()
+})
+
+function infiniteScroll(){
+  if($('.pagination').length){
+    // console.log('pagination present...');
+    $(window).scroll(function(){
+      var url = $('.pagination .next_page').attr('href')
+      if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
+        $('.pagination').text("Loading...")
+        // console.log('getting?');
+        $.getScript(url)
+      }
+    })
+  }
+}
+</script>

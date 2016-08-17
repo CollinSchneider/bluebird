@@ -12,7 +12,17 @@
 //
 //= require jquery
 //= require jquery_ujs
-//= require turbolinks
 //= require_tree .
 //= require jquery
 //= require materialize-sprockets
+
+if($('.pagination').length){
+  $(window).scroll(function(){
+    var url = $('.pagination .next_page').attr('href')
+    if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
+      $('.pagination').text("Loading...")
+      console.log('getting?');
+      $.getScript(url)
+    }
+  })
+}

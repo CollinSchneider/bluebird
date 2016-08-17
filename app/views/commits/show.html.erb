@@ -15,18 +15,18 @@
 
       <% total_orders = Commit.where('product_id = ?', @commit.product.id).sum(:amount).to_i %>
       <% total_sales = total_orders*@commit.product.discount.to_f %>
-      <% percentage = ((total_sales/@commit.product.milestones[0].goal.to_i)*100) %>
+      <% percentage = ((total_sales/@commit.product.goal.to_f)*100) %>
       <% if percentage >= 100 %>
         <% percentage = 100 %>
       <% end %>
-      <h4><%= '%.2f' % percentage %>% of the way to the discount!</h4>
       <div class="row">
-        <div class="progress col s4 offset-s4 no-padding">
-          <div class="progress-bar progress-bar-success progress-bar-striped active" role="progressbar" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100" style="width: <%= percentage %>%">
-            <span class="sr-only"><%= percentage %>% Complete (success)</span>
+        <h4><%= '%.2f' % percentage %>% of the way to the discount!</h4>
+        <div class="progress-bar-outline col s8 offset-s2 no-padding">
+          <div class="progress-fill no-margin" style="width: <%= percentage %>%">
           </div>
         </div>
       </div>
+
       <div class="row">
         <h5>You have a pending purchase order of <%= @commit.amount %> <%= @commit.product.title.pluralize %></h5>
         <button class="btn" id ="edit-commit">Edit</button>

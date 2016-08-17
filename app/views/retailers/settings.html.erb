@@ -1,0 +1,32 @@
+
+<%= render partial: 'partials/retailer_profile_nav' %>
+
+  <div class="center-align col s12 m9">
+    <h4>Settings</h4>
+    <div class="row">
+      <%= form_for current_user do |f| %>
+        <div class="input-field">
+          <%= f.label "First Name" %>
+          <%= f.text_field :first_name, :value => current_user.first_name %>
+        </div>
+        <div class="input-field">
+          <%= f.label "Last Name" %>
+          <%= f.text_field :last_name, :value => current_user.last_name %>
+        </div>
+        <div class="input-field">
+          <%= f.label "Email" %>
+          <%= f.text_field :email, :value => current_user.email %>
+        </div>
+          <%= f.submit "Update Account", :class => 'btn' %>
+      <% end %>
+    </div>
+
+    <div class="row">
+      <div class="left-align col s6">
+        <a href="/settings/retailer/update_password" class="btn">Update Password</a>
+      </div>
+      <div class="right-align col s6">
+        <%= button_to "Delete Account", user_path(current_user.id), method: :delete, :class => 'btn red', data: {confirm: "Are you sure you want to delete your account?"} %>
+      </div>
+    </div>
+  </div>

@@ -1,29 +1,34 @@
+<%= render partial: 'partials/wholesaler_profile_nav' %>
 
-<div class="center-align container">
-  <h4>Past Products</h4>
+<!-- <div class="container"> -->
+  <div class="col s12 m8">
 
-  <% @products.each_slice(3) do |slice| %>
-    <div class="row">
-      <% slice.each do |product| %>
-        <div class="border col s4 center-align product">
-          <h5>Expired at <%= product.calc_end_time %></h5>
-          <h4><%= product.title %></h4>
-          <%= image_tag product.main_image, :class => 'responsive-img' %>
-          <h5 class="was-price">Was $<%= product.price %></h5>
-          <h4>Now $<%= product.discount %></h4>
-          <h5><%= product.description %></h5>
-          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
-          <% total_sales = total_orders*product.discount.to_f %>
-          <% if product.status == 'goal_met' %>
-            <h5>You exceeded your goal of $<%= '%.2f' % product.milestones[0].goal %> and did $<%= '%.2f' % total_sales %> in sales!</h5>
-          <% elsif product.status == 'discount_granted' %>
-            <h5>You did not meet your goal of $<%= '%.2f' % product.milestones[0].goal %> but decided to grant the discount anyway and did $<%= '%.2f' % total_sales %> in sales </h5>
-          <% else %>
-            <h5>You did $<%= '%.2f' % total_sales %> in sales, but did not reach your goal of $<%= '%.2f' % product.milestones[0].goal %></h5>
-          <% end %>
-        </div>
-      <% end %>
-    </div>
-  <% end %>
+  <%= render partial: 'partials/products_header' %>
+  <div id ="products">
+    <%= render partial: 'partials/products' %>
+  </div>
 
-</div>
+  <%= will_paginate @products %>
+
+  </div>
+<!-- </div> -->
+
+<script>
+$(document).ready(function(){
+infiniteScroll()
+})
+
+function infiniteScroll(){
+  if($('.pagination').length){
+    // console.log('pagination present...');
+    $(window).scroll(function(){
+      var url = $('.pagination .next_page').attr('href')
+      if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
+        $('.pagination').text("Loading...")
+        // console.log('getting?');
+        $.getScript(url)
+      }
+    })
+  }
+}
+</script>

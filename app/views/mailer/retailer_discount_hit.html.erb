@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h5>Congrats <%= @user.first_name %>!</h5>
+
+    <div class="center-align">
+      <div class="row">
+        <p>
+          <strong>You hit your discount!</strong> Your order of <%= @commit.amount %> <%= @product.title.pluralize %>
+          reached its discounted price of $<%= @product.discount %>.
+        </p>
+      </div>
+      <div class="row">
+        <p>
+          When <%= @product.user.company_name %> ships your order, we will send you your tracking information
+          and transfer your funds from your account.
+        </p>
+      </div>
+      <div class="row">
+        <h6>
+          As always, feel free to reach out with any questions.
+        </h6>
+      </div>
+      <div class="row">
+        Your friends, <br>
+        BlueBird.club
+      </div>
+    </div>
+
+
+  </body>
+</html>

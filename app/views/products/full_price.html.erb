@@ -1,0 +1,291 @@
+<div class="container">
+
+<div class="center-align row">
+  <div class="col s8 offset-s2 m4 offset-m4">
+    <h2 id="timer"></h2>
+  </div>
+</div>
+
+<div class="center-align">
+  <h3><strong><%= @product.title %></strong></h3>
+  <a href="/company/<%= @product.user.key %>" style="color: black; text-decoration:none">
+    <h6>From <%= @product.user.company_name %></h6>
+  </a>
+</div>
+<div class="row col s10 offset-s1 center-align valign-wrapper">
+  <div class="col s8 row">
+    <div class="col s2 row">
+      <% if @product.photo_two.exists? %>
+        <%= image_tag @product.photo_two.url(:large), :class => 'responsive-img alternate-image', :id => 'photo-two' %>
+      <% end %>
+    </div>
+    <div class="col s2 row">
+      <% if @product.photo_three.exists? %>
+      <%= image_tag @product.photo_three.url(:large), :class => 'responsive-img alternate-image', :id => 'photo-three' %>
+      <% end %>
+    </div>
+    <div class="col s2 row">
+      <% if @product.photo_four.exists? %>
+      <%= image_tag @product.photo_four.url(:large), :class => 'responsive-img alternate-image', :id => 'photo-four' %>
+      <% end %>
+    </div>
+    <div class="col s2 row">
+      <% if @product.photo_five.exists? %>
+      <%= image_tag @product.photo_five.url(:large), :class => 'responsive-img alternate-image', :id => 'photo-five' %>
+      <% end %>
+    </div>
+    <div class="col s10">
+      <%= image_tag @product.main_image.url(:large), :class => 'responsive-img main-image materialboxed' %>
+    </div>
+  </div>
+  <div class="col s8">
+    <h5><%= @product.time_to_expiration %></h5>
+    <div class="row">
+      <h5 class='now-price'><strong>$<%= @product.price %></strong></h5>
+    </div>
+    <div class="row">
+      <h5><%= @product.description %></h6>
+    </div>
+    <% if @product.user.contactable %>
+      <h5>Contact Seller:</h5>
+      <h6>Email: <%= @product.user.email %></h6>
+      <h6>Phone: <%= @product.user.phone_number %></h6>
+    <% end %>
+    <h6>This product did not hit its sales goal, you now have until <%= @product.product_token.expiration_datetime.strftime('%l:%M %P on %b %d, %Y') %> to purchase</h6>
+    <% users_orders = current_user.commits.where('product_id = ? AND status = ?', @product.id, 'live') %>
+    <% if users_orders == [] && current_user.user_type != 'wholesaler' %>
+      <div class="col s8 offset-s2">
+        <%= form_for Commit.new do |f| %>
+        <%= f.hidden_field :product_id, :value => @product.id %>
+        <div class="input-field">
+          <%= f.label "Order Quantity" %>
+          <%= f.number_field :amount %>
+        </div>
+        <%= f.button "Make Order", :class => 'btn' %>
+        <% end %>
+      </div>
+    <% elsif users_orders != [] %>
+      <h4><%= link_to "Ordered #{users_orders[0].amount}", commit_path(users_orders[0].id) %> </h4>
+    <% end %>
+  </div>
+</div>
+
+
+<% if !@company_products.empty? %>
+  <div class="col s10 offset-s1 row">
+    <h5><a href="/company/<%= @product.user.key %>">More products from <%= @product.user.company_name %></a></h5>
+  </div>
+  <div class="row">
+    <% @company_products.each do |product| %>
+      <div class="col s12 m4 center-align no-padding">
+        <div class="product">
+          <%= link_to "/products/#{product.id}-#{product.slug}" do %>
+            <div class="percent-box col s3 m1 white-text">
+              <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
+            </div>
+            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+            <div class="content-div">
+              <h5 class="truncate"><%= product.title %></h5>
+              <h6>From <%= product.user.company_name %></h6>
+              <h6>
+                <span class="was-price">$<%= product.price %></span>
+                <span class="now-price"><strong>$<%= product.discount %></strong></span>
+              </h6>
+            </div>
+          <% end %>
+
+          <div class="row">
+            <%= product.description %>
+          </div>
+
+          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
+          <% total_sales = total_orders*product.discount.to_f %>
+          <% percentage = ((total_sales/product.goal.to_f)*100) %>
+          <% if percentage >= 100 %>
+            <% percentage = 100 %>
+          <% end %>
+          <div class="row">
+            <div class="meter animate col s8 offset-s2 no-padding">
+              <span style="width: <%= percentage %>%"><span></span></span>
+            </div>
+            <div class="row">
+              <div class="col s4 offset-s2">
+                <h6><%= '%.0f' % percentage %>% to discount</h6>
+              </div>
+              <div class="col s4">
+                <h6><%= product.time_to_expiration %></h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<% if !@similar_products.nil? %>
+  <div class="col s10 offset-s1 row">
+    <h5>Similar Products</h5>
+  </div>
+  <div class="row">
+    <% @similar_products.each do |product| %>
+      <div class="col s12 m4 center-align no-padding">
+        <div class="product">
+          <%= link_to "/products/#{product.id}-#{product.slug}" do %>
+            <div class="percent-box col s3 m1 white-text">
+              <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
+            </div>
+            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+            <div class="content-div">
+              <h5 class="truncate"><%= product.title %></h5>
+              <h6>From <%= product.user.company_name %></h6>
+              <h6 class="was-price">Was $<%= product.price %></h6>
+              <h6 class="now-price"><strong>Now $<%= product.discount %></strong></h6>
+              <%= product.description %>
+            </div>
+          <% end %>
+
+          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
+          <% total_sales = total_orders*product.discount.to_f %>
+          <% percentage = ((total_sales/product.goal.to_f)*100) %>
+          <% if percentage >= 100 %>
+            <% percentage = 100 %>
+          <% end %>
+          <div class="row">
+            <% if percentage == 100 %>
+              <div class="meter-striped col s8 offset-s2 no-padding">
+                <span style="width: <%= percentage %>%"><span></span></span>
+              </div>
+            <% else %>
+              <div class="meter col s8 offset-s2 no-padding">
+                <span style="width: <%= percentage %>%"><span></span></span>
+              </div>
+            <% end %>
+            <div class="row">
+              <div class="col s4 offset-s2">
+                <h6><%= '%.0f' % percentage %>% to discount</h6>
+              </div>
+              <div class="col s4">
+                <h6><%= product.time_to_expiration %></h6>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+
+</div>
+
+<script>
+  $(document).ready(function(){
+    alternateImage()
+    $('.materialboxed').materialbox();
+    console.log('load');
+    $('.product').mouseover(function(){
+      $(this).attr('class', 'product z-depth-4')
+    })
+    $('.product').mouseout(function(){
+      $(this).attr('class', 'product')
+    })
+    // animateMeter()
+    setTime()
+    setInterval(timer, 1000);
+  })
+
+  function setTime(){
+    var seconds = <%= @product.product_token.expiration_datetime - Time.now %>;
+    var days        = Math.floor(seconds/24/60/60);
+    var hoursLeft   = Math.floor((seconds) - (days*86400));
+    var hours       = Math.floor(hoursLeft/3600);
+    var minutesLeft = Math.floor((hoursLeft) - (hours*3600));
+    var minutes     = Math.floor(minutesLeft/60);
+    var remainingSeconds = Math.floor(seconds % 60);
+    if(minutes < 10) {
+      minutes = "0" + minutes
+    }
+    if(hours < 10) {
+      hours = "0" + hours
+    }
+    if (remainingSeconds < 10) {
+        remainingSeconds = "0" + remainingSeconds;
+    }
+    document.getElementById('timer').innerHTML = days + ":" + hours + ":" + minutes + ":" + remainingSeconds;
+  }
+
+  var seconds = <%= @product.product_token.expiration_datetime - Time.now %>;
+  function timer() {
+    var days        = Math.floor(seconds/24/60/60);
+    var hoursLeft   = Math.floor((seconds) - (days*86400));
+    var hours       = Math.floor(hoursLeft/3600);
+    var minutesLeft = Math.floor((hoursLeft) - (hours*3600));
+    var minutes     = Math.floor(minutesLeft/60);
+    var remainingSeconds = Math.floor(seconds % 60);
+    if(minutes < 10) {
+      minutes = "0" + minutes
+    }
+    if(hours < 10) {
+      hours = "0" + hours
+    }
+    if (remainingSeconds < 10) {
+        remainingSeconds = "0" + remainingSeconds;
+    }
+    console.log(seconds);
+    document.getElementById('timer').innerHTML = days + ":" + hours + ":" + minutes + ":" + remainingSeconds;
+    if (seconds == 0) {
+        location.reload()
+    } else {
+        seconds--;
+    }
+  }
+
+  // var mainImage = $('<img class = "responsive-img main-image materialboxed"/>')
+  // mainImage.attr( "src" , "<%= image_path "#{@product.main_image.url(:large)}" %>" );
+  // mainImage.load(function(){
+  //   console.log('replaced...');
+  //   $('.main-image').replaceWith(mainImage)
+  // })
+  //
+  // if($('#photo-two')){
+  //   var secondImage = $('<img class = "responsive-img alternate-image"/>')
+  //   secondImage.attr("src" , "<%= image_path "#{@product.photo_two.url(:large)}" %>" );
+  //   secondImage.load(function(){
+  //     $('#photo-two').replaceWith(secondImage)
+  //   })
+  // }
+  //
+  // if($('#photo-three')){
+  //   var secondImage = $('<img class = "responsive-img alternate-image"/>')
+  //   secondImage.attr("src" , "<%= image_path "#{@product.photo_three.url(:large)}" %>" );
+  //   secondImage.load(function(){
+  //     $('#photo-three').replaceWith(secondImage)
+  //   })
+  // }
+  //
+  // if($('#photo-four')){
+  //   var secondImage = $('<img class = "responsive-img alternate-image"/>')
+  //   secondImage.attr("src" , "<%= image_path "#{@product.photo_four.url(:large)}" %>" );
+  //   secondImage.load(function(){
+  //     $('#photo-four').replaceWith(secondImage)
+  //   })
+  // }
+  //
+  // if($('#photo-five')){
+  //   var secondImage = $('<img class = "responsive-img alternate-image"/>')
+  //   secondImage.attr("src" , "<%= image_path "#{@product.photo_five.url(:large)}" %>" );
+  //   secondImage.load(function(){
+  //     $('#photo-five').replaceWith(secondImage)
+  //   })
+  // }
+
+  function alternateImage(){
+    $('.alternate-image').mouseover(function(){
+      var makeMain = $(this).attr('src')
+      var makeAlternate = $('.main-image').attr('src')
+      $('.main-image').attr('src', makeMain)
+      $(this).attr('src', makeAlternate)
+    })
+  }
+</script>
