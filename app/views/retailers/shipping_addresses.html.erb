@@ -1,0 +1,47 @@
+<div class="row">
+
+  <%= render partial: 'partials/retailer_profile_nav' %>
+
+  <div class="col s12 m7 offset-m3 center-align">
+
+
+  <% if @retailer.primary_address.nil? %>
+    <h5>Before you can make any purchase orders, you must first add a shipping address</h5>
+    <%= form_tag('/api/create_shipping_address', method: :post) do %>
+      <div class="input-field">
+        <label>Street Address One</label>
+        <input id="street-line-one" type="text" name="street_one">
+      </div>
+      <div class="input-field">
+        <label>Street Address Two</label>
+        <input id="street-line-two" type="text" name="street_two">
+      </div>
+      <div class="input-field">
+        <label>City</label>
+        <input id="city" type="text" name="city">
+      </div>
+      <div class="input-field">
+        <label>State</label>
+        <input id="state" type="text" name="state">
+      </div>
+      <div class="input-field">
+        <label>Zip</label>
+        <input id="zip" type="text" name="zip">
+      </div>
+      <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
+    <% end %>
+
+    <% else %>
+
+      <h4><%= @retailer.user.first_name %>'s Primary Address:</h4>
+      <div class="row">
+        <h4><%= @retailer.primary_address.street1.capitalize %></h4>
+        <% if @retailer.primary_address.street2 != '' %>
+        <h4><%= @retailer.primary_address.street2.capitalize %></h4>
+        <% end %>
+        <h4><%= @retailer.primary_address.city.capitalize %>, <%= @retailer.primary_address.state %> <%= @retailer.primary_address.zip %></h4>
+      </div>
+
+    <% end %>
+
+</div>

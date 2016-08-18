@@ -11,13 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160815234525) do
+ActiveRecord::Schema.define(version: 20160818001708) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
-  create_table "commits", force: :cascade do |t|
+  create_table "admins", force: :cascade do |t|
     t.integer  "user_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "admins", ["user_id"], name: "index_admins_on_user_id", using: :btree
+
+  create_table "commits", force: :cascade do |t|
     t.datetime "created_at",       null: false
     t.datetime "updated_at",       null: false
     t.integer  "amount"
@@ -28,10 +35,21 @@ ActiveRecord::Schema.define(version: 20160815234525) do
     t.string   "sale_amount"
     t.boolean  "pdf_generated"
     t.string   "uuid"
+    t.integer  "retailer_id"
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
-  add_index "commits", ["user_id"], name: "index_commits_on_user_id", using: :btree
+
+  create_table "companies", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "company_name"
+    t.string   "company_key"
+    t.string   "bio"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
+  add_index "companies", ["user_id"], name: "index_companies_on_user_id", using: :btree
 
   create_table "milestones", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -72,7 +90,6 @@ ActiveRecord::Schema.define(version: 20160815234525) do
     t.string   "description"
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
-    t.integer  "user_id"
     t.string   "discount"
     t.string   "status"
     t.string   "category"
@@ -106,52 +123,53 @@ ActiveRecord::Schema.define(version: 20160815234525) do
     t.string   "percent_discount"
     t.boolean  "featured",                 default: false
     t.string   "uuid"
+    t.integer  "wholesaler_id"
   end
 
-  add_index "products", ["user_id"], name: "index_products_on_user_id", using: :btree
-
-  create_table "shipping_addresses", force: :cascade do |t|
+  create_table "retailers", force: :cascade do |t|
     t.integer  "user_id"
-    t.string   "address_id"
+    t.string   "stripe_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  add_index "shipping_addresses", ["user_id"], name: "index_shipping_addresses_on_user_id", using: :btree
+  add_index "retailers", ["user_id"], name: "index_retailers_on_user_id", using: :btree
 
-  create_table "stripe_credentials", force: :cascade do |t|
-    t.integer  "user_id"
-    t.string   "stripe_publishable_key"
-    t.string   "access_token"
-    t.datetime "created_at",             null: false
-    t.datetime "updated_at",             null: false
-    t.string   "stripe_user_id"
+  create_table "shipping_addresses", force: :cascade do |t|
+    t.string   "address_id"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+    t.integer  "retailer_id"
+    t.boolean  "primary"
   end
-
-  add_index "stripe_credentials", ["user_id"], name: "index_stripe_credentials_on_user_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
-    t.string   "user_type"
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
-    t.string   "retailer_stripe_id"
-    t.string   "wholesaler_stripe_id"
     t.string   "first_name"
     t.string   "last_name"
-    t.string   "company_name"
     t.boolean  "contactable"
     t.string   "phone_number"
     t.string   "password_reset_token"
     t.string   "password_reset_expiration"
-    t.string   "key"
     t.string   "uuid"
   end
 
-  add_foreign_key "commits", "users"
+  create_table "wholesalers", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "stripe_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "wholesalers", ["user_id"], name: "index_wholesalers_on_user_id", using: :btree
+
+  add_foreign_key "admins", "users"
+  add_foreign_key "companies", "users"
   add_foreign_key "product_images", "products"
   add_foreign_key "product_tokens", "products"
-  add_foreign_key "shipping_addresses", "users"
-  add_foreign_key "stripe_credentials", "users"
+  add_foreign_key "retailers", "users"
+  add_foreign_key "wholesalers", "users"
 end

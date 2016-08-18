@@ -6,10 +6,10 @@ class UsersController < ApplicationController
 
   def index
     if !current_user.nil?
-      if current_user.user_type == 'wholesaler'
-        redirect_to wholesaler_path
-      elsif current_user.user_type == 'retailer'
-        redirect_to retailer_path
+      if current_user.is_wholesaler?
+        redirect_to '/wholesaler/profile'
+      elsif current_user.is_retailer?
+        redirect_to '/shop'
       end
     end
   end
@@ -46,26 +46,41 @@ class UsersController < ApplicationController
 
   def create
     if params[:beta_code] == BETA_CODE
-      user = User.create(user_params)
-      if user.save
-        session[:user_id] = user.id
-        user.create_key
-        user.create_uuid
-        if user.user_type == 'retailer'
-          user.make_stripe_customer
-          Mailer.retailer_welcome_email(user).deliver_later
-          redirect_to shop_path
-        elsif user.user_type == 'wholesaler'
-          Mailer.wholesaler_welcome_email(user).deliver_later
-          redirect_to wholesaler_path
+      if params[:user][:password] == params[:user][:password_confirmation]
+        user = User.create(user_params)
+        if user.save
+          session[:user_id] = user.id
+            # admin = Admin.new
+            # admin.user_id = user.id
+            # admin.save
+            company = Company.new
+            company.company_name = params[:company][:company_name]
+            company.user_id = user.id
+            company.save
+          if params[:user_type] == 'retailer'
+            retailer = Retailer.new
+            retailer.user_id = user.id
+            retailer.save
+            Mailer.retailer_welcome_email(user).deliver_later
+            redirect_to '/retailer/accounts'
+          elsif params[:user_type] == 'wholesaler'
+            wholesaler = Wholesaler.new
+            wholesaler.user_id = user.id
+            wholesaler.save
+            Mailer.wholesaler_welcome_email(user).deliver_later
+            redirect_to '/wholesaler/profile'
+          end
+        else
+          flash[:error] = user.errors.full_messages
+          redirect_to request.referrer
         end
       else
-        flash[:error] = user.errors.full_messages
         redirect_to request.referrer
+        flash[:error] = ["Password and Password Confirmation does not match"]
       end
     else
       redirect_to request.referrer
-      flash[:error] = "Incorrect Beta Code!"
+      flash[:error] = ["Incorrect Beta Code!"]
     end
   end
 
@@ -114,20 +129,20 @@ class UsersController < ApplicationController
     response = http.request(request)
     data = JSON.parse(response.body)
 
-    credential = StripeCredential.new
-    credential.stripe_publishable_key = data["stripe_publishable_key"]
-    credential.access_token = data["access_token"]
-    credential.stripe_user_id = data["stripe_user_id"]
-    credential.user_id = current_user.id
-    credential.save!
+    stripe_publishable_key = data["stripe_publishable_key"]
+    access_token = data["access_token"]
+    stripe_user_id = data["stripe_user_id"]
+    wholesaler = current_user.wholesaler
+    wholesaler.stripe_id = stripe_user_id
+    wholesaler.save!
 
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     customer = Stripe::Customer.create(
-      {:description => "Customer for: #{current_user.email}"},
-      {:stripe_account => credential.stripe_user_id}
+      {:description => "Customer for: #{current_user.full_name}"},
+      {:stripe_account => current_user.wholesaler.stripe_id}
     )
 
-    redirect_to wholesaler_path
+    redirect_to '/wholesaler/profile'
   end
 
   def settings
@@ -137,8 +152,7 @@ class UsersController < ApplicationController
   private
   def user_params
     params.require(:user).permit(:first_name, :last_name, :email, :password,
-      :user_type, :wholesaler_stripe_id, :retailer_stripe_id, :company_name,
-      :contactable, :phone_number, :password_reset_token, :password_reset_expiration, :key)
+      :contactable, :phone_number, :password_reset_token, :password_reset_expiration)
   end
 
 end

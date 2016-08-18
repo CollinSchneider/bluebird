@@ -30,8 +30,8 @@
                     <%= f.text_field :last_name, :class =>'white-text' %>
                   </div>
                   <div class="input-field">
-                    <%= f.label "Company Name", :class =>'white-text' %>
-                    <%= f.text_field :company_name, :class =>'white-text' %>
+                    <label class="white-text">Company Name</label>
+                    <input type="text" name="company[company_name]" class="white-text">
                   </div>
                   <div class="input-field">
                     <%= f.label :email, :class =>'white-text' %>
@@ -42,7 +42,11 @@
                     <%= f.password_field :password, :class =>'white-text' %> <br>
                   </div>
                   <div class="input-field">
-                    <select name="user[user_type]" required>
+                    <%= f.label "Confirm Password", :class => 'white-text' %>
+                    <%= f.password_field :password_confirmation, :class => 'white-text' %> <br>
+                  </div>
+                  <div class="input-field">
+                    <select name="user_type" required class="white-text">
                       <option disabled="disabled" selected class="white-text">Select</option>
                       <option value="wholesaler" class="white-text">Wholesaler</option>
                       <option value="retailer" class="white-text">Retailer</option>
@@ -50,7 +54,7 @@
                   </div>
                   <div class="input-field">
                     <label class="white-text">Beta Code</label>
-                    <input type="password" name="beta_code" value="">
+                    <input type="password" name="beta_code" class="white-text">
                   </div>
                   <div class="input-field">
                     <%= f.submit "Sign Up", :class => 'btn white black-text' %>

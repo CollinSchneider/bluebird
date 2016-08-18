@@ -5,39 +5,6 @@ require 'easypost'
 require 'prawn'
 class ApiController < ApplicationController
 
-  def make_purchase_order
-    commit = Commit.new
-    product = Product.find(params[:product_id])
-    if params[:amount].to_f <= product.quantity.to_f
-
-      commit.product_id = params[:product_id]
-      commit.amount = params[:amount]
-      commit.user_id = current_user.id
-      commit.status = 'live'
-      product.current_sales = product.current_sales.to_f + commit.amount.to_f*product.discount.to_f
-      product.quantity -= commit.amount.to_f
-      product.save
-      if commit.save
-        render :json => {
-          :success => true,
-          :commit => commit
-        }
-      else
-        render :json => {
-          :success => false,
-          :error => commit.errors
-        }
-      end
-
-    else
-      render :json => {
-        :success => false,
-        :error => "Not enough inventory",
-        :inventory_left => product.inventory
-      }
-    end
-  end
-
   def stripe_connect_charge
     commit_id = params[:commit_id]
     commit = Commit.find(commit_id)
@@ -71,14 +38,14 @@ class ApiController < ApplicationController
 
   def create_credit_card
     token = params[:token]
-    customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     customer.sources.create(:source => token)
     redirect_to request.referrer
   end
 
   def delete_credit_card
     card_id = params[:card_id]
-    customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     card = customer.sources.retrieve(card_id).delete
     redirect_to request.referrer
   end
@@ -115,12 +82,18 @@ class ApiController < ApplicationController
     )
     # render :json => {address: verifiable_address}
     if verifiable_address.verifications.delivery.success
+      current_user.retailer.shipping_addresses.each do |address|
+        address.primary = false
+        address.save
+      end
       local_address = ShippingAddress.new
-      local_address.user_id = current_user.id
+      local_address.retailer_id = current_user.retailer.id
       local_address.address_id = verifiable_address.id
+      local_address.primary = true
       local_address.save
     else
-      flash[:error] = verifiable_address.verifications.delivery.errors.each
+      flash[:error] = []
+      flash[:error] << verifiable_address.verifications.delivery.errors
     end
     redirect_to request.referrer
   end

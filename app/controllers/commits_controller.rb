@@ -8,7 +8,7 @@ class CommitsController < ApplicationController
         commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
         commit.product.save
         commit.status = 'live'
-        commit.user_id = current_user.id
+        commit.retailer_id = current_user.retailer.id
         commit.create_uuid
         commit.save
       else

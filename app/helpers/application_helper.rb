@@ -13,14 +13,18 @@ module ApplicationHelper
   def authenticate_retailer
     redirect_to "/users" unless !current_user.nil?
     if current_user
-      redirect_to wholesaler_path unless current_user.user_type == 'retailer'
+      if current_user.is_retailer?
+        @retailer = current_user.retailer
+      else
+        redirect_to wholesaler_path unless current_user.is_retailer?
+      end
     end
   end
 
   def authenticate_wholesaler
     redirect_to "/users" unless !current_user.nil?
     if current_user
-      redirect_to shop_path unless current_user.user_type == 'wholesaler'
+      redirect_to shop_path unless current_user.is_wholesaler?
     end
   end
 

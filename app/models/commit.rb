@@ -1,6 +1,6 @@
 class Commit < ActiveRecord::Base
 
-  belongs_to :user
+  belongs_to :retailer
   belongs_to :product
 
   before_validation(on: :create) do

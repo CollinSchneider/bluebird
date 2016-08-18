@@ -36,8 +36,8 @@ class WelcomeController < ApplicationController
       @products = Product.where('status = ?', 'live').page(params[:page]).per_page(3)
     end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    if current_user.retailer_stripe_id
-      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    if current_user.is_retailer? && current_user.retailer.stripe_id
+      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     end
   end
 
@@ -64,8 +64,8 @@ class WelcomeController < ApplicationController
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.now).order(end_time: :asc).page(params[:page]).per_page(3)
     end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    if current_user.retailer_stripe_id
-      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    if current_user.is_retailer? && current_user.retailer.stripe_id
+      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     end
   end
 
@@ -92,8 +92,8 @@ class WelcomeController < ApplicationController
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.now).order(start_time: :asc).page(params[:page]).per_page(3)
     end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    if current_user.retailer_stripe_id
-      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    if current_user.is_retailer? && current_user.retailer.stripe_id
+      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     end
   end
 
@@ -148,8 +148,8 @@ class WelcomeController < ApplicationController
       @products = Product.where('status = ? AND category = ?', 'live', 'Tech').page(params[:page]).per_page(3)
     end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    if current_user.retailer_stripe_id
-      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    if current_user.is_retailer? && current_user.retailer.stripe_id
+      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     end
   end
 
@@ -178,9 +178,9 @@ class WelcomeController < ApplicationController
       @products = Product.where('status = ? AND category = ?', 'live', 'Accessories').page(params[:page]).per_page(3)
     end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    if current_user.retailer_stripe_id
-      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
-    end
+    # if current_user.is_retailer? && current_user.retailer.stripe_id
+    #   @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+    # end
   end
 
   def home_goods
@@ -209,8 +209,8 @@ class WelcomeController < ApplicationController
       @products = Product.where('status = ? AND category = ?', 'live', 'Home Goods').page(params[:page]).per_page(3)
     end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    if current_user.retailer_stripe_id
-      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    if current_user.is_retailer? && current_user.retailer.stripe_id
+      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     end
   end
 
@@ -240,16 +240,16 @@ class WelcomeController < ApplicationController
       @products = Product.where('status = ? AND category = ?', 'live', 'Apparel').page(params[:page]).per_page(3)
     end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    if current_user.retailer_stripe_id
-      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    if current_user.is_retailer? && current_user.retailer.stripe_id
+      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     end
   end
 
   def company_show
-    @company = User.find_by_key(params[:key])
-    @products = Product.where('user_id = ? AND status = ? AND end_time >= ?', @company.id, 'live', Time.now)
-    if current_user.retailer_stripe_id
-      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
+    @company = Company.find_by_company_key(params[:key])
+    @products = Product.where('wholesaler_id = ? AND status = ? AND end_time >= ?', @company.user.wholesaler.id, 'live', Time.now)
+    if current_user.is_retailer? && current_user.retailer.stripe_id
+      @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
     end
   end
 

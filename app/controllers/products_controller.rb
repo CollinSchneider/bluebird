@@ -5,16 +5,19 @@ class ProductsController < ApplicationController
     if Time.now > @product.end_time
       redirect_to shop_path
     end
-    @company_products = Product.where('user_id = ? AND status = ? AND id != ?', @product.user_id, 'live', @product.id).order(current_sales: :desc).limit(3)
+    @company_products = Product.where('wholesaler_id = ? AND status = ? AND id != ?', @product.wholesaler_id, 'live', @product.id).order(current_sales: :desc).limit(3)
     @similar_products = Product.where('category = ? AND status = ? AND id != ?', @product.category, 'live', @product.id).order(current_sales: :desc).limit(3)
   end
 
   def wholesaler_show
     @product = Product.find(params[:id])
     @products_to_ship = @product.commits.where('shipping_id IS NULL').count
-    if current_user.id != @product.user.id
-      redirect_to root_path
-    end
+    # @product.created_at.beginning_of_day..DateTime.now.beginning_of_day do |time|
+    # end
+    # @total_sales = {}
+    # @product.commits.each do |commit|
+    # end
+    redirect_to '/shop' if !current_user.is_wholesaler? || current_user.wholesaler.id != @product.wholesaler.id
   end
 
   def edit
@@ -30,7 +33,7 @@ class ProductsController < ApplicationController
 
   def create
     product = Product.create(product_params)
-    product.user_id = current_user.id
+    product.wholesaler_id = current_user.wholesaler.id
     if product.goal.nil?
       product.goal = params[:product][:goal]
     end
@@ -54,7 +57,6 @@ class ProductsController < ApplicationController
     @product = Product.where('id in (select product_id from product_tokens where token = ?)', params[:token]).first
     @company_products = Product.where('user_id = ? AND status = ? AND id != ?', @product.user_id, 'live', @product.id).order(current_sales: :desc).limit(3)
     @similar_products = Product.where('category = ? AND status = ? AND id != ?', @product.category, 'live', @product.id).order(current_sales: :desc).limit(3)
-    binding.pry
   end
 
   # def discover

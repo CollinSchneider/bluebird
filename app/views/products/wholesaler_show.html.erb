@@ -11,6 +11,7 @@
   <% end %>
 </div>
 <div class="row col s10 offset-s1 center-align valign-wrapper">
+
   <div class="col s6 valign">
     <%= image_tag @product.main_image.url(:large), :class => 'responsive-img main-image materialboxed' %>
     <div class="row">
@@ -36,6 +37,7 @@
       </div>
     </div>
   </div>
+
   <div class="col s8">
     <h5>
       <span class='was-price'>$<%= @product.price %></span>
@@ -43,43 +45,34 @@
     </h5>
     <div class="row">
       <h5><%= @product.description %></h6>
-      </div>
-    <% total_orders = Commit.where('product_id = ?', @product.id).sum(:amount).to_i %>
-    <% total_sales = total_orders*@product.discount.to_f %>
-    <% percentage = ((total_sales/@product.goal.to_f)*100) %>
-    <% if percentage >= 100 %>
-      <% percentage = 100 %>
-    <% end %>
+    </div>
     <div class="row">
-      <% if percentage >= 100 %>
-        <div class="meter animate col s8 offset-s2 no-padding">
-          <span style="width: <%= percentage %>%"><span></span></span>
-        </div>
-      <% else %>
-        <div class="meter col s8 offset-s2 no-padding">
-          <span style="width: <%= percentage %>%"><span></span></span>
-        </div>
-      <% end %>
-      <div class="row">
-        <div class="col s4 offset-s2">
-          <h6><%= '%.0f' % percentage %>% of goal</h6>
-        </div>
-        <div class="col s4">
-          <h6><%= @product.time_to_expiration %></h6>
-        </div>
+      <div class="<%= @product.percentage["class"] %>">
+        <span style="width: <%= @product.percentage["progress"] %>%"><span></span></span>
       </div>
     </div>
+
+    <div class="row">
+      <div class="col s4 offset-s2">
+        <h6><strong><%= '%.0f' % @product.percentage["percent_to_discount"] %>%</strong> of goal</h6>
+      </div>
+      <div class="col s4">
+        <h6><%= @product.time_to_expiration %></h6>
+      </div>
+    </div>
+
   </div>
 </div>
 
 <div class="row center-align">
   <% if @product.status == 'goal_met' || @product.status == 'discount_granted' %>
   <h5>Collected $<%= '%.2f' % @product.current_sales %> in sales from <%= @product.commits.sum(:amount) %> orders from <%= @product.commits.length %> customers</h5>
-
   <% end %>
 </div>
 
-<div class="row">
+<div class="row center-align">
+  <h6><%= @product.quantity %> left in inventory</h6>
+  <h6><%= @product.commits.sum(:amount) %> purchase orders for $<%= '%.2f' % @product.current_sales %> in sales </h6>
   <%= line_chart @product.commits.group_by_day(:created_at).sum(:amount), ytitle: '# Purchase Orders' %>
 </div>
 

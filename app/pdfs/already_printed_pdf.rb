@@ -2,7 +2,7 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def initialize(user)
     super()
-    products_to_ship = user.products.where('
+    products_to_ship = user.wholesaler.products.where('
           products.status = ? OR products.status = ?', 'goal_met', 'discount_granted'
         ).joins(:commits).where('
           shipping_id IS NULL
@@ -19,9 +19,9 @@ class AlreadyPrintedPdf < Prawn::Document
 
         image_header
         product_title(product)
-        pad_bottom(30) {seller_info(product.user)}
+        pad_bottom(30) {seller_info(product.wholsaler.user)}
         stroke_horizontal_rule
-        pad_bottom(15) {buyer_info(commit.user)}
+        pad_bottom(15) {buyer_info(commit.retailer)}
         stroke_horizontal_rule
         pad_bottom(10) {column_headers}
         stroke_horizontal_rule
@@ -42,8 +42,8 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def directions
     move_down 10
-    text "To be clear, it looks like you have already generated these receipts
-    but have not shipped the orders yet. We just wanted to let you know to avoid any possible confusion. \n
+    text "These are all the receipts for products in which you have not entered shipping information yet. \n
+    After following these steps, these receipts will no longer be located here. \n
     1.) Print off each of the receipts below \n
     2.) Place each receipt in the according shipment \n
     3.) Ship each order to your buyers \n
@@ -65,15 +65,14 @@ class AlreadyPrintedPdf < Prawn::Document
     text "#{product.title} Shipment", size: 25, style: :bold, align: :center
   end
 
-  def buyer_info(user)
+  def buyer_info(retailer)
     move_down 15
-    EasyPost.api_key = "sl7EFdaoEC2GaVf5qYjz0g"
+    EasyPost.api_key = EasyPost.api_key = ENV['EASYPOST_API_KEY']
     address = EasyPost::Address.retrieve(user.shipping_addresses[0].address_id)
-    text "Buyer: #{user.full_name} \n
-    #{user.company_name} \n
+    text "Buyer: #{retailer.full_name} \n
+    #{retailer.company.company_name} \n
     #{address.street1} \n
-    #{address.city}, #{address.state}, #{address.zip} \n
-    #{address.phone}"
+    #{address.city}, #{address.state}, #{address.zip}"
   end
 
   def seller_info(user)

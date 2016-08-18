@@ -4,17 +4,13 @@ Rails.application.routes.draw do
 
   get '/api/stripe_connect_charge' => 'api#stripe_connect_charge'
   post '/api/stripe_connect_charge' => 'api#stripe_connect_charge'
-  get '/api/fake_mailgun' => 'api#fake_mailgun'
-  post '/api/fake_mailgun' => 'api#fake_mailgun'
 
   resources :users
-  # post 'users/password_reset/:id' => 'users#password_reset'
   put 'users/password_reset/:id' => 'users#password_reset'
   resources :products
-  # get '/products/:id/:slug' => 'products#slug_show'
-  resources :milestones
   resources :commits
-  resources :stripe_credentials
+  resources :wholesalers
+  resources :retailers
 
                   #///////////////////#
                   #     API ROUTES    #
@@ -61,7 +57,7 @@ Rails.application.routes.draw do
               #///////////////////#
               # WHOLESALER ROUTES #
               #///////////////////#
-  get '/wholesaler/profile' => 'wholesalers#index', as: :wholesaler
+  get '/wholesaler/profile' => 'wholesalers#profile'
   get '/wholesaler/accounts' => 'wholesalers#accounts', as: :wholesaler_accounts
   get '/new_product' => 'wholesalers#new_product'
   get '/approve_product/:id' => 'wholesalers#approve_product'
@@ -84,10 +80,11 @@ Rails.application.routes.draw do
                 #///////////////////#
                 #  RETAILER ROUTES  #
                 #///////////////////#
-  get '/retailer/pending_orders' => 'retailers#index', as: :retailer
-  get '/retailer/accounts' => 'retailers#accounts', as: :retailer_accounts
-  get '/retailer/order_history' => 'retailers#order_history', as: :retailer_order_history
+  get '/retailer/pending_orders' => 'retailers#index'
+  get '/retailer/accounts' => 'retailers#accounts'
+  get '/retailer/order_history' => 'retailers#order_history'
   get '/retailer/settings' => 'retailers#settings'
+  get '/retailer/shipping_addresses' => 'retailers#shipping_addresses'
   get '/retailer/settings/change_password' => 'retailers#change_password'
   put '/retailer/settings/change_password' => 'retailers#change_password'
 

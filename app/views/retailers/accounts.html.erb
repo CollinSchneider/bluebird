@@ -1,14 +1,12 @@
 <%= render partial: 'partials/retailer_profile_nav' %>
 
-<div class="col s12 m10">
-
-  <h2 class='center-align'>Manage Payments</h2>
+<div class="col s12 m9 offset-m2">
 
   <% if @stripe_customer.default_source.nil? %>
     <div class="center-align row">
-      <h3>You need your payment info!</h3>
+      <h5>You need a credit card on file before making any orders</h5>
 
-      <form class="credit-card-form col s8 offset-s2" action="" method="">
+      <form class="credit-card-form col s8 offset-s2">
         <div class="input-field">
           <label>Card Holder Name</label>
           <input id="card-name" type="text">
@@ -40,14 +38,14 @@
           <label>Billing Zip Code</label>
           <input id="billing-zip" type="text" value="">
         </div>
-        <span id="payment-errors"></span> <br>
+        <h6 class="red-text" id="payment-errors"></h6> <br>
         <input class="submit btn" type="submit" value="Add Credit Card" value="Add Credit Card">
         <!-- <input id="create-card" class='btn'>Add Credit Card</button> -->
       </form>
 
     </div>
   <% else %>
-  <h4 class='center-align'>Current credit cards:</h4>
+  <h4 class='center-align'><%= current_user.first_name %>'s credit card:</h4>
     <div class="row">
       <div class="row center-align col s8 offset-s2 border credit-card">
         <div class="right-align">
@@ -66,73 +64,12 @@
           </div>
         </div>
       </div>
-    </div>
-    <% @stripe_customer.sources.each do |source| %>
-      <% if source.id != @stripe_customer.default_source %>
-        <div class="row">
-          <div class="center-align col s8 offset-s2 border credit-card">
-            <div class="row">
-              <div class="col s4 left-align">
-                <button class="make-primary btn" id="<%=source.id%>">Make Primary</button>
-              </div>
-              <div class="right-align col s2 offset-s10">
-                <button data="<%=source.id%>" class="delete-card btn red" id="<%=source.id%>">X</button>
-              </div>
-            </div>
-            <h5>Card Holder: <%= source.name %></h5>
-            <h6>Card Number: **** **** **** <%= source.last4 %></h6>
-            <h6> Zip: <%= source.address_zip %></h6>
-            <div class="row">
-              <div class="left-align col s5 offset-s1">
-                <h6>Expiration: <%= source.exp_month %>/<%= source.exp_year %> </h6>
-              </div>
-              <div class="right-align col s5">
-                <h6><%= source.brand %></h6>
-              </div>
-            </div>
-          </div>
+      <div class="row center-align">
+        <div class="col s12">
+          <button class="delete-card btn red" data="<%= @default_card.id %>">Delete Card</button>
         </div>
-      <% end %>
-    <% end %>
-    <div class="center-align row">
-      <h3>Add another form of payment</h3>
-        <form class="credit-card-form col s8 offset-s2">
-          <div class="input-field">
-            <label>Card Holder Name</label>
-            <input id="card-name" type="text">
-          </div>
-          <div class="input-field">
-            <label>Credit Card Number</label>
-            <input id="card-number" type="text"> <br>
-          </div>
-          <div class="input-field">
-            <label>CVC</label>
-            <input id="card-cvc" type="text"> <br>
-          </div>
-          <div class="input-field">
-            <div class="row">
-              <div class="col s4 offset-s1">
-                <label>Exp Month</label>
-                <input id="exp-month" type="number">
-              </div>
-              <div class="col s1">
-                <h6>/</h6>
-              </div>
-              <div class="col s4">
-                <label>Exp Year</label>
-                <input id="exp-year" type="number"> <br>
-              </div>
-            </div>
-          </div>
-          <div class="input-field">
-            <label>Billing Zip Code</label>
-            <input id="billing-zip" type="text" value="">
-          </div>
-          <span id="payment-errors"></span> <br>
-          <input class="submit btn" type="submit" value="Add Credit Card" value="Add Credit Card">
-          <!-- <input id="create-card" class='btn'>Add Credit Card</button> -->
-        </form>
       </div>
+    </div>
   <% end %>
 
 </div>
@@ -189,7 +126,14 @@ function submitCard(){
 function stripeResponseHandler(status, response){
   if(response.error){
     $('#payment-errors').text(response.error.message)
-    $('#create-card').prop("disabled", false)
+    $('.submit').prop("disabled", false)
+    $('.submit').val('Add Credit Card')
+    $('#billing-zip').val('')
+    $('#exp-year').val('')
+    $('#exp-month').val('')
+    $('#card-cvc').val('')
+    $('#card-number').val('')
+    $('#card-name').val('')
   } else {
     var token = response.id;
     console.log(token);

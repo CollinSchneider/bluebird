@@ -1,37 +1,26 @@
 require 'stripe'
 
 class User < ActiveRecord::Base
+  attr_accessor :updating
   has_secure_password
 
-  validates :password, presence: true
-  validates :email, presence: true, uniqueness: true
-  validates :user_type, presence: true
-  validates :first_name, presence: true
-  validates :last_name, presence: true
-  validates :company_name, presence: true
+  validates :password, presence: true, length: 8..20, unless: :updating
+  validates :email, presence: true, uniqueness: true, unless: :updating
+  validates :first_name, presence: true, unless: :updating
+  validates :last_name, presence: true, unless: :updating
 
-  has_many :products
-  has_many :milestones, through: :products
-  has_many :commits
   has_many :shipping_addresses
 
-  has_one :stripe_credential
+  has_one :wholesaler
+  has_one :retailer
+  has_one :company
 
-  before_validation(on: :save) do
+  before_create(on: :save) do
+    self.uuid = SecureRandom.uuid
   end
 
   def create_uuid
     self.uuid = SecureRandom.uuid
-    self.save
-  end
-
-  def make_stripe_customer
-    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    customer = Stripe::Customer.create(
-      :description => "Customer for #{self.email}"
-    )
-    self.retailer_stripe_id = customer.id
-    self.save
   end
 
   def collect_payment(commit, shipping_cost)
@@ -60,40 +49,16 @@ class User < ActiveRecord::Base
     return charge
   end
 
-  def create_key
-    slug = self.company_name
-    slug = slug.gsub(' ', '-')
-    slug = slug.gsub('.', '')
-    slug = slug.gsub(',', '')
-    slug = slug.gsub("'", "")
-    self.key = slug.downcase
-    self.save
-  end
-
   def full_name
     "#{self.first_name.capitalize} #{self.last_name.capitalize}"
   end
 
   def is_wholesaler?
-    return self.user_type == 'wholesaler'
+    return self.wholesaler.present?
   end
 
   def is_retailer?
-    return self.user_type == 'retailer'
-  end
-
-  def needs_stripe_connect?
-    return self.stripe_credential.nil?
-  end
-
-  def needs_credit_card?
-    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    customer = Stripe::Customer.retrieve(self.retailer_stripe_id)
-    return customer.default_source.nil?
-  end
-
-  def needs_shipping_info?
-    return !self.shipping_addresses.any?
+    return self.retailer.present?
   end
 
 end

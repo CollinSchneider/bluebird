@@ -8,11 +8,20 @@ class SessionsController < ApplicationController
       redirect_to users_path
     elsif user && user.authenticate(params[:password])
       session[:user_id] = user.id
-      if user.user_type == 'retailer'
-        redirect_to shop_path
-      elsif user.user_type == 'wholesaler'
-        redirect_to wholesaler_path
+
+      if user.is_retailer?
+        if user.retailer.needs_credit_card?
+          redirect_to '/retailer/accounts'
+        elsif user.retailer.needs_shipping_info?
+          redirect_to '/retailer/shipping_addresses'
+        else
+          redirect_to '/shop'
+        end
+
+      elsif user.is_wholesaler?
+        redirect_to '/wholesaler/profile'
       end
+
     else
       flash[:error] = "Incorrect password"
       redirect_to users_path

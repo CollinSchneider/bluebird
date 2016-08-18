@@ -3,7 +3,7 @@
     <% slice.each do |product| %>
       <div class="col s12 m4 center-align no-padding">
         <div class="product">
-          <% if current_user.id == product.user_id %>
+          <% if current_user.is_wholesaler? && current_user.wholesaler.id == product.wholesaler_id %>
             <a href="/wholesaler/product/<%=product.id %>-<%= product.slug %>">
           <% else %>
             <a href="/products/<%= product.id %>-<%= product.slug %>">
@@ -11,10 +11,13 @@
           <div class="col s3 m1 white-text percent-box">
             <h5><%= '%.0f' % (product.percent_discount*100) %>% Off</h5>
           </div>
+          <!-- <div class="col s3 m1 bluebird-pick">
+            <img src="/images/bluebird-blue-mascot.png" class="responsive-img" />
+          </div> -->
             <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
             <div class="content-div">
               <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
-              <h6>From <%= product.user.company_name %></h6>
+              <h6>From <%= product.wholesaler.user.company.company_name %></h6>
               <h6>
                 <span class="was-price">Was $<%= product.price %></span>
                 <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
@@ -29,32 +32,21 @@
             </div>
           </a>
 
-          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
-          <% total_sales = total_orders*product.discount.to_f %>
-          <% percentage = ((total_sales/product.goal.to_f)*100) %>
-          <% if percentage >= 100 %>
-            <% percentage = 100 %>
-          <% end %>
-          <div class="row content-div" style="padding-bottom: 0px; margin-bottom: 0px">
-
-            <% if percentage == 100 %>
-              <div class="meter animate striped col s8 offset-s2 no-padding">
-              	<span style="width: <%= percentage %>%"><span></span></span>
-              </div>
-            <% else %>
-              <div class="meter col s8 offset-s2 no-padding">
-                <span style="width: <%= percentage %>%"><span></span></span>
-              </div>
-            <% end %>
+          <div class="row">
+            <div class="<%= product.percentage["class"] %>">
+              <span style="width: <%= product.percentage["progress"] %>%"><span></span></span>
+            </div>
+          </div>
 
             <div class="row" style="margin-bottom: 0px">
               <div class="col s12 m6">
-                <h6><strong><%= '%.0f' % percentage %>%</strong><br> to discount</h6>
+                <h6><strong><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</strong></h6>
               </div>
               <div class="col s12 m6">
                 <h6><%= product.time_to_expiration %></h6>
               </div>
             </div>
+            
           </div>
         </div>
       </div>

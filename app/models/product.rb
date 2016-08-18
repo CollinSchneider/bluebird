@@ -1,6 +1,6 @@
 class Product < ActiveRecord::Base
 
-  belongs_to :user
+  belongs_to :wholesaler
   has_many :commits
 
   has_one :product_token
@@ -71,6 +71,31 @@ class Product < ActiveRecord::Base
     self.save
   end
 
+  def percentage
+    total_orders = Commit.where('product_id = ?', self.id).sum(:amount).to_i
+    total_sales = total_orders*self.discount.to_f
+    percentage = ((total_sales/self.goal.to_f)*100)
+    if percentage >= 100
+      progress = 100
+      progress_class = 'meter striped animate col s8 offset-s2 no-padding'
+    else
+      progress = percentage
+      progress_class = 'meter col s8 offset-s2 no-padding'
+    end
+    return {
+      'progress_bar' => progress,
+      'percent_to_discount' => percentage.floor,
+      'class' => progress_class
+    }
+  end
+
+  def percent_to_discount
+    total_orders = Commit.where('product_id = ?', self.id).sum(:amount).to_i
+    total_sales = total_orders*self.discount.to_f
+    percentage = ((total_sales/self.goal.to_f)*100)
+    return percentage
+  end
+
   def calc_end_time
     return self.end_time.strftime('%l:%M %P on %b %d, %Y')
   end
@@ -80,9 +105,9 @@ class Product < ActiveRecord::Base
     minutes = seconds/60
     hours = minutes/60
     days = hours/24
-    if days > 1
+    if days > 2
       return "#{days.floor} days left"
-    elsif days < 1 && days > 0
+    elsif days < 2 && days > 0
       hours = days*24
       if hours > 1
         return "#{(hours).floor}\n hours left"

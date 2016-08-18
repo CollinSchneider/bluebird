@@ -52,7 +52,7 @@
       <h6>Phone: <%= @product.user.phone_number %></h6>
     <% end %>
     <h6>This product did not hit its sales goal, you now have until <%= @product.product_token.expiration_datetime.strftime('%l:%M %P on %b %d, %Y') %> to purchase</h6>
-    <% users_orders = current_user.commits.where('product_id = ? AND status = ?', @product.id, 'live') %>
+    <% users_orders = current_user.retailer.commits.where('product_id = ? AND status = ?', @product.id, 'live') %>
     <% if users_orders == [] && current_user.user_type != 'wholesaler' %>
       <div class="col s8 offset-s2">
         <%= form_for Commit.new do |f| %>
