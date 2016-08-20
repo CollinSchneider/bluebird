@@ -11,10 +11,24 @@ Rails.application.routes.draw do
   resources :commits
   resources :wholesalers
   resources :retailers
+  resources :companies
 
                   #///////////////////#
                   #     API ROUTES    #
                   #///////////////////#
+
+  get '/api/products/:action' => 'api/products'
+  post '/api/products/:action' => 'api/products'
+
+  get '/api/payments/:action' => 'api/payments'
+  post '/api/payments/:action' => 'api/payments'
+
+  get '/api/wholesalers/:action' => 'api/wholesalers'
+  post '/api/wholesalers/:action' => 'api/wholesalers'
+
+  get '/api/shipping/:action' => 'api/shipping'
+  post '/api/shipping/:action' => 'api/shipping'
+
   get '/api/send_password_reset' => 'api#send_password_reset'
   post '/api/send_password_reset' => 'api#send_password_reset'
 
@@ -51,14 +65,13 @@ Rails.application.routes.draw do
   get '/api/create_tracking_and_charge' => 'api#create_tracking_and_charge'
   post '/api/create_tracking_and_charge' => 'api#create_tracking_and_charge'
 
-  get '/api/products/extend_product' => 'api/products#extend_product'
-  post '/api/products/extend_product' => 'api/products#extend_product'
-
               #///////////////////#
               # WHOLESALER ROUTES #
               #///////////////////#
+  get '/wholesaler' => redirect('/wholesaler/profile')
   get '/wholesaler/profile' => 'wholesalers#profile'
   get '/wholesaler/accounts' => 'wholesalers#accounts', as: :wholesaler_accounts
+  get '/wholesaler/company' => 'wholesalers#company'
   get '/new_product' => 'wholesalers#new_product'
   get '/approve_product/:id' => 'wholesalers#approve_product'
   put '/launch_product/:id' => 'wholesalers#launch_product'
@@ -80,13 +93,22 @@ Rails.application.routes.draw do
                 #///////////////////#
                 #  RETAILER ROUTES  #
                 #///////////////////#
+  get '/retailer' => redirect('/retailer/pending_orders')
   get '/retailer/pending_orders' => 'retailers#index'
   get '/retailer/accounts' => 'retailers#accounts'
   get '/retailer/order_history' => 'retailers#order_history'
   get '/retailer/settings' => 'retailers#settings'
   get '/retailer/shipping_addresses' => 'retailers#shipping_addresses'
+  get '/retailer/company' => 'retailers#company'
   get '/retailer/settings/change_password' => 'retailers#change_password'
   put '/retailer/settings/change_password' => 'retailers#change_password'
+  get '/retailer/:order/card_declined' => 'retailers#card_declined'
+
+                #///////////////////#
+                #   ADMIN ROUTES    #
+                #///////////////////#
+
+  get '/admin' => 'admin#index'
 
                 #///////////////////#
                 #  PRODUCT ROUTES   #
@@ -112,9 +134,11 @@ Rails.application.routes.draw do
   get '/signup' => 'users#signup'
   get '/forgot_password' => 'users#forgot_password'
   get '/reset_password/:token' => 'users#reset_password'
-  get '/about' => 'welcome#about'
-  get '/faq' => 'welcome#faq'
-  get '/why_bluebird' => 'welcome#why'
+  get '/about' => 'users#about'
+  get '/faq' => 'users#faq'
+  get '/why_bluebird' => 'users#why'
+  get '/apply' => 'users#apply'
+  get '/thank_you' => 'users#thank_you'
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'

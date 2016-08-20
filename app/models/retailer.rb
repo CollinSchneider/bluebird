@@ -40,4 +40,14 @@ class Retailer < ActiveRecord::Base
     return !self.shipping_addresses.any?
   end
 
+  def card_declined?
+    declined_commits = self.commits.where('card_declined = ?', true)
+    return !declined_commits.empty?
+  end
+
+  def declined_order
+    declined_id = self.commits.where('card_declined = ?', true).pluck(:id)
+    return declined_id.first
+  end
+
 end

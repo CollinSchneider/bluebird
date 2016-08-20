@@ -6,7 +6,7 @@ class AlreadyPrintedPdf < Prawn::Document
           products.status = ? OR products.status = ?', 'goal_met', 'discount_granted'
         ).joins(:commits).where('
           shipping_id IS NULL
-        ')
+        ').uniq
 
     directions_title(user)
     directions
@@ -19,7 +19,7 @@ class AlreadyPrintedPdf < Prawn::Document
 
         image_header
         product_title(product)
-        pad_bottom(30) {seller_info(product.wholsaler.user)}
+        pad_bottom(30) {seller_info(product.wholesaler.user)}
         stroke_horizontal_rule
         pad_bottom(15) {buyer_info(commit.retailer)}
         stroke_horizontal_rule
@@ -67,16 +67,16 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def buyer_info(retailer)
     move_down 15
-    EasyPost.api_key = EasyPost.api_key = ENV['EASYPOST_API_KEY']
-    address = EasyPost::Address.retrieve(user.shipping_addresses[0].address_id)
-    text "Buyer: #{retailer.full_name} \n
+    EasyPost.api_key = ENV['EASYPOST_API_KEY']
+    address = EasyPost::Address.retrieve(retailer.shipping_addresses[0].address_id)
+    text "Buyer: #{retailer.user.full_name} \n
     #{retailer.company.company_name} \n
     #{address.street1} \n
     #{address.city}, #{address.state}, #{address.zip}"
   end
 
   def seller_info(user)
-    text "Seller: #{user.company_name}", align: :center
+    text "Seller: #{user.company.company_name}", align: :center
   end
 
   def column_headers

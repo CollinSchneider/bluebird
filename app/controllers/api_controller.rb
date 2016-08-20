@@ -16,31 +16,24 @@ class ApiController < ApplicationController
   def create_tracking_and_charge
     tracking_code = params[:tracking_number]
     amount = params[:amount]
-    EasyPost.api_key = ENV["EASYPOST_API_KEY"]
-    tracker = EasyPost::Tracker.create({
-      tracking_code: tracking_code
-    })
+    # EasyPost.api_key = ENV["EASYPOST_API_KEY"]
+    # tracker = EasyPost::Tracker.create({
+    #   tracking_code: tracking_code
+    # })
     commit = Commit.find(params[:commit_id])
-    commit.shipping_id = tracker.id
-    commit.save!
-    shipping_cost = 0
-    tracker.fees.each do |fee|
-      shipping_cost += fee.amount.to_f
-    end
+    # commit.shipping_id = tracker.id
+    # commit.save!
+    shipping_cost = 30
+    # tracker.fees.each do |fee|
+    #   shipping_cost += fee.amount.to_f
+    # end
 
-    charge = current_user.collect_payment(commit, shipping_cost)
-    render :json => {
-      :charge => charge,
-      :shipment => tracker
-    }
-    Mailer.retailer_sale_shipped(commit.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url).deliver_later
-  end
-
-  def create_credit_card
-    token = params[:token]
-    customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
-    customer.sources.create(:source => token)
-    redirect_to request.referrer
+    charge = current_user.collect_payment(commit)
+    # render :json => {
+    #   :charge => charge,
+    #   :shipment => tracker
+    # }
+    # Mailer.retailer_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url).deliver_later
   end
 
   def delete_credit_card
@@ -127,7 +120,7 @@ class ApiController < ApplicationController
     product.save
     render :json => {:product => product}
     product.commits.each do |commit|
-      Mailer.retailer_discount_hit(commit.user, commit, product).deliver_later
+      # Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
       commit.status = 'discount_granted'
       commit.save(validate: false)
     end

@@ -34,6 +34,12 @@
           Account
         </a>
       </h6>
+    <% elsif current_user.is_admin? %>
+      <h6>
+        <a class='nav-category black-text valign' href="/admin">
+          Account
+        </a>
+      </h6>
     <% end %>
     <div class="col m2 hidden-sm valign">
       <form>

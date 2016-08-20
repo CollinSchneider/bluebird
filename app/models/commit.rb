@@ -4,12 +4,14 @@ class Commit < ActiveRecord::Base
   belongs_to :product
 
   before_validation(on: :create) do
-    # self.set_product_start_data
+    self.uuid = SecureRandom.uuid
+    self.status = 'live'
   end
 
-  def create_uuid
-    self.uuid = SecureRandom.uuid
-    self.save
+  def set_primary_card_id
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    customer = Stripe::Customer.retrieve(self.retailer.stripe_id)
+    self.card_id = customer.default_source
   end
 
 end

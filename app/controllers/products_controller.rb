@@ -2,9 +2,11 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find(params[:id])
-    if Time.now > @product.end_time
-      redirect_to shop_path
-    end
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+    # if Time.now > @product.end_time
+    #   redirect_to shop_path
+    # end
     @company_products = Product.where('wholesaler_id = ? AND status = ? AND id != ?', @product.wholesaler_id, 'live', @product.id).order(current_sales: :desc).limit(3)
     @similar_products = Product.where('category = ? AND status = ? AND id != ?', @product.category, 'live', @product.id).order(current_sales: :desc).limit(3)
   end

@@ -1,0 +1,23 @@
+<div class="row">
+
+  <%= render partial: 'partials/wholesaler_profile_nav' %>
+
+  <div class="col s12 m8 offset-m3 center-align">
+    <h6 class='green-text'><%= flash[:success] %></h6>
+    <div class="row">
+      <h4><%= @company.company_name%></h4>
+    </div>
+    <div class="row">
+      <%= form_for @company do |f| %>
+        <textarea name="company[bio]" rows="8" cols="40" placeholder="Company Bio"><%= @company.bio %></textarea>
+        <div class="input-field">
+          <label>Location</label>
+          <input type="text" name="company[location]" value="<%= @company.location %>">
+        </div>
+        <input type="submit" value="Update Company Info" class="btn">
+      <% end %>
+    </div>
+  </div>
+
+
+</div>

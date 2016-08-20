@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160818001708) do
+ActiveRecord::Schema.define(version: 20160820145355) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 20160818001708) do
   add_index "admins", ["user_id"], name: "index_admins_on_user_id", using: :btree
 
   create_table "commits", force: :cascade do |t|
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
     t.integer  "amount"
     t.string   "status"
     t.integer  "product_id"
@@ -36,6 +36,10 @@ ActiveRecord::Schema.define(version: 20160818001708) do
     t.boolean  "pdf_generated"
     t.string   "uuid"
     t.integer  "retailer_id"
+    t.boolean  "card_declined"
+    t.datetime "card_decline_date"
+    t.string   "card_id"
+    t.string   "declined_reason"
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
@@ -47,6 +51,8 @@ ActiveRecord::Schema.define(version: 20160818001708) do
     t.string   "bio"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.string   "location"
+    t.string   "website"
   end
 
   add_index "companies", ["user_id"], name: "index_companies_on_user_id", using: :btree
@@ -61,6 +67,15 @@ ActiveRecord::Schema.define(version: 20160818001708) do
 
   add_index "milestones", ["batch_id"], name: "index_milestones_on_batch_id", using: :btree
   add_index "milestones", ["product_id"], name: "index_milestones_on_product_id", using: :btree
+
+  create_table "product_features", force: :cascade do |t|
+    t.integer  "product_id"
+    t.string   "feature"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "product_features", ["product_id"], name: "index_product_features_on_product_id", using: :btree
 
   create_table "product_images", force: :cascade do |t|
     t.integer  "product_id"
@@ -162,12 +177,14 @@ ActiveRecord::Schema.define(version: 20160818001708) do
     t.string   "stripe_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean  "approved"
   end
 
   add_index "wholesalers", ["user_id"], name: "index_wholesalers_on_user_id", using: :btree
 
   add_foreign_key "admins", "users"
   add_foreign_key "companies", "users"
+  add_foreign_key "product_features", "products"
   add_foreign_key "product_images", "products"
   add_foreign_key "product_tokens", "products"
   add_foreign_key "retailers", "users"

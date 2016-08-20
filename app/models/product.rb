@@ -1,7 +1,10 @@
 class Product < ActiveRecord::Base
 
   belongs_to :wholesaler
+
   has_many :commits
+  has_many :product_features
+  has_many :product_features
 
   has_one :product_token
 
@@ -83,7 +86,7 @@ class Product < ActiveRecord::Base
       progress_class = 'meter col s8 offset-s2 no-padding'
     end
     return {
-      'progress_bar' => progress,
+      'progress_bar' => "width: #{progress.floor}%",
       'percent_to_discount' => percentage.floor,
       'class' => progress_class
     }
@@ -126,13 +129,22 @@ class Product < ActiveRecord::Base
   def self.expire_product
     products = Product.where('status = ? AND end_time <= ?', 'live', Time.now)
     products.each do |product|
-      if product.current_sales.to_f >= product.goal.to_f
+      if product.commits.sum(:amount).to_f*product.discount.to_f >= product.goal.to_f
+      # if product.current_sales.to_f >= product.goal.to_f
         product.status = 'goal_met'
         product.save
         product.commits.each do |commit|
           commit.status = 'goal_met'
           commit.save(validate: false)
-          Mailer.retailer_discount_hit(commit.user, commit, product).deliver_later
+          charge = product.wholesaler.user.collect_payment(commit)
+          if charge[1]
+            Mailer.retailer_discount_hit(commit.user, commit, product).deliver_later
+          else
+            commit.card_declined = true
+            commit.card_decline_date = Time.now
+            commit.save(validate: false)
+            # Send card failure email
+          end
         end
         Mailer.wholesaler_discount_hit(product.user, product).deliver_later
       else

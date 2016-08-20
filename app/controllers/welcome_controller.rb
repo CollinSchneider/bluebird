@@ -1,5 +1,6 @@
 require 'stripe'
 class WelcomeController < ApplicationController
+  before_action :redirect_if_not_logged_in
 
   def shop
     authenticate_anybody
@@ -257,6 +258,11 @@ class WelcomeController < ApplicationController
     @products = Product.where('id in (
       select product_id from product_tokens where expiration_datetime > ?
     )', Time.now).page(params[:page]).per_page(3)
+  end
+
+  private
+  def redirect_if_not_logged_in
+    redirect_to '/users' if current_user.nil?
   end
 
 end

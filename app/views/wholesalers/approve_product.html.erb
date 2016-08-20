@@ -99,26 +99,26 @@
       </div>
       <div class="row">
         <div class="col s4">
-          <%= image_tag @product.main_image.url(:medium), :class => 'responsive-img' %>
+          <%= image_tag @product.main_image.url(:medium), :class => 'responsive-img materialboxed' %>
         </div>
         <% if !@product.photo_two_file_name.nil? %>
           <div class="col s2">
-            <%= image_tag @product.photo_two.url(:medium), :class => 'responsive-img' %>
+            <%= image_tag @product.photo_two.url(:medium), :class => 'responsive-img materialboxed' %>
           </div>
         <% end %>
         <% if !@product.photo_three_file_name.nil? %>
           <div class="col s2">
-            <%= image_tag @product.photo_three.url(:medium), :class => 'responsive-img' %>
+            <%= image_tag @product.photo_three.url(:medium), :class => 'responsive-img materialboxed' %>
           </div>
         <% end %>
         <% if !@product.photo_four_file_name.nil? %>
           <div class="col s2">
-            <%= image_tag @product.photo_four.url(:medium), :class => 'responsive-img' %>
+            <%= image_tag @product.photo_four.url(:medium), :class => 'responsive-img materialboxed' %>
           </div>
         <% end %>
         <% if !@product.photo_five_file_name.nil? %>
           <div class="col s2">
-            <%= image_tag @product.photo_five.url(:medium), :class => 'responsive-img' %>
+            <%= image_tag @product.photo_five.url(:medium), :class => 'responsive-img materialboxed' %>
           </div>
         <% end %>
       </div>

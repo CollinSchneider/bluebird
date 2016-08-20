@@ -3,16 +3,18 @@ class WholesalersController < ApplicationController
   layout 'wholesaler'
   before_action :authenticate_wholesaler
 
-  def signup
-  end
-
   def profile
+    @commits_where_card_declined = current_user.wholesaler.products.where('
+                                              products.status = ? OR products.status = ?',
+                                              'goal_met', 'discount_granted').joins(:commits).where('
+                                                shipping_id IS NULL AND card_declined = ?
+                                              ', true).count
     @needs_attention = current_user.wholesaler.products.where('status = ?', 'needs_attention')
     @needs_shipping = current_user.wholesaler.products.where('
                                               products.status = ? OR products.status = ?',
                                               'goal_met', 'discount_granted').joins(:commits).where('
-                                                shipping_id IS NULL
-                                              ')
+                                                shipping_id IS NULL AND card_declined != ?
+                                              ', true)
     @receipts_to_generate = @needs_shipping.where('pdf_generated != ?', false)
   end
 
@@ -94,9 +96,17 @@ class WholesalersController < ApplicationController
     end
   end
 
+  def company
+    @wholesaler = current_user.wholesaler
+    @company = current_user.company
+    if request.put?
+      #
+    end
+  end
+
   def needs_shipping
     product_array = current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').pluck(:id).to_a
-    @need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL', product_array)
+    @need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL AND card_declined != ?', product_array, true)
     @receipts_to_generate = @need_to_ship.where('pdf_generated != ?', false)
 
     respond_to do |format|

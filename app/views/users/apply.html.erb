@@ -14,13 +14,13 @@
       <div class="col s12">
         <div class="card center white-text z-depth-5" id='login-container'>
           <div class="card-content white-text">
-            <span class="card-title white-text" id='logo'>Sign Up</span>
+            <span class="card-title white-text" id='logo'>Wholesaler Application</span>
             <div class="row">
               <p class="red-text"> <%= flash[:error] %> </p>
             </div>
             <div class="row">
               <div class="input-field col s12" id='login-content' style="color:black">
-                <%= form_for User.new do |f| %>
+                <%= form_for User.new, url: '/api/wholesalers/apply' do |f| %>
                   <div class="input-field">
                     <%= f.label "First Name", :class =>'white-text' %>
                     <%= f.text_field :first_name, :class =>'white-text' %>
@@ -30,8 +30,16 @@
                     <%= f.text_field :last_name, :class =>'white-text' %>
                   </div>
                   <div class="input-field">
+                    <label class='white-text'>Phone Number</label>
+                    <%= f.text_field :phone_number, :class => 'white-text' %>
+                  </div>
+                  <div class="input-field">
                     <label class="white-text">Company Name</label>
                     <input type="text" name="company[company_name]" class="white-text">
+                  </div>
+                  <div class="input-field">
+                    <label class="white-text">Company Website</label>
+                    <input type="text" name="company[website]" class="white-text">
                   </div>
                   <div class="input-field">
                     <%= f.label :email, :class =>'white-text' %>
@@ -45,7 +53,7 @@
                     <%= f.label "Confirm Password", :class => 'white-text' %>
                     <%= f.password_field :password_confirmation, :class => 'white-text' %> <br>
                   </div>
-                    <input type="hidden" name="user_type" value="retailer">
+                    <input type="hidden" name="user_type" value="wholesaler">
                   <!-- <div class="input-field">
                     <select name="user_type" required class="white-text">
                       <option disabled="disabled" selected class="white-text">Select</option>
@@ -53,12 +61,12 @@
                       <option value="retailer" class="white-text">Retailer</option>
                     </select>
                   </div> -->
-                  <div class="input-field">
+                  <!-- <div class="input-field">
                     <label class="white-text">Beta Code</label>
                     <input type="password" name="beta_code" class="white-text">
-                  </div>
+                  </div> -->
                   <div class="input-field">
-                    <%= f.submit "Sign Up", :class => 'btn white black-text' %>
+                    <%= f.submit "Apply", :class => 'btn white black-text' %>
                   </div>
                 <% end %>
               </div>

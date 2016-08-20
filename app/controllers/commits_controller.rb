@@ -2,26 +2,28 @@ class CommitsController < ApplicationController
 
   def create
     commit = Commit.create(commit_params)
-    if Time.now < commit.product.end_time
+    # if Time.now < commit.product.end_time
       if commit.amount <= commit.product.quantity
         commit.product.quantity -= commit.amount
         commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
         commit.product.save
-        commit.status = 'live'
         commit.retailer_id = current_user.retailer.id
-        commit.create_uuid
+        commit.set_primary_card_id
         commit.save
       else
-        commit.delete
+        commit.destroy
         flash[:error] = "Sorry, only #{commit.product.quantity} in inventory!"
       end
-    end
+    # else
+    #   commit.destroy
+    #   flash[:error] = "Nice try, this product expired"
+    # end
     redirect_to request.referrer
   end
 
   def show
     @commit = Commit.find(params[:id])
-    authenticate_retailer_commit(@commit)
+    # authenticate_retailer_commit(@commit)
   end
 
   def edit

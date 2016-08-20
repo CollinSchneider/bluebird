@@ -45,7 +45,7 @@
       <h5 class='now-price' style="display: inline-block"><strong>$<%= @product.discount %></strong></h5>
     </div>
     <div class="row">
-      <h5><%= @product.description %></h6>
+      <p><%= @product.description %></p>
     </div>
     <% if @product.wholesaler.user.contactable %>
       <h5>Contact Seller:</h5>
@@ -55,7 +55,7 @@
 
     <div class="row">
       <div class="<%= @product.percentage["class"] %>">
-        <span style="width: <%= @product.percentage["progress"] %>%"><span></span></span>
+        <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
       </div>
       <div class="row col s12">
         <h6><%= '%.0f' % @product.percentage["percent_to_discount"] %>% to discount</h6>
@@ -83,13 +83,32 @@
           </div>
         <% elsif users_orders != [] %>
           <h4><%= link_to "Ordered #{users_orders[0].amount}", commit_path(users_orders[0].id) %> </h4>
+          <h5><strong>$<%= '%.2f' % ((users_orders[0].amount.to_f*@product.price.to_f) - (users_orders[0].amount.to_f*@product.discount.to_f)) %> in savings</strong></h5>
+          <div class="row">
+            <h6>Upon expiration, you would be charged from this credit card:</h6>
+            <% @default_card = @stripe_customer.sources.retrieve(users_orders[0].card_id) %>
+            <h6>**** **** **** <%= @default_card.last4 %></h6>
+            <h6><%= @default_card.brand %></h6>
+            <h6>Exp: <%= @default_card.exp_month %>/<%= @default_card.exp_year %></h6>
+          </div>
+          <div class="row">
+            <h6>Change payment method:</h6>
+            <% @stripe_customer.sources.each do |source| %>
+              <% if source.id != users_orders[0].card_id %>
+                <form class='change-payment'>
+                  <input type="hidden" class='card_id' value="<%= source.id %>">
+                  <input type="hidden" class='commit_id' value="<%= users_orders[0].id %>">
+                  <input type='submit' class="btn" value="<%= source.brand %>: <%= source.last4 %>" />
+                </form>
+              <% end %>
+            <% end %>
+          </div>
         <% end %>
       <% end %>
 
     <% end %>
   </div>
 </div>
-
 <% if !@company_products.empty? %>
   <div class="col s10 offset-s1 row">
     <h5><a href="/company/<%= @product.wholesaler.user.company.company_key %>">More products from <%= @product.wholesaler.user.company.company_name %></a></h5>
@@ -195,16 +214,15 @@
 
 <script>
   $(document).ready(function(){
+    changePayment()
     alternateImage()
     $('.materialboxed').materialbox();
-    console.log('load');
     $('.product').mouseover(function(){
       $(this).attr('class', 'product z-depth-4')
     })
     $('.product').mouseout(function(){
       $(this).attr('class', 'product')
     })
-    // animateMeter()
     setTime()
     setInterval(timer, 1000);
   })
@@ -254,6 +272,24 @@
     }
   }
 
+  function changePayment(){
+    $('.change-payment').submit(function(e){
+      e.preventDefault()
+      var cardId = $(this).find('.card_id').val()
+      var commitId = $(this).find('.commit_id').val()
+      $.ajax({
+        method: 'POST',
+        url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_id=' +commitId,
+        success: function(data){
+          console.log(data);
+          if(data.success){
+            location.reload()
+          }
+        }
+       })
+    })
+  }
+
   // var mainImage = $('<img class = "responsive-img main-image materialboxed"/>')
   // mainImage.attr( "src" , "<%= image_path "#{@product.main_image.url(:large)}" %>" );
   // mainImage.load(function(){
@@ -292,18 +328,6 @@
   //     $('#photo-five').replaceWith(secondImage)
   //   })
   // }
-
-  function animateMeter(){
-    $(".meter > span").each(function() {
-      $(this)
-      .data("origWidth", $(this).width())
-      .width(0)
-      .animate({
-        width: $(this).data("origWidth") // or + "%" if fluid
-      }, 1200);
-    });
-  }
-
 
   function alternateImage(){
     $('.alternate-image').mouseover(function(){

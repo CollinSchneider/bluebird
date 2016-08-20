@@ -32,6 +32,13 @@
       </div>
     </div>
 
+    <% if @commits_where_card_declined > 0 %>
+      <div class="row center-align">
+        <h6>*Note: <%= @commits_where_card_declined %> of your purchase orders have been declined because the retailer's card defaulted.</h6>
+        <h6>We will keep an eye on this, and you will be notified shortly when this is resolved.</h6>
+      </div>
+    <% end %>
+
   <% else %>
 
     <div class="center-align col s8 offset-s2">

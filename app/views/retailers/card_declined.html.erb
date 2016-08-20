@@ -1,0 +1,15 @@
+<div class="row">
+  <div class="col s8 offset-s2 center-align">
+    <h5>Whoops! Looks like your card was declined for a previous purchase.</h5>
+    <h5>Let's fix this as soon as possible, otherwise we may have to cancel your order</h5>
+    <div class="row">
+      <div class="row border col s6 offset-s3">
+        <% declined_card = @stripe_customer.sources.retrieve(@commit.card_id) %>
+        <h6><%= @commit.product.title %></h6>
+        <h6>Declined Card: <%= declined_card.brand %> **** **** **** <%= declined_card.last4%></h6>
+        <h6>Declined on: <%= @commit.card_decline_date.strftime('%b %d') %></h6>
+        <h6>Declined reason: <%= @commit.declined_reason %></h6>
+      </div>
+    </div>
+  </div>
+</div>

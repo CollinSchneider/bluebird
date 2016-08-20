@@ -13,22 +13,47 @@ class User < ActiveRecord::Base
 
   has_one :wholesaler
   has_one :retailer
+  has_one :admin
   has_one :company
 
   before_create(on: :save) do
     self.uuid = SecureRandom.uuid
   end
 
-  def create_uuid
-    self.uuid = SecureRandom.uuid
-  end
-
-  def collect_payment(commit, shipping_cost)
+  def collect_shipping_charge(commit, shipping_cost)
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    customer_stripe_id = commit.user.retailer_stripe_id
+    customer_stripe_id = commit.retailer.stripe_id
     customer_card = Stripe::Customer.retrieve(customer_stripe_id).default_source
 
-    dollar_amount = (commit.amount.to_f*commit.product.discount.to_f) + shipping_cost
+    charge_attrs = {
+      amount: 1000,
+      currency: 'usd',
+      customer: customer_stripe_id,
+      source: customer_card,
+      description: "#{commit.product.title} shipping cost",
+      destination: self.wholesaler.stripe_id
+    }
+    begin
+      charge = Stripe::Charge.create( charge_attrs )
+      success = true
+      return success, charge
+    rescue Stripe::CardError => e
+      success = false
+      commit.card_declined = true
+      commit.card_decline_date = Time.now
+      commit.declined_reason = e.message
+      commit.save!
+      return success, e.message
+    end
+  end
+
+  def collect_payment(commit)
+    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+    customer_stripe_id = commit.retailer.stripe_id
+    customer = Stripe::Customer.retrieve(customer_stripe_id)
+    customer_card = customer.sources.retrieve(commit.card_id)
+
+    dollar_amount = (commit.amount.to_f*commit.product.discount.to_f)
     stripe_amount = dollar_amount.to_f*100
     stripe_fee = (stripe_amount*0.029 + 30).floor
     bluebird_fee = (stripe_amount*0.05).floor
@@ -40,13 +65,26 @@ class User < ActiveRecord::Base
       source: customer_card,
       description: "#{commit.product.title} BlueBird.club purchase",
       application_fee: bluebird_fee + stripe_fee,
-      destination: self.stripe_credential.stripe_user_id
+      destination: self.wholesaler.stripe_id
     }
-    charge = Stripe::Charge.create( charge_attrs )
-    commit.stripe_charge_id = charge.id
-    commit.sale_amount = wholesaler_amount
-    commit.save!
-    return charge
+    begin
+      charge = Stripe::Charge.create( charge_attrs )
+      if !charge.nil?
+        success = true
+        commit.stripe_charge_id = charge.id
+        commit.sale_amount = wholesaler_amount
+        commit.card_declined = false
+        commit.save!
+        return charge, success
+      end
+    rescue Stripe::CardError => e
+      success = false
+      commit.card_declined = true
+      commit.card_decline_date = Time.now
+      commit.declined_reason = e.message
+      commit.save!
+      return e, success
+    end
   end
 
   def full_name
@@ -59,6 +97,10 @@ class User < ActiveRecord::Base
 
   def is_retailer?
     return self.retailer.present?
+  end
+
+  def is_admin?
+    return self.admin.present?
   end
 
 end

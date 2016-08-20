@@ -31,7 +31,6 @@ class RetailersController < ApplicationController
   def change_password
     if request.put?
       current_user.update(user_password_params)
-      current_user.save(validate: false)
       if current_user.save(validate: false)
         flash[:success] = "Password Updated"
       else
@@ -39,6 +38,14 @@ class RetailersController < ApplicationController
       end
       redirect_to request.referrer
     end
+  end
+
+  def card_declined
+    @commit = Commit.find(params[:order])
+    # @declined_commits = current_user.retailer.commits.where('card_declined = ?', true)
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    EasyPost.api_key = ENV['EASYPOST_API_KEY']
+    @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
   end
 
   private
