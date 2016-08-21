@@ -1,0 +1,41 @@
+<% @past_orders.each do |order| %>
+  <div class="border">
+    <div class="row valign-wrapper">
+      <div class="col s3">
+        <%= image_tag order.product.main_image.url(:medium), :class => 'responsive-img valign' %>
+      </div>
+      <div class="col s6" style="padding: 0px">
+        <h6>Order #<%= order.uuid %></h6>
+        <h5><stronger><%= order.product.title %></stronger></h5>
+        <h6>From: <a href="/company/<%=order.product.wholesaler.company.company_key%>"><%= order.product.wholesaler.company.company_name %></a></h6>
+        <h6><%= order.product.description %></h6>
+        <h6>Quantity: <%= order.amount %>x </h6>
+        <% if !order.shipping_id.nil? %>
+          <%
+            EasyPost.api_key = ENV['EASYPOST_API_KEY']
+            shipment = EasyPost::Tracker.retrieve(order.shipping_id)
+          %>
+          <h6>Shipment is <%= shipment.status.gsub('_', ' ') %></h6>
+          <h6>Estimated Arrival: <%= DateTime.parse(shipment.est_delivery_date).strftime('%l:%M %P on %b %d, %Y') %></h6>
+          <% last_tracked = shipment.tracking_details[shipment.tracking_details.length-1] %>
+          <h6>Currently in: <%= last_tracked.tracking_location.city.capitalize %>, <%= last_tracked.tracking_location.state %> at <%= DateTime.parse(last_tracked.datetime).strftime('%l:%M %P on %b %d, %Y') %></h6>
+          <h6><a target="_blank" href="<%= shipment.public_url %>">More shipping details</a></h6>
+        <% else %>
+          <h6>Order is not out for shipping yet, you will be notified with the shipment details when it has been shipped.</h6>
+        <% end %>
+      </div>
+      <div class="col s2 text-right">
+        <h6>$<%= order.product.discount.to_f*order.amount.to_f %></h6>
+        <% if !shipment.nil? %>
+          <h6>+ $<%= '%.2f' % shipment.fees[0].amount %> Shipping</h6>
+          <strong><hr></strong>
+          <h6><strong>$<%= '%.2f' % (order.product.discount.to_f*order.amount.to_f + shipment.fees[0].amount.to_f) %></strong></h6>
+        <% else %>
+          <h6>Shipping: calculated upon out for delivery</h6>
+          <strong><hr></strong>
+          <h5><strong>$<%= '%.2f' % (order.product.discount.to_f*order.amount.to_f) %></strong></h5>
+        <% end %>
+      </div>
+    </div>
+  </div>
+<% end %>

@@ -6,10 +6,147 @@
       <div class="row border col s6 offset-s3">
         <% declined_card = @stripe_customer.sources.retrieve(@commit.card_id) %>
         <h6><%= @commit.product.title %></h6>
+        <% if @commit.shipping_id.nil? %>
+          <h6>You still owe $<%= @commit.amount.to_f*@commit.product.discount.to_f%></h6>
+        <% else %>
+          <h6>You still owe $something for shipping</h6>
+        <% end %>
         <h6>Declined Card: <%= declined_card.brand %> **** **** **** <%= declined_card.last4%></h6>
         <h6>Declined on: <%= @commit.card_decline_date.strftime('%b %d') %></h6>
         <h6>Declined reason: <%= @commit.declined_reason %></h6>
       </div>
     </div>
+
+    <div class="row">
+      <h4 class='red-text error-message'></h4>
+      <h5>Change form of payment:</h5>
+      <% @stripe_customer.sources.each do |source| %>
+        <% if source.id != declined_card.id %>
+          <div class="row">
+            <button data="<%= source.id %>" class='update-payment btn'><%= source.brand %>: <%= source.last4 %></button>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="row">
+      <h5>Add new card:</h5>
+      <form class="credit-card-form col s8 offset-s2 center-align">
+        <div class="input-field">
+          <label>Card Holder Name</label>
+          <input id="card-name" type="text">
+        </div>
+        <div class="input-field">
+          <label>Credit Card Number</label>
+          <input id="card-number" type="text"> <br>
+        </div>
+        <div class="input-field">
+          <label>CVC</label>
+          <input id="card-cvc" type="text"> <br>
+        </div>
+        <div class="input-field">
+          <div class="row">
+            <div class="col s4 offset-s1">
+              <label>Exp Month</label>
+              <input id="exp-month" type="number">
+            </div>
+            <div class="col s1">
+              <h6>/</h6>
+            </div>
+            <div class="col s4">
+              <label>Exp Year</label>
+              <input id="exp-year" type="number"> <br>
+            </div>
+          </div>
+        </div>
+        <div class="input-field">
+          <label>Billing Zip Code</label>
+          <input id="billing-zip" type="text" value="">
+        </div>
+        <h6 class="red-text" id="payment-errors"></h6>
+        <input class="submit btn" type="submit" value="Add Another Card">
+      </form>
+    </div>
+
   </div>
 </div>
+
+<script>
+
+  function updatePayment(cardId){
+    $.ajax({
+      method: 'POST',
+      url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_id=<%=@commit.id%>',
+      success: function(data){
+        console.log(data);
+        if(data.success) {
+          location.reload()
+        } else {
+          $('.error-message').text(data.error)
+        }
+      }
+    })
+  }
+
+  $('.update-payment').click(function(){
+    var cardId = $(this).attr('data')
+    updatePayment(cardId)
+  })
+
+  var submittedForm;
+  $('form').submit(function(e){
+    e.preventDefault()
+    submittedForm = $(this)
+    var cardName = submittedForm.find($('#card-name')).val();
+    var cardNumber = submittedForm.find($('#card-number')).val();
+    var cardCvc = submittedForm.find($('#card-cvc')).val();
+    var expMonth = submittedForm.find($('#exp-month')).val();
+    var expYear = submittedForm.find($('#exp-year')).val();
+    var billingZip = submittedForm.find($('#billing-zip')).val()
+    var submitButton = submittedForm.find($('.submit'))
+    submitButton.val('Saving Card...')
+    submitButton.prop('disabled', true)
+    console.log(cardName + ', ' + cardNumber);
+    Stripe.card.createToken({
+      // customer: stripeCustomer,
+      name: cardName,
+      number: cardNumber,
+      cvc: cardCvc,
+      exp_month: expMonth,
+      exp_year: expYear,
+      address_zip: billingZip
+    }, stripeResponseHandler);
+  })
+
+
+  function stripeResponseHandler(status, response){
+    if(response.error){
+      submittedForm.find('#payment-errors').text(response.error.message)
+      submittedForm.find('.submit').prop("disabled", false)
+      submittedForm.find('.submit').val('Add Credit Card')
+      submittedForm.find('#billing-zip').val('')
+      submittedForm.find('#exp-year').val('')
+      submittedForm.find('#exp-month').val('')
+      submittedForm.find('#card-cvc').val('')
+      submittedForm.find('#card-number').val('')
+      submittedForm.find('#card-name').val('')
+    } else {
+      var token = response.id;
+      console.log(token);
+      $.ajax({
+        method: 'POST',
+        url: '/api/payments/create_credit_card?token=' + token,
+        success: function(data) {
+          console.log(data);
+          if(!data.success) {
+            $('#payment-errors').text(data.error)
+            submittedForm.find('.submit').prop('disabled', false)
+            submittedForm.find('.submit').val('Add Credit Card')
+          } else {
+            updatePayment(data.card.id)
+          }
+        }
+      })
+    }
+  }
+
+</script>

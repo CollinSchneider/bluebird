@@ -1,13 +1,12 @@
 require 'stripe'
 
 class User < ActiveRecord::Base
-  attr_accessor :updating
   has_secure_password
 
-  validates :password, presence: true, length: 8..20, unless: :updating
-  validates :email, presence: true, uniqueness: true, unless: :updating
-  validates :first_name, presence: true, unless: :updating
-  validates :last_name, presence: true, unless: :updating
+  validates :password, presence: true, length: 8..20
+  validates :email, presence: true, uniqueness: true
+  validates :first_name, presence: true
+  validates :last_name, presence: true
 
   has_many :shipping_addresses
 
@@ -23,11 +22,15 @@ class User < ActiveRecord::Base
   def collect_shipping_charge(commit, shipping_cost)
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
     customer_stripe_id = commit.retailer.stripe_id
-    customer_card = Stripe::Customer.retrieve(customer_stripe_id).default_source
-
+    customer = Stripe::Customer.retrieve(customer_stripe_id)
+    customer_card = customer.sources.retrieve(commit.card_id)
+    shipping_cost = 1000
+    application_fee = ((shipping_cost*0.029) + 30).to_i
+    # application_fee = stripe_fee*100
     charge_attrs = {
-      amount: 1000,
+      amount: shipping_cost,
       currency: 'usd',
+      application_fee: application_fee,
       customer: customer_stripe_id,
       source: customer_card,
       description: "#{commit.product.title} shipping cost",
@@ -83,7 +86,7 @@ class User < ActiveRecord::Base
       commit.card_decline_date = Time.now
       commit.declined_reason = e.message
       commit.save!
-      return e, success
+      return e.message, success
     end
   end
 

@@ -47,26 +47,26 @@ class UsersController < ApplicationController
         user = User.create(user_params)
         if user.save
           session[:user_id] = user.id
-            admin = Admin.new
-            admin.user_id = user.id
-            admin.save
-          #   company = Company.new
-          #   company.company_name = params[:company][:company_name]
-          #   company.user_id = user.id
-          #   company.save
-          # if params[:user_type] == 'retailer'
-          #   retailer = Retailer.new
-          #   retailer.user_id = user.id
-          #   retailer.save
-          #   Mailer.retailer_welcome_email(user).deliver_later
-          #   redirect_to '/retailer/accounts'
-          # elsif params[:user_type] == 'wholesaler'
-          #   wholesaler = Wholesaler.new
-          #   wholesaler.user_id = user.id
-          #   wholesaler.save
-          #   Mailer.wholesaler_welcome_email(user).deliver_later
-          #   redirect_to '/wholesaler/profile'
-          # end
+            # admin = Admin.new
+            # admin.user_id = user.id
+            # admin.save
+            company = Company.new
+            company.company_name = params[:company][:company_name]
+            company.user_id = user.id
+            company.save
+          if params[:user_type] == 'retailer'
+            retailer = Retailer.new
+            retailer.user_id = user.id
+            retailer.save
+            Mailer.retailer_welcome_email(user).deliver_later
+            redirect_to '/retailer/accounts'
+          elsif params[:user_type] == 'wholesaler'
+            wholesaler = Wholesaler.new
+            wholesaler.user_id = user.id
+            wholesaler.save
+            Mailer.wholesaler_welcome_email(user).deliver_later
+            redirect_to '/wholesaler/profile'
+          end
         else
           flash[:error] = user.errors.full_messages
           redirect_to request.referrer

@@ -10,7 +10,6 @@ class SessionsController < ApplicationController
 
       if user.is_retailer?
         session[:user_id] = user.id
-        binding.pry
         if user.retailer.needs_credit_card?
           redirect_to '/retailer/accounts'
         elsif user.retailer.needs_shipping_info?

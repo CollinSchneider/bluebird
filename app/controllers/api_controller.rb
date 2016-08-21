@@ -53,44 +53,6 @@ class ApiController < ApplicationController
   #   )
   # end
 
-  def create_shipping_address
-    street_one = params[:street_one]
-    street_two = params[:street_two]
-    city = params[:city]
-    state = params[:state]
-    zip = params[:zip]
-    company = params[:company]
-    phone = params[:phone]
-    EasyPost.api_key = ENV["EASYPOST_API_KEY"]
-    verifiable_address = EasyPost::Address.create(
-      verify: ["delivery"],
-      street1: street_one,
-      street2: street_two,
-      city: city,
-      state: state,
-      zip: zip,
-      country: "US",
-      company: company,
-      phone: phone
-    )
-    # render :json => {address: verifiable_address}
-    if verifiable_address.verifications.delivery.success
-      current_user.retailer.shipping_addresses.each do |address|
-        address.primary = false
-        address.save
-      end
-      local_address = ShippingAddress.new
-      local_address.retailer_id = current_user.retailer.id
-      local_address.address_id = verifiable_address.id
-      local_address.primary = true
-      local_address.save
-    else
-      flash[:error] = []
-      flash[:error] << verifiable_address.verifications.delivery.errors
-    end
-    redirect_to request.referrer
-  end
-
   def save_shipping_id
     address_id = params[:address_id]
     shipping_address = ShippingAddress.create(:address_id => address_id, :user_id => current_user.id)
@@ -122,6 +84,7 @@ class ApiController < ApplicationController
     product.commits.each do |commit|
       # Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
       commit.status = 'discount_granted'
+      current_user.collect_payment(commit)
       commit.save(validate: false)
     end
   end

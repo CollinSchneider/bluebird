@@ -7,7 +7,10 @@ class Api::PaymentsController < ApiController
     begin
       card = customer.sources.create(:source => token)
       if !card.nil?
-        render :json => {:success => true}
+        render :json => {
+          :success => true,
+          :card => card
+        }
       end
     rescue Stripe::CardError => e
       flash[:error] = e.message
@@ -41,15 +44,37 @@ class Api::PaymentsController < ApiController
     commit = Commit.find(params[:commit_id])
     card_id = params[:card_id]
     commit.card_id = card_id
+    commit.save(validate: false)
     if commit.card_declined
       commit.card_declined = false
       commit.card_decline_date = nil
+      commit.declined_reason = nil
+      commit.save(validate: false)
     end
-    if commit.save
-      render :json => {success: true}
+
+    if commit.stripe_charge_id.nil? && commit.status == 'goal_met'
+      charge = commit.product.wholesaler.user.collect_payment(commit)
+
+      if charge[1]
+        if commit.save(validate: false)
+          render :json => {success: true}
+        else
+          render :json => {success: false}
+        end
+
+      else
+        render :json => {
+          success: false,
+          error: charge[0]
+        }
+      end
+
+    # elsif !commit.stripe_charge_id.nil? && ## Need to see if shipping has failed
+    #   charge = commit.product.wholesaler.user.collect_shipping_charge(commit)
     else
-      render :json => {success: false}
+      render :json => {success: true}
     end
+
   end
 
 end

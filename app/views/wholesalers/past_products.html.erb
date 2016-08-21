@@ -3,11 +3,17 @@
 
   <div class="col s12 m8 offset-m3">
 
-    <div id ="products" class="row" style='margin-top: 20px'>
-      <%= render partial: 'partials/products' %>
-    </div>
-
-    <%= will_paginate @products %>
+    <% if !@products.empty? %>
+      <div id ="products" class="row" style='margin-top: 20px'>
+        <%= render partial: 'partials/products' %>
+      </div>
+      <%= will_paginate @products %>
+    <% else %>
+      <div class="center-align">
+        <h6>No past products, let's list some new products!</h6>
+        <a class='btn' href="/wholesaler/profile">Sell</a>
+      </div>
+    <% end %>
 
   </div>
 </div>

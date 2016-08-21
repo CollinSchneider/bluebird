@@ -2,17 +2,25 @@
 <div class="row">
 <%= render partial: 'partials/wholesaler_profile_nav' %>
 
-  <div class="col s12 m10 offset-m2 offset-l1 center-align">
+  <div class="col s12 m9 offset-m2 center-align">
 
   <h4>Analytics</h4>
   <div class="row">
-    <div class="col s6">
+    <div class="col s3">
       <h5>Total Purchase Orders:</h5>
       <h5><strong><%= @commits.sum(:amount) %></strong></h5>
     </div>
-    <div class="col s6">
+    <div class="col s3">
       <h5>Total Sales:</h5>
       <h5><strong>$<%= @total_sales %></strong></h5>
+    </div>
+    <div class="col s3">
+      <h5>Average Customer Sale</h5>
+      <h5><strong>$<%= '%.2f' % (@total_sales/@commits.sum(:amount)) %></strong></h5>
+    </div>
+    <div class="col s3">
+      <h5>Rate of Goal Hit</h5>
+      <h5><strong><%= current_user.wholesaler.products.count/current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').count*100 %>%</strong></h5>
     </div>
   </div>
 
@@ -24,7 +32,7 @@
         <div class="product">
           <h5 class="truncate"><%= product.title %></h5>
           <%= image_tag product.main_image.url(:thumb), :class => 'responsive-img' %>
-          <h5>$<%= product.current_sales %></h5>
+          <h5>$<%= product.total_sales %></h5>
         </div>
       </div>
     </a>

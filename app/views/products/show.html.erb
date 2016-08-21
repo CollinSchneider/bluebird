@@ -86,10 +86,10 @@
           <h5><strong>$<%= '%.2f' % ((users_orders[0].amount.to_f*@product.price.to_f) - (users_orders[0].amount.to_f*@product.discount.to_f)) %> in savings</strong></h5>
           <div class="row">
             <h6>Upon expiration, you would be charged from this credit card:</h6>
-            <% @default_card = @stripe_customer.sources.retrieve(users_orders[0].card_id) %>
-            <h6>**** **** **** <%= @default_card.last4 %></h6>
-            <h6><%= @default_card.brand %></h6>
-            <h6>Exp: <%= @default_card.exp_month %>/<%= @default_card.exp_year %></h6>
+            <% @commit_card = @stripe_customer.sources.retrieve(users_orders[0].card_id) %>
+            <h6>**** **** **** <%= @commit_card.last4 %></h6>
+            <h6><%= @commit_card.brand %></h6>
+            <h6>Exp: <%= @commit_card.exp_month %>/<%= @commit_card.exp_year %></h6>
           </div>
           <div class="row">
             <h6>Change payment method:</h6>
@@ -283,7 +283,7 @@
         success: function(data){
           console.log(data);
           if(data.success){
-            location.reload()
+            // location.reload()
           }
         }
        })

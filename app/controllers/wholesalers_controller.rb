@@ -68,11 +68,10 @@ class WholesalersController < ApplicationController
     goal_met_products = current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted')
     product_ids = goal_met_products.pluck(:id)
     @total_commits = Commit.where('product_id in (?)', product_ids).sum(:amount)
-    total_sales = 0
-    goal_met_products.pluck(:discount).each do |sale|
-      total_sales += sale.to_f
+    @total_sales = 0
+    goal_met_products.each do |product|
+      @total_sales += product.total_sales
     end
-    @total_sales = total_sales*@commits.sum(:amount).to_f
     @top_sellers = goal_met_products.order(current_sales: :desc).limit(5)
   end
 

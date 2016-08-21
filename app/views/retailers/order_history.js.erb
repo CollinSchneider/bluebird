@@ -1,0 +1,6 @@
+$('#past-orders').append("<%= j render partial: 'partials/past_orders' %>")
+<% if @past_orders.next_page %>
+  $('.pagination').replaceWith('<%= j will_paginate(@past_orders) %>')
+<% else %>
+  $('.pagination').remove()
+<% end %>

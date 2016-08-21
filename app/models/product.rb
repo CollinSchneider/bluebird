@@ -99,6 +99,11 @@ class Product < ActiveRecord::Base
     return percentage
   end
 
+  def total_sales
+    total_commits = self.commits.sum(:amount).to_f
+    return total_commits*self.discount.to_f
+  end
+
   def calc_end_time
     return self.end_time.strftime('%l:%M %P on %b %d, %Y')
   end

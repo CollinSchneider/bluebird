@@ -1128,3 +1128,309 @@ Running via Spring preloader in process 29643
 	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
 	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
 	from -e:1:in `<main>'
+Running via Spring preloader in process 29777
+Running via Spring preloader in process 29792
+/usr/local/lib/ruby/gems/2.3.0/gems/activemodel-4.2.5/lib/active_model/attribute_methods.rb:433:in `method_missing': undefined method `user' for #<Product:0x007f8f1131ac20> (NoMethodError)
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:149:in `block in expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:131:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 29946
+[1] pry(#<User>)> [1] pry(#<User>)> /usr/local/lib/ruby/gems/2.3.0/gems/activemodel-4.2.5/lib/active_model/attribute_methods.rb:433:in `method_missing': undefined method `user' for #<Commit:0x007f8f135eaea8> (NoMethodError)
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:141:in `block (2 levels) in expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:136:in `block in expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:131:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+
+From: /Users/cschneider/PersonalCode/BlueBirdClub/app/models/user.rb @ line 73 User#collect_payment:
+
+    68:       source: customer_card,
+    69:       description: "#{commit.product.title} BlueBird.club purchase",
+    70:       application_fee: bluebird_fee + stripe_fee,
+    71:       destination: self.wholesaler.stripe_id
+    72:     }
+ => 73:     binding.pry
+    74:     begin
+    75:       charge = Stripe::Charge.create( charge_attrs )
+    76:       if !charge.nil?
+    77:         success = true
+    78:         commit.stripe_charge_id = charge.id
+
+[0G
+From: /Users/cschneider/PersonalCode/BlueBirdClub/app/models/user.rb @ line 82 User#collect_payment:
+
+    77:         success = true
+    78:         commit.stripe_charge_id = charge.id
+    79:         commit.sale_amount = wholesaler_amount
+    80:         commit.card_declined = false
+    81:         commit.save!
+ => 82:         binding.pry
+    83:         return charge, success
+    84:       end
+    85:     rescue Stripe::CardError => e
+    86:       success = false
+    87:       commit.card_declined = true
+
+[0GRunning via Spring preloader in process 29990
+Running via Spring preloader in process 30052
+[1] pry(#<User>)> [1] pry(#<User>)> [1] pry(#<User>)> [1] pry(#<User>)> [1] pry(#<User>)> [1] pry(#<User>)> /usr/local/lib/ruby/gems/2.3.0/gems/activemodel-4.2.5/lib/active_model/attribute_methods.rb:433:in `method_missing': undefined method `user' for #<Product:0x007f8f1358b840> (NoMethodError)
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:149:in `block in expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:131:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+
+From: /Users/cschneider/PersonalCode/BlueBirdClub/app/models/user.rb @ line 77 User#collect_payment:
+
+    72:       source: customer_card,
+    73:       description: "#{commit.product.title} BlueBird.club purchase",
+    74:       application_fee: bluebird_fee + stripe_fee,
+    75:       destination: self.wholesaler.stripe_id
+    76:     }
+ => 77:     binding.pry
+    78:     begin
+    79:       charge = Stripe::Charge.create( charge_attrs )
+    80:       if !charge.nil?
+    81:         success = true
+    82:         commit.stripe_charge_id = charge.id
+
+[0G
+From: /Users/cschneider/PersonalCode/BlueBirdClub/app/models/user.rb @ line 95 User#collect_payment:
+
+     90:       success = false
+     91:       commit.card_declined = true
+     92:       commit.card_decline_date = Time.now
+     93:       commit.declined_reason = e.message
+     94:       commit.save!
+ =>  95:       binding.pry
+     96:       return e.message, success
+     97:     end
+     98:   end
+     99: 
+    100:   def full_name
+
+[0G
+From: /Users/cschneider/PersonalCode/BlueBirdClub/app/models/user.rb @ line 77 User#collect_payment:
+
+    72:       source: customer_card,
+    73:       description: "#{commit.product.title} BlueBird.club purchase",
+    74:       application_fee: bluebird_fee + stripe_fee,
+    75:       destination: self.wholesaler.stripe_id
+    76:     }
+ => 77:     binding.pry
+    78:     begin
+    79:       charge = Stripe::Charge.create( charge_attrs )
+    80:       if !charge.nil?
+    81:         success = true
+    82:         commit.stripe_charge_id = charge.id
+
+[0G
+From: /Users/cschneider/PersonalCode/BlueBirdClub/app/models/user.rb @ line 95 User#collect_payment:
+
+     90:       success = false
+     91:       commit.card_declined = true
+     92:       commit.card_decline_date = Time.now
+     93:       commit.declined_reason = e.message
+     94:       commit.save!
+ =>  95:       binding.pry
+     96:       return e.message, success
+     97:     end
+     98:   end
+     99: 
+    100:   def full_name
+
+[0G
+From: /Users/cschneider/PersonalCode/BlueBirdClub/app/models/user.rb @ line 77 User#collect_payment:
+
+    72:       source: customer_card,
+    73:       description: "#{commit.product.title} BlueBird.club purchase",
+    74:       application_fee: bluebird_fee + stripe_fee,
+    75:       destination: self.wholesaler.stripe_id
+    76:     }
+ => 77:     binding.pry
+    78:     begin
+    79:       charge = Stripe::Charge.create( charge_attrs )
+    80:       if !charge.nil?
+    81:         success = true
+    82:         commit.stripe_charge_id = charge.id
+
+[0G
+From: /Users/cschneider/PersonalCode/BlueBirdClub/app/models/user.rb @ line 95 User#collect_payment:
+
+     90:       success = false
+     91:       commit.card_declined = true
+     92:       commit.card_decline_date = Time.now
+     93:       commit.declined_reason = e.message
+     94:       commit.save!
+ =>  95:       binding.pry
+     96:       return e.message, success
+     97:     end
+     98:   end
+     99: 
+    100:   def full_name
+
+[0GRunning via Spring preloader in process 30120
+Running via Spring preloader in process 30165
+/usr/local/lib/ruby/gems/2.3.0/gems/activemodel-4.2.5/lib/active_model/attribute_methods.rb:433:in `method_missing': undefined method `user' for #<Product:0x007f8f168dc500> (NoMethodError)
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:149:in `block in expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:131:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 30272
+/usr/local/lib/ruby/gems/2.3.0/gems/activemodel-4.2.5/lib/active_model/attribute_methods.rb:433:in `method_missing': undefined method `user' for #<Product:0x007f8f11c60780> (NoMethodError)
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:163:in `block in expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:136:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 30386
+Running via Spring preloader in process 30398
+Running via Spring preloader in process 30457
+/usr/local/lib/ruby/gems/2.3.0/gems/activemodel-4.2.5/lib/active_model/attribute_methods.rb:433:in `method_missing': undefined method `user' for #<Commit:0x007f8f1701fbc8> (NoMethodError)
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:146:in `block (2 levels) in expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:141:in `block in expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/delegation.rb:46:in `each'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:136:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 1037

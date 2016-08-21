@@ -65,4 +65,10 @@ class Mailer < ApplicationMailer
     mail(to: @user.email, subject: "BlueBird password reset")
   end
 
+  def card_declined(user, commit)
+    @user = user
+    email_with_name = %("#{@user.full_name}" <#{@user.email}>)
+    mail(to: @user.email, subject: "BlueBird credit card error")
+  end
+
 end

@@ -7,7 +7,7 @@
 
   <% if @retailer.primary_address.nil? %>
     <h5>Before you can make any purchase orders, you must first add a shipping address</h5>
-    <%= form_tag('/api/create_shipping_address', method: :post) do %>
+    <%= form_tag('/api/shipping/create_shipping_address', method: :post) do %>
       <div class="input-field">
         <label>Street Address One</label>
         <input id="street-line-one" type="text" name="street_one">
@@ -28,6 +28,8 @@
         <label>Zip</label>
         <input id="zip" type="text" name="zip">
       </div>
+      <div class='errors-div'>
+      </div>
       <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
     <% end %>
 
@@ -45,3 +47,37 @@
     <% end %>
 
 </div>
+
+<script>
+  $('form').submit(function(e){
+    e.preventDefault()
+    var form = $(this)
+    var streetLine1 = form.find('#street-line-one').val()
+    var streetLine2 = form.find('#street-line-two').val()
+    var city = form.find('#city').val()
+    var state = form.find('#state').val()
+    var zip = form.find('#zip').val()
+    form.find('#submit-address').prop('disabled', true)
+    form.find('#submit-address').text('Saving...')
+    $('.errors-div').text('')
+    $.ajax({
+      method: 'POST',
+      url: '/api/shipping/create_shipping_address?street_line_1=' +streetLine1+ '&street_line_2=' +streetLine2+
+        '&city=' +city+ '&state=' +state+ '&city=' +city+ '&zip=' +zip,
+      success: function(data){
+        console.log(data);
+        if(!data.success) {
+          form.find('#submit-address').prop('disabled', false)
+          form.find('#submit-address').text('Create Address')
+          for (var i = 0; i < data.errors.length; i++) {
+            var error = data.errors[i]
+            var message = $('<h6 class="red-text">').text("Address Error: " + error.message)
+            $('.errors-div').append(message)
+          }
+        } else {
+          location.reload()
+        }
+      }
+    })
+  })
+</script>
