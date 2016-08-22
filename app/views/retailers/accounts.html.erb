@@ -11,7 +11,7 @@
       <h5>You need a credit card on file before making any orders</h5>
     </div>
   <% else %>
-  <h4 class='center-align'><%= current_user.first_name %>'s credit card:</h4>
+  <h4 class='center-align'>Primary Credit Card:</h4>
     <div class="row">
       <div class="row center-align col s8 offset-s2 border credit-card">
         <h6>(Default Payment)</h6>
@@ -30,6 +30,9 @@
     </div>
   <% end %>
 
+  <% if @stripe_customer.sources.count > 1 %>
+    <h5>Alternate Credit Cards:</h5>
+  <% end %>
   <% @stripe_customer.sources.each do |source| %>
     <% if source.id != @stripe_customer.default_source %>
       <div class="row">

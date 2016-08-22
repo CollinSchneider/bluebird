@@ -1,0 +1,18 @@
+
+<div class="col m2">
+  <div class="profile-nav">
+    <ul>
+      <%
+        items = {
+          'Pending Wholesalers' => '/admin',
+          'Featured Products' => '/admin/features',
+          'Logout' => '/logout'
+        }
+        items.each do |name, url|
+          liclass = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
+      %>
+        <li><a class="<%= liclass %>" href="<%= url %>"><%= name %></a></li>
+      <% end %>
+    </ul>
+  </div>
+</div>

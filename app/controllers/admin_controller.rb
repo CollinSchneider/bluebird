@@ -7,6 +7,10 @@ class AdminController < ApplicationController
     @applications = Wholesaler.where('approved != ? OR approved IS NULL', true)
   end
 
+  def feature_products
+    @products = Product.where('status = ? AND end_time > ? AND featured = ?', 'live', Time.now, true)
+  end
+
   private
   def redirect_if_not_admin
     redirect_to '/shop' if current_user.is_retailer?

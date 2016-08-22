@@ -1,0 +1,86 @@
+<div class="row">
+  <% @products.each_slice(3) do |slice| %>
+    <div class="row">
+      <% slice.each do |product| %>
+        <div class="col s12 m4 center-align no-padding">
+          <div class="product">
+            <div class="col s3 m1 white-text percent-box">
+              <h5><%= '%.0f' % (product.percent_discount*100) %>% Off</h5>
+            </div>
+              <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+              <div class="content-div" style='margin-bottom: 0px'>
+                <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
+                <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
+                <h6>
+                  <span class="was-price">Was $<%= product.price %></span>
+                  <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
+                </h6>
+              </div>
+              <div class="description content-div" style='margin-top: 0px'>
+                <p style='font-size: 12px' style='margin-top: 0px'>
+                  <%= product.description %>
+                </p>
+              </div>
+
+            <div class="row">
+              <div class="<%= product.percentage["class"] %>">
+                <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+              </div>
+            </div>
+
+              <div class="row" style="margin-bottom: 0px">
+                <div class="col s12 m6">
+                  <h6><strong><%= '%.0f' % product.percentage["percent_to_discount"] %>%</strong><br> to discount</h6>
+                </div>
+                <div class="col s12 m6">
+                  <h6><%= product.time_to_expiration %></h6>
+                </div>
+              </div>
+              <% if !product.featured %>
+                <button data='<%=product.id %>' class="btn feature-product">Feature Product</button>
+                <button data='<%= product.id %>' class='btn hidden un-feature-product'>Un-Feature Product</button>
+              <% else %>
+                <button data='<%=product.id %>' class="btn hidden feature-product">Feature Product</button>
+                <button data='<%= product.id %>' class='btn un-feature-product'>Un-Feature Product</button>
+              <% end %>
+            </div>
+          </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+
+<script>
+  $('.feature-product').click(function(){
+    var button = $(this)
+    var productId = $(this).attr('data')
+    $.ajax({
+      method: 'POST',
+      url: '/api/admin/feature_product?product_id=' + productId,
+      success: function(data){
+        console.log(data);
+        if(data.success) {
+          button.attr('class', 'feature-product btn hidden')
+          $('.un-feature-product').attr('class', 'un-feature-product btn')
+        }
+      }
+    })
+  })
+
+  $('.un-feature-product').click(function(){
+    var button = $(this)
+    var productId = $(this).attr('data')
+    $.ajax({
+      method: 'POST',
+      url: '/api/admin/un_feature_product?product_id=' + productId,
+      success: function(data){
+        console.log(data);
+        if(data.success) {
+          button.attr('class', 'un-feature-product btn hidden')
+          $('.feature-product').attr('class', 'un-feature-product btn')
+        }
+      }
+    })
+  })
+</script>

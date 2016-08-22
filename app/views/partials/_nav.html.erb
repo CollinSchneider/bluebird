@@ -1,4 +1,5 @@
-<div class="navigation row no-margin z-depth-1" style="padding-top: 10px; padding-bottom: 10px">
+
+<div class="navigation row no-margin" style="padding-top: 10px; padding-bottom: 10px; margin: 0px">
   <div class="col s12 valign-wrapper">
     <div class="col s12 m2">
       <a href="/shop">
@@ -18,19 +19,21 @@
           items.each do |name, url|
             link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
         %>
-          <div style="display: inline-block">
+          <div class='nav-category-div' style="display: inline-block">
             <span class="nav-category"><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></span>
           </div>
         <% end %>
       </h6>
       </div>
     <% if current_user.is_retailer? %>
-      <a class="nav-category black-text valign" href="/retailer/pending_orders">
-        <h6>Account</h6>
-      </a>
+      <h6>
+        <a class="nav-category black-text valign account-link" href="/retailer/pending_orders">
+          Account
+        </a>
+      </h6>
     <% elsif current_user.is_wholesaler? %>
       <h6>
-        <a class="nav-category black-text valign" href="/wholesaler/profile">
+        <a class="nav-category black-text valign account-link" href="/wholesaler/profile">
           Account
         </a>
       </h6>
@@ -48,3 +51,106 @@
     </div>
   </div>
 </div>
+<div class="row col s12 no-margin z-depth-1 sub-nav-container">
+  <div class="col s10 offset-s1 no-margin sub-nav discover-sub-nav">
+    <h6 class="no-padding no-margin">
+      <%
+        items = {
+          'FEATURED' => '/bluebird_choice',
+          'BEST SELLERS' => '/best_sellers',
+          'ENDING SOON' => '/ending_soon',
+          'NEW ARRIVALS' => '/new_arrivals'
+        }
+        items.each do |name, url|
+          link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
+      %>
+        <div class='sub-nav-category nav-category-div center-align'>
+          <span><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></span>
+        </div>
+      <% end %>
+    </h6>
+  </div>
+  <% if current_user.is_retailer? %>
+    <div class="col s10 offset-s1 no-margin sub-nav account-sub-nav">
+      <h6 class="no-margin no-padding">
+        <%
+          items = {
+            'PENDING ORDERS' => '/retailer/pending_orders',
+            'ORDER HISTORY' => '/retailer/order_history',
+            'MANAGE PAYMENTS' => '/retailer/accounts',
+            'SHIPPING INFORMATION' => '/retailer/shipping_addresses',
+            'SETTINGS' => '/retailer/settings',
+            'LOGOUT' => '/logout'
+          }
+          items.each do |name, url|
+            link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
+        %>
+          <div class='sub-nav-category nav-category-div center-align'>
+            <span><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></span>
+          </div>
+        <% end %>
+      </h6>
+    </div>
+  <% elsif current_user.is_wholesaler? %>
+    <div class="col s10 offset-l1 no-margin sub-nav account-sub-nav">
+      <h6 class="no-padding no-margin">
+        <%
+          items = {
+            'PROFILE' => '/wholesaler/profile',
+            'COMPANY' => '/wholesaler/company',
+            'CURRENT SALES' => '/current_sales',
+            'PAST PRODUCTS' => '/past_products',
+            'ANALYTICS' => '/analytics',
+            'SETTINGS' => 'wholesaler/settings',
+            'MANAGE BANK ACCOUNT' => 'http://dashboard.stripe.com',
+            'LOGOUT' => '/logout'
+          }
+          items.each do |name, url|
+            link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
+        %>
+        <div class='sub-nav-category nav-category-div center-align'>
+          <span><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></span>
+        </div>
+        <% end %>
+      </h6>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  if(<%= current_user.retailer.needs_credit_card? %>){
+    $('a[href="/retailer/accounts"]').attr('class', 'red-text')
+  }
+  if(<%= current_user.retailer.needs_shipping_info? %>){
+    $('a[href="/retailer/shipping_addresses"]').attr('class', 'red-text')
+  }
+  $('a[href="/discover"]').mouseover(function(){
+    $('.account-sub-nav').css({
+      display: 'none'
+    })
+    $('.sub-nav-container').css({
+      display: 'inherit'
+    })
+    $('.discover-sub-nav').css({
+      display: 'inherit'
+    })
+  })
+
+  $('.account-link').mouseover(function(){
+    $('.discover-sub-nav').css({
+      display: 'none'
+    })
+    $('.sub-nav-container').css({
+      display: 'inherit'
+    })
+    $('.account-sub-nav').css({
+      display: 'inherit'
+    })
+  })
+
+  $('.body-div').mouseover(function(){
+    $('.sub-nav-container').css({
+      display: 'none'
+    })
+  })
+</script>

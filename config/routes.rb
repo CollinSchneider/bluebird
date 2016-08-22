@@ -17,6 +17,12 @@ Rails.application.routes.draw do
                   #     API ROUTES    #
                   #///////////////////#
 
+  get '/api/company/:action' => 'api/company'
+  post '/api/company/:action' => 'api/company'
+
+  get '/api/admin/:action' => 'api/admin'
+  post '/api/admin/:action' => 'api/admin'
+
   get '/api/products/:action' => 'api/products'
   post '/api/products/:action' => 'api/products'
 
@@ -109,6 +115,7 @@ Rails.application.routes.draw do
                 #///////////////////#
 
   get '/admin' => 'admin#index'
+  get '/admin/features' => 'admin#feature_products'
 
                 #///////////////////#
                 #  PRODUCT ROUTES   #
@@ -125,6 +132,7 @@ Rails.application.routes.draw do
   get '/company/:key' => 'welcome#company_show'
   get '/products/:token/:slug' => 'products#full_price'
   get '/discover' => 'products#discover'
+  get '/bluebird_choice' => 'products#bluebird_choice'
 
   post '/sessions' => 'sessions#create'
   delete '/sessions' => 'sessions#destroy'

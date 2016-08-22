@@ -8,8 +8,8 @@
 
 <div class="center-align">
   <h3><strong><%= @product.title %></strong></h3>
-  <a href="/company/<%= @product.user.key %>" style="color: black; text-decoration:none">
-    <h6>From <%= @product.user.company_name %></h6>
+  <a href="/company/<%= @product.wholesaler.user.company.company_key %>" style="color: black; text-decoration:none">
+    <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
   </a>
 </div>
 <div class="row col s10 offset-s1 center-align valign-wrapper">
@@ -46,16 +46,16 @@
     <div class="row">
       <h5><%= @product.description %></h6>
     </div>
-    <% if @product.user.contactable %>
+    <% if @product.wholesaler.user.contactable %>
       <h5>Contact Seller:</h5>
       <h6>Email: <%= @product.user.email %></h6>
       <h6>Phone: <%= @product.user.phone_number %></h6>
     <% end %>
     <h6>This product did not hit its sales goal, you now have until <%= @product.product_token.expiration_datetime.strftime('%l:%M %P on %b %d, %Y') %> to purchase</h6>
-    <% users_orders = current_user.retailer.commits.where('product_id = ? AND status = ?', @product.id, 'live') %>
-    <% if users_orders == [] && current_user.user_type != 'wholesaler' %>
+    <% users_orders = current_user.retailer.full_price_commits.where('product_id = ?', @product.id) if current_user.is_retailer? %>
+    <% if users_orders == [] && current_user.is_retailer? %>
       <div class="col s8 offset-s2">
-        <%= form_for Commit.new do |f| %>
+        <%= form_for FullPriceCommit.new do |f| %>
         <%= f.hidden_field :product_id, :value => @product.id %>
         <div class="input-field">
           <%= f.label "Order Quantity" %>
@@ -64,8 +64,6 @@
         <%= f.button "Make Order", :class => 'btn' %>
         <% end %>
       </div>
-    <% elsif users_orders != [] %>
-      <h4><%= link_to "Ordered #{users_orders[0].amount}", commit_path(users_orders[0].id) %> </h4>
     <% end %>
   </div>
 </div>

@@ -7,6 +7,11 @@
     <div class="row">
       <h4><%= @company.company_name%></h4>
     </div>
+    <% if !@company.logo.nil? %>
+      <div class="row">
+        <img src="<%= @company.logo %>" class='responsive-img' />
+      </div>
+    <% end %>
     <div class="row">
       <%= form_for @company do |f| %>
         <textarea name="company[bio]" rows="8" cols="40" placeholder="Company Bio"><%= @company.bio %></textarea>
@@ -17,6 +22,12 @@
         <input type="submit" value="Update Company Info" class="btn">
       <% end %>
     </div>
+    <%= form_for @company do |f| %>
+      <div class="input-field">
+        <%= f.file_field :logo %>
+      </div>
+      <%= f.submit "Update Logo" %>
+    <% end %>
   </div>
 
 

@@ -2,36 +2,31 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def initialize(user)
     super()
-    products_to_ship = user.wholesaler.products.where('
-          products.status = ? OR products.status = ?', 'goal_met', 'discount_granted'
-        ).joins(:commits).where('
-          shipping_id IS NULL
-        ').uniq
+    product_array = user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').pluck(:id).to_a
+    need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL AND card_declined != ?', product_array, true)
 
     directions_title(user)
     directions
     bluebird_image
     start_new_page
-    products_to_ship.each do |product|
-      product.commits.each do |commit|
-        commit.pdf_generated = true
-        commit.save
+    need_to_ship.each do |commit|
+      commit.pdf_generated = true
+      commit.save
 
-        image_header
-        product_title(product)
-        pad_bottom(30) {seller_info(product.wholesaler.user)}
-        stroke_horizontal_rule
-        pad_bottom(15) {buyer_info(commit.retailer)}
-        stroke_horizontal_rule
-        pad_bottom(10) {column_headers}
-        stroke_horizontal_rule
-        pad_bottom(10) {order_info(commit)}
-        stroke_horizontal_rule
-        pad_bottom(10) {shipping_info}
-        stroke_horizontal_rule
-        order_total(commit)
-        start_new_page
-      end
+      image_header
+      product_title(commit.product)
+      pad_bottom(30) {seller_info(commit.product.wholesaler.user)}
+      stroke_horizontal_rule
+      pad_bottom(15) {buyer_info(commit.retailer)}
+      stroke_horizontal_rule
+      pad_bottom(10) {column_headers}
+      stroke_horizontal_rule
+      pad_bottom(10) {order_info(commit)}
+      stroke_horizontal_rule
+      pad_bottom(10) {shipping_info}
+      stroke_horizontal_rule
+      order_total(commit)
+      start_new_page
     end
   end
 

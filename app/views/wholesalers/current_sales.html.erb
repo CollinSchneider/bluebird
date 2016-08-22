@@ -5,7 +5,7 @@
 <div class="col s12 m8 offset-m3">
 
   <% if !@products.empty? %>
-    <div id ="products">
+    <div id ="products" style="margin-top: 20px">
       <%= render partial: 'partials/products' %>
     </div>
     <%= will_paginate @products %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160820145355) do
+ActiveRecord::Schema.define(version: 20160822005820) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -49,13 +49,33 @@ ActiveRecord::Schema.define(version: 20160820145355) do
     t.string   "company_name"
     t.string   "company_key"
     t.string   "bio"
-    t.datetime "created_at",   null: false
-    t.datetime "updated_at",   null: false
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
     t.string   "location"
     t.string   "website"
+    t.string   "logo_file_name"
+    t.string   "logo_content_type"
+    t.integer  "logo_file_size"
+    t.datetime "logo_updated_at"
   end
 
   add_index "companies", ["user_id"], name: "index_companies_on_user_id", using: :btree
+
+  create_table "full_price_commits", force: :cascade do |t|
+    t.integer  "product_id"
+    t.integer  "retailer_id"
+    t.string   "uuid"
+    t.integer  "amount"
+    t.string   "stripe_charge_id"
+    t.boolean  "card_declined"
+    t.datetime "card_decline_date"
+    t.string   "declined_reason"
+    t.datetime "created_at",        null: false
+    t.datetime "updated_at",        null: false
+  end
+
+  add_index "full_price_commits", ["product_id"], name: "index_full_price_commits_on_product_id", using: :btree
+  add_index "full_price_commits", ["retailer_id"], name: "index_full_price_commits_on_retailer_id", using: :btree
 
   create_table "milestones", force: :cascade do |t|
     t.datetime "created_at", null: false
@@ -184,6 +204,8 @@ ActiveRecord::Schema.define(version: 20160820145355) do
 
   add_foreign_key "admins", "users"
   add_foreign_key "companies", "users"
+  add_foreign_key "full_price_commits", "products"
+  add_foreign_key "full_price_commits", "retailers"
   add_foreign_key "product_features", "products"
   add_foreign_key "product_images", "products"
   add_foreign_key "product_tokens", "products"

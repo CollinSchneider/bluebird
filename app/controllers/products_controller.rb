@@ -3,7 +3,7 @@ class ProductsController < ApplicationController
   def show
     @product = Product.find(params[:id])
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+    @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id) if current_user.is_retailer?
     # if Time.now > @product.end_time
     #   redirect_to shop_path
     # end
@@ -57,12 +57,24 @@ class ProductsController < ApplicationController
 
   def full_price
     @product = Product.where('id in (select product_id from product_tokens where token = ?)', params[:token]).first
-    @company_products = Product.where('user_id = ? AND status = ? AND id != ?', @product.user_id, 'live', @product.id).order(current_sales: :desc).limit(3)
+    @company_products = Product.where('wholesaler_id = ? AND status = ? AND id != ?', @product.wholesaler.id, 'live', @product.id).order(current_sales: :desc).limit(3)
     @similar_products = Product.where('category = ? AND status = ? AND id != ?', @product.category, 'live', @product.id).order(current_sales: :desc).limit(3)
   end
 
-  # def discover
-  # end
+  def bluebird_choice
+    if params[:query]
+      @products = Product.where('slug LIKE ? AND end_time > ? AND status = ?
+                                OR LOWER(description) LIKE ? AND end_time > ? AND status = ?
+                                OR user_id in (
+                                  select id from users where key like ?
+                                ) AND end_time > ? AND status = ?',
+                                "%#{slug}%", Time.now, 'live',
+                                "%#{slug}%", Time.now, 'live',
+                                "%#{slug}%", Time.now, 'live').page(params[:page]).per_page(3)
+    else
+      @products = Product.where('status = ? AND end_time > ? AND featured = ?', 'live', Time.now, true).page(params[:page]).per_page(3)
+    end
+  end
 
   private
   def product_params

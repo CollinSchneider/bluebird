@@ -44,9 +44,12 @@ class WholesalersController < ApplicationController
   def current_sales
     if params[:query]
       query = "%#{params[:query].gsub(' ', '').downcase}%"
-      @products = current_user.wholesaler.products.where('status = ? AND lower(title) LIKE ? or status = ? AND lower(description) LIKE ?', 'live', query, 'live', query).order(end_time: :asc).page(params[:page]).per_page(3)
+      @products = current_user.wholesaler.products.where('status = ? AND lower(title) LIKE ? or status = ?
+        AND lower(description) LIKE ?', 'live', query, 'live', query
+        ).order(end_time: :asc).page(params[:page]).per_page(3)
     else
-      @products = current_user.wholesaler.products.where('status = ?', 'live').order(end_time: :asc).page(params[:page]).per_page(3)
+      @products = current_user.wholesaler.products.where('status = ?', 'live'
+        ).order(end_time: :asc).page(params[:page]).per_page(3)
     end
   end
 

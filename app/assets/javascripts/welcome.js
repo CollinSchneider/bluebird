@@ -1,5 +1,18 @@
 $(document).ready(function(){
   console.log('ready');
+  
+  $('a[href="/discover"]').mouseover(function(){
+    $('.discover-sub-nav').css({
+      display: 'inherit'
+    })
+  })
+
+  $('.body-div').mouseover(function(){
+    console.log('body....');
+    $('.sub-nav-container').css({
+      display: 'none'
+    })
+  })
   sendToStripe();
 
   $('.make-puchase-order').click(function(){
