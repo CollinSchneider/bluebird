@@ -35,41 +35,8 @@ Rails.application.routes.draw do
   get '/api/shipping/:action' => 'api/shipping'
   post '/api/shipping/:action' => 'api/shipping'
 
-  get '/api/send_password_reset' => 'api#send_password_reset'
-  post '/api/send_password_reset' => 'api#send_password_reset'
-
-  get '/api/grant_discount' => 'api#grant_discount'
-  get '/api/expire_product' => 'api#expire_product'
-
-  get '/api/make_purchase_order' => 'api#make_purchase_order'
-  post '/api/make_purchase_order' => 'api#make_purchase_order'
-
-  get '/api/create_credit_card/:token' => 'api#create_credit_card'
-  post '/api/create_credit_card/:token' => 'api#create_credit_card'
-  get '/api/charge_credit_card' => 'api#charge_credit_card'
-  get '/api/create_stripe_connect/:scope/:code' => 'api#create_stripe_connect'
-  get '/api/send_money' => 'api#send_money'
-  get '/api/delete_credit_card' => 'api#delete_credit_card'
-  post '/api/delete_credit_card' => 'api#delete_credit_card'
-
-  get '/api/create_shipping_address' => 'api#create_shipping_address'
-  post '/api/create_shipping_address' => 'api#create_shipping_address'
-  get '/api/save_shipping_id/:address_id' => 'api#save_shipping_id'
-  post '/api/save_shipping_id/:address_id' => 'api#save_shipping_id'
-  get '/api/ship_batch' => 'api#ship_batch'
-  post '/api/ship_batch' => 'api#ship_batch'
-  get '/api/save_shipment' => 'api#save_shipment'
-  post '/api/save_shipment' => 'api#save_shipment'
-  get '/api/get_shipping_label' => 'api#get_shipping_label'
-  post '/api/get_shipping_label' => 'api#get_shipping_label'
-  get '/api/create_shipment' => 'api#create_shipment'
-  post '/api/create_shipment' => 'api#create_shipment'
-  get '/api/purchase_shipment' => 'api#purchase_shipment'
-  post '/api/purchase_shipment' => 'api#purchase_shipment'
-  get '/api/prawn_test' => 'api#prawn_test'
-  post '/api/prawn_test' => 'api#prawn_test'
-  get '/api/create_tracking_and_charge' => 'api#create_tracking_and_charge'
-  post '/api/create_tracking_and_charge' => 'api#create_tracking_and_charge'
+  get '/api/users:action' => 'api/users'
+  post '/api/users:action' => 'api/users'
 
               #///////////////////#
               # WHOLESALER ROUTES #
@@ -79,6 +46,7 @@ Rails.application.routes.draw do
   get '/wholesaler/accounts' => 'wholesalers#accounts', as: :wholesaler_accounts
   get '/wholesaler/company' => 'wholesalers#company'
   get '/new_product' => 'wholesalers#new_product'
+  get '/fix_product' => 'wholesalers#fix_product'
   get '/approve_product/:id' => 'wholesalers#approve_product'
   put '/launch_product/:id' => 'wholesalers#launch_product'
   get '/past_products' => 'wholesalers#past_products'
@@ -94,6 +62,7 @@ Rails.application.routes.draw do
   get '/wholesaler/product/:id' => 'products#wholesaler_show'
   get '/current_sales' => 'wholesalers#current_sales'
   get '/already_printed' => 'wholesalers#already_printed'
+  get '/relist' => 'wholesalers#relist'
 
 
                 #///////////////////#
@@ -103,12 +72,14 @@ Rails.application.routes.draw do
   get '/retailer/pending_orders' => 'retailers#index'
   get '/retailer/accounts' => 'retailers#accounts'
   get '/retailer/order_history' => 'retailers#order_history'
+  get '/retailer/order_history/:id' => 'retailers#show_order_history'
   get '/retailer/settings' => 'retailers#settings'
   get '/retailer/shipping_addresses' => 'retailers#shipping_addresses'
   get '/retailer/company' => 'retailers#company'
+  get '/retailer/last_chance' => 'retailers#last_chance'
   get '/retailer/settings/change_password' => 'retailers#change_password'
   put '/retailer/settings/change_password' => 'retailers#change_password'
-  get '/retailer/:order/card_declined' => 'retailers#card_declined'
+  get '/retailer/:order_uuid/card_declined' => 'retailers#card_declined'
 
                 #///////////////////#
                 #   ADMIN ROUTES    #
@@ -116,6 +87,8 @@ Rails.application.routes.draw do
 
   get '/admin' => 'admin#index'
   get '/admin/features' => 'admin#feature_products'
+  get '/admin/unshipped' => 'admin#unshipped'
+  get '/admin/signup' => 'users#admin_signup'
 
                 #///////////////////#
                 #  PRODUCT ROUTES   #
@@ -139,13 +112,17 @@ Rails.application.routes.draw do
   get '/logout' => 'users#logout'
 
   root 'users#index'
-  get '/signup' => 'users#signup'
   get '/forgot_password' => 'users#forgot_password'
   get '/reset_password/:token' => 'users#reset_password'
   get '/about' => 'users#about'
   get '/faq' => 'users#faq'
   get '/why_bluebird' => 'users#why'
-  get '/apply' => 'users#apply'
+  get '/apply' => redirect('/users/apply/step1')
+  get '/apply/:action' => 'users/apply'
+  post '/apply/:action' => 'users/apply'
+  get '/signup' => redirect('/signup/step1')
+  get '/signup/:action' => 'users/signup'
+  post '/signup/:action' => 'users/signup'
   get '/thank_you' => 'users#thank_you'
 
   # You can have the root of your site routed with "root"

@@ -39,8 +39,24 @@ class Api::ShippingController < ApiController
     end
   end
 
+  def delete_address
+    address = ShippingAddress.find_by_address_id(params[:address_id])
+    address.delete
+    render :json => {success: true}
+  end
+
+  def make_primary_address
+    address = ShippingAddress.find(params[:address_id])
+    primary_address = current_user.retailer.shipping_addresses.where(:primary => true).first
+    primary_address.primary = false
+    primary_address.save
+    address.primary = true
+    address.save
+    render :json => {success: true}
+  end
+
   def ship_order
-    commit = Commit.find(params[:commit_id])
+    commit = Commit.find_by_uuid(params[:commit_uuid])
     tracking_code = params[:tracking_code]
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
     begin
@@ -54,17 +70,23 @@ class Api::ShippingController < ApiController
         end
         charge = current_user.collect_shipping_charge(commit, shipping_cost)
         if charge[0] == true
+          Mailer.retailer_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
           commit.shipping_id = tracker.id
-          commit.save!
+          commit.card_declined = false
+          commit.card_decline_date = nil
+          commit.save(validate: false)
           render :json => {
             success: true,
             charge: charge[1],
             tracking: tracker
           }
         else
-          # commit.card_declined = true
-          # commit.card_decline_date = Time.now
-          # commit.save!
+          declined_charge = "$#{ '%.2f' % shipping_cost.to_f}"
+          Mailer.retailer_declined_card_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url, declined_charge)
+          commit.card_declined = true
+          commit.card_decline_date = Time.now
+          commit.declined_reason = charge[1]
+          commit.save(validate: false)
           render :json => {
             success: false,
             error: charge[1]

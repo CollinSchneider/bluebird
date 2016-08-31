@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160822005820) do
+ActiveRecord::Schema.define(version: 20160826224543) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 20160822005820) do
   add_index "admins", ["user_id"], name: "index_admins_on_user_id", using: :btree
 
   create_table "commits", force: :cascade do |t|
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
     t.integer  "amount"
     t.string   "status"
     t.integer  "product_id"
@@ -40,6 +40,9 @@ ActiveRecord::Schema.define(version: 20160822005820) do
     t.datetime "card_decline_date"
     t.string   "card_id"
     t.string   "declined_reason"
+    t.boolean  "full_price"
+    t.boolean  "refunded"
+    t.string   "shipping_charge_id"
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
@@ -72,6 +75,8 @@ ActiveRecord::Schema.define(version: 20160822005820) do
     t.string   "declined_reason"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
+    t.string   "card_id"
+    t.string   "shipping_id"
   end
 
   add_index "full_price_commits", ["product_id"], name: "index_full_price_commits_on_product_id", using: :btree
@@ -159,6 +164,13 @@ ActiveRecord::Schema.define(version: 20160822005820) do
     t.boolean  "featured",                 default: false
     t.string   "uuid"
     t.integer  "wholesaler_id"
+    t.string   "long_description"
+    t.string   "feature_one"
+    t.string   "feature_two"
+    t.string   "feature_three"
+    t.string   "feature_four"
+    t.string   "feature_five"
+    t.integer  "minimum_order"
   end
 
   create_table "retailers", force: :cascade do |t|
@@ -185,7 +197,6 @@ ActiveRecord::Schema.define(version: 20160822005820) do
     t.datetime "updated_at",                null: false
     t.string   "first_name"
     t.string   "last_name"
-    t.boolean  "contactable"
     t.string   "phone_number"
     t.string   "password_reset_token"
     t.string   "password_reset_expiration"
@@ -195,9 +206,11 @@ ActiveRecord::Schema.define(version: 20160822005820) do
   create_table "wholesalers", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "stripe_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
     t.boolean  "approved"
+    t.boolean  "contactable_by_phone"
+    t.boolean  "contactable_by_email"
   end
 
   add_index "wholesalers", ["user_id"], name: "index_wholesalers_on_user_id", using: :btree

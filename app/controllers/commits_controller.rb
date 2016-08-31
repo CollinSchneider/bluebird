@@ -2,43 +2,43 @@ class CommitsController < ApplicationController
 
   def create
     commit = Commit.create(commit_params)
-    # if Time.now < commit.product.end_time
-      if commit.amount <= commit.product.quantity
+      if commit.save
         commit.product.quantity -= commit.amount
         commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
         commit.product.save
         commit.retailer_id = current_user.retailer.id
         commit.set_primary_card_id
         commit.save
+
+        if commit.full_price
+          commit.status = 'full_price'
+          commit.save
+          amount = commit.product.price.to_f*commit.amount.to_i
+          charge = commit.product.wholesaler.user.collect_payment(commit, amount)
+          Mailer.retailer_full_price_email(commit, commit.retailer.user)
+          Mailer.wholesaler_full_price_email(commit, commit.product.wholesaler.user)
+          if !charge.nil? && !charge[1]
+            return redirect_to "/retailer/#{commit.uuid}/card_declined"
+          end
+        end
       else
-        commit.destroy
-        flash[:error] = "Sorry, only #{commit.product.quantity} in inventory!"
+        flash[:error] = commit.errors.full_messages
       end
-    # else
-    #   commit.destroy
-    #   flash[:error] = "Nice try, this product expired"
-    # end
-    redirect_to request.referrer
-  end
-
-  def show
-    @commit = Commit.find(params[:id])
-    # authenticate_retailer_commit(@commit)
-  end
-
-  def edit
-    commit = Commit.find(params[:id])
+    return redirect_to request.referrer
   end
 
   def update
     commit = Commit.find(params[:id])
+    og_quantity = commit.amount
     commit.update(commit_params)
-    # if commit.amount >= commit.product.quantity
-    #   if commit.save(verify: false)
-    #     commit.product.quantity
-    #   end
-    # end
-    redirect_to product_path(commit.product_id)
+    commit_difference = commit.amount - og_quantity
+    if commit.save
+      commit.product.quantity -= commit_difference
+      commit.product.save(validate: false)
+    else
+      flash[:error] = commit.errors
+    end
+    return redirect_to request.referrer
   end
 
   def destroy
@@ -46,12 +46,12 @@ class CommitsController < ApplicationController
     commit.product.quantity += commit.amount
     commit.product.save
     commit.destroy
-    redirect_to shop_path
+    redirect_to request.referrer
   end
 
   private
   def commit_params
-    params.require(:commit).permit(:user_id, :product_id, :amount, :status, :uuid)
+    params.require(:commit).permit(:user_id, :product_id, :amount, :status, :uuid, :full_price)
   end
 
 end

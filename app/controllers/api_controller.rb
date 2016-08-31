@@ -5,14 +5,6 @@ require 'easypost'
 require 'prawn'
 class ApiController < ApplicationController
 
-  def stripe_connect_charge
-    commit_id = params[:commit_id]
-    commit = Commit.find(commit_id)
-
-    stripe_charge = current_user.collect_payment(commit)
-    render :json => stripe_charge
-  end
-
   def create_tracking_and_charge
     tracking_code = params[:tracking_number]
     amount = params[:amount]
@@ -27,20 +19,13 @@ class ApiController < ApplicationController
     # tracker.fees.each do |fee|
     #   shipping_cost += fee.amount.to_f
     # end
-
-    charge = current_user.collect_payment(commit)
+    amount = commit.amount.to_i*commit.product.discount.to_f
+    charge = current_user.collect_payment(commit, amount)
     # render :json => {
     #   :charge => charge,
     #   :shipment => tracker
     # }
     # Mailer.retailer_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url).deliver_later
-  end
-
-  def delete_credit_card
-    card_id = params[:card_id]
-    customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
-    card = customer.sources.retrieve(card_id).delete
-    redirect_to request.referrer
   end
 
   # def charge_credit_card
@@ -84,27 +69,32 @@ class ApiController < ApplicationController
     product.commits.each do |commit|
       # Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
       commit.status = 'discount_granted'
-      current_user.collect_payment(commit)
+      amount = product.discount.to_f*commit.amount.to_f
+      current_user.collect_payment(commit, amount)
       commit.save(validate: false)
     end
   end
 
   def expire_product
     product = Product.find(params[:product_id])
-    product.status = 'full_price'
-    product.current_sales = 0
-    product.save(validate: false)
     pt = ProductToken.new
     pt.product_id = product.id
     pt.token = SecureRandom.uuid
-    pt.expiration_datetime = Time.now + 7.days
+    pt.expiration_datetime = (Time.now + 7.days + 1.hour).beginning_of_hour
     pt.save
-    render :json => {:product => product}
+
+    original_inventory = product.quantity.to_i
     product.commits.each do |commit|
-      Mailer.retailer_discount_missed(commit.user, product).deliver_later
+      original_inventory += commit.amount.to_i
+      Mailer.retailer_discount_missed(commit.retailer.user, product).deliver_later
       commit.status = 'past'
       commit.save(validate: false)
     end
+    product.status = 'full_price'
+    product.current_sales = 0
+    product.quantity = original_inventory
+    product.save(validate: false)
+    render :json => {:product => product}
   end
 
   def send_password_reset

@@ -1,25 +1,28 @@
 <%= render partial: 'partials/signed_out_nav' %>
 
 <div class="col s12">
-  <div id="first-div" class="section-white border valign-wrapper">
+  <div id="first-div" class="section-white valign-wrapper">
     <div class="row no-margin">
       <div class="col s8 offset-s2 valign center-align">
-        <div class="col s4 offset-s4 border button-fade">
-          <a href="/signup" class="black-text"><h5>Sign Up</h5></a>
-        </div>
         <img src="/images/main-bluebird.png" class="responsive-img"/>
-        <h4 class="bluebird-text"><stronger>Sign Up. Reach Goals.</stronger></h4>
+        <h5 class="dark-bluebird-text"><stronger>The wholesaler-to-retailer marketplace, <span class="bold">always</span> at a discounted price.</stronger></h5>
         <!-- <h5><a href="#" class="find-out-how">Find out how</a></h5> -->
       </div>
       <div class="row">
-        <div class="col s5 offset-s2 center-align">
-          <div class="col s6 button-fade wholesaler">
+        <div class="col s3 offset-s2 center-align">
+          <div class="col s9 button-fade how-it-works">
+            <h5>How it Works</h5>
+          </div>
+          <!-- <h4><a href="#" class="wholesaler link bluebird-text">Wholesalers</a></h4> -->
+        </div>
+        <div class="col s3 center-align">
+          <div class="col s9 button-fade wholesaler">
             <h5>Wholesalers</h5>
           </div>
           <!-- <h4><a href="#" class="wholesaler link bluebird-text">Wholesalers</a></h4> -->
         </div>
-        <div class="col s5 center-align">
-          <div class="col s6 button-fade retailer">
+        <div class="col s3 center-align">
+          <div class="col s9 button-fade retailer">
             <h5>Retailers</h5>
           </div>
           <!-- <h4><a href="#" class="retailer link bluebird-text">Retailers</a></h4> -->
@@ -28,29 +31,91 @@
     </div>
   </div>
   <div class="row no-margin col s12">
-    <div class="retailers-div section-blue center-align white-text col s12" style="padding-top: 25vh">
+    <div class="how-it-works-div section-blue center-align white-text col s12" style="padding-top: 25vh">
       <div class="row">
-        <h1><strong>Retailers</strong></h1>
+        <h1><strong>How it Works</strong></h1>
       </div>
       <div class="row col s10 offset-s1">
-        <h4>Sign up, get amazing deals, never have to pay full price.</h4>
-        <h5>Sound too good be to true? Well it's not; sign up today.</h5>
+        <div class="row">
+          <h6>1) Wholesalers list their product with a sales goal, and a duration of the sale</h6>
+          <h6>2) Retailers make purchase orders</h6>
+          <h6>3) If the sales goal is reached by the end of the duration, the retailers get the product for the discount</h6>
+          <h6>4) If the product does not reach the sales goal, nobody is obligated to pay.</h6>
+        </div>
+        <div class="row">
+          <h5>Seem to good to be true? It's not</h5>
+        </div>
       </div>
       <a href="/signup" class="btn white black-text">Sign Up Today</a>
     </div>
   </div>
+  <div class="row no-margin col s12">
+    <div class="retailers-div section-white center-align col s12" style="padding-top: 25vh">
+      <div class="row">
+        <h1><strong>Retailers</strong></h1>
+      </div>
+      <div class="row col s10 offset-s1">
+        <div class="row valign-wrapper">
+          <div class="col s4 valign">
+            <div style="margin: 5px; padding: 10px">
+              <h5>Unparalled Prices.</h5>
+              <h6>
+                Everybody has a discount. Guaranteed.
+              </h6>
+            </div>
+          </div>
+          <div class="col s4 valign">
+            <div style="margin: 5px; padding: 10px">
+              <h5>Access Thousands of Products all in one Place.</h5>
+              <h6>
+                One signin, unlimited products and vendors.
+              </h6>
+            </div>
+          </div>
+          <div class="col s4 valign">
+            <div style="margin: 5px; padding: 10px">
+              <h5>Automate Your Purchasing Power.</h5>
+              <h6>
+                Place a purchase order in one click.
+              </h6>
+            </div>
+          </div>
+        </div>
+    </div>
+      <a href="/signup" class="btn white-text">Sign Up Today</a>
+    </div>
+  </div>
   <div class="row no-margin">
-    <div class="wholesalers-div section-white center-align col s12" style="padding-top: 25vh">
+    <div class="wholesalers-div section-blue center-align white-text col s12" style="padding-top: 25vh">
       <div class="row">
         <div class="col s12">
           <h1><strong>Wholesalers</strong></h1>
         </div>
       </div>
       <div class="row col s10 offset-s1">
-        <h4>If you've made it this far, chances are you're looking to take your business to the next step.</h4>
-        <h5>BlueBird.club is your answer to reaching those new sales goals.</h5>
+        <div class="row valign-wrapper">
+          <div class="col s4 valign">
+            <h5>Reach a New Market</h5>
+            <h6>
+              BlueBird will put your product in front of retailers who are ready to purchase.
+            </h6>
+          </div>
+          <div class="col s4 valign">
+            <h5>No More Tracking Down Payments</h5>
+            <h6>
+              You worry about perfecting your product,
+              we'll put the money in your bank account.
+            </h6>
+          </div>
+          <div class="col s4 valign">
+            <h5>Goodbye to sales agents.</h5>
+            <h6>
+              BlueBird is the best sales agent you can find, for half the price.
+            </h6>
+          </div>
+        </div>
       </div>
-      <a href="/signup" class="btn">Sign Up Today</a>
+      <a href="/signup" class="white black-text btn">Sign Up Today</a>
     </div>
   </div>
 </div>
@@ -60,6 +125,10 @@
   var navHeight = $('.navigation').height()
   $('#first-div').css({
     height: height - navHeight
+  })
+
+  $('.how-it-works').click(function(){
+    animateScrollTo($('.how-it-works-div'))
   })
 
   $('.wholesaler').click(function(){

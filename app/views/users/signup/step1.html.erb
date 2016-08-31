@@ -1,0 +1,55 @@
+
+<div class="col s1" style="position: absolute; margin-top: 20px; margin-left: 20px">
+  <img src="/images/bluebird-white-text.png" class='responsive-img' style="width: 20%" />
+</div>
+
+<div class="row no-overflow">
+  <div class="apply-body bluebird white-text center-align col s12 m6 valign-wrapper">
+
+    <div class="valign col s12">
+      <div class="row">
+        <div class="col s4">
+          <h4>Step 1</h4>
+          <h5>The Basics</h5>
+        </div>
+        <div class="col s4 grey-text">
+          <h5>Step 2</h5>
+          <h6>Your Business</h6>
+        </div>
+        <div class="col s4 grey-text">
+          <h5>Step 3</h5>
+          <h6>Finishing Touches</h6>
+        </div>
+      </div>
+      <div class="row col s8 offset-s2">
+        <form method="post">
+        <%= form_for User.new, method: 'POST' do |f| %>
+          <div class="input-field">
+            <label>First Name</label>
+            <input type="text" name="user[first_name]">
+          </div>
+          <div class="input-field">
+            <label>Last Name</label>
+            <input type="text" name="user[last_name]">
+          </div>
+          <input type="submit" value="Next" class='white black-text btn'>
+        <% end %>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="apply-body col m6 hidden-on-small-only valign-wrapper">
+    <div class="col s8 offset-s2 valign center-align">
+      <div class="row">
+        <h5>Never pay full wholesale price again. Discounts. Every. Single. Time.</h5>
+      </div>
+      <div class="row">
+        <div class="col s8 offset-s2">
+          <img src="/images/money.jpg" class='responsive-img circle'/>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

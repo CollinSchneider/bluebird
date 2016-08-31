@@ -1,2 +1,0 @@
-class ProductTokensController < ApplicationController
-end

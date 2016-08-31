@@ -62,7 +62,7 @@
         console.log(data);
         if(data.success) {
           button.attr('class', 'feature-product btn hidden')
-          $('.un-feature-product').attr('class', 'un-feature-product btn')
+          button.parent().find('.un-feature-product').attr('class', 'un-feature-product btn')
         }
       }
     })

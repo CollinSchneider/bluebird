@@ -1,8 +1,10 @@
 <div class="row">
 
-<%= render partial: 'partials/retailer_profile_nav' %>
+  <div class="hide-on-small-only">
+    <%= render partial: 'partials/retailer_profile_nav' %>
+  </div>
 
-  <div class="center-align col s12 m9 offset-m2">
+  <div class="center-align col s12 m8 offset-m3 order-box z-depth-2" style="margin-top: 50px">
     <h4>Settings</h4>
     <div class="row">
       <%= form_for current_user do |f| %>
@@ -23,13 +25,30 @@
     </div>
 
     <div class="row">
-      <div class="left-align col s6">
-        <a href="/settings/retailer/update_password" class="btn">Update Password</a>
+      <div class="col s12 m6">
+        <div class="hide-on-med-and-up">
+          <div class="s12 center-align">
+            <a href="/retailer/settings/change_password" class="btn">Update Password</a>
+          </div>
+        </div>
+        <div class="hide-on-small-only left-align">
+          <div class="m6">
+            <a href="/retailer/settings/change_password" class="btn">Update Password</a>
+          </div>
+        </div>
       </div>
-      <div class="right-align col s6">
-        <%= button_to "Delete Account", user_path(current_user.id), method: :delete, :class => 'btn red', data: {confirm: "Are you sure you want to delete your account?"} %>
+      <div class="col s12 m6">
+        <div class="hide-on-med-and-up">
+          <div class="s12 center-align">
+            <%= button_to "Delete Account", user_path(current_user.id), method: :delete, :class => 'btn red', data: {confirm: "Are you sure you want to delete your account?"} %>
+          </div>
+        </div>
+        <div class="hide-on-small-only right-align">
+          <div class="m6">
+            <%= button_to "Delete Account", user_path(current_user.id), method: :delete, :class => 'btn red', data: {confirm: "Are you sure you want to delete your account?"} %>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
-  
+
 </div>

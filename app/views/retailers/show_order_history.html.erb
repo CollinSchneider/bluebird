@@ -1,0 +1,27 @@
+<div class="row">
+
+  <%= render partial: 'partials/retailer_profile_nav' %>
+
+  <div class="col s12 m8 offset-m3">
+
+    <div class="col s4">
+      <%= image_tag @order.product.main_image.url(:medium), :class => 'responsive-img' %>
+    </div>
+    <div class="col s8 center-align">
+      <h4><%= @order.product.title %></h4>
+      <% if !@order.full_price %>
+        <h6><%= @order.amount %> x $<%= '%.2f' % (@order.product.discount) %>: <span class='bold'>$<%= '%.2f' % (@order.amount.to_i*@order.product.discount.to_f) %></span></h6>
+        <h6>Shipping: $<%= @shipping_amount %></h6>
+        <hr>
+        <h6 class="bold">$<%= '%.2f' % ((@order.amount.to_i*@order.product.discount.to_f)+(@shipping_amount.to_f)) %> total</h6>
+      <% else %>
+        <h6><%= @order.amount %> x $<%= '%.2f' % (@order.product.price) %>: <span class='bold'>$<%= '%.2f' % (@order.amountl.to_i*@order.product.price.to_f) %></span></h6>
+        <h6>Shipping: $<%= @shipping_amount %></h6>
+        <hr>
+        <h6 class="bold">$<%= '%.2f' % ((@order.amount.to_i*@order.product.price.to_f)+(@shipping_amount.to_f)) %></h6>
+      <% end %>
+    </div>
+
+  </div>
+
+</div>

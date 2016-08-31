@@ -20,6 +20,7 @@ if($('.pagination').length){
   $(window).scroll(function(){
     var url = $('.pagination .next_page').attr('href')
     if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
+      // replaceWithGif($('.pagination').text())
       $('.pagination').text("Loading...")
       console.log('getting?');
       $.getScript(url)
@@ -38,4 +39,12 @@ $('.body-div').mouseover(function(){
   $('.sub-nav-container').css({
     display: 'none'
   })
+  $('.sub-nav-triangle').css({
+    display: 'none'
+  })
 })
+
+function replaceWithGif(something) {
+  var gif = $('<img class="responsive=img loading-gif" src="/images/loading.gif"/>')
+  something.replaceWith(gif)
+}

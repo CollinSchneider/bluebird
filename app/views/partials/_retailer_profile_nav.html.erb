@@ -1,14 +1,11 @@
-<% purchases = Product.where('id in (
-  select product_id from commits where retailer_id = ?
-)', current_user.retailer.id) %>
-
-<div class="col m2">
+<div class="hide-on-small-only col m2">
   <div class="profile-nav">
     <ul>
       <%
         items = {
           'Pending Orders' => '/retailer/pending_orders',
           'Order History' => '/retailer/order_history',
+          'Last Chance' => '/retailer/last_chance',
           'Manage Payments' => '/retailer/accounts',
           'Shipping Addresses' => '/retailer/shipping_addresses',
           'Settings' => '/retailer/settings',
@@ -24,10 +21,10 @@
 </div>
 
 <script>
-  if(<%= current_user.retailer.needs_credit_card? %>){
-    $('a[href="/retailer/accounts"]').attr('class', 'red-text')
-  }
-  if(<%= current_user.retailer.needs_shipping_info? %>){
-    $('a[href="/retailer/shipping_addresses"]').attr('class', 'red-text')
-  }
+  // if(<#%= current_user.retailer.needs_credit_card? %>){
+  //   $('a[href="/retailer/accounts"]').attr('class', 'red-text')
+  // }
+  // if(<#%= current_user.retailer.needs_shipping_info? %>){
+  //   $('a[href="/retailer/shipping_addresses"]').attr('class', 'red-text')
+  // }
 </script>

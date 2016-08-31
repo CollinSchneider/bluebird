@@ -11,35 +11,3 @@
   </div>
 
 </div>
-
-<script>
-  $('#address-form').submit(function(e){
-    e.preventDefault()
-    var streetOne = $('#street-line-one').val()
-    var streetTwo = $('#street-line-two').val()
-    var city = $('#city').val()
-    var state = $('#state').val()
-    var zip = $('#zip').val()
-    var company = $('#company').val()
-    var phone = $('#phone-number').val()
-    $.ajax({
-      method: "POST",
-      url: "/api/create_shipping_address?street_one=" + streetOne + "&street_two=" + streetTwo + "&city=" + city +
-            "&state=" + state + "&zip=" + zip + "&company=" + company + "&phone=" + phone,
-      success: function(data){
-        console.log(data);
-        saveShippingAddress(data.address.id)
-      }
-    })
-  })
-
-  function saveShippingAddress(addressId){
-    $.ajax({
-      method: "POST",
-      url: "/api/save_shipping_id/" + addressId,
-      success: function(data){
-        console.log(data);
-      }
-    })
-  }
-</script>

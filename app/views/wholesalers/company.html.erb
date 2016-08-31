@@ -3,18 +3,32 @@
   <%= render partial: 'partials/wholesaler_profile_nav' %>
 
   <div class="col s12 m8 offset-m3 center-align">
-    <h6 class='green-text'><%= flash[:success] %></h6>
+    <div class="row center-align">
+      <h6 class='green-text'><%= flash[:success] %></h6>
+      <% if !flash[:error].nil? %>
+        <% flash[:error].each do |err, msg| %>
+          <h6 class='red-text'><%= msg %></h6>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="col s12 m8 offset-m3 center-align order-box z-depth-2">
     <div class="row">
       <h4><%= @company.company_name%></h4>
     </div>
-    <% if !@company.logo.nil? %>
+    <% if @company.logo.present? %>
       <div class="row">
         <img src="<%= @company.logo %>" class='responsive-img' />
       </div>
     <% end %>
     <div class="row">
       <%= form_for @company do |f| %>
-        <textarea name="company[bio]" rows="8" cols="40" placeholder="Company Bio"><%= @company.bio %></textarea>
+        <div class="input-field">
+          <label for="bio">Company Bio</label>
+          <%= f.text_area :bio, :id => "bio", :class => "materialize-textarea" %> <br>
+        </div>
+        <!-- <textarea name="company[bio]" rows="8" cols="40" placeholder="Company Bio"><%= @company.bio %></textarea> -->
         <div class="input-field">
           <label>Location</label>
           <input type="text" name="company[location]" value="<%= @company.location %>">
@@ -22,12 +36,26 @@
         <input type="submit" value="Update Company Info" class="btn">
       <% end %>
     </div>
-    <%= form_for @company do |f| %>
-      <div class="input-field">
-        <%= f.file_field :logo %>
-      </div>
-      <%= f.submit "Update Logo" %>
-    <% end %>
+  </div>
+
+  <div class="col s12 m8 offset-m3 center-align order-box z-depth-2">
+    <div class="row">
+      <h5>Update Company Logo</h5>
+    </div>
+    <div class="row">
+      <%= form_for @company do |f| %>
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>Logo</span>
+            <%= f.file_field :logo %>
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+          </div>
+        </div>
+        <%= f.submit "Update Logo", :class => 'btn' %>
+      <% end %>
+    </div>
   </div>
 
 

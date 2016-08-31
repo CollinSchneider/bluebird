@@ -2,81 +2,160 @@
 
   <%= render partial: 'partials/retailer_profile_nav' %>
 
-  <div class="col s12 m7 offset-m3 center-align">
 
 
   <% if @retailer.primary_address.nil? %>
-    <h5>Before you can make any purchase orders, you must first add a shipping address</h5>
-    <%= form_tag('/api/shipping/create_shipping_address', method: :post) do %>
-      <div class="input-field">
-        <label>Street Address One</label>
-        <input id="street-line-one" type="text" name="street_one">
+    <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
+      <h5>Before you can make any purchase orders, you must first add a shipping address</h5>
+      <%= form_tag('/api/shipping/create_shipping_address', method: :post) do %>
+        <div class="input-field">
+          <label>Street Address One</label>
+          <input id="street-line-one" type="text" name="street_one">
+        </div>
+        <div class="input-field">
+          <label>Street Address Two</label>
+          <input id="street-line-two" type="text" name="street_two">
+        </div>
+        <div class="input-field">
+          <label>City</label>
+          <input id="city" type="text" name="city">
+        </div>
+        <div class="input-field">
+          <label>State</label>
+          <input id="state" type="text" name="state">
+        </div>
+        <div class="input-field">
+          <label>Zip</label>
+          <input id="zip" type="text" name="zip">
+        </div>
+        <div class='errors-div'>
+        </div>
+        <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
       </div>
-      <div class="input-field">
-        <label>Street Address Two</label>
-        <input id="street-line-two" type="text" name="street_two">
-      </div>
-      <div class="input-field">
-        <label>City</label>
-        <input id="city" type="text" name="city">
-      </div>
-      <div class="input-field">
-        <label>State</label>
-        <input id="state" type="text" name="state">
-      </div>
-      <div class="input-field">
-        <label>Zip</label>
-        <input id="zip" type="text" name="zip">
-      </div>
-      <div class='errors-div'>
-      </div>
-      <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
     <% end %>
 
     <% else %>
-
-      <h4><%= @retailer.user.first_name %>'s Primary Address:</h4>
-      <div class="row">
-        <h4><%= @retailer.primary_address.street1.capitalize %></h4>
-        <% if @retailer.primary_address.street2 != '' %>
-        <h4><%= @retailer.primary_address.street2.capitalize %></h4>
-        <% end %>
-        <h4><%= @retailer.primary_address.city.capitalize %>, <%= @retailer.primary_address.state %> <%= @retailer.primary_address.zip %></h4>
+      <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
+        <h4><%= @retailer.user.first_name %>'s Primary Address:</h4>
+        <div class="row">
+          <h4><%= @retailer.primary_address.street1.capitalize %></h4>
+          <% if @retailer.primary_address.street2 != '' %>
+          <h4><%= @retailer.primary_address.street2.capitalize %></h4>
+          <% end %>
+          <h4><%= @retailer.primary_address.city.capitalize %>, <%= @retailer.primary_address.state %> <%= @retailer.primary_address.zip %></h4>
+        </div>
       </div>
 
+    <% if @retailer.shipping_addresses.count > 1 %>
+      <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
+        <% @retailer.shipping_addresses.each_slice(3) do |slice| %>
+          <div class="row">
+            <% slice.each do |address| %>
+              <%
+              EasyPost.api_key = ENV['EASYPOST_API_KEY']
+              easy_address = EasyPost::Address.retrieve(address.address_id)
+              %>
+              <% if easy_address.id != @retailer.primary_address.id %>
+                <div class="col s12 m4 white">
+                  <h6><%= easy_address.street1 %></h6>
+                  <% if easy_address.street2 != '' %>
+                    <h6><%= easy_address.street2 %></h6>
+                  <% end %>
+                  <h6><%= easy_address.city %>, <%= easy_address.state %> <%= easy_address.zip %></h6>
+                  <a href="#" class='make-primary' data='<%= address.id %>'>Make Primary Address</a> <br>
+                  <a href="#" class='delete-address red-text' data='<%= easy_address.id %>'>Delete Address</a>
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
     <% end %>
 
-</div>
+    <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
+      <h5>Upload New Shipping Address</h5>
+      <%= form_tag('/api/shipping/create_shipping_address', method: :post) do %>
+        <div class="input-field">
+          <label>Street Address One</label>
+          <input id="street-line-one" type="text" name="street_one">
+        </div>
+        <div class="input-field">
+          <label>Street Address Two</label>
+          <input id="street-line-two" type="text" name="street_two">
+        </div>
+        <div class="input-field">
+          <label>City</label>
+          <input id="city" type="text" name="city">
+        </div>
+        <div class="input-field">
+          <label>State</label>
+          <input id="state" type="text" name="state">
+        </div>
+        <div class="input-field">
+          <label>Zip</label>
+          <input id="zip" type="text" name="zip">
+        </div>
+        <div class='errors-div'>
+        </div>
+        <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
+      <% end %>
+    </div>
+  <% end %>
+
 
 <script>
-  $('form').submit(function(e){
-    e.preventDefault()
-    var form = $(this)
-    var streetLine1 = form.find('#street-line-one').val()
-    var streetLine2 = form.find('#street-line-two').val()
-    var city = form.find('#city').val()
-    var state = form.find('#state').val()
-    var zip = form.find('#zip').val()
-    form.find('#submit-address').prop('disabled', true)
-    form.find('#submit-address').text('Saving...')
-    $('.errors-div').text('')
+  // $('form').submit(function(e){
+  //   e.preventDefault()
+  //   var form = $(this)
+  //   var streetLine1 = form.find('#street-line-one').val()
+  //   var streetLine2 = form.find('#street-line-two').val()
+  //   var city = form.find('#city').val()
+  //   var state = form.find('#state').val()
+  //   var zip = form.find('#zip').val()
+  //   form.find('#submit-address').prop('disabled', true)
+  //   form.find('#submit-address').text('Saving...')
+  //   $('.errors-div').text('')
+  //   $.ajax({
+  //     method: 'POST',
+  //     url: '/api/shipping/create_shipping_address?street_line_1=' +streetLine1+ '&street_line_2=' +streetLine2+
+  //       '&city=' +city+ '&state=' +state+ '&city=' +city+ '&zip=' +zip,
+  //     success: function(data){
+  //       console.log(data);
+  //       if(!data.success) {
+  //         form.find('#submit-address').prop('disabled', false)
+  //         form.find('#submit-address').text('Create Address')
+  //         for (var i = 0; i < data.errors.length; i++) {
+  //           var error = data.errors[i]
+  //           var message = $('<h6 class="red-text">').text("Address Error: " + error.message)
+  //           $('.errors-div').append(message)
+  //         }
+  //       } else {
+  //         location.reload()
+  //       }
+  //     }
+  //   })
+  // })
+
+  $('.make-primary').click(function(){
+    console.log('click');
+    var addressId = $(this).attr('data')
     $.ajax({
       method: 'POST',
-      url: '/api/shipping/create_shipping_address?street_line_1=' +streetLine1+ '&street_line_2=' +streetLine2+
-        '&city=' +city+ '&state=' +state+ '&city=' +city+ '&zip=' +zip,
+      url: '/api/shipping/make_primary_address?address_id=' + addressId,
       success: function(data){
-        console.log(data);
-        if(!data.success) {
-          form.find('#submit-address').prop('disabled', false)
-          form.find('#submit-address').text('Create Address')
-          for (var i = 0; i < data.errors.length; i++) {
-            var error = data.errors[i]
-            var message = $('<h6 class="red-text">').text("Address Error: " + error.message)
-            $('.errors-div').append(message)
-          }
-        } else {
-          location.reload()
-        }
+        location.reload()
+      }
+    })
+  })
+
+  $('.delete-address').click(function(){
+    var easyAddressId = $(this).attr('data')
+    console.log(easyAddressId);
+    $.ajax({
+      method: 'POST',
+      url: '/api/shipping/delete_address?address_id=' + easyAddressId,
+      success: function(data){
+        location.reload()
       }
     })
   })

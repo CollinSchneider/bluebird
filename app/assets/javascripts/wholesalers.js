@@ -45,4 +45,7 @@ $('.body-div').mouseover(function(){
   $('.sub-nav-container').css({
     display: 'none'
   })
+  $('.sub-nav-triangle').css({
+    display: 'none'
+  })
 })

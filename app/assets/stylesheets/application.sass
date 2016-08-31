@@ -28,32 +28,93 @@ body
 input
   color: black
 
+.no-overflow
+  overflow: hidden
+
 .hidden
   display: none
 
+.bold
+  font-weight: 800
+
+.no-bottom-margin
+  margin-bottom: 0px
+
+.loading-gif
+  width: 2rem
+
 .navigation
-  background: rgb(236, 236, 236)
+  background: rgb(248, 248, 248)
+  // background: white
+  padding-bottom: 0px
+  z-index: 100000
+  input
+    border-bottom: 1px solid black
+    height: 2.5rem
+    border: 1px solid black
+    border-radius: 10px
+    background: white
+  input:focus
+    border-bottom: 1px solid black
+
+@media only screen and (max-width: 880px)
+  .nav-category
+    font-size: 12px
+
+@media only screen and (max-width: 800px)
+  .nav-category
+    font-size: 10px
+
+.sub-nav-triangle
+  position: absolute
+  display: none
+  width: 0
+  height: 0
+  border-left: 10px solid transparent
+  border-right: 10px solid transparent
+  border-bottom: 15px solid rgb(54, 54, 54)
 
 .sub-nav-container
-  background: rgb(236, 236, 236)
+  background: rgb(54, 54, 54)
+  color: white
+
+.search-sub-nav-container
+  background: white
+  color: black
+  display: none
+  border-top: 1px solid rgb(225, 225, 225)
+  .input-field input
+    border: none
+    background: white
+  .input-field input[type=text]:focus
+    border-bottom: none
+    box-shadow: none
 
 .sub-nav-category
   display: inline-block
   height: 100%
-  padding: 5px
+  padding: 15px
+  font-weight: normal
+  font-size: 12px
 
-.sub-nav-category:hover
-  border-bottom: 1px solid black
+.sub-nav-category:hover, .active-sub-nav-category
+  border-bottom: 2px solid white
 
 .sub-nav
   padding-top: 0px
   padding-bottom: 0px
-  // padding-left: 50px
   display: none
-  background: rgb(236, 236, 236)
+  // background: rgba(34, 34, 34, 0.86)
+  color: white
+  border-top: 1px solid black
+  .nav-link
+    color: white
 
 .bluebird-text
   color: rgb(0, 186, 255)
+
+.dark-bluebird-text
+  color: rgb(0, 113, 189)
 
 .btn
   background: rgb(0, 186, 255)
@@ -62,7 +123,7 @@ input
   text-decoration: underline
 
 .active-nav-link
-  text-decoration: underline
+  // text-decoration: underline
   font-size: 115%
   color: rgb(0, 148, 255)
 
@@ -71,11 +132,12 @@ input
 
 .nav-category
   margin-left: 10px
-  // position: absolute
-  // bottom: 0
+  transition: .5s
 
 .nav-category:hover
   text-decoration: underline
+  cursor: pointer
+  color: rgb(0, 148, 255)
 
 .border
   border: 1px solid black
@@ -90,8 +152,8 @@ input
 .no-margin
   margin: 0 0 0 0
 
-.responsive-img
-  width: 100%
+#products
+  // min-height: 105vh
 
 .was-price
   color: rgb(157, 157, 157)
@@ -117,6 +179,8 @@ input
   border: 1px solid rgb(217, 217, 217)
   margin-left: 2em
   width: 80%
+  background: white
+  transition: .75s
   img
     border-top-left-radius: 10px
     border-top-right-radius: 10px
@@ -126,6 +190,10 @@ input
   .description
     height: 65px
 
+.product:hover
+  -webkit-box-shadow: 10px 10px 5px 0px rgba(194,194,194,1)
+  -moz-box-shadow: 10px 10px 5px 0px rgba(194,194,194,1)
+  box-shadow: 10px 10px 5px 0px rgba(194,194,194,1)
 
 .percent-box
   background: rgba(0, 0, 0, .4)

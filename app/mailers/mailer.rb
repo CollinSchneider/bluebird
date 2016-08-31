@@ -1,14 +1,16 @@
 class Mailer < ApplicationMailer
   default from: 'info@bluebird.club'
 
-  def retailer_welcome_email(user)
+  def retailer_welcome_email(user, password)
     @user = user
+    @password = password
     email_with_name = %("#{@user.full_name}" <#{@user.email}>)
     mail(to: @user.email, subject: "Welcome to BlueBird.club, #{@user.first_name}")
   end
 
-  def wholesaler_welcome_email(user)
+  def wholesaler_welcome_email(user, password)
     @user = user
+    @password = password
     email_with_name = %("#{@user.full_name}" <#{@user.email}>)
     mail(to: @user.email, subject: "Welcome to BlueBird.club, #{@user.first_name}")
   end
@@ -35,6 +37,17 @@ class Mailer < ApplicationMailer
     @tracking_url = tracking_url
     email_with_name = %("#{@user.full_name}" <#{@user.email}>)
     mail(to: @user.email, subject: "Your order is on the way, #{@user.first_name}")
+  end
+
+  def retailer_declined_card_sale_shipped(user, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url, charge)
+      @user = user
+      @tracking_carrier = tracking_carrier
+      @tracking_code = tracking_code
+      @tracking_delivery_date = tracking_delivery_date
+      @tracking_url = tracking_url
+      @charge = charge
+      email_with_name = %("#{@user.full_name}" <#{@user.email}>)
+      mail(to: @user.email, subject: "Your order is on the way, but we need some info")
   end
 
   def retailer_discount_hit(user, commit, product)
@@ -65,10 +78,26 @@ class Mailer < ApplicationMailer
     mail(to: @user.email, subject: "BlueBird password reset")
   end
 
-  def card_declined(user, commit)
+  def card_declined(user, commit, card)
     @user = user
+    @card = card
+    @commit = commit
     email_with_name = %("#{@user.full_name}" <#{@user.email}>)
     mail(to: @user.email, subject: "BlueBird credit card error")
+  end
+
+  def wholesaler_full_price_email(commit, user)
+    @commit = commit
+    @user = user
+    email_with_name = %("#{@user.full_name}" <#{@user.email}>)
+    mail(to: @user.email, subject: "New Purchase Order!")
+  end
+
+  def retailer_full_price_email(commit, user)
+    @commit = commit
+    @user = user
+    email_with_name = %("#{@user.full_name}" <#{@user.email}>)
+    mail(to: @user.email, subject: "Purchase Confirmation")
   end
 
 end

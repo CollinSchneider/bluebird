@@ -3,10 +3,11 @@
     <img src="images/main-bluebird.png" alt="" class="responsive-img" />
   </div> -->
   <!-- <div class="col s4 offset-s3"> -->
-  <div class="col s4 valign">
+  <div class="col s4 valign left-align">
     <% if params[:query] %>
       <h6>Search results for:</h6>
       <h6><strong>"<%= params[:query] %>"</strong></h6>
+      <a href="<%= request.path %>">Clear Search</a>
     <% end %>
   </div>
   <div class="row col s6 m4 offset-s3 offset-m4 valign">

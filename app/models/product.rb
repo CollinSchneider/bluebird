@@ -4,7 +4,6 @@ class Product < ActiveRecord::Base
 
   has_many :commits
   has_many :product_features
-  has_many :product_features
 
   has_one :product_token
 
@@ -19,28 +18,28 @@ class Product < ActiveRecord::Base
 
   validate :enough_inventory_for_sale
 
-  has_attached_file :main_image, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, default_url: "/images/:style/missing.png"
+  has_attached_file :main_image, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
   validates_attachment_content_type :main_image, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :photo_two, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, default_url: "/images/:style/missing.png"
+  has_attached_file :photo_two, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
   validates_attachment_content_type :photo_two, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :photo_three, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, default_url: "/images/:style/missing.png"
+  has_attached_file :photo_three, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
   validates_attachment_content_type :photo_three, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :photo_four, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, default_url: "/images/:style/missing.png"
+  has_attached_file :photo_four, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
   validates_attachment_content_type :photo_four, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :photo_five, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, default_url: "/images/:style/missing.png"
+  has_attached_file :photo_five, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
   validates_attachment_content_type :photo_five, content_type: /\Aimage\/.*\Z/
 
   before_validation(on: :create) do
-
+    self.uuid = SecureRandom.uuid
+    self.slug = make_slug
   end
 
   def create_uuid
     self.uuid = SecureRandom.uuid
-    self.save
   end
 
   def make_slug
@@ -49,7 +48,7 @@ class Product < ActiveRecord::Base
     slug.gsub!("'", "")
     slug.gsub!('.', '')
     slug.gsub!(' ', '-')
-    self.slug = slug
+    return self.slug = slug
   end
 
   def set_product_start_data
@@ -127,12 +126,46 @@ class Product < ActiveRecord::Base
     end
   end
 
+  def time_to_full_price_expiration
+    seconds = self.product_token.expiration_datetime - Time.now
+    minutes = seconds/60
+    hours = minutes/60
+    days = hours/24
+    if days > 2
+      return "#{days.floor} days left"
+    elsif days < 2 && days > 0
+      hours = days*24
+      if hours > 1
+        return "#{(hours).floor}\n hours left"
+      else
+        return "#{(hours*60).floor}\n minutes left"
+      end
+    else
+      return "Expired #{self.end_time.strftime('%b %d')}"
+    end
+  end
+
   def percent_discount
     return 1 - (self.discount.to_f/self.price.to_f)
   end
 
+  def full_price?
+    return self.status == 'full_price'
+  end
+
+  def self.end_full_priced
+    products = Product.where('status = ? AND id in (
+      select product_id from product_tokens where expiration_datetime <= ?
+    )', 'full_price', Time.now + 30.seconds)
+    products.each do |product|
+      # Send email to wholesaler
+      product.status = 'past'
+      product.save
+    end
+  end
+
   def self.expire_product
-    products = Product.where('status = ? AND end_time <= ?', 'live', Time.now)
+    products = Product.where('status = ? AND end_time <= ?', 'live', Time.now + 30.seconds)
     products.each do |product|
       if product.commits.sum(:amount).to_f*product.discount.to_f >= product.goal.to_f
       # if product.current_sales.to_f >= product.goal.to_f
@@ -141,9 +174,10 @@ class Product < ActiveRecord::Base
         product.commits.each do |commit|
           commit.status = 'goal_met'
           commit.save(validate: false)
-          charge = product.wholesaler.user.collect_payment(commit)
+          amount = product.discount.to_f*commit.amount.to_i
+          charge = product.wholesaler.user.collect_payment(commit, amount)
           if charge[1]
-            Mailer.retailer_discount_hit(commit.user, commit, product).deliver_later
+            Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
           else
             commit.card_declined = true
             commit.card_decline_date = Time.now
@@ -151,7 +185,7 @@ class Product < ActiveRecord::Base
             # Send card failure email
           end
         end
-        Mailer.wholesaler_discount_hit(product.user, product).deliver_later
+        Mailer.wholesaler_discount_hit(product.wholesaler.user, product).deliver_later
       else
         product.status = 'needs_attention'
         product.save
@@ -160,7 +194,7 @@ class Product < ActiveRecord::Base
           commit.save(validate: false)
           # Mailer.retailer_discount_missed(commit.user, product)
         end
-        Mailer.wholesaler_needs_attention(product.user, product).deliver_later
+        Mailer.wholesaler_needs_attention(product.wholesaler.user, product).deliver_later
       end
     end
   end

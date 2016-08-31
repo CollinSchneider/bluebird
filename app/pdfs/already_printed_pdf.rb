@@ -2,32 +2,35 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def initialize(user)
     super()
-    product_array = user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').pluck(:id).to_a
+    product_array = user.wholesaler.products.where('status = ? OR status = ? OR status = ?', 'goal_met', 'discount_granted', 'full_price').pluck(:id).to_a
     need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL AND card_declined != ?', product_array, true)
 
     directions_title(user)
     directions
     bluebird_image
     start_new_page
-    need_to_ship.each do |commit|
-      commit.pdf_generated = true
-      commit.save
 
-      image_header
-      product_title(commit.product)
-      pad_bottom(30) {seller_info(commit.product.wholesaler.user)}
-      stroke_horizontal_rule
-      pad_bottom(15) {buyer_info(commit.retailer)}
-      stroke_horizontal_rule
-      pad_bottom(10) {column_headers}
-      stroke_horizontal_rule
-      pad_bottom(10) {order_info(commit)}
-      stroke_horizontal_rule
-      pad_bottom(10) {shipping_info}
-      stroke_horizontal_rule
-      order_total(commit)
-      start_new_page
+    need_to_ship.each do |commit|
+      pdf_sequence(commit)
     end
+
+  end
+
+  def pdf_sequence(commit)
+    image_header
+    product_title(commit.product)
+    pad_bottom(30) {seller_info(commit.product.wholesaler.user)}
+    stroke_horizontal_rule
+    pad_bottom(15) {buyer_info(commit.retailer)}
+    stroke_horizontal_rule
+    pad_bottom(10) {column_headers}
+    stroke_horizontal_rule
+    pad_bottom(10) {order_info(commit)}
+    stroke_horizontal_rule
+    pad_bottom(10) {shipping_info}
+    stroke_horizontal_rule
+    order_total(commit)
+    start_new_page
   end
 
   def directions_title(user)
@@ -66,8 +69,8 @@ class AlreadyPrintedPdf < Prawn::Document
     address = EasyPost::Address.retrieve(retailer.shipping_addresses[0].address_id)
     text "Buyer: #{retailer.user.full_name} \n
     #{retailer.company.company_name} \n
-    #{address.street1} \n
-    #{address.city}, #{address.state}, #{address.zip}"
+    #{address.street1.downcase.capitalize} \n
+    #{address.city.downcase.capitalize}, #{address.state}, #{address.zip}"
   end
 
   def seller_info(user)
@@ -81,7 +84,11 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def order_info(commit)
     move_down 10
-    text "#{commit.product.title.pluralize}                   $#{commit.product.discount}                    #{commit.amount}                    $#{'%.2f' % (commit.product.discount.to_f*commit.amount.to_f)}", align: :right
+    if !commit.full_price
+      text "#{commit.product.title.pluralize}                   $#{commit.product.discount}                    #{commit.amount}                    $#{'%.2f' % (commit.product.discount.to_f*commit.amount.to_f)}", align: :right
+    else
+      text "#{commit.product.title.pluralize}                   $#{commit.product.price}                    #{commit.amount}                    $#{'%.2f' % (commit.product.price.to_f*commit.amount.to_f)}", align: :right
+    end
   end
 
   def shipping_info
@@ -91,7 +98,11 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def order_total(commit)
     move_down 10
-    text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.discount.to_f)}", align: :right, style: :bold
+    if !commit.full_price
+      text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.discount.to_f)}", align: :right, style: :bold
+    else
+      text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.price.to_f)}", align: :right, style: :bold
+    end
   end
 
 end

@@ -7,7 +7,11 @@
         <% declined_card = @stripe_customer.sources.retrieve(@commit.card_id) %>
         <h6><%= @commit.product.title %></h6>
         <% if @commit.shipping_id.nil? %>
-          <h6>You still owe $<%= @commit.amount.to_f*@commit.product.discount.to_f%></h6>
+          <% if !@commit.full_price %>
+            <h6>You still owe $<%= @commit.amount.to_f*@commit.product.discount.to_f%></h6>
+          <% else %>
+            <h6>You still owe $<%= @commit.amount.to_f*@commit.product.price.to_f%></h6>
+          <% end %>
         <% else %>
           <h6>You still owe $something for shipping</h6>
         <% end %>
@@ -75,7 +79,7 @@
   function updatePayment(cardId){
     $.ajax({
       method: 'POST',
-      url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_id=<%=@commit.id%>',
+      url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_uuid=<%=@commit.uuid%>',
       success: function(data){
         console.log(data);
         if(data.success) {

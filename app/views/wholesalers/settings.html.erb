@@ -2,46 +2,95 @@
 
 <%= render partial: 'partials/wholesaler_profile_nav' %>
 
-<div class="col s12 m9 offset-m3 offset-l2">
+<div class="col s12 m8 l9 offset-m3 offset-l2 edit-order-box z-depth-2" style="margin-top: 25px">
 
   <h4>Settings</h4>
-  <div class="row center-align">
-    <%= form_for current_user do |f| %>
+  <h6 class='green-text'><%= flash[:success] %></h6>
+  <% if !flash[:error].nil? %>
+    <% flash[:error].each do |err| %>
+      <h6 class='red-text'><%= err %></h6>
+    <% end %>
+  <% end %>
+   <div class="row center-align">
+    <%= form_tag('/api/wholesalers/update_account') do %>
+    <div class="row">
       <div class="input-field">
-        <%= f.label "First Name" %>
-        <%= f.text_field :first_name, :value => current_user.first_name %>
-      </div>
-      <div class="input-field">
-        <%= f.label "Last Name" %>
-        <%= f.text_field :last_name, :value => current_user.last_name %>
-      </div>
-        <h5>Allow other users to contact you?</h5>
-        <div class="input-field">
-          <%= f.label "Yes" %>
-          <%= f.radio_button :contactable, :value => true %>
+        <div class="col s6">
+          <%= label_tag "First Name" %>
+          <input type="text" name="user[first_name]" value="<%= current_user.first_name%>">
+          <!-- <#%= text_field_tag :first_name, :value => current_user.first_name, :id => 'first-name' %> -->
         </div>
-        <div class="input-field">
-          <%= f.label "No" %>
-          <%= f.radio_button :contactable, :value => false %>
+      </div>
+      <div class="input-field">
+        <div class="col s6">
+          <%= label_tag "Last Name" %>
+          <input type="text" name="user[last_name]" value="<%= current_user.last_name%>">
+          <!-- <#%= text_field_tag :last_name, :value => current_user.last_name, :id => 'last-name' %> -->
         </div>
-      <div class="input-field">
-        <%= f.label "Email" %>
-        <%= f.text_field :email, :value => current_user.email %>
       </div>
-      <div class="input-field">
-        <%= f.label "Phone Number" %>
-        <%= f.text_field :phone_number, :value => current_user.phone_number %>
+    </div>
+    <div class="row">
+      <div class="col s6">
+        <div class="input-field">
+          <%= label_tag "Email" %>
+          <input type="email" name="user[email]" value="<%= current_user.email %>">
+          <!-- <#%= email_field_tag :email, :value => current_user.email, :id => 'email' %> -->
+        </div>
       </div>
-      <%= f.submit "Update Account", :class => 'btn' %>
+      <div class="col s6">
+        <div class="input-field">
+          <%= label_tag "Phone Number" %>
+          <input type="text" name="user[phone_number]" value="<%= current_user.phone_number %>">
+          <!-- <#%= text_field_tag :phone_number, :value => current_user.phone_number, :id => 'phone-number' %> -->
+        </div>
+      </div>
+    </div>
+      <div class="input-field">
+        <% if current_user.wholesaler.contactable_by_email %>
+          <input id="contact-by-email" type="checkbox" name="contactable_by_email" value="true" checked>
+        <% else %>
+          <input id="contact-by-email" type="checkbox" name="contactable_by_email" value="true">
+        <% end %>
+        <label for="contact-by-email">Allow buyers to contact you by email?</label>
+      </div>
+      <div class="input-field row">
+        <% if current_user.wholesaler.contactable_by_phone %>
+          <input id="contact-by-phone" type="checkbox" name="contact_by_phone" value="true" checked>
+        <% else %>
+          <input id="contact-by-phone" type="checkbox" name="contact_by_phone" value="true">
+        <% end %>
+        <label for="contact-by-phone">Allow buyers to contact you by phone?</label>
+      </div>
+      <div class="input-field row">
+        <%= submit_tag "Update Account", :class => 'btn' %>
+      </div>
     <% end %>
   </div>
 
   <div class="row">
-    <div class="left-align col s6">
-      <a href="/settings/wholesaler/change_password" class='btn'>Change Password</a>
+    <div class="col s12 m6">
+      <div class="hide-on-med-and-up">
+        <div class="s12 center-align">
+          <a href="/settings/wholesaler/change_password" class='btn'>Change Password</a>
+        </div>
+      </div>
+      <div class="hide-on-small-only left-align">
+        <div class="m6">
+          <a href="/settings/wholesaler/change_password" class='btn'>Change Password</a>
+        </div>
+      </div>
     </div>
-    <div class="right-align col s6">
-      <%= link_to "Delete Account", user_path(current_user.id), method: :destroy, :class => 'btn red', data: {confirm: "Are you sure you want to delete your account?"} %>
+    <div class="col s12 m6">
+      <div class="hide-on-med-and-up">
+        <div class="s12 center-align">
+          <%= link_to "Delete Account", user_path(current_user.id), method: :destroy, :class => 'btn red', data: {confirm: "Are you sure you want to delete your account?"} %>
+        </div>
+      </div>
+      <div class="hide-on-small-only right-align">
+        <div class="m6">
+          <%= link_to "Delete Account", user_path(current_user.id), method: :destroy, :class => 'btn red', data: {confirm: "Are you sure you want to delete your account?"} %>
+        </div>
+      </div>
     </div>
   </div>
 

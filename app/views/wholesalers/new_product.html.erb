@@ -5,27 +5,54 @@
   <h4>List a New Product!</h4>
 </div>
 
-<% if !params[:goal] %>
-  <div class="row">
-    <div class="col s8 offset-s2 center-align">
-      <h4>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h4>
-      <form action="/new_product?duration=<%=params[:duration]%>" method="get">
-        <input type="hidden" name="duration" value="<%= params[:duration] %>">
-        <div class="row">
-          <div class="col s1 right-align">
-            <h6>$</h6>
-          </div>
-          <div class="col s11 left-align valign-wrapper">
-            <div class="col s11">
-              <input type="text" name="goal" placeholder="Sales Goal ($)">
+<% if !params[:duration] %>
+  <div class="row center-align">
+    <div class="col s12 m8 offset-m2">
+      <div class="product-form-div z-depth-2">
+
+        <form>
+          <select name="duration" id="duration-select">
+            <option disabled="disabled" selected>Select Sale Duration</option>
+            <option value="5_minutes">5 Minutes</option>
+            <option value="1_day">1 Day</option>
+            <option value="7_days">7 Days</option>
+            <option value="10_days">10 Days</option>
+            <option value="14_days">14 Days</option>
+            <option value="30_days">30 Days</option>
+          </select>
+          <input type="submit" value="Set Duration" class='btn'>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+<% elsif !params[:goal] %>
+  <div class="row center-align">
+    <h4>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h4>
+    <div class="col s12 m8 offset-m2">
+
+      <div class="product-form-div z-depth-2">
+        <form action="/new_product?duration=<%=params[:duration]%>" method="get">
+          <input type="hidden" name="duration" value="<%= params[:duration] %>">
+          <div class="row valign-wrapper">
+            <div class="col s1 right-align valign">
+              <h6>$</h6>
             </div>
-            <div class="col s1 valign">
-              <a class="tooltipped" data-position="right" data-delay="0" data-tooltip="I am tooltip<br> Me too">?</a>
+            <div class="col s11 left-align valign-wrapper">
+              <div class="col s11 input-field">
+                <label>Sales Goal ($)</label>
+                <input type="text" name="goal">
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="right" data-delay="0" data-tooltip="<h6>This is your sales goal, if it is <br> met you will sell this product<br> for the discounted price you set.</h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
             </div>
           </div>
-        </div>
-        <input type="submit" value="Set Sales Goal" class="btn">
-      </form>
+          <input type="submit" value="Set Sales Goal" class="btn">
+        </form>
+      </div>
+
     </div>
   </div>
 <% end %>
@@ -36,64 +63,182 @@
     <h5>Sales Goal: $<%= params[:goal] %></h5>
     <% if flash.now[:error] %>
       <% flash.now[:error].each do |err, msg| %>
-        <h6 class="red-text error-field"> <%= msg.first %></h6>
+        <h6 class="red-text error-field"><i span="tiny material-icons">error_outline</i> <%= msg.first %></h6>
       <% end %>
     <% end %>
-    <div class="col s6 offset-s3">
+    <div class="col s12">
       <%= form_for Product.new, :html => {:class => 'new-product-form'} do |f| %>
         <%= f.hidden_field :duration, :value => params[:duration] %>
         <%= f.hidden_field :goal, :value => params[:goal] %>
-        <div class="input-field">
-          <%= f.label 'Product Title' %>
-          <%= f.text_field :title %> <br>
-        </div>
-        <div class="input-field">
-          <p class="center-align"> Main Image: </p>
-          <%= f.file_field :main_image %> <br>
-        </div>
-        <div class="input-field">
-          <p class="center-align"> Image Two: </p>
-          <%= f.file_field :photo_two %> <br>
-        </div>
-        <div class="input-field">
-          <p class="center-align"> Image Three: </p>
-          <%= f.file_field :photo_three %> <br>
-        </div>
-        <div class="input-field">
-          <p class="center-align"> Image Four: </p>
-          <%= f.file_field :photo_four %> <br>
-        </div>
-        <div class="input-field">
-          <p class="center-align"> Image Five: </p>
-          <%= f.file_field :photo_five %> <br>
-        </div>
-        <div class="input-field">
-          <%= f.text_area :description, :placeholder => "Product Description" %> <br>
+
+        <div class="col s12 m8 offset-m2">
+          <div class="product-form-div z-depth-2">
+
+            <h5>Describe your product.</h5>
+            <div class="input-field">
+              <%= f.label 'Product Title*' %>
+              <%= f.text_field :title %> <br>
+            </div>
+            <div class="input-field valign-wrapper">
+              <div class="col s11">
+                <label for="short-description">Short Description*</label>
+                <%= f.text_area :description, :id => "short-description", :class => "materialize-textarea", :length => 60 %> <br>
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Short, 120 character maximum length product description</h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
+            </div>
+            <div class="input-field valign-wrapper">
+              <div class="col s11">
+                <label for="long-description">Long Description</label>
+                <%= f.text_area :long_description, :id => "long-description", :class => "materialize-textarea" %> <br>
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Longer, detailed product description</h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
+            </div>
+            <div class="input-field">
+              <%= f.label "Feature One*" %>
+              <%= f.text_field :feature_one %>
+            </div>
+            <div class="input-field">
+              <%= f.label "Feature Two" %>
+              <%= f.text_field :feature_two %>
+            </div>
+            <div class="input-field">
+              <%= f.label "Feature Three" %>
+              <%= f.text_field :feature_three %>
+            </div>
+            <div class="input-field">
+              <%= f.label "Feature Four" %>
+              <%= f.text_field :feature_four %>
+            </div>
+            <div class="input-field">
+              <%= f.label "Feature Five" %>
+              <%= f.text_field :feature_five %>
+            </div>
+
+            <div class="input-field">
+              <select name="product[category]">
+                <option selected="selected" disabled>Choose Category*</option>
+                <option value="Home Goods">Home Goods</option>
+                <option value="Accessories">Accessories</option>
+                <option value="Apparel">Apparel</option>
+                <option value="Tech">Tech</option>
+              </select>
+            </div>
+
+          </div>
         </div>
 
-        <div class="input-field">
-          <select name="product[category]">
-            <option selected="selected" disabled>Choose Category</option>
-            <option value="Home Goods">Home Goods</option>
-            <option value="Accessories">Accessories</option>
-            <option value="Apparel">Apparel</option>
-            <option value="Tech">Tech</option>
-          </select>
+        <div class="col s12 m8 offset-m2">
+          <div class="product-form-div z-depth-2">
+
+            <h5>Show off your product.</h5>
+            <div class="file-field input-field">
+              <div class="btn">
+                <span>Main Image*</span>
+                <%= f.file_field :main_image %>
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+            <div class="file-field input-field">
+              <div class="btn">
+                <span>Image Two</span>
+                <%= f.file_field :photo_two %>
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+            <div class="file-field input-field">
+              <div class="btn">
+                <span>Image Three</span>
+                <%= f.file_field :photo_three %>
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+            <div class="file-field input-field">
+              <div class="btn">
+                <span>Image Four</span>
+                <%= f.file_field :photo_four %>
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+            <div class="file-field input-field">
+              <div class="btn">
+                <span>Image Five</span>
+                <%= f.file_field :photo_five %>
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" type="text">
+              </div>
+            </div>
+
+          </div>
         </div>
-        <div class="input-field">
-          <%= f.label 'Product Full Wholesale Price' %>
-          <%= f.number_field :price %> <br>
+
+        <div class="col s12 m8 offset-m2">
+          <div class="product-form-div z-depth-2">
+            <h5>Set the numbers.</h5>
+            <div class="input-field valign-wrapper">
+              <div class="col s11">
+                <%= f.label 'Product Full Wholesale Price*' %>
+                <%= f.number_field :price %> <br>
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the full wholesale price. <br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
+            </div>
+            <div class="input-field valign-wrapper">
+              <div class="col s11">
+                <%= f.label 'Product Discounted Wholesale Price*' %>
+                <%= f.number_field :discount, :class => 'product-discount' %> <br>
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
+            </div>
+            <div class="input-field valign-wrapper">
+              <div class="col s11">
+                <%= f.label 'Product Inventory For Sale*' %>
+                <%= f.number_field :quantity, :class => 'product-quantity' %> <br>
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>How much inventory you are listing for sale <br> Tip: must be possible to reach $<%=params[:goal]%> in sales at your<br> discounted price with this amount of inventory.</h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
+            </div>
+            <div class="input-field valign-wrapper">
+              <div class="col s11">
+                <%= f.label 'Minimum Allowed Order' %>
+                <%= f.number_field :minimum_order %> <br>
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="top" data-delay="0" data-tooltip="<h6>The lowest quantity of product a retailer can order.</h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
+            </div>
+
+          </div>
         </div>
-        <div class="input-field">
-          <%= f.label 'Product Discounted Wholesale Price' %>
-          <%= f.number_field :discount, :class => 'product-discount' %> <br>
+
+        <div class="row col s12">
+          <div class="row">
+            <%= f.submit 'Create Product', :class => 'submit-button btn' %>
+          </div>
+          <div class="row">
+            <div class="col s2 offset-s5">
+              <img src="/images/loading.gif" class='responsive-img loading-wheel hidden' />
+            </div>
+          </div>
         </div>
-        <div class="input-field">
-          <%= f.label 'Product Inventory For Sale' %>
-          <%= f.number_field :quantity, :class => 'product-quantity' %> <br>
-        </div>
-        <%= f.submit 'Create Product', :class => 'btn' %>
       <% end %>
+
     </div>
   </div>
 <% end %>
@@ -108,4 +253,9 @@
       span.remove();
     });
   });
+
+  $('form').submit(function(){
+    $('.submit-button').remove()
+    $('.loading-wheel').attr('class', 'responsive-img')
+  })
 </script>

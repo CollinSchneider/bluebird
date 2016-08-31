@@ -1,12 +1,24 @@
+<div class="sub-nav-triangle">
+</div>
 
-<div class="navigation row no-margin" style="padding-top: 10px; padding-bottom: 10px; margin: 0px">
-  <div class="col s12 valign-wrapper">
-    <div class="col s12 m2">
+<div class="navigation row no-margin z-depth-1" style="padding-top: 10px; margin: 0px">
+  <div class="col s12 valign-wrapper main-nav">
+    <div class="col s4 m2 offset-s4 valign">
       <a href="/shop">
         <img src="/images/bluebird-blue-text.png" alt="" class="responsive-img"/>
       </a>
     </div>
-    <div class="col s7 valign">
+    <div class="hide-on-med-and-up col s4 right-align valign">
+      <a class='black-text account-side-nav-link button-collapse' data-activates="slide-out">
+        <div class="nav-category-div" style="display: inline-block">
+          <span class='nav-category bold'><i class='material-icons'>reorder</i></span>
+        </div>
+      </a>
+    </div>
+    <!-- <div class="col s4 border right-align hide-on-med-and-up valign nav-category-div">
+      <a class="button-collapse" data-activtes="slide-out">Account</a>
+    </div> -->
+    <div class="col s7 valign hide-on-small-only">
       <h6>
         <%
           items = {
@@ -19,132 +31,230 @@
           items.each do |name, url|
             link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
         %>
-          <div class='nav-category-div' style="display: inline-block">
-            <span class="nav-category"><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></span>
-          </div>
+          <a class="<%= link_class %>" href="<%= url %>">
+            <div class='nav-category-div' style="display: inline-block">
+              <span class="nav-category bold"><%= name %></span>
+            </div>
+          </a>
         <% end %>
       </h6>
       </div>
+      <div class="offset-s4 offset-m1">
+      <% if current_user.is_retailer? %>
+        <h6>
+          <div class="hide-on-small-only">
+            <a class="black-text account-link" href="/retailer/pending_orders">
+              <div class='nav-category-div' style="display: inline-block">
+                <span class="nav-category bold">Account</span>
+              </div>
+            </a>
+          </div>
+        </h6>
+      <% elsif current_user.is_wholesaler? %>
+      <h6>
+        <div class="hide-on-small-only">
+          <a class="black-text account-link" href="/wholesaler/profile">
+            <div class='nav-category-div' style="display: inline-block">
+              <span class="nav-category bold">Account</span>
+            </div>
+          </a>
+        </div>
+      </h6>
+      <% elsif current_user.is_admin? %>
+        <h6>
+          <div class="hide-on-small-only">
+            <a class="black-text account-link" href="/admin">
+              <div class='nav-category-div' style="display: inline-block">
+                <span class="nav-category bold">Account</span>
+              </div>
+            </a>
+          </div>
+        </h6>
+      <% end %>
+    </div>
+    <div class="right">
+
+    </div>
+    <div class="col s1 hide-on-small-only valign nav-category-div">
+      <a href="#" class="search nav-category"><i class=" nav-categorysmall material-icons black-text">search</i></a>
+    </div>
+  </div>
+  <div class="row col s12 no-margin sub-nav-container">
+    <div class="no-margin sub-nav discover-sub-nav">
+      <h6 class="no-padding no-margin">
+        <%
+          items = {
+            'FEATURED' => '/bluebird_choice',
+            'BEST SELLERS' => '/best_sellers',
+            'ENDING SOON' => '/ending_soon',
+            'NEW ARRIVALS' => '/new_arrivals'
+          }
+          items.each do |name, url|
+            link_class = request.fullpath.start_with?(url) ? 'active-sub-nav-category white-text' : 'white-text'
+        %>
+        <a href="<%=url%>">
+          <div class='sub-nav-category nav-category-div center-align <%= link_class %>'>
+            <%= name %>
+          </div>
+        </a>
+        <% end %>
+      </h6>
+    </div>
     <% if current_user.is_retailer? %>
-      <h6>
-        <a class="nav-category black-text valign account-link" href="/retailer/pending_orders">
-          Account
-        </a>
-      </h6>
+      <div class="no-margin sub-nav account-sub-nav">
+        <h6 class="no-margin no-padding">
+          <%
+            items = {
+              'LOGOUT' => '/logout',
+              'SETTINGS' => '/retailer/settings',
+              'SHIPPING INFORMATION' => '/retailer/shipping_addresses',
+              'MANAGE PAYMENTS' => '/retailer/accounts',
+              'ORDER HISTORY' => '/retailer/order_history',
+              'PENDING ORDERS' => '/retailer/pending_orders'
+            }
+            items.each do |name, url|
+              link_class = request.fullpath.start_with?(url) ? 'active-sub-nav-category' : 'white-text'
+          %>
+            <a href="<%= url %>">
+              <div class='sub-nav-category nav-category-div center-align <%= link_class %>'>
+                <%= name %>
+              </div>
+            </a>
+          <% end %>
+        </h6>
+      </div>
     <% elsif current_user.is_wholesaler? %>
-      <h6>
-        <a class="nav-category black-text valign account-link" href="/wholesaler/profile">
-          Account
-        </a>
-      </h6>
-    <% elsif current_user.is_admin? %>
-      <h6>
-        <a class='nav-category black-text valign' href="/admin">
-          Account
-        </a>
-      </h6>
+      <div class="no-margin sub-nav account-sub-nav">
+        <h6 class="no-padding no-margin">
+          <%
+            items = {
+              'LOGOUT' => '/logout',
+              'MANAGE BANK ACCOUNT' => 'http://dashboard.stripe.com',
+              'SETTINGS' => '/wholesaler/settings',
+              'ANALYTICS' => '/analytics',
+              'PAST PRODUCTS' => '/past_products',
+              'CURRENT SALES' => '/current_sales',
+              'COMPANY' => '/wholesaler/company',
+              'SELL' => '/new_product',
+              'PROFILE' => '/wholesaler/profile'
+            }
+            items.each do |name, url|
+              link_class = request.fullpath.start_with?(url) ? 'active-sub-nav-category' : 'white-text'
+          %>
+          <a href="<%= url %>">
+            <div class='sub-nav-category nav-category-div center-align <%= link_class %>'>
+              <%= name %>
+            </div>
+          </a>
+          <% end %>
+        </h6>
+      </div>
     <% end %>
-    <div class="col m2 hidden-sm valign">
-      <form>
-        <input type="text" name="query" placeholder="Search" class="no-margin">
+  </div>
+  <div class="search-sub-nav-container col s12">
+    <div class="no-margin search-sub-nav">
+      <form class='valign col s12'>
+        <div class="input-field">
+          <div class="col s1">
+            <i class="small material-icons nav-category">search</i>
+          </div>
+          <div class="col s10">
+            <input type="text" name="query" placeholder="Search" id="search-input">
+          </div>
+          <div class="col s1 right-align">
+              <a href="#" class='cancel-search black-text'>X</a>
+          </div>
+        </div>
       </form>
     </div>
   </div>
 </div>
-<div class="row col s12 no-margin z-depth-1 sub-nav-container">
-  <div class="col s10 offset-s1 no-margin sub-nav discover-sub-nav">
-    <h6 class="no-padding no-margin">
-      <%
-        items = {
-          'FEATURED' => '/bluebird_choice',
-          'BEST SELLERS' => '/best_sellers',
-          'ENDING SOON' => '/ending_soon',
-          'NEW ARRIVALS' => '/new_arrivals'
-        }
-        items.each do |name, url|
-          link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
-      %>
-        <div class='sub-nav-category nav-category-div center-align'>
-          <span><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></span>
-        </div>
-      <% end %>
-    </h6>
-  </div>
-  <% if current_user.is_retailer? %>
-    <div class="col s10 offset-s1 no-margin sub-nav account-sub-nav">
-      <h6 class="no-margin no-padding">
-        <%
-          items = {
-            'PENDING ORDERS' => '/retailer/pending_orders',
-            'ORDER HISTORY' => '/retailer/order_history',
-            'MANAGE PAYMENTS' => '/retailer/accounts',
-            'SHIPPING INFORMATION' => '/retailer/shipping_addresses',
-            'SETTINGS' => '/retailer/settings',
-            'LOGOUT' => '/logout'
-          }
-          items.each do |name, url|
-            link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
-        %>
-          <div class='sub-nav-category nav-category-div center-align'>
-            <span><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></span>
-          </div>
-        <% end %>
-      </h6>
-    </div>
-  <% elsif current_user.is_wholesaler? %>
-    <div class="col s10 offset-l1 no-margin sub-nav account-sub-nav">
-      <h6 class="no-padding no-margin">
-        <%
-          items = {
-            'PROFILE' => '/wholesaler/profile',
-            'COMPANY' => '/wholesaler/company',
-            'CURRENT SALES' => '/current_sales',
-            'PAST PRODUCTS' => '/past_products',
-            'ANALYTICS' => '/analytics',
-            'SETTINGS' => 'wholesaler/settings',
-            'MANAGE BANK ACCOUNT' => 'http://dashboard.stripe.com',
-            'LOGOUT' => '/logout'
-          }
-          items.each do |name, url|
-            link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
-        %>
-        <div class='sub-nav-category nav-category-div center-align'>
-          <span><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></span>
-        </div>
-        <% end %>
-      </h6>
-    </div>
-  <% end %>
-</div>
+<ul id="slide-out" class="side-nav">
+  <li><div class="userView">
+    <a href="#!name"><span class="white-text name">John Doe</span></a>
+    <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
+  </div></li>
+  <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+  <li><a href="#!">Second Link</a></li>
+  <li><div class="divider"></div></li>
+  <li><a class="subheader">Subheader</a></li>
+  <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+</ul>
 
 <script>
-  if(<%= current_user.retailer.needs_credit_card? %>){
-    $('a[href="/retailer/accounts"]').attr('class', 'red-text')
+  // if("<#%= current_user.is_retailer? %>"){
+  //   if("<#%= current_user.retailer.needs_credit_card? %>"){
+  //     $('a[href="/retailer/accounts"]').attr('class', 'red-text')
+  //     console.log('credit...');
+  //   }
+  //   if("<#%= current_user.retailer.needs_shipping_info? %>"){
+  //     $('a[href="/retailer/shipping_addresses"]').attr('class', 'red-text')
+  //     console.log('shipping...');
+  //   }
+  // }
+
+  $(".button-collapse").sideNav();
+
+  function movePointer(position, width){
+    var height = $('.main-nav').height() - 25
+    $('.sub-nav-triangle').css({
+      display: 'inherit',
+      marginLeft: position.left + (width/2 - 5),
+      marginTop: position.top + height
+    })
   }
-  if(<%= current_user.retailer.needs_shipping_info? %>){
-    $('a[href="/retailer/shipping_addresses"]').attr('class', 'red-text')
-  }
-  $('a[href="/discover"]').mouseover(function(){
-    $('.account-sub-nav').css({
+
+  function removePointer(){
+    $('.sub-nav-triangle').css({
       display: 'none'
     })
+  }
+
+  function showSubNav(showDiv, hideDiv){
     $('.sub-nav-container').css({
       display: 'inherit'
     })
-    $('.discover-sub-nav').css({
+    $('.search-sub-nav').css({
+      display: 'none'
+    })
+    hideDiv.css({
+      display: 'none'
+    })
+    showDiv.css({
       display: 'inherit'
     })
+  }
+
+  $('a[href="/discover"]').mouseover(function(){
+    movePointer($(this).offset(), $(this).width())
+    showSubNav($('.discover-sub-nav'), $('.account-sub-nav'))
   })
 
   $('.account-link').mouseover(function(){
+    movePointer($(this).offset(), $(this).width())
+    showSubNav($('.account-sub-nav'), $('.discover-sub-nav'))
+  })
+
+  $('.search').click(function(){
+    removePointer()
+    $('.search-sub-nav-container').css({
+      display: 'inherit'
+    })
+    $('.search-sub-nav').css({
+      display: 'inherit'
+    })
     $('.discover-sub-nav').css({
       display: 'none'
     })
-    $('.sub-nav-container').css({
-      display: 'inherit'
-    })
     $('.account-sub-nav').css({
-      display: 'inherit'
+      display: 'none'
+    })
+    $('#search-input').focus()
+  })
+
+  $('.cancel-search').click(function(){
+    $('.search-sub-nav-container').css({
+      display: 'none'
     })
   })
 
@@ -152,5 +262,6 @@
     $('.sub-nav-container').css({
       display: 'none'
     })
+    removePointer()
   })
 </script>

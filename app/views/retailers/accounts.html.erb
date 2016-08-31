@@ -1,103 +1,107 @@
 <%= render partial: 'partials/retailer_profile_nav' %>
 
-<div class="col s12 m9 offset-m2 center-align">
+<div class="col s12 m8 offset-m3 center-align row">
 
-  <% if current_user.retailer.card_declined? %>
-    <h6 class='red-text'><strong>Looks like your card got declined for your order of <%= current_user.retailer.commits.where('card_declined = ?', true).first.product.title %> on <%= current_user.retailer.commits.where('card_declined = ?', true).first.card_decline_date.strftime('%b %d') %>, update a new one?</strong></h6>
-  <% end %>
+  <div class="row col s12">
+    <% if current_user.retailer.card_declined? %>
+      <h6 class='red-text'><strong>Looks like your card got declined for your order of <%= current_user.retailer.commits.where('card_declined = ?', true).first.product.title %> on <%= current_user.retailer.commits.where('card_declined = ?', true).first.card_decline_date.strftime('%b %d') %>, update a new one?</strong></h6>
+    <% end %>
 
-  <% if @stripe_customer.default_source.nil? %>
-    <div class="center-align row">
-      <h5>You need a credit card on file before making any orders</h5>
-    </div>
-  <% else %>
-  <h4 class='center-align'>Primary Credit Card:</h4>
-    <div class="row">
-      <div class="row center-align col s8 offset-s2 border credit-card">
-        <h6>(Default Payment)</h6>
-        <h5>Card Holder: <%= @default_card.name %></h5>
-        <h6>Card Number: **** **** **** <%= @default_card.last4 %></h6>
-        <h6> Zip: <%= @default_card.address_zip %></h6>
-        <div class="row">
-          <div class="left-align col s5 offset-s1">
-            <h6>Expiration: <%= @default_card.exp_month %>/<%= @default_card.exp_year %> </h6>
-          </div>
-          <div class="right-align col s5">
-            <h6><%= @default_card.brand %></h6>
-          </div>
+    <% if @stripe_customer.default_source.nil? %>
+      <div class="col s12 order-box z-depth-2" style="padding-bottom: 20px">
+        <div class="center-align row">
+          <h5>You need a credit card on file before making any orders</h5>
         </div>
-      </div>
-    </div>
-  <% end %>
-
-  <% if @stripe_customer.sources.count > 1 %>
-    <h5>Alternate Credit Cards:</h5>
-  <% end %>
-  <% @stripe_customer.sources.each do |source| %>
-    <% if source.id != @stripe_customer.default_source %>
-      <div class="row">
-        <div class="row center-align col s8 offset-s2 border credit-card">
-          <h5>Card Holder: <%= source.name %></h5>
-          <h6>Card Number: **** **** **** <%= source.last4 %></h6>
-          <h6> Zip: <%= source.address_zip %></h6>
-          <div class="row">
-            <div class="left-align col s5 offset-s1">
-              <h6>Expiration: <%= source.exp_month %>/<%= source.exp_year %> </h6>
+      <% else %>
+        <div class="row order-box z-depth-2" style="margin-top: 25px">
+          <div class="row center-align col s12 credit-card">
+            <h6>(Primary Payment Form)</h6>
+            <h5>Card Holder: <%= @default_card.name %></h5>
+            <h6>Card Number: **** **** **** <%= @default_card.last4 %></h6>
+            <h6> Zip: <%= @default_card.address_zip %></h6>
+            <div class="row">
+              <div class="left-align col s5 offset-s1">
+                <h6>Expiration: <%= @default_card.exp_month %>/<%= @default_card.exp_year %> </h6>
+              </div>
+              <div class="right-align col s5">
+                <h6><%= @default_card.brand %></h6>
+              </div>
             </div>
-            <div class="right-align col s5">
-              <h6><%= source.brand %></h6>
-            </div>
-          </div>
-        </div>
-        <div class="row center-align">
-          <div class="col s12">
-            <button class="delete-card btn red" data="<%= source.id %>">Delete Card</button>
-          </div>
-        </div>
-        <div class="row center-align">
-          <div class="col s12">
-            <button class="make-default-card btn green" data="<%= source.id %>">Make Default Payment</button>
           </div>
         </div>
       </div>
     <% end %>
+  </div>
+
+  <% if @stripe_customer.sources.count > 1 %>
+    <div class="row col s12 m8 offset-m3 order-box z-depth-2">
+      <h5 class='center-align'>Alternate Credit Cards:</h5>
+    <% @stripe_customer.sources.each_slice(3) do |slice| %>
+    <div class="row">
+      <% slice.each do |source| %>
+        <% if source.id != @stripe_customer.default_source %>
+          <div class="row">
+            <div class="row col s12 m4 center-align credit-card white">
+              <h6>Card Holder: <%= source.name %></h6>
+              <h6>Card Number: **** **** **** <%= source.last4 %></h6>
+              <h6> Zip: <%= source.address_zip %></h6>
+              <div class="row">
+                <div class="left-align col s5 offset-s1">
+                  <h6>Expiration: <%= source.exp_month %>/<%= source.exp_year %> </h6>
+                </div>
+                <div class="right-align col s5">
+                  <h6><%= source.brand %></h6>
+                </div>
+              </div>
+              <div class="links">
+                <a class='delete-card red-text' data="<%= source.id %>" href="">Delete</a><br>
+                <a class='make-default-card' data="<%= source.id %>" href="">Make Default</a>
+              </div>
+              <img src="/images/loading.gif" class='loading-gif' style="display: none" />
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <% end %>
+  </div>
   <% end %>
 
-  <form class="credit-card-form col s8 offset-s2 center-align">
-    <div class="input-field">
-      <label>Card Holder Name</label>
-      <input id="card-name" type="text">
-    </div>
-    <div class="input-field">
-      <label>Credit Card Number</label>
-      <input id="card-number" type="text"> <br>
-    </div>
-    <div class="input-field">
-      <label>CVC</label>
-      <input id="card-cvc" type="text"> <br>
-    </div>
-    <div class="input-field">
-      <div class="row">
-        <div class="col s4 offset-s1">
-          <label>Exp Month</label>
-          <input id="exp-month" type="number">
-        </div>
-        <div class="col s1">
-          <h6>/</h6>
-        </div>
-        <div class="col s4">
-          <label>Exp Year</label>
-          <input id="exp-year" type="number"> <br>
+
+  <div class="col s12 m8 offset-m3 order-box z-depth-2">
+    <form class="credit-card-form col s8 offset-s2 center-align">
+      <div class="input-field">
+        <label>Card Holder Name</label>
+        <input id="card-name" type="text">
+      </div>
+      <div class="input-field">
+        <label>Credit Card Number</label>
+        <input id="card-number" type="text"> <br>
+      </div>
+      <div class="input-field">
+        <label>CVC</label>
+        <input id="card-cvc" type="text"> <br>
+      </div>
+      <div class="input-field">
+        <div class="row">
+          <div class="col s6 m4 offset-m2">
+            <label>Exp Month</label>
+            <input id="exp-month" type="number">
+          </div>
+          <div class="col s6 m4 offset-m2">
+            <label>Exp Year</label>
+            <input id="exp-year" type="number"> <br>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="input-field">
-      <label>Billing Zip Code</label>
-      <input id="billing-zip" type="text" value="">
-    </div>
-    <h6 class="red-text" id="payment-errors"></h6>
-    <input class="submit btn" type="submit" value="Add Another Card">
-  </form>
+      <div class="input-field">
+        <label>Billing Zip Code</label>
+        <input id="billing-zip" type="text" value="">
+      </div>
+      <h6 class="red-text" id="payment-errors"></h6>
+      <input class="submit btn" type="submit" value="Add Payment">
+    </form>
+  </div>
 
 </div>
 
@@ -113,9 +117,11 @@ function deleteCard(){
     $(this).prop('disabled', true)
     $(this).text('Deleting...')
     var cardId = $(this).attr('data')
+    $(this).parent().toggle()
+    $(this).parent().parent().find('.loading-gif').toggle()
     $.ajax({
       method: 'POST',
-      url: '/api/delete_credit_card?card_id=' + cardId,
+      url: '/api/payements/delete_credit_card?card_id=' + cardId,
       success: function(data){
         console.log(data);
         location.reload()
@@ -128,6 +134,8 @@ function makeDefaultCard(){
   $('.make-default-card').click(function(){
     $(this).prop('disabled', true)
     var cardId = $(this).attr('data')
+    $(this).parent().toggle()
+    $(this).parent().parent().find('.loading-gif').toggle()
     $.ajax({
       method: 'POST',
       url: '/api/payments/make_default_card?card_id=' + cardId,
@@ -174,12 +182,12 @@ function stripeResponseHandler(status, response){
     submittedForm.find('#payment-errors').text(response.error.message)
     submittedForm.find('.submit').prop("disabled", false)
     submittedForm.find('.submit').val('Add Credit Card')
-    submittedForm.find('#billing-zip').val('')
-    submittedForm.find('#exp-year').val('')
-    submittedForm.find('#exp-month').val('')
-    submittedForm.find('#card-cvc').val('')
-    submittedForm.find('#card-number').val('')
-    submittedForm.find('#card-name').val('')
+    // submittedForm.find('#billing-zip').val('')
+    // submittedForm.find('#exp-year').val('')
+    // submittedForm.find('#exp-month').val('')
+    // submittedForm.find('#card-cvc').val('')
+    // submittedForm.find('#card-number').val('')
+    // submittedForm.find('#card-name').val('')
   } else {
     var token = response.id;
     console.log(token);

@@ -1,133 +1,93 @@
 <div class="container">
 
-  <div class="center-align row">
-    <% if flash[:error] %>
-      <% flash[:error].each do |err, msg| %>
-        <h6 class="red-text"><%= msg %></h6>
+  <div class="show-product">
+    <div class="row center-align col s10 offset-s1">
+      <h5>This product is not yet live. If you like the way things look, go ahead and launch the product</h5>
+      <%= form_for @product, url: "/launch_product/#{@product.id}", method: 'PUT' do |f| %>
+        <%= f.submit "LAUNCH PRODUCT", :class => 'btn' %>
       <% end %>
-    <% end %>
-    <div class="row">
-      <h5>This product is still not live, once you hit 'approve' at the bottom of this page it will be officially live and can no longer be edited</h5>
-      <h6>In the current state, you would have to sell <%= (@product.goal.to_f/@product.discount.to_f).ceil %> items to reach your goal of $<%= @product.goal %> and receive your guaranteed sales.</h6>
     </div>
-    <h4><%= @product.title %></h4>
-    <%= form_for @product, url: "/launch_product/#{@product.id}", method: "PUT" do %>
-      <div class="input-field">
-        <label>Title</label>
-        <input type="text" name="product[title]" value="<%= @product.title%>">
-      </div>
-      <div class="input-field">
-        <label>Description</label>
-        <textarea name="product[description]" rows="8" cols="40"><%=@product.description%></textarea>
-      </div>
-      <div class="input-field">
-        <label>Sales Goal ($)</label>
-        <input type="text" name="product[goal]" value="<%= @product.goal %>">
-      </div>
-      <div class="input-field">
-        <label>Full Wholesale Price</label>
-        <input type="text" name="product[price]" value="<%= @product.price %>">
-      </div>
-      <div class="input-field">
-        <label>Offered Discount Price</label>
-        <input type="text" name="product[discount]" value="<%= @product.discount %>">
-      </div>
-      <div class="input-field">
-        <label>Product Category</label>
-        <select name="product[category]">
-          <option disabled="disabled">Product Category</option>
-          <% if @product.category == 'Home Goods' %>
-            <option selected>Home Goods</option>
-          <% else %>
-            <option>Home Goods</option>
-          <% end %>
-          <% if @product.category == 'Accessories' %>
-            <option selected>Accessories</option>
-          <% else %>
-            <option>Accessories</option>
-          <% end %>
-          <% if @product.category == 'Apparel' %>
-            <option selected>Apparel</option>
-          <% else %>
-            <option>Apparel</option>
-          <% end %>
-          <% if @product.category == 'Tech' %>
-            <option selected>Tech</option>
-          <% else %>
-            <option>Tech</option>
-          <% end %>
-        </select>
-      </div>
-      <div class="input-field">
-        <label>Quantity Selling</label>
-        <input type="text" name="product[category]" value="<%= @product.quantity %>">
-      </div>
-      <div class="input-field">
-        <label>Sale Duration</label>
-        <select name="product[duration]">
-          <% if @product.duration == '5_minutes' %>
-            <option value="5_minutes" selected>5 Minutes</option>
-          <% else %>
-            <option value="5_minutes">5 Minutes</option>
-          <% end %>
-          <% if @product.duration == '1_day' %>
-            <option value="1_day" selected>1 Day</option>
-          <% else %>
-            <option value="1_day">1 Day</option>
-          <% end %>
-          <% if @product.duration == '7_days' %>
-            <option value="7_days" selected>7 Days</option>
-          <% else %>
-            <option value = "7_days">7 Days</option>
-          <% end %>
-          <% if @product.duration == '10_days' %>
-            <option value = "10_days" selected>10 Days</option>
-          <% else %>
-            <option value = "10_days">10 Days</option>
-          <% end %>
-          <% if @product.duration == '14_days' %>
-            <option value ="14_days" selected>14 Days</option>
-          <% else %>
-            <option value = "14_days">14</option>
-          <% end %>
-          <% if @product.duration == '30_days' %>
-            <option value = "30_days" selected>30 Days</option>
-          <% else %>
-            <option value="30_days">30 Days</option>
-          <% end %>
-        </select>
-      </div>
+    <div class="col 12 valign-wrapper">
       <div class="row">
-        <div class="col s4">
-          <%= image_tag @product.main_image.url(:medium), :class => 'responsive-img materialboxed' %>
-        </div>
-        <% if !@product.photo_two_file_name.nil? %>
-          <div class="col s2">
-            <%= image_tag @product.photo_two.url(:medium), :class => 'responsive-img materialboxed' %>
-          </div>
-        <% end %>
-        <% if !@product.photo_three_file_name.nil? %>
-          <div class="col s2">
-            <%= image_tag @product.photo_three.url(:medium), :class => 'responsive-img materialboxed' %>
-          </div>
-        <% end %>
-        <% if !@product.photo_four_file_name.nil? %>
-          <div class="col s2">
-            <%= image_tag @product.photo_four.url(:medium), :class => 'responsive-img materialboxed' %>
-          </div>
-        <% end %>
-        <% if !@product.photo_five_file_name.nil? %>
-          <div class="col s2">
-            <%= image_tag @product.photo_five.url(:medium), :class => 'responsive-img materialboxed' %>
-          </div>
-        <% end %>
-      </div>
-      <input type="submit" value="Launch Product" class="btn">
-    <% end %>
-    <!-- </form> -->
-  </div>
-</div>
 
-<script>
-  $('select').material_select()
-</script>
+        <div class="col s6">
+
+          <div class="image-box z-depth-1 valign">
+            <div class="row">
+              <div class="col s12">
+                <%= image_tag @product.main_image.url(:large), :class => 'responsive-img main-image materialboxed' %>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s2">
+                <% if @product.photo_two.present? %>
+                  <%= image_tag @product.photo_two.url(:large), :class => 'responsive-img alternate-image' %>
+                <% end %>
+              </div>
+
+              <div class="col s2">
+                <% if @product.photo_three.present? %>
+                    <%= image_tag @product.photo_three.url(:large), :class => 'responsive-img alternate-image' %>
+                <% end %>
+              </div>
+
+              <div class="col s2">
+                <% if @product.photo_four.present? %>
+                  <%= image_tag @product.photo_four.url(:large), :class => 'responsive-img alternate-image' %>
+                <% end %>
+              </div>
+
+              <div class="col s2">
+                <% if @product.photo_five.present? %>
+                    <%= image_tag @product.photo_five.url(:large), :class => 'responsive-img alternate-image' %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col s6">
+
+          <div class="row center-align">
+            <div class="info-box z-depth-1">
+              <div class="row">
+                <h5 class='bold'><%= @product.title %></h5>
+                <a class='black-text' href="/company/<%=@product.wholesaler.user.company.company_key%>">
+                  <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
+                </a>
+                <h6 class='was-price' style="display: inline-block">$<%= @product.price %></h6>
+                <h6 class='now-price bold' style="display: inline-block">$<%= @product.discount %></h6>
+              </div>
+
+              <div class="row">
+                <h6><%= simple_format(@product.long_description) %></h6>
+              </div>
+
+              <div class="row">
+                <ul>
+                  <li><%= @product.feature_one %></li>
+                  <% if !@product.feature_two.nil? %>
+                    <li><%= @product.feature_two %></li>
+                  <% end %>
+                  <% if !@product.feature_three.nil? %>
+                    <li><%= @product.feature_three %></li>
+                  <% end %>
+                  <% if !@product.feature_four.nil? %>
+                    <li><%= @product.feature_four %></li>
+                  <% end %>
+                  <% if !@product.feature_five.nil? %>
+                    <li><%= @product.feature_five %></li>
+                  <% end %>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>

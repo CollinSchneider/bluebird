@@ -1,0 +1,39 @@
+
+<% @products.each_slice(3) do |slice| %>
+  <div class="row">
+    <% slice.each do |product| %>
+      <div class="col s12 m4 center-align no-padding">
+        <div class="product">
+          <a href="/products/<%= product.product_token.token %>/<%= product.slug %>">
+          <div class="col s3 m1 white-text percent-box">
+            <h5><%= '%.0f' % (product.percent_discount*100) %>% Off</h5>
+          </div>
+          <!-- <div class="col s3 m1 bluebird-pick">
+            <img src="/images/bluebird-blue-mascot.png" class="responsive-img" />
+          </div> -->
+            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+            <div class="content-div" style='margin-bottom: 0px'>
+              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
+              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
+              <h6>
+                <span class="now-price"><strong>$<%= product.price %></strong></span>
+              </h6>
+            </div>
+            <div class="description content-div" style='margin-top: 0px'>
+              <p style='font-size: 12px' style='margin-top: 0px'>
+                <%= product.description %>
+              </p>
+            </div>
+          </a>
+
+          <div class="row" style="margin-bottom: 0px">
+            <div class="col s12">
+              <h6><%= product.time_to_full_price_expiration %></h6>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>

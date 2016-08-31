@@ -1,0 +1,15 @@
+<%= @user.first_name %>,
+
+This is your confirmation email of your purchase order of <%= @commit.product.title %> from <%= @commit.product.wholesaler.user.company.company_name %>.
+We will notify you with the shipping details when your order is shipped out.
+
+You can keep an eye the status here: localhost:3000/retailer/order_history/<%=@commit.id %>?email_click=<%= @user.uuid%>
+
+Product: <%= @commit.product.title %>
+Quantity: <%= @commit.amount %>
+Individual Price: $<%= '%.2f' % (@commit.product.price.to_f) %>
+Shipping: Determined Upon Shipment
+Total: $<%+ '%.2f' % (@commit.product.price.to_f*@commit.amount.to_i) %>
+
+Your friends,
+BlueBird.club

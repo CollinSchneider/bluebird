@@ -2,6 +2,9 @@
 
   <div class="center-align row">
     <h3><%= @company.company_name %></h3>
+    <div class="col s12">
+      <%= image_tag @company.logo.url(:medium), :class => 'responsive-img' %>
+    </div>
 
     <%= render partial: 'partials/products' %>
   </div>

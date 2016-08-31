@@ -16,7 +16,9 @@
 <body>
 <div class="row">
 
-<%= render partial: 'partials/nav' %>
+  <div class="hidden-on-sm-only">
+    <%= render partial: 'partials/nav' %>
+  </div>
 
   <div class="body-div col s12">
     <%= yield %>

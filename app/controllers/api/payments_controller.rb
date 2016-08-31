@@ -33,27 +33,33 @@ class Api::PaymentsController < ApiController
     end
   end
 
-  def charge_user
-    commit = Commit.find(params[:commit_id])
-    shipping_cost = 30
-    charge = current_user.collect_payment(commit)
-    render :json => {charge: charge}
+
+  def delete_credit_card
+    card_id = params[:card_id]
+    customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+    card = customer.sources.retrieve(card_id).delete
+    redirect_to request.referrer
   end
 
   def change_commit_card
-    commit = Commit.find(params[:commit_id])
+    commit = Commit.find_by_uuid(params[:commit_uuid])
     card_id = params[:card_id]
     commit.card_id = card_id
-    commit.save(validate: false)
     if commit.card_declined
       commit.card_declined = false
       commit.card_decline_date = nil
       commit.declined_reason = nil
-      commit.save(validate: false)
     end
+    commit.save(validate: false)
 
-    if commit.stripe_charge_id.nil? && commit.status == 'goal_met'
-      charge = commit.product.wholesaler.user.collect_payment(commit)
+      if commit.stripe_charge_id.nil?
+
+      if commit.full_price
+        amount = commit.product.price.to_f*commit.amount.to_f
+      elsif commit.status == 'goal_met' || commit.status = 'discount_granted'
+        amount = commit.product.discount.to_f*commit.amount.to_f
+      end
+      charge = commit.product.wholesaler.user.collect_payment(commit, amount)
 
       if charge[1]
         if commit.save(validate: false)
@@ -68,13 +74,36 @@ class Api::PaymentsController < ApiController
           error: charge[0]
         }
       end
-
     # elsif !commit.stripe_charge_id.nil? && ## Need to see if shipping has failed
     #   charge = commit.product.wholesaler.user.collect_shipping_charge(commit)
     else
       render :json => {success: true}
     end
+  end
 
+  #TODO Come back for sending a refund email, need to figure out dynamically inserting the reason, or should this be manual
+  def refund_order
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    order = Commit.find(params[:order_id])
+    charge = Stripe::Charge.retrieve(order.stripe_charge_id, :stripe_account => order.product.wholesaler.stripe_id)
+    begin
+      refund = charge.refunds.create(:amount => charge.amount, :refund_application_fee => true)
+    rescue => e
+      return render :json => {
+        success: false,
+        error: e.message
+      }
+    end
+    if !refund.nil?
+      order.refunded = true
+      order.save(validate: false)
+      return render :json => {
+        success: true,
+        order: order,
+        charge: charge,
+        refund: refund
+      }
+    end
   end
 
 end

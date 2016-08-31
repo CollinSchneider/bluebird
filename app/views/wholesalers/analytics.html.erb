@@ -6,26 +6,27 @@
 
   <h4>Analytics</h4>
   <div class="row">
-    <div class="col s3">
+    <div class="col s6 m3">
       <h5>Total Purchase Orders:</h5>
-      <h5><strong><%= @commits.sum(:amount) %></strong></h5>
+      <h5 class="bold"><strong><%= @sale_commits.sum(:amount) %></strong></h5>
     </div>
-    <div class="col s3">
+    <div class="col s6 m3">
       <h5>Total Sales:</h5>
-      <h5><strong>$<%= @total_sales %></strong></h5>
+      <h5 class="bold"><strong>$<%= @total_sales %></strong></h5>
     </div>
-    <div class="col s3">
+    <div class="col s6 m3">
       <h5>Average Customer Sale</h5>
-      <h5><strong>$<%= '%.2f' % (@total_sales/@commits.sum(:amount)) %></strong></h5>
+      <h5 class="bold"><strong>$<%= '%.2f' % (@total_sales/@sale_commits.sum(:amount)) %></strong></h5>
     </div>
-    <div class="col s3">
+    <div class="col s6 m3">
       <h5>Rate of Goal Hit</h5>
-      <h5><strong><%= current_user.wholesaler.products.count/current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').count*100 %>%</strong></h5>
+      <h5><%= current_user.wholesaler.products.count %>/<%= current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').count %></h5>
+      <h5 class="bold"><strong><%= ((current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').count.to_i)/(current_user.wholesaler.products.count.to_i)) %>%</strong></h5>
     </div>
   </div>
 
   <h5>Top Earners:</h5>
-  <div class="row col s12 offset-s1">
+  <div class="row col s12 offset-m1">
     <% @top_sellers.each do |product| %>
     <a href="/wholesaler/product/<%= product.id %>">
       <div class="col s10 offset-s1 m2">
@@ -41,9 +42,9 @@
 
   <div class="row">
 
-    <div class="col s8 offset-s2">
+    <div class="col s12 m8 offset-m2">
       <h4>Orders</h4>
-      <%= line_chart @commits.group_by_day(:created_at).sum(:amount) %>
+      <%= line_chart @sale_commits.group_by_day(:created_at).sum(:amount) %>
     </div>
   </div>
 

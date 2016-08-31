@@ -17,7 +17,9 @@
 <div class="row">
 
   <%= render partial: 'partials/nav' %>
-  <%= render partial: 'partials/admin_profile_nav' %>
+  <div class="hide-on-small-only">
+    <%= render partial: 'partials/admin_profile_nav' %>
+  </div>
 
   <div class="col m8 offset-m3 body-div">
     <%= yield %>

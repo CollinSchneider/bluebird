@@ -1,0 +1,57 @@
+<div class="row">
+  <form>
+    <input type="text" name="query">
+    <input type="submit" value="search" class='btn'>
+  </form>
+  <h4>Unshipped Orders:</h4>
+  <% @orders.each_slice(3) do |slice| %>
+    <div class="row">
+      <% slice.each do |order| %>
+        <div class="col s12 m4">
+          <div class="order-div border center-align">
+            <%= ((((Time.now - order.created_at)/60)/60)/24).round(2) %> days past
+            <% if order.full_price? %>
+              <h6>Full-price order placed at <%= order.created_at.strftime('%l:%M %P on %b %d, %Y') %></h6>
+            <% else %>
+              <h6>Listing finished at <%= order.created_at.strftime('%l:%M %P on %b %d, %Y') %></h6>
+            <% end %>
+            <h6>Order uuid: <%= order.uuid %></h6>
+            <h6 class='bold'> Retailer:</h6>
+            <ul>
+              <li><%= order.retailer.user.full_name %></li>
+              <li><%= order.retailer.user.company.company_name %></li>
+              <li><%= order.retailer.user.email %></li>
+              <li><%= order.retailer.user.phone_number %></li>
+            </ul>
+            <h6 class='bold'> Wholesaler: </h6>
+            <ul>
+              <li><%= order.product.wholesaler.user.full_name %></li>
+              <li><%= order.product.wholesaler.user.company.company_name %></li>
+              <li><%= order.product.wholesaler.user.email %></li>
+              <li><%= order.product.wholesaler.user.phone_number %></li>
+            </ul>
+            <% if order.full_price? %>
+              <h6><%= order.amount %> <%= order.product.title.pluralize %> for $<%= '%.2f' % order.product.price.to_f %> each</h6>
+            <% else %>
+              <h6><%= order.amount %> <%= order.product.title.pluralize %> for $<%= '%.2f' % order.product.discount.to_f %> each</h6>
+            <% end %>
+            <button class='refund btn' data='<%= order.id %>'>REFUND</button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  $('.refund').click(function(){
+    var orderId = $(this).attr('data')
+    $.ajax({
+      method: 'POST',
+      url: '/api/payments/refund_order?order_id=' + orderId,
+      success: function(data){
+        console.log(data);
+      }
+    })
+  })
+</script>

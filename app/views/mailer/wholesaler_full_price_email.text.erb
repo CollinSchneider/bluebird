@@ -1,0 +1,16 @@
+<%= @user.first_name %>,
+
+Your product <%= @commit.product.title %> on BlueBird.club has received a new purchase order for your full price of <%= '%.2f' % (@commit.product.price.to_f) %>.
+
+It is now your job to get this shipped to your customer as soon as possible! Below is the order breakdown.
+
+Product: <%= @commit.product.title %>
+Quantity: <%= @commit.amount %>
+Individual Price: $<%= '%.2f' % (@commit.product.price.to_f) %>
+Shipping: Determined Upon Shipment
+Total: $<%+ '%.2f' % (@commit.product.price.to_f*@commit.amount.to_i) %>
+
+If you need any help with the process, don't hesitate to reach out to us.
+
+Your friends,
+BlueBird.club

@@ -6,6 +6,18 @@
   <body>
     <h3>Welcome to BlueBird.club, <%= @user.first_name %>!</h3>
 
+    <div class="row">
+      <p>
+        You're login credentials are:
+      </p>
+      <p>
+        Email: <%= @user.email %>
+      </p>
+      <p>
+        Password: <%= @password %>
+      </p>
+    </div>
+
     <div class="center-align">
       <div class="row">
         <p>

@@ -7,7 +7,7 @@
     <h6><%= @user.first_name %>,</h6>
 
     <p>
-      Looks like there was an error processing your payment on your purchase of <%= @commit.product.title %>,
+      Looks like there was an error processing your payment on your purchase of <%= @commit.product.title %> using your <%= @card.brand %> **** **** **** <%= @card.last4 %>,
       not a big deal though. Please update your card as soon as possible and your order will go through without a hitch.
       However if you don't update your card within 7 days, BlueBird reserves the right to cancel your order.
     </p>

@@ -1,48 +1,76 @@
 
-<div class="container center-align">
+<div class="container">
   <h5>Needs Attention</h5>
 
   <h6 id="notice"></h6>
 
-  <% @products.each_slice(2) do |slice| %>
+  <% @products.each_slice(3) do |slice| %>
     <div class="row">
       <% slice.each do |product| %>
-        <div class="border col s6 center-align product">
+        <div class="col s12 no-padding">
+          <div class="product row border">
+            <div class="row">
 
-          <h6>Expired at <%= product.calc_end_time %></h6>
-          <h5><%= product.title %></h5>
-          <%= image_tag product.main_image, :class => 'responsive-img' %>
-          <h5 class="was-price">Was $<%= product.price %></h5>
-          <h5>Now $<%= product.discount %></h5>
-          <h5><%= product.description %></h5>
+              <div class="col s2">
+                <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+              </div>
+              <div class="col s2">
+                <div class="row no-bottom-margin">
+                  <h6><%= product.title %></h6>
+                </div>
+                <div class="row no-bottom-margin">
+                  <h6 class='now-price'>$<%= product.discount %> each</h6>
+                  <h6><%= product.commits.count %> orders</h6>
+                  <% total_sales = (product.discount.to_f*product.commits.sum(:amount).to_i) %>
+                  <h6>$<%= '%.2f' % total_sales %> in sales</h6>
+                  <h6><%= product.percentage["percent_to_discount"] %>% of your goal</h6>
+                </div>
+              </div>
 
-          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
-          <% total_sales = total_orders*product.discount.to_f %>
-          <% real_percentage = ((total_sales/product.goal.to_i)*100) %>
-          <% if real_percentage >= 100 %>
-            <% percentage = 100 %>
-          <% end %>
-          <h5>$<%= '%.2f' % total_sales %> in sales</h5>
-          <h5>Completed <%= '%.2f' % real_percentage %>% of your goal</h5>
+              <div class="col s8 left-align" style="margin-top: 60px">
+                <div class="row">
+                  <div class="<%= product.percentage["class"] %>">
+                    <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+                  </div>
+                </div>
+              </div>
 
-          <% if total_sales > 0 %>
-            <button class='grant-discount green btn' data='<%= product.id %>'>Grant Discount</button>
-          <% end %>
-          <button class='expire-product btn red lighten-2' data='<%= product.id %>'>Expire Product</button>
-          <button class='extend-product btn green' data='<%= product.uuid %>'>Extend Product</button>
+            </div>
+
+            <div class="row">
+              <div class="buttons row">
+                <% if total_sales.to_f > 0 %>
+                <div class="col s4">
+                  <button class='grant-discount green btn' data='<%= product.id %>'>Grant Discount</button>
+                </div>
+                <% end %>
+                <div class="col s4">
+                  <button class='expire-product btn red lighten-2' data='<%= product.id %>'>Expire Product</button>
+                </div>
+                <div class="col s4">
+                  <button class='extend-product btn green' data='<%= product.uuid %>'>Extend Product</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
-      <% end %>
-    </div>
-  <% end %>
+    <% end %>
+  </div>
+<% end %>
 
 </div>
 
 <script>
+  $('.btn').click(function(){
+    replaceWithGif($(this).parent())
+  })
+
   $('.grant-discount').click(function(){
     var div = $(this).parent()
     var productId = $(this).attr('data')
     $.ajax({
-      url: '/api/grant_discount?product_id=' + productId,
+      url: '/api/products/grant_discount?product_id=' + productId,
       success: function(data) {
         console.log(data);
         $('#notice').text("You have successfully granted the discount to " + data.product.title + ", you must now ship it out and the funds will be transferred to your account (see your profile page)!")
@@ -52,27 +80,28 @@
   })
 
   $('.expire-product').click(function(){
-    var div = $(this).parent()
+    var thisButton = $(this)
     var productId = $(this).attr('data')
     $.ajax({
-      url: '/api/expire_product?product_id=' + productId,
+      url: '/api/products/expire_product?product_id=' + productId,
       success: function(data) {
         console.log(data);
         $('#notice').text("You have successfully expired the product " + data.product.title + ", you are no longer guaranteed any sales.")
-        div.fadeOut()
+        // div.fadeOut()
+        thisButton.parent().parent().parent().fadeOut()
       }
     })
   })
 
   $('.extend-product').click(function(){
-    var div = $(this).parent()
+    var thisButton = $(this)
     var productUuid = $(this).attr('data')
     $.ajax({
       url: '/api/products/extend_product?uuid=' + productUuid,
       success: function(data){
         console.log(data);
         $('#notice').text(data.product.title + " has been extended 10 more days!")
-        div.fadeOut()
+        thisButton.parent().parent().parent().fadeOut()
       }
     })
   })

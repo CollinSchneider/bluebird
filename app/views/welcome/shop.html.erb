@@ -1,7 +1,7 @@
 
 <%= render partial: 'partials/shop_header' %>
 
-<div class="container">
+<div class="container center-align">
   <%= render partial: 'partials/products_header' %>
   <div id ="products">
     <%= render partial: 'partials/products' %>
@@ -21,7 +21,8 @@ function infiniteScroll(){
     $(window).scroll(function(){
       var url = $('.pagination .next_page').attr('href')
       if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
-        $('.pagination').text("Loading...")
+        var gif = $('<img src = "/images/loading.gif" class="loading-gif"/>')
+        $('.pagination').text('Fetching...')
         // console.log('getting?');
         $.getScript(url)
       }

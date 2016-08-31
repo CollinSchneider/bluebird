@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h6><%= @user.first_name %>,</h6>
+
+    <div class="center-align col s8 offset-s2">
+      <div class="row">
+        <p>
+          This is your confirmation email of your purchase order of <%= @commit.product.title %> from <%= @commit.product.wholesaler.user.company.company_name %>.
+          We will notify you with the shipping details when your order is shipped out.
+        </p>
+        <p>
+          You can keep an eye the status <a href="localhost:3000/retailer/order_history/<%=@commit.id %>?email_click=<%= @user.uuid%>">here</a>
+        </p>
+      </div>
+
+      <div class="row">
+        <table>
+          <thead>
+            <tr>
+              <th>Product</th>
+              <th>Quantity</th>
+              <th>Individual Price</th>
+              <th>Shipping</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr>
+              <td><%= @commit.product.title %></td>
+              <td><%= @commit.amount %></td>
+              <td>$<%= '%.2f' % (@commit.product.price.to_f) %></td>
+              <td>Determined Upon Shipment</td>
+              <td>$<%+ '%.2f' % (@commit.product.price.to_f*@commit.amount.to_i) %></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row">
+        Your friends, <br>
+        BlueBird.club
+      </div>
+    </div>
+
+
+  </body>
+</html>

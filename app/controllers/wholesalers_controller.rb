@@ -5,20 +5,21 @@ class WholesalersController < ApplicationController
 
   def profile
     @commits_where_card_declined = current_user.wholesaler.products.where('
-                                              products.status = ? OR products.status = ?',
-                                              'goal_met', 'discount_granted').joins(:commits).where('
+                                              products.status = ? OR products.status = ? OR products.status = ?',
+                                              'goal_met', 'discount_granted', 'full_price').joins(:commits).where('
                                                 shipping_id IS NULL AND card_declined = ?
                                               ', true).count
-    @needs_attention = current_user.wholesaler.products.where('status = ?', 'needs_attention')
-    @needs_shipping = current_user.wholesaler.products.where('
-                                              products.status = ? OR products.status = ?',
-                                              'goal_met', 'discount_granted').joins(:commits).where('
-                                                shipping_id IS NULL AND card_declined != ?
-                                              ', true)
-    @receipts_to_generate = @needs_shipping.where('pdf_generated != ?', false)
+    # @needs_attention = current_user.wholesaler.products.where('status = ?', 'needs_attention')
+    # @needs_shipping = current_user.wholesaler.products.where('
+    #                                           products.status = ? OR products.status = ? OR products.status = ?',
+    #                                           'goal_met', 'discount_granted', 'full_price').joins(:commits).where('
+    #                                             shipping_id IS NULL AND card_declined != ?
+    #                                           ', true)
+    # @receipts_to_generate = @needs_shipping.where('pdf_generated != ?', false)
   end
 
   def new_product
+    redirect_to '/wholesaler/profile' if current_user.wholesaler.needs_to_ship? || current_user.wholesaler.needs_attention? || current_user.wholesaler.needs_stripe_connect?
     @product = Product.new
   end
 
@@ -27,18 +28,27 @@ class WholesalersController < ApplicationController
     redirect_to "/wholesaler/profile" if @product.wholesaler_id != current_user.wholesaler.id
   end
 
+  def fix_product
+    @product = Product.find(params[:product])
+    redirect_to "/wholesaler/profile" if @product.wholesaler_id != current_user.wholesaler.id
+  end
+
   def launch_product
     if request.put?
       @product = Product.find(params[:id])
-      @product.update(product_params)
-      if @product.save
-        @product.set_product_start_data
-        redirect_to "/products/#{@product.id}-#{@product.slug}"
-      else
-        redirect_to request.referrer
-        flash[:error] = @product.errors
-      end
+      # @product.update(product_params)
+      # if @product.save
+      @product.set_product_start_data
+      return redirect_to "/products/#{@product.id}-#{@product.slug}"
+      # else
+      #   flash[:error] = @product.errors
+      #   return redirect_to request.referrer
+      # end
     end
+  end
+
+  def relist
+    @product = Product.find_by_uuid(params[:uuid])
   end
 
   def current_sales
@@ -46,31 +56,35 @@ class WholesalersController < ApplicationController
       query = "%#{params[:query].gsub(' ', '').downcase}%"
       @products = current_user.wholesaler.products.where('status = ? AND lower(title) LIKE ? or status = ?
         AND lower(description) LIKE ?', 'live', query, 'live', query
-        ).order(end_time: :asc).page(params[:page]).per_page(3)
+        ).order(end_time: :asc).page(params[:page]).per_page(6)
     else
       @products = current_user.wholesaler.products.where('status = ?', 'live'
-        ).order(end_time: :asc).page(params[:page]).per_page(3)
+        ).order(end_time: :asc).page(params[:page]).per_page(6)
     end
   end
 
   def past_products
     if params[:query]
       query = "%#{params[:query].gsub(' ', '').downcase}%"
-      @products = current_user.wholesaler.products.where('status != ? AND status != ? AND lower(title) LIKE ? OR status != ? AND status != ? AND lower(description) LIKE ?', 'live', 'needs_attention', query, 'live', 'needs_attention', query).order(end_time: :asc).page(params[:page]).per_page(3)
+      @products = current_user.wholesaler.products.where('status != ? AND status != ? AND lower(title) LIKE ? OR status != ? AND status != ? AND lower(description) LIKE ?',
+        'live', 'needs_attention', query, 'live', 'needs_attention', query).order(end_time: :asc).page(params[:page]).per_page(6)
     else
-      @products = current_user.wholesaler.products.where('status != ? AND status != ?', 'live', 'needs_attention').page(params[:page]).per_page(3)
+      @products = current_user.wholesaler.products.where('status != ? AND status != ?', 'live', 'needs_attention').order(end_time: :desc).page(params[:page]).per_page(6)
     end
   end
 
   def analytics
-    @commits = Commit.where('product_id in (
+    @sale_commits = Commit.where('product_id in (
       select id from products where wholesaler_id = ?
     ) AND product_id in (
       select id from products where status = ? OR status = ?
     )', current_user.wholesaler.id, 'goal_met', 'discount_granted')
     goal_met_products = current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted')
     product_ids = goal_met_products.pluck(:id)
-    @total_commits = Commit.where('product_id in (?)', product_ids).sum(:amount)
+    # @total_commits = Commit.where('product_id in (?)', product_ids).sum(:amount)
+    @total_commits = Commit.where('product_id in (
+      select id from products where wholesaler_id = ?
+    )', current_user.wholesaler.id)
     @total_sales = 0
     goal_met_products.each do |product|
       @total_sales += product.total_sales
@@ -107,8 +121,9 @@ class WholesalersController < ApplicationController
   end
 
   def needs_shipping
-    product_array = current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').pluck(:id).to_a
+    product_array = current_user.wholesaler.products.where('status = ? OR status = ? OR status = ?', 'goal_met', 'discount_granted', 'full_price').pluck(:id).to_a
     @need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL AND card_declined != ?', product_array, true)
+
     @receipts_to_generate = @need_to_ship.where('pdf_generated != ?', false)
 
     respond_to do |format|
@@ -136,13 +151,12 @@ class WholesalersController < ApplicationController
   def change_password
     if request.put?
       if params[:user][:password] == params[:user][:confirm_password]
-        current_user.updating = true
         current_user.update(user_password_params)
-        binding.pry
+        current_user.skip_user_validation = true
         if current_user.save
           flash[:success] = "Password Updated"
         else
-          flash[:error] == current_user.errors
+          flash[:error] = current_user.errors.full_messages
         end
       else
         flash[:error] = "Password and Password Confirmation do not match"
@@ -158,7 +172,7 @@ class WholesalersController < ApplicationController
 
   def product_params
     params.require(:product).permit(:user_id, :percent_discont, :goal, :company_name, :current_sales,
-      :duration, :title, :price, :description, :discount, :status, :category, :quantity, :main_image,
-      :photo_two, :photo_three, :photo_four, :photo_five)
+      :duration, :title, :price, :description, :discount, :status, :category, :quantity, :minimum_order,
+      :main_image, :photo_two, :photo_three, :photo_four, :photo_five)
   end
 end

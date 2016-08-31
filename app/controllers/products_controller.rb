@@ -14,11 +14,6 @@ class ProductsController < ApplicationController
   def wholesaler_show
     @product = Product.find(params[:id])
     @products_to_ship = @product.commits.where('shipping_id IS NULL').count
-    # @product.created_at.beginning_of_day..DateTime.now.beginning_of_day do |time|
-    # end
-    # @total_sales = {}
-    # @product.commits.each do |commit|
-    # end
     redirect_to '/shop' if !current_user.is_wholesaler? || current_user.wholesaler.id != @product.wholesaler.id
   end
 
@@ -41,7 +36,7 @@ class ProductsController < ApplicationController
     end
     if product.save
       # current_products = current_user.products.where('status = live')
-      product.create_uuid
+      # product.create_uuid
       redirect_to "/approve_product/#{product.id}"
     else
       flash[:error] = product.errors
@@ -57,6 +52,7 @@ class ProductsController < ApplicationController
 
   def full_price
     @product = Product.where('id in (select product_id from product_tokens where token = ?)', params[:token]).first
+    redirect_to "/shop" if @product.status == 'past' || @product.product_token.expiration_datetime <= Time.now
     @company_products = Product.where('wholesaler_id = ? AND status = ? AND id != ?', @product.wholesaler.id, 'live', @product.id).order(current_sales: :desc).limit(3)
     @similar_products = Product.where('category = ? AND status = ? AND id != ?', @product.category, 'live', @product.id).order(current_sales: :desc).limit(3)
   end
@@ -79,7 +75,8 @@ class ProductsController < ApplicationController
   private
   def product_params
     params.require(:product).permit(:user_id, :percent_discont, :goal, :company_name, :current_sales,
-      :duration, :title, :price, :description, :discount, :status, :category, :quantity, :main_image,
+      :duration, :title, :price, :description, :long_description, :discount, :status, :category, :quantity,
+      :feature_one, :feature_two, :feature_three, :feature_four, :feature_five, :minimum_order, :main_image,
       :photo_two, :photo_three, :photo_four, :photo_five)
   end
 

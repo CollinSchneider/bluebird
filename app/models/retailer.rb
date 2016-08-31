@@ -19,8 +19,9 @@ class Retailer < ActiveRecord::Base
 
   def primary_address
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
-    if self.shipping_addresses.first
-      address = EasyPost::Address.retrieve(self.shipping_addresses.first.address_id)
+    address = self.shipping_addresses.where(:primary => true).first
+    if !address.nil?
+      address = EasyPost::Address.retrieve(address.address_id)
     else
       nil
     end
@@ -46,7 +47,7 @@ class Retailer < ActiveRecord::Base
   end
 
   def declined_order
-    declined_id = self.commits.where('card_declined = ?', true).pluck(:id)
+    declined_id = self.commits.where('card_declined = ?', true).order(card_decline_date: :asc).pluck(:uuid)
     return declined_id.first
   end
 

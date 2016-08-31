@@ -17,8 +17,10 @@ class WelcomeController < ApplicationController
       slug.gsub!('!', '')
       @products = Product.where('slug LIKE ? AND end_time > ? AND status = ?
                                 OR LOWER(description) LIKE ? AND end_time > ? AND status = ?
-                                OR user_id in (
-                                  select id from users where key like ?
+                                OR wholesaler_id in (
+                                  select id from wholesalers where user_id in (
+                                    select user_id from companies where company_key like ?
+                                  )
                                 ) AND end_time > ? AND status = ?',
                                 "%#{slug}%", Time.now, 'live',
                                 "%#{slug}%", Time.now, 'live',
@@ -26,13 +28,9 @@ class WelcomeController < ApplicationController
     elsif params[:products] == 'percent_off'
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.now).order(percent_discount: :desc).page(params[:page]).per_page(3)
     elsif params[:products] == 'high_low'
-      # @products = Product.where('status = ? ORDER BY CAST(discount AS DECIMAL) DESC', 'live').page(params[:page]).per_page(3)
-      # @products = Product.where('status = ?', 'live').order(discount: :desc).page(params[:page]).per_page(3)
-      @products = Product.where('status = ?', 'live').page(params[:page]).per_page(3)
+      @products = Product.where('status = ?', 'live').order(discount: :desc).page(params[:page]).per_page(3)
     elsif params[:products] == 'low_high'
-      # @products = Product.where('status = ? ORDER BY CAST(discount AS DECIMAL) ASC', 'live').page(params[:page]).per_page(3)
-      # @products = Product.where('status = ?', 'live').order(discount: :asc).page(params[:page]).per_page(3)
-      @products = Product.where('status = ?', 'live').page(params[:page]).per_page(3)
+      @products = Product.where('status = ?', 'live').order(discount: :asc).page(params[:page]).per_page(3)
     else
       @products = Product.where('status = ?', 'live').page(params[:page]).per_page(3)
     end
@@ -88,9 +86,9 @@ class WelcomeController < ApplicationController
                                 ) AND end_time > ? AND status = ?',
                                 "%#{slug}%", Time.now, 'live',
                                 "%#{slug}%", Time.now, 'live',
-                                "%#{slug}%", Time.now, 'live',).order(start_time: :asc).page(params[:page]).per_page(3)
+                                "%#{slug}%", Time.now, 'live',).order(start_time: :desc).page(params[:page]).per_page(3)
     else
-      @products = Product.where('status = ? AND end_time > ?', 'live', Time.now).order(start_time: :asc).page(params[:page]).per_page(3)
+      @products = Product.where('status = ? AND end_time > ?', 'live', Time.now).order(start_time: :desc).page(params[:page]).per_page(3)
     end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     if current_user.is_retailer? && current_user.retailer.stripe_id

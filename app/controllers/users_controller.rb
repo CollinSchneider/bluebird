@@ -6,13 +6,6 @@ class UsersController < ApplicationController
 
   def index
     redirect_if_logged_in
-    if !current_user.nil?
-      if current_user.is_wholesaler?
-        redirect_to '/wholesaler/profile'
-      elsif current_user.is_retailer?
-        redirect_to '/shop'
-      end
-    end
   end
 
   def signup
@@ -47,26 +40,26 @@ class UsersController < ApplicationController
         user = User.create(user_params)
         if user.save
           session[:user_id] = user.id
-            # admin = Admin.new
-            # admin.user_id = user.id
-            # admin.save
-            company = Company.new
-            company.company_name = params[:company][:company_name]
-            company.user_id = user.id
-            company.save
-          if params[:user_type] == 'retailer'
-            retailer = Retailer.new
-            retailer.user_id = user.id
-            retailer.save
-            Mailer.retailer_welcome_email(user).deliver_later
-            redirect_to '/retailer/accounts'
-          elsif params[:user_type] == 'wholesaler'
-            wholesaler = Wholesaler.new
-            wholesaler.user_id = user.id
-            wholesaler.save
-            Mailer.wholesaler_welcome_email(user).deliver_later
-            redirect_to '/wholesaler/profile'
-          end
+            admin = Admin.new
+            admin.user_id = user.id
+            admin.save
+            # company = Company.new
+            # company.company_name = params[:company][:company_name]
+            # company.user_id = user.id
+            # company.save
+          # if params[:user_type] == 'retailer'
+          #   retailer = Retailer.new
+          #   retailer.user_id = user.id
+          #   retailer.save
+          #   # Mailer.retailer_welcome_email(user).deliver_later
+          #   redirect_to '/retailer/accounts'
+          # elsif params[:user_type] == 'wholesaler'
+          #   wholesaler = Wholesaler.new
+          #   wholesaler.user_id = user.id
+          #   wholesaler.save
+          #   # Mailer.wholesaler_welcome_email(user).deliver_later
+          #   redirect_to '/wholesaler/profile'
+          # end
         else
           flash[:error] = user.errors.full_messages
           redirect_to request.referrer
@@ -98,12 +91,6 @@ class UsersController < ApplicationController
     session.destroy
     redirect_to '/users'
   end
-
-  # def retailer
-  # end
-  #
-  # def wholesaler
-  # end
 
   def accounts
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
@@ -149,11 +136,12 @@ class UsersController < ApplicationController
   private
   def user_params
     params.require(:user).permit(:first_name, :last_name, :email, :password,
-      :contactable, :phone_number, :password_reset_token, :password_reset_expiration)
+      :contactable_by_phone, :contactable_by_email, :phone_number,
+      :password_reset_token, :password_reset_expiration)
   end
 
   def redirect_if_logged_in
-    redirect_to '/shop' if !current_user.nil?
+    return redirect_to '/shop' if !current_user.nil?
   end
 
 end

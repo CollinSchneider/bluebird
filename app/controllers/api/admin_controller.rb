@@ -1,5 +1,6 @@
 class Api::AdminController < ApiController
 
+  #TODO congrats email?
   def feature_product
     if current_user.is_admin?
       product = Product.find(params[:product_id])

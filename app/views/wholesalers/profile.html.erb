@@ -6,7 +6,7 @@
   <h4 class="center-align">Welcome, <%= current_user.first_name %>!</h4>
 
   <% if current_user.wholesaler.needs_stripe_connect? %>
-  <div class="center-align">
+  <div class="center-align col s10 offset-s1">
     <h5>Ready to take <%= current_user.company.company_name %> to the next level?</h5>
     <h5>First let's get you connected to our trusty payment processor; Stripe, so you can get paid!</h5>
     <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Connect with Stripe</a>
@@ -14,7 +14,7 @@
 
 <% else %>
 
-  <% if @needs_shipping.empty? && @needs_attention.empty? %>
+  <% if !current_user.wholesaler.needs_to_ship? && !current_user.wholesaler.needs_attention? %>
     <div class="row center-align">
       <h5>What are you waiting for? Post a new product</h5>
       <div class="col s4 offset-s4">
@@ -32,37 +32,37 @@
       </div>
     </div>
 
-    <% if @commits_where_card_declined > 0 %>
-      <div class="row center-align">
-        <h6>*Note: <%= @commits_where_card_declined %> of your purchase orders have been declined because the retailer's card defaulted.</h6>
-        <h6>We will keep an eye on this, and you will be notified shortly when this is resolved.</h6>
-      </div>
-    <% end %>
-
   <% else %>
 
     <div class="center-align col s8 offset-s2">
-      <% if @needs_attention.count > 0 %>
+      <% if current_user.wholesaler.needs_attention? %>
         <h5>Before you can post another product, you have to satisfy some products that need your attention!</h5>
         <h4><%= link_to 'Need Attention', '/needs_attention', :class => 'btn' %></h4>
-      <% elsif @needs_shipping.count > 0 %>
+      <% elsif current_user.wholesaler.needs_to_ship? %>
       <div class="row">
-        <% if !@receipts_to_generate.nil? %>
-        <h5>Let's ship these orders and get paid!</h5>
-        <h6>You cannot list any more sales until these items are shipped.</h6>
-        <!-- <#%= link_to "Generate Receipts", '/needs_shipping.pdf', :class => 'btn btn-primary generate-receipts' %> -->
-        <%= link_to "Generate Receipts", '/already_printed.pdf', :class => 'btn btn-primary generate-receipts' %>
-        <h4><%= link_to 'Ship Orders', '/needs_shipping', :class => 'btn' %></h4>
-        <% else %>
+        <!-- <#% if !@receipts_to_generate.nil? %> -->
+          <h5>Let's ship these orders and get paid!</h5>
+          <h6>You cannot list any more sales until these items are shipped.</h6>
+          <!-- <#%= link_to "Generate Receipts", '/needs_shipping.pdf', :class => 'btn btn-primary generate-receipts' %> -->
+          <%= link_to "Generate Receipts", '/already_printed.pdf', :class => 'btn btn-primary generate-receipts' %>
+          <h4><%= link_to 'Ship Orders', '/needs_shipping', :class => 'btn' %></h4>
+        <!-- <#% else %>
           <h6>You have already generated all of your receipts, would you like to print them again?</h6>
           <h6>You must double check not to ship the same package twice</h6>
-          <h6>These orders all have not yet been shipped</h6>
-        <% end %>
+          <h6>These orders all have not yet been shipped</h6> -->
+        <!-- <#% end %> -->
       </div>
       <% end %>
     </div>
 
   <% end %>
+<% end %>
+
+<% if @commits_where_card_declined > 0 %>
+  <div class="col s12 row center-align">
+    <h6>*Note: <%= @commits_where_card_declined  %> of your purchase orders have been declined because the retailer's card defaulted.</h6>
+    <h6>We will keep an eye on this, and you will be notified shortly when this is resolved.</h6>
+  </div>
 <% end %>
 
 </div>

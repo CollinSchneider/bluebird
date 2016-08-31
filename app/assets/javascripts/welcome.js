@@ -1,6 +1,6 @@
 $(document).ready(function(){
-  console.log('ready');
-  
+  sendToStripe();
+
   $('a[href="/discover"]').mouseover(function(){
     $('.discover-sub-nav').css({
       display: 'inherit'
@@ -12,20 +12,11 @@ $(document).ready(function(){
     $('.sub-nav-container').css({
       display: 'none'
     })
+    $('.sub-nav-triangle').css({
+      display: 'none'
+    })
   })
-  sendToStripe();
 
-  $('.make-puchase-order').click(function(){
-    console.log('click');
-    var productBox = $(this).find('.product-box');
-    // var items = productBox.find('.item-purchase-orders')
-    var items = $(productBox , ' .item-purchase-orders');
-    console.log(items);
-
-    // $('.item-purchase-orders').each(function(order){
-      // console.log($(this).val())
-    // })
-  })
 })
 
 var productId;
