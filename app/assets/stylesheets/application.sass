@@ -40,14 +40,23 @@ input
 .no-bottom-margin
   margin-bottom: 0px
 
+.submit-link
+  background-color: transparent
+  text-decoration: underline
+  border: none
+  color: blue
+  cursor: pointer
+
 .loading-gif
   width: 2rem
 
 .navigation
+  height: 60px
   background: rgb(248, 248, 248)
   // background: white
+  position: relative
   padding-bottom: 0px
-  z-index: 100000
+  z-index: 10
   input
     border-bottom: 1px solid black
     height: 2.5rem
@@ -73,16 +82,22 @@ input
   border-left: 10px solid transparent
   border-right: 10px solid transparent
   border-bottom: 15px solid rgb(54, 54, 54)
+  z-index: 15
 
 .sub-nav-container
   background: rgb(54, 54, 54)
   color: white
+  z-index: 100
+  position: absolute
+  margin-bottom: 15px
+  margin-top: 50px
 
 .search-sub-nav-container
   background: white
   color: black
   display: none
   border-top: 1px solid rgb(225, 225, 225)
+  border-bottom: 1px solid rgb(225, 225, 225)
   .input-field input
     border: none
     background: white
@@ -127,6 +142,9 @@ input
   font-size: 115%
   color: rgb(0, 148, 255)
 
+.active-sub-nav
+  color: rgb(0, 148, 255)
+
 .pointer
   cursor: pointer
 
@@ -151,9 +169,6 @@ input
 
 .no-margin
   margin: 0 0 0 0
-
-#products
-  // min-height: 105vh
 
 .was-price
   color: rgb(157, 157, 157)
@@ -180,7 +195,7 @@ input
   margin-left: 2em
   width: 80%
   background: white
-  transition: .75s
+  transition: .5s
   img
     border-top-left-radius: 10px
     border-top-right-radius: 10px

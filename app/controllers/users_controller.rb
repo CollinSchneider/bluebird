@@ -8,9 +8,6 @@ class UsersController < ApplicationController
     redirect_if_logged_in
   end
 
-  def signup
-  end
-
   def reset_password
     @user = User.find_by_password_reset_token(params[:token])
   end
@@ -18,15 +15,16 @@ class UsersController < ApplicationController
   def password_reset
     @user = User.find(params[:id])
     @user.update(user_params)
-    if @user.save(validate: false)
+    @user.skip_user_validation
+    if @user.save
       session[:user_id] = @user.id
       @user.password_reset_token = nil
       @user.password_reset_expiration = nil
-      @user.save
+      @user.save!
       redirect_to shop_path
     else
       redirect_to request.referrer
-      flash.now[:error] = @user.errors
+      flash[:error] = @user.errors.full_messages
     end
   end
 
@@ -40,26 +38,26 @@ class UsersController < ApplicationController
         user = User.create(user_params)
         if user.save
           session[:user_id] = user.id
-            admin = Admin.new
-            admin.user_id = user.id
-            admin.save
-            # company = Company.new
-            # company.company_name = params[:company][:company_name]
-            # company.user_id = user.id
-            # company.save
-          # if params[:user_type] == 'retailer'
-          #   retailer = Retailer.new
-          #   retailer.user_id = user.id
-          #   retailer.save
-          #   # Mailer.retailer_welcome_email(user).deliver_later
-          #   redirect_to '/retailer/accounts'
-          # elsif params[:user_type] == 'wholesaler'
-          #   wholesaler = Wholesaler.new
-          #   wholesaler.user_id = user.id
-          #   wholesaler.save
-          #   # Mailer.wholesaler_welcome_email(user).deliver_later
-          #   redirect_to '/wholesaler/profile'
-          # end
+            # admin = Admin.new
+            # admin.user_id = user.id
+            # admin.save
+            company = Company.new
+            company.company_name = params[:company][:company_name]
+            company.user_id = user.id
+            company.save
+          if params[:user_type] == 'retailer'
+            retailer = Retailer.new
+            retailer.user_id = user.id
+            retailer.save
+            # Mailer.retailer_welcome_email(user).deliver_later
+            redirect_to '/retailer/accounts'
+          elsif params[:user_type] == 'wholesaler'
+            wholesaler = Wholesaler.new
+            wholesaler.user_id = user.id
+            wholesaler.save
+            # Mailer.wholesaler_welcome_email(user).deliver_later
+            redirect_to '/wholesaler/profile'
+          end
         else
           flash[:error] = user.errors.full_messages
           redirect_to request.referrer
@@ -76,8 +74,15 @@ class UsersController < ApplicationController
 
   def update
     user = User.find(params[:id])
-    user.update(user_params)
-    redirect_to request.referrer
+    # user.skip_password_presence = true
+    user.attributes = user_params
+    if user.save(context: :user_info_create)
+      flash[:success] = "Info Updated"
+      return redirect_to request.referrer
+    else
+      flash[:error] = user.errors.full_messages
+      return redirect_to request.referrer
+    end
   end
 
   def destroy
@@ -90,11 +95,6 @@ class UsersController < ApplicationController
   def logout
     session.destroy
     redirect_to '/users'
-  end
-
-  def accounts
-    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    @stripe_customer = Stripe::Customer.retrieve(current_user.retailer_stripe_id)
   end
 
   def accounts_verify
@@ -137,7 +137,7 @@ class UsersController < ApplicationController
   def user_params
     params.require(:user).permit(:first_name, :last_name, :email, :password,
       :contactable_by_phone, :contactable_by_email, :phone_number,
-      :password_reset_token, :password_reset_expiration)
+      :password_reset_token, :password_reset_expiration, :password_confirmation)
   end
 
   def redirect_if_logged_in

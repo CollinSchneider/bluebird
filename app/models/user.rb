@@ -1,12 +1,13 @@
 require 'stripe'
 
 class User < ActiveRecord::Base
-  has_secure_password
+  has_secure_password(validate: false)
+  attr_accessor :editing_password, :editing_user_info
 
-  validates :password, presence: true, confirmation: true, length: 8..20, unless: :skip_password_presence
-  validates :email, presence: true, uniqueness: true, unless: :skip_user_validation
-  validates :first_name, presence: true, unless: :skip_user_validation
-  validates :last_name, presence: true, unless: :skip_user_validation
+  validates :password, presence: true, confirmation: true, length: 8..20, on: :editing_password
+  validates :email, presence: true, uniqueness: true, on: :user_info_create
+  validates :first_name, presence: true, on: :user_info_create
+  validates :last_name, presence: true, on: :user_info_create
 
   has_many :shipping_addresses
 
@@ -15,7 +16,6 @@ class User < ActiveRecord::Base
   has_one :admin
   has_one :company
 
-  attr_accessor :skip_user_validation, :skip_password_presence
 
   before_create(on: :save) do
     self.uuid = SecureRandom.uuid

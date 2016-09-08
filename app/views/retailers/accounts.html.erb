@@ -1,6 +1,6 @@
 <%= render partial: 'partials/retailer_profile_nav' %>
 
-<div class="col s12 m8 offset-m3 center-align row">
+<div class="col s12 m8 offset-m3 center-align row border">
 
   <div class="row col s12">
     <% if current_user.retailer.card_declined? %>
@@ -8,7 +8,6 @@
     <% end %>
 
     <% if @stripe_customer.default_source.nil? %>
-      <div class="col s12 order-box z-depth-2" style="padding-bottom: 20px">
         <div class="center-align row">
           <h5>You need a credit card on file before making any orders</h5>
         </div>
@@ -29,47 +28,48 @@
             </div>
           </div>
         </div>
-      </div>
-    <% end %>
-  </div>
+      <% end %>
+    </div>
 
   <% if @stripe_customer.sources.count > 1 %>
     <div class="row col s12 m8 offset-m3 order-box z-depth-2">
       <h5 class='center-align'>Alternate Credit Cards:</h5>
     <% @stripe_customer.sources.each_slice(3) do |slice| %>
-    <div class="row">
-      <% slice.each do |source| %>
-        <% if source.id != @stripe_customer.default_source %>
-          <div class="row">
-            <div class="row col s12 m4 center-align credit-card white">
-              <h6>Card Holder: <%= source.name %></h6>
-              <h6>Card Number: **** **** **** <%= source.last4 %></h6>
-              <h6> Zip: <%= source.address_zip %></h6>
-              <div class="row">
-                <div class="left-align col s5 offset-s1">
-                  <h6>Expiration: <%= source.exp_month %>/<%= source.exp_year %> </h6>
+      <div class="row">
+        <% slice.each do |source| %>
+          <% if source.id != @stripe_customer.default_source %>
+            <div class="row">
+              <div class="row col s12 m4 center-align credit-card white">
+                <h6>Card Holder: <%= source.name %></h6>
+                <h6>Card Number: **** **** **** <%= source.last4 %></h6>
+                <h6> Zip: <%= source.address_zip %></h6>
+                <div class="row">
+                  <div class="left-align col s5 offset-s1">
+                    <h6>Expiration: <%= source.exp_month %>/<%= source.exp_year %> </h6>
+                  </div>
+                  <div class="right-align col s5">
+                    <h6><%= source.brand %></h6>
+                  </div>
                 </div>
-                <div class="right-align col s5">
-                  <h6><%= source.brand %></h6>
+                <div class="links">
+                  <a class='delete-card red-text' data="<%= source.id %>" href="">Delete</a><br>
+                  <a class='make-default-card' data="<%= source.id %>" href="">Make Default</a>
                 </div>
+                <img src="/images/loading.gif" class='loading-gif' style="display: none" />
               </div>
-              <div class="links">
-                <a class='delete-card red-text' data="<%= source.id %>" href="">Delete</a><br>
-                <a class='make-default-card' data="<%= source.id %>" href="">Make Default</a>
-              </div>
-              <img src="/images/loading.gif" class='loading-gif' style="display: none" />
             </div>
-          </div>
+          <% end %>
         <% end %>
-      <% end %>
-    </div>
+      </div>
     <% end %>
   </div>
   <% end %>
 
+</div>
 
-  <div class="col s12 m8 offset-m3 order-box z-depth-2">
-    <form class="credit-card-form col s8 offset-s2 center-align">
+<div class="row">
+  <div class="col s12 order-box z-depth-2">
+    <form class="credit-card-form col s8 offset-s2 center-align" autocomplete="off">
       <div class="input-field">
         <label>Card Holder Name</label>
         <input id="card-name" type="text">
@@ -102,7 +102,6 @@
       <input class="submit btn" type="submit" value="Add Payment">
     </form>
   </div>
-
 </div>
 
 <script>

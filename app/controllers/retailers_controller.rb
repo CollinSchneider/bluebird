@@ -31,20 +31,26 @@ class RetailersController < ApplicationController
       )', 'full_price', 'discount_granted', 'goal_met', "%#{slug}%", "%#{slug}%", "%#{slug}%"
       ).order(created_at: :desc).page(params[:page]).per_page(9)
     else
-      @past_orders = current_user.retailer.commits.where('stripe_charge_id IS NOT NULL AND product_id in (
-        select id from products where status = ? OR status = ? or status = ?
-      )', 'full_price', 'discount_granted', 'goal_met').order(created_at: :desc).page(params[:page]).per_page(9)
+      @past_orders = current_user.retailer.commits.order(created_at: :desc).page(params[:page]).per_page(9)
+      # @past_orders = current_user.retailer.commits.where('stripe_charge_id IS NOT NULL AND product_id in (
+      #   select id from products where status = ? OR status = ? or status = ?
+      # )', 'full_price', 'discount_granted', 'goal_met').order(created_at: :desc).page(params[:page]).per_page(9)
     end
   end
 
   def show_order_history
     @order = Commit.find(params[:id])
-    EasyPost.api_key = ENV['EASYPOST_API_KEY']
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    @easypost = EasyPost::Tracker.retrieve(@order.shipping_id)
-    charge = Stripe::Charge.retrieve(@order.shipping_charge_id, :stripe_account => @order.product.wholesaler.stripe_id)
-    @shipping_amount = '%.2f' % (charge.amount/100)
+    @stripe_customer = Stripe::Customer.retrieve(@order.retailer.stripe_id)
+    @commit_card = @stripe_customer.sources.retrieve(@order.card_id)
     redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
+    if !@order.shipping_id.nil?
+      EasyPost.api_key = ENV['EASYPOST_API_KEY']
+      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+      @easypost = EasyPost::Tracker.retrieve(@order.shipping_id)
+      charge = Stripe::Charge.retrieve(@order.shipping_charge_id, :stripe_account => @order.product.wholesaler.stripe_id)
+      @shipping_amount = '%.2f' % (charge.amount/100)
+    end
   end
 
   def accounts
@@ -60,7 +66,6 @@ class RetailersController < ApplicationController
       if params[:user][:password] == params[:user][:password_confirmation]
         if params[:user][:password].length > 7
           current_user.update(user_password_params)
-          current_user.skip_user_validation = true
           if current_user.save(validate: false)
             flash[:success] = "Password Updated"
             return redirect_to request.referrer
@@ -77,7 +82,7 @@ class RetailersController < ApplicationController
   end
 
   def card_declined
-    @commit = Commit.find_by_uuid(params[:order_uuid]) || FullPriceCommit.find_by_uuid(params[:order_uuid])
+    @commit = Commit.find_by_uuid(params[:order_uuid])
     redirect_to '/retailer' if !@commit.card_declined
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
@@ -103,6 +108,12 @@ class RetailersController < ApplicationController
   private
   def user_password_params
     params.require(:user).permit(:password, :password_confirmation)
+  end
+
+  def authenticate_retailer
+    return redirect_to "/users" if current_user.nil?
+    return redirect_to "/wholesaler" if current_user.is_wholesaler?
+    @retailer = current_user.retailer
   end
 
 end

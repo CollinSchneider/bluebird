@@ -55,9 +55,9 @@
       </div>
       <div class="input-field row">
         <% if current_user.wholesaler.contactable_by_phone %>
-          <input id="contact-by-phone" type="checkbox" name="contact_by_phone" value="true" checked>
+          <input id="contact-by-phone" type="checkbox" name="contactable_by_phone" value="true" checked>
         <% else %>
-          <input id="contact-by-phone" type="checkbox" name="contact_by_phone" value="true">
+          <input id="contact-by-phone" type="checkbox" name="contactable_by_phone" value="true">
         <% end %>
         <label for="contact-by-phone">Allow buyers to contact you by phone?</label>
       </div>
@@ -97,3 +97,29 @@
 </div>
 
 </div>
+
+<!-- <script>
+  $('#contact-by-email').click(function(){
+    var value = $(this).prop('checked')
+    $.ajax({
+      method: 'POST',
+      url: '/api/wholesalers/contact_by_email?value=' + value,
+      success: function(data){
+        console.log(data);
+        location.reload()
+      }
+    })
+  })
+
+  $('#contact-by-phone').click(function(){
+    var value = $(this).prop('checked')
+    $.ajax({
+      method: 'POST',
+      url: '/api/wholesalers/contact_by_phone?value=' + value,
+      success: function(data){
+        console.log(data);
+        location.reload()
+      }
+    })
+  })
+</script> -->

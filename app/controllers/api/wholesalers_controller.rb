@@ -43,32 +43,30 @@ class Api::WholesalersController < ApiController
   end
 
   def update_account
-    current_user.update(update_user_params)
-    current_user.skip_password_presence = true
-    if params[:contactable_by_email] == 'true'
-      current_user.wholesaler.contactable_by_email = true
-    else
-      current_user.wholesaler.contactable_by_email = false
-    end
-    if params[:contactable_by_phone] == 'true'
-      current_user.wholesaler.contactable_by_phone = true
-    else
-      current_user.wholesaler.contactable_by_phone = false
-    end
-    if current_user.save(validate: false)
-      current_user.wholesaler.save(validate: false)
+    current_user.editing_user_info = true
+    if current_user.update(update_user_params)
+      if params[:contactable_by_email].nil?
+        current_user.wholesaler.update(:contactable_by_email => false)
+      elsif params[:contactable_by_email] == 'true'
+        current_user.wholesaler.update(:contactable_by_email => true)
+      end
+      if params[:contactable_by_phone].nil?
+        current_user.wholesaler.update(:contactable_by_phone => false)
+      elsif params[:contactable_by_phone] == 'true'
+        current_user.wholesaler.update(:contactable_by_phone => true)
+      end
+      current_user.wholesaler.save!
       flash[:success] = "Updated Info Successfully"
     else
       flash[:error] = current_user.errors.full_messages
     end
-    binding.pry
     redirect_to request.referrer
   end
 
   private
   def update_user_params
     params.require(:user).permit(:first_name, :last_name, :email, :password,
-      :contactable, :phone_number, :password_reset_token, :password_reset_expiration)
+      :contactable, :phone_number)
   end
 
 end

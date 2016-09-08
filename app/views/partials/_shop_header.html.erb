@@ -1,19 +1,26 @@
 <!-- <div class="col s12 border zoom-hover">
   <img src="/images/bluebird-blue-text.png" class='responsive-img zoom-hover' />
 </div> -->
+<%
+  header_products = Product.where("status = 'live'").limit(4)
+-%>
 
 <div class="col s12">
   <div class="slider">
     <ul class="slides">
-      <li>
-        <%= image_tag Product.last.main_image.url(:large), :class => 'responsive-img' %>
-        <!-- <img src="http://lorempixel.com/580/250/nature/1"> -->
-        <div class="caption center-align">
-          <h3>This is our big Tagline!</h3>
-          <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5>
-        </div>
-      </li>
-      <li>
+      <% header_products.each do|product| %>
+        <li>
+          <a href="/products/<%=product.id %>-<%=product.slug %>">
+            <%= image_tag product.main_image.url(:medium), :style => 'height: 100%' %>
+            <!-- <#%= image_tag Product.where("status = 'live'").last.main_image.url(:large), :class => 'responsive-img' %> -->
+            <div class="caption center-align">
+              <h3><%= product.title %></h3>
+              <h5 class="light grey-text text-lighten-3"><%= product.description %></h5>
+            </div>
+          </a>
+        </li>
+      <% end %>
+      <!-- <li>
         <img src="http://lorempixel.com/580/250/nature/2">
         <div class="caption left-align">
           <h3>Left Aligned Caption</h3>
@@ -33,7 +40,7 @@
           <h3>This is our big Tagline!</h3>
           <h5 class="light grey-text text-lighten-3">Here's our small slogan.</h5>
         </div>
-      </li>
+      </li> -->
     </ul>
   </div>
 </div>

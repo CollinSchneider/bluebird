@@ -19,9 +19,13 @@
       <div class="row col s8 offset-s2">
         <!-- <form method="post"> -->
         <%= form_for @user, url: "/signup/step3?uuid=#{@user.uuid}", method: 'POST' do |f| %>
+          <% errors = [] %>
           <% if !flash[:error].nil? %>
             <% flash[:error].each do |err| %>
-              <h6 class='red-text'><%= err %></h6>
+              <% if !errors.include?(err) %>
+                <% errors.push(err) %>
+                <h6 class='red-text'><%= err %></h6>
+              <% end %>
             <% end %>
           <% end %>
           <div class="input-field">

@@ -151,17 +151,16 @@ class WholesalersController < ApplicationController
   def change_password
     if request.put?
       if params[:user][:password] == params[:user][:confirm_password]
-        current_user.update(user_password_params)
-        current_user.skip_user_validation = true
-        if current_user.save
+        if params[:user][:password].length > 7
+          current_user.update(user_password_params)
           flash[:success] = "Password Updated"
         else
-          flash[:error] = current_user.errors.full_messages
+          flash[:error] = "Password must be at least 8 characters long."
         end
       else
-        flash[:error] = "Password and Password Confirmation do not match"
-        redirect_to request.referrer
+        flash[:error] = "Password and Password Confirmation must match."
       end
+      return redirect_to request.referrer
     end
   end
 
@@ -175,4 +174,10 @@ class WholesalersController < ApplicationController
       :duration, :title, :price, :description, :discount, :status, :category, :quantity, :minimum_order,
       :main_image, :photo_two, :photo_three, :photo_four, :photo_five)
   end
+
+  def authenticate_wholesaler
+    redirect_to '/users' if current_user.nil?
+    redirect_to '/shop' if current_user.is_retailer?
+  end
+
 end

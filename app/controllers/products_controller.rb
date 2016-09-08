@@ -19,13 +19,19 @@ class ProductsController < ApplicationController
 
   def edit
     @product = Product.find(params[:id])
-    authenticate_wholesaler_product(@product)
   end
 
   def update
     product = Product.find(params[:id])
-    product.update(product_params)
-    redirect_to product_path(product.id)
+    if product.wholesaler_id == current_user.wholesaler.id
+      product.update(product_params)
+      if product.save!
+        return redirect_to "/product/#{product.id}-#{product.slug}"
+      else
+        flash[:error] = product.errors.full_messages
+        return redirect_to request.referrer
+      end
+    end
   end
 
   def create
@@ -46,8 +52,10 @@ class ProductsController < ApplicationController
 
   def destroy
     product = Product.find(params[:id])
-    product.delete
-    redirect_to request.referrer
+    if product.wholesaler_id == current_user.wholesaler.id
+      product.delete
+      return redirect_to request.referrer
+    end
   end
 
   def full_price

@@ -3,24 +3,40 @@ class Commit < ActiveRecord::Base
   belongs_to :retailer
   belongs_to :product
 
+  belongs_to :shipping_address
+
   validate :meets_minimum_order
   validate :enough_inventory
-  validate :product_live
+  # validate :product_live
 
-  before_validation(on: :create) do
+  # before_create(on: :save) do
+  #   self.uuid = SecureRandom.uuid
+  #   self.status = 'live'
+  #   self.refunded = false
+  # end
+
+  def set_commit
     self.uuid = SecureRandom.uuid
     self.status = 'live'
     self.refunded = false
+    self.set_primary_card_id_and_address
+    self.set_sale_amount
+    self.save
   end
 
-  def set_primary_card_id
+  def set_primary_card_id_and_address
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     customer = Stripe::Customer.retrieve(self.retailer.stripe_id)
     self.card_id = customer.default_source
+    self.shipping_address_id = self.retailer.primary_address_id
   end
 
-  def full_price?
-    return false
+  def set_sale_amount
+    if self.full_price
+      self.sale_amount = self.product.price.to_f*self.amount
+    else
+      self.sale_amount = self.product.discount.to_f*self.amount
+    end
   end
 
   # VALIDATIONS

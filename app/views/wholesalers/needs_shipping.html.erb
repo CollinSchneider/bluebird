@@ -20,7 +20,7 @@
             <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.price.to_f*commit.amount.to_f) %></h5>
             <h6>(Purchased for full price)</h6>
           <% end %>
-          <% address = EasyPost::Address.retrieve(commit.retailer.shipping_addresses[0].address_id) %>
+          <% address = EasyPost::Address.retrieve(commit.shipping_address.address_id) %>
           <h6>Ship to:</h6>
           <h6><%= commit.retailer.user.full_name %></h6>
           <h6><%= commit.retailer.user.company.company_name %></h6>

@@ -1,57 +1,70 @@
 class CommitsController < ApplicationController
+  before_action :redirect_if_not_retailer
 
   def create
-    commit = Commit.create(commit_params)
-      if commit.save
-        commit.product.quantity -= commit.amount
-        commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
-        commit.product.save
-        commit.retailer_id = current_user.retailer.id
-        commit.set_primary_card_id
-        commit.save
+    if current_user.is_retailer?
+      commit = Commit.create(commit_params)
+      commit.set_commit
+        if commit.save
+          commit.product.quantity -= commit.amount
+          commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
+          commit.product.save
+          commit.retailer_id = current_user.retailer.id
+          commit.save!
 
-        if commit.full_price
-          commit.status = 'full_price'
-          commit.save
-          amount = commit.product.price.to_f*commit.amount.to_i
-          charge = commit.product.wholesaler.user.collect_payment(commit, amount)
-          Mailer.retailer_full_price_email(commit, commit.retailer.user)
-          Mailer.wholesaler_full_price_email(commit, commit.product.wholesaler.user)
-          if !charge.nil? && !charge[1]
-            return redirect_to "/retailer/#{commit.uuid}/card_declined"
+          if commit.full_price
+            commit.status = 'full_price'
+            commit.save
+            amount = commit.product.price.to_f*commit.amount.to_i
+            charge = commit.product.wholesaler.user.collect_payment(commit, amount)
+            Mailer.retailer_full_price_email(commit, commit.retailer.user)
+            Mailer.wholesaler_full_price_email(commit, commit.product.wholesaler.user)
+            if !charge.nil? && !charge[1]
+              return redirect_to "/retailer/#{commit.uuid}/card_declined"
+            end
+          else
           end
+        else
+          flash[:error] = commit.errors.full_messages
         end
-      else
-        flash[:error] = commit.errors.full_messages
-      end
-    return redirect_to request.referrer
+      return redirect_to request.referrer
+    end
   end
 
   def update
     commit = Commit.find(params[:id])
-    og_quantity = commit.amount
-    commit.update(commit_params)
-    commit_difference = commit.amount - og_quantity
-    if commit.save
-      commit.product.quantity -= commit_difference
-      commit.product.save(validate: false)
-    else
-      flash[:error] = commit.errors
+    if commit.retailer_id == current_user.retailer.id
+      og_quantity = commit.amount
+      commit.update(commit_params)
+      commit_difference = commit.amount - og_quantity
+      if commit.save
+        commit.product.quantity -= commit_difference
+        commit.product.save(validate: false)
+      else
+        flash[:error] = commit.errors.full_messages
+      end
+      return redirect_to request.referrer
     end
-    return redirect_to request.referrer
   end
 
   def destroy
     commit = Commit.find(params[:id])
-    commit.product.quantity += commit.amount
-    commit.product.save
-    commit.destroy
-    redirect_to request.referrer
+    if commit.retailer_id == current_user.retailer.id
+      commit.product.quantity += commit.amount
+      commit.product.save
+      commit.destroy
+      return redirect_to request.referrer
+    end
   end
 
   private
   def commit_params
-    params.require(:commit).permit(:user_id, :product_id, :amount, :status, :uuid, :full_price)
+    params.require(:commit).permit(:user_id, :product_id, :amount, :status, :uuid, :full_price, :retailer_id)
+  end
+
+  def redirect_if_not_retailer
+    redirect_to "/users" if current_user.nil?
+    redirect_to "/wholesaler" if current_user.is_wholesaler?
   end
 
 end

@@ -35,8 +35,8 @@ Rails.application.routes.draw do
   get '/api/shipping/:action' => 'api/shipping'
   post '/api/shipping/:action' => 'api/shipping'
 
-  get '/api/users:action' => 'api/users'
-  post '/api/users:action' => 'api/users'
+  get '/api/users/:action' => 'api/users'
+  post '/api/users/:action' => 'api/users'
 
               #///////////////////#
               # WHOLESALER ROUTES #

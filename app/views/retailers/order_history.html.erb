@@ -9,26 +9,26 @@
   </div>
   <div class="row">
     <% if params[:query] %>
-    <h6>Search results for "<%= params[:query] %>"</h6>
-    <a href="<%= request.path %>">Clear</a>
+      <h6>Search results for "<%= params[:query] %>"</h6>
+      <a href="<%= request.path %>">Clear</a>
     <% end %>
   </div>
 
-  <div class="row border col s12 center-align">
-    <div class="col m3">
+  <div class="row border col s12 center-align valign-wrapper">
+    <div class="col m3 valign">
       <h6 class="bold">Order #</h6>
     </div>
-    <div class="col m2">
+    <div class="col m2 valign">
       <h6 class="bold">Product</h6>
     </div>
-    <div class="col m2">
+    <div class="col m2 valign">
       <h6 class="bold">Price</h6>
     </div>
-    <div class="col m2">
+    <div class="col m2 valign">
       <h6 class="bold">Vendor</h6>
     </div>
-    <div class="col m2">
-      <h6 class="bold">Sale Finished On</h6>
+    <div class="col m2 valign">
+      <h6 class="bold">Sale Result</h6>
     </div>
   </div>
   <div id="past-orders">

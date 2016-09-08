@@ -8,16 +8,23 @@
         <img src="/images/bluebird-blue-text.png" alt="" class="responsive-img"/>
       </a>
     </div>
-    <div class="hide-on-med-and-up col s4 right-align valign">
-      <a class='black-text account-side-nav-link button-collapse' data-activates="slide-out">
-        <div class="nav-category-div" style="display: inline-block">
-          <span class='nav-category bold'><i class='material-icons'>reorder</i></span>
-        </div>
-      </a>
-    </div>
-    <!-- <div class="col s4 border right-align hide-on-med-and-up valign nav-category-div">
-      <a class="button-collapse" data-activtes="slide-out">Account</a>
-    </div> -->
+    <% if current_user.is_retailer? %>
+      <div class="hide-on-med-and-up col s4 right-align valign">
+        <a class='black-text account-side-nav-link button-collapse' data-activates="retailer-slide-out">
+          <div class="nav-category-div" style="display: inline-block">
+            <span class='nav-category bold'><i class='material-icons'>reorder</i></span>
+          </div>
+        </a>
+      </div>
+    <% elsif current_user.is_wholesaler? %>
+      <div class="hide-on-med-and-up col s4 right-align valign">
+        <a class='black-text account-side-nav-link button-collapse' data-activates="wholesaler-slide-out">
+          <div class="nav-category-div" style="display: inline-block">
+            <span class='nav-category bold'><i class='material-icons'>reorder</i></span>
+          </div>
+        </a>
+      </div>
+    <% end %>
     <div class="col s7 valign hide-on-small-only">
       <h6>
         <%
@@ -72,14 +79,11 @@
         </h6>
       <% end %>
     </div>
-    <div class="right">
-
-    </div>
     <div class="col s1 hide-on-small-only valign nav-category-div">
       <a href="#" class="search nav-category"><i class=" nav-categorysmall material-icons black-text">search</i></a>
     </div>
   </div>
-  <div class="row col s12 no-margin sub-nav-container">
+  <div class="row col s12 sub-nav-container">
     <div class="no-margin sub-nav discover-sub-nav">
       <h6 class="no-padding no-margin">
         <%
@@ -169,29 +173,77 @@
     </div>
   </div>
 </div>
-<ul id="slide-out" class="side-nav">
-  <li><div class="userView">
-    <a href="#!name"><span class="white-text name">John Doe</span></a>
-    <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
-  </div></li>
-  <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-  <li><a href="#!">Second Link</a></li>
+
+<ul id="wholesaler-slide-out" class="side-nav">
+  <div class="userView center-align">
+    <li><span class="bold"><%= current_user.full_name %></span></li>
+    <li>
+      <div class="row">
+        <form class="col s10 offset-s1">
+          <input type="text" name="query" placeholder="Search Page">
+        </form>
+      </div>
+    </li>
+    <!-- <li>
+      <form class="col s10 offset-s1">
+        <input type="text" name="query" placeholder="Search Page">
+      </form>
+    </li> -->
+  </div>
+  <!-- PRODUCT STUFF  -->
   <li><div class="divider"></div></li>
+  <%
+    items = {
+      'PROFILE' => '/wholesaler/profile',
+      'SELL' => '/new_product',
+      'COMPANY' => '/wholesaler/company',
+      'CURRENT SALES' => '/current_sales',
+      'PAST PRODUCTS' => '/past_products',
+      'ANALYTICS' => '/analytics',
+      'SETTINGS' => '/wholesaler/settings',
+      'MANAGE BANK ACCOUNT' => 'http://dashboard.stripe.com',
+      'LOGOUT' => '/logout',
+    }
+    items.each do |name, url|
+      link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'white-text'
+  %>
+    <li><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></li>
+  <% end %>
+  <!-- <li><a href="/wholesaler/profile">Profile</a></li>
+  <li><a href="/current_sales">Current Sales</a></li>
+  <li><a href="/past_products">Past Products</a></li>
+  <li><a href="/wholesaler/company">Company Info</a></li>
+  <li><a href="/analytics">Analytics</a></li>
+  <li><a href="/wholesaler/settings">Settings</a></li>
+  <li><a href="/logout">Logout</a></li> -->
+</ul>
+
+<ul id="retailer-slide-out" class="side-nav">
+  <li><div class="userView">
+    <a href="#!name"><%= current_user.full_name %></a>
+  </div></li>
+  <li><div class="divider"></div></li>
+  <%
+    items = {
+      'PENDING ORDERS' => '/retailer/pending_orders',
+      'ORDER HISTORY' => '/retailer/order_history',
+      'MANAGE PAYMENTS' => '/retailer/accounts',
+      'SHIPPING INFORMATION' => '/retailer/shipping_addresses',
+      'SETTINGS' => '/retailer/settings',
+      'LOGOUT' => '/logout',
+    }
+    items.each do |name, url|
+      link_class = request.fullpath.start_with?(url) ? 'active-sub-nav' : 'black-text'
+  %>
+    <li><a class="<%=link_class %>" href="<%= url %>"><%= name %></a></li>
+  <% end %>
+  <!-- <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
+  <li><a href="#!">Second Link</a></li>
   <li><a class="subheader">Subheader</a></li>
-  <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+  <li><a class="waves-effect" href="#!">Third Link With Waves</a></li> -->
 </ul>
 
 <script>
-  // if("<#%= current_user.is_retailer? %>"){
-  //   if("<#%= current_user.retailer.needs_credit_card? %>"){
-  //     $('a[href="/retailer/accounts"]').attr('class', 'red-text')
-  //     console.log('credit...');
-  //   }
-  //   if("<#%= current_user.retailer.needs_shipping_info? %>"){
-  //     $('a[href="/retailer/shipping_addresses"]').attr('class', 'red-text')
-  //     console.log('shipping...');
-  //   }
-  // }
 
   $(".button-collapse").sideNav();
 
@@ -200,7 +252,10 @@
     $('.sub-nav-triangle').css({
       display: 'inherit',
       marginLeft: position.left + (width/2 - 5),
-      marginTop: position.top + height
+      marginTop: 47
+    })
+    $('.body-div').css({
+      marginTop: 60
     })
   }
 

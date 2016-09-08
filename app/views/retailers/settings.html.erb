@@ -6,6 +6,12 @@
 
   <div class="center-align col s12 m8 offset-m3 order-box z-depth-2" style="margin-top: 50px">
     <h4>Settings</h4>
+    <% if !flash[:error].nil? %>
+      <% flash[:error].each do |err| %>
+        <h6 class='red-text'><%= err %></h6>
+        <% end %>
+    <% end %>
+    <h6 class='green-text'><%= flash[:success] %></h6>
     <div class="row">
       <%= form_for current_user do |f| %>
         <div class="input-field">
@@ -20,7 +26,7 @@
           <%= f.label "Email" %>
           <%= f.text_field :email, :value => current_user.email %>
         </div>
-          <%= f.submit "Update Account", :class => 'btn' %>
+        <%= f.submit "Update Account", :class => 'btn' %>
       <% end %>
     </div>
 

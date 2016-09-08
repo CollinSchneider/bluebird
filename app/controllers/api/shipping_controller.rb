@@ -2,8 +2,8 @@ require 'easypost'
 class Api::ShippingController < ApiController
 
   def create_shipping_address
-    street_one = params[:street_line_1]
-    street_two = params[:street_line_2]
+    street_one = params[:street_one]
+    street_two = params[:street_two]
     city = params[:city]
     state = params[:state]
     zip = params[:zip]
@@ -18,10 +18,6 @@ class Api::ShippingController < ApiController
       country: "US"
     )
     if verifiable_address.verifications.delivery.success
-      render :json => {
-        success: true,
-        address: verifiable_address
-      }
       current_user.retailer.shipping_addresses.each do |address|
         address.primary = false
         address.save
@@ -31,11 +27,19 @@ class Api::ShippingController < ApiController
       local_address.address_id = verifiable_address.id
       local_address.primary = true
       local_address.save
+      return redirect_to request.referrer
+      # return render :json => {
+      #   success: true,
+      #   easy_address: verifiable_address,
+      #   local_address: local_address
+      # }
     else
-      render :json => {
-        success: false,
-        errors: verifiable_address.verifications.delivery.errors
-      }
+      flash[:error] = verifiable_address.verifications.delivery.errors
+      return redirect_to request.referrer
+      # return render :json => {
+      #   success: false,
+      #   errors: verifiable_address.verifications.delivery.errors
+      # }
     end
   end
 
@@ -53,6 +57,18 @@ class Api::ShippingController < ApiController
     address.primary = true
     address.save
     render :json => {success: true}
+  end
+
+  def change_commit_shipping
+    shipping_id = params[:shipping_id]
+    commit_id = params[:commit_id]
+    commit = Commit.find(commit_id)
+    commit.shipping_address_id = shipping_id
+    if commit.save!
+      return render :json => {:success => true}
+    else
+      return render :json => {:success => false}
+    end
   end
 
   def ship_order

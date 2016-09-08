@@ -6,7 +6,9 @@ $('a[href="/discover"]').mouseover(function(){
 })
 
 $('.body-div').mouseover(function(){
-  console.log('body....');
+  $(this).css({
+    marginTop: 0
+  })
   $('.sub-nav-container').css({
     display: 'none'
   })

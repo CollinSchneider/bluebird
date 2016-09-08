@@ -1,6 +1,11 @@
 
   <% @past_orders.each do |order| %>
-    <a href="/retailer/order_history/<%= order.id %>">
+    <% if order.product.status == 'live' %>
+      <% link = "/products/#{order.product.id}-#{order.product.slug}" %>
+    <% else %>
+      <% link = "/retailer/order_history/#{order.id}" %>
+    <% end %>
+    <a href="<%= link %>">
       <div class="row col s12 center-align order-row border black-text valign-wrapper">
         <div class="col m3 valign">
           <h6><%= order.uuid %></h6>
@@ -19,7 +24,13 @@
           <h6><%= order.product.wholesaler.user.company.company_name %></h6>
         </div>
         <div class="col m2 valign">
-          <h6><%= order.product.end_time.strftime('%b %d, %Y') %></h6>
+          <% if order.product.status == 'live' %>
+            <h6>Sale Still Live</h6>
+          <% elsif order.product.status == 'goal_met' || order.product.status == 'discount_granted' || order.product.status == 'full_price' %>
+            <h6>Sale Completed</h6>
+          <% elsif order.product.status == 'not_met' %>
+            <h6>Sale Not Made</h6>
+          <% end %>
         </div>
       </div>
     </a>

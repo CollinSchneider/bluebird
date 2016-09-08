@@ -27,6 +27,10 @@ class Retailer < ActiveRecord::Base
     end
   end
 
+  def primary_address_id
+    self.shipping_addresses.where(:primary => true).first.id
+  end
+
   def company
     self.user.company
   end

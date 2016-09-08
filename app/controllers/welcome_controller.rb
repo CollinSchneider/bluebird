@@ -3,7 +3,6 @@ class WelcomeController < ApplicationController
   before_action :redirect_if_not_logged_in
 
   def shop
-    authenticate_anybody
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND CAST(current_sales AS decimal) >= CAST(products.goal AS decimal)', 'live', Time.now).page(params[:page]).per_page(3)
     elsif params[:query]
@@ -41,7 +40,6 @@ class WelcomeController < ApplicationController
   end
 
   def ending_soon
-    authenticate_anybody
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal', 'live', Time.now).order(end_time: :asc).page(params[:page]).per_page(3)
     elsif params[:query]
@@ -69,7 +67,6 @@ class WelcomeController < ApplicationController
   end
 
   def new_arrivals
-    authenticate_anybody
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal', 'live', Time.now).order(start_time: :asc).page(params[:page]).per_page(3)
     elsif params[:query]
@@ -97,7 +94,6 @@ class WelcomeController < ApplicationController
   end
 
   def best_sellers
-    authenticate_anybody
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal', 'live', Time.now).order(current_sales: :desc).page(params[:page]).per_page(3)
     elsif params[:query]
@@ -121,7 +117,6 @@ class WelcomeController < ApplicationController
   end
 
   def tech
-    authenticate_anybody
     if params[:products] == 'discounted'
       # TODO: Come back to this, not sure when product becomes 'goal_met'
       @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.now, 'Tech').page(params[:page]).per_page(3)
@@ -153,7 +148,6 @@ class WelcomeController < ApplicationController
   end
 
   def accessories
-    authenticate_anybody
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.now, 'Accessories').page(params[:page]).per_page(3)
     elsif params[:query]
@@ -183,7 +177,6 @@ class WelcomeController < ApplicationController
   end
 
   def home_goods
-    authenticate_anybody
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.now, 'Home Goods').page(params[:page]).per_page(3)
     elsif params[:query]
@@ -214,7 +207,6 @@ class WelcomeController < ApplicationController
   end
 
   def apparel
-    authenticate_anybody
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.now, 'Apparel').page(params[:page]).per_page(3)
     elsif params[:query]

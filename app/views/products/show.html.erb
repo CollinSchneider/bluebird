@@ -4,7 +4,7 @@
     <div class="col 12 valign-wrapper">
       <div class="row">
 
-        <div class="col s6">
+        <div class="col s12 m6">
 
           <div class="title-box z-depth-1 center-align">
             <h4 id="timer" class='dark-bluebird-text bold'></h4>
@@ -32,16 +32,12 @@
                     <h6>Exp: <%= @commit_card.exp_month %>/<%= @commit_card.exp_year %></h6>
                   </div>
                   <div class="row">
-                    <h6>Change payment method:</h6>
-                    <% @stripe_customer.sources.each do |source| %>
-                      <% if source.id != users_orders[0].card_id %>
-                        <form class='change-payment'>
-                          <input type="hidden" class='card_id' value="<%= source.id %>">
-                          <input type="hidden" class='commit_id' value="<%= users_orders[0].id %>">
-                          <input type='submit' class="btn" value="<%= source.brand %>: <%= source.last4 %>" />
-                        </form>
-                      <% end %>
-                    <% end %>
+                    <h6>And shipped to this address:</h6>
+                    <h6><%= current_user.retailer.primary_address.street1 %></h6>
+                    <h6><%= current_user.retailer.primary_address.city %>, <%= current_user.retailer.primary_address.state %>, <%= current_user.retailer.primary_address.zip %></h6>
+                  </div>
+                  <div class="row">
+                    <a href="/retailer/order_history/<%= users_orders[0].id %>">Edit</a>
                   </div>
                   <div class="row">
                     <%= button_to "Delete Purchase Order", commit_path(users_orders[0].id), method: :delete, :class => 'btn red' %> <br>
@@ -86,7 +82,7 @@
           </div>
         </div>
 
-        <div class="col s6">
+        <div class="col s12 m6">
           <div class="row center-align no-bottom-margin">
 
             <div class="info-box z-depth-1">
@@ -153,6 +149,11 @@
             <% if current_user.is_retailer? %>
             <div class="row center-align">
               <div class="order-box z-depth-1">
+                <% if !flash[:error].nil? %>
+                  <% flash[:error].each do |err| %>
+                    <h6 class='red-text'><%= err %></h6>
+                  <% end %>
+                <% end %>
 
                 <% if current_user.retailer.needs_credit_card? %>
                   <h6><a href="/retailer/accounts">We need a credit card on file before you can make an order</a></h6>
@@ -166,15 +167,11 @@
                     <%= form_for Commit.new do |f| %>
                     <%= f.hidden_field :product_id, :value => @product.id %>
                     <%= f.hidden_field :full_price, :value => false %>
+                    <%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
                     <div class="input-field">
                       <%= f.label "Order Quantity" %>
                       <%= f.number_field :amount, :minimum => @product.minimum_order %>
                     </div>
-                    <% if !flash[:error].nil? %>
-                      <% flash[:error].each do |err| %>
-                        <h6 class='red-text'><%= err %></h6>
-                      <% end %>
-                    <% end %>
                     <%= f.button "Make Order", :class => 'btn' %>
                     <% end %>
 
@@ -224,15 +221,15 @@
           <% end %>
 
           <div class="row">
-            <div class="<%= @product.percentage["class"] %>">
-              <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
+            <div class="<%= product.percentage["class"] %>">
+              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
             </div>
             <div class="row col s12">
               <div class="col s6">
-                <h6><%= '%.0f' % @product.percentage["percent_to_discount"] %>% to discount</h6>
+                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
               </div>
               <div class="col s6">
-                <h6><%= @product.time_to_expiration %></h6>
+                <h6><%= product.time_to_expiration %></h6>
               </div>
             </div>
           </div>
@@ -272,15 +269,15 @@
           <% end %>
 
           <div class="row">
-            <div class="<%= @product.percentage["class"] %>">
-              <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
+            <div class="<%= product.percentage["class"] %>">
+              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
             </div>
             <div class="row col s12">
               <div class="col s6">
-                <h6><%= '%.0f' % @product.percentage["percent_to_discount"] %>% to discount</h6>
+                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
               </div>
               <div class="col s6">
-                <h6><%= @product.time_to_expiration %></h6>
+                <h6><%= product.time_to_expiration %></h6>
               </div>
             </div>
           </div>
