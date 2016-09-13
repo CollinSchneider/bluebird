@@ -1,6 +1,7 @@
 class Company < ActiveRecord::Base
 
-  validate :unique_company
+  # validate :unique_company
+  validates :company_name, presence: true
 
   belongs_to :user
 
@@ -9,6 +10,7 @@ class Company < ActiveRecord::Base
 
   before_create(on: :save) do
     self.company_key = create_company_key
+    self.uuid = SecureRandom.uuid
   end
 
   def create_company_key
@@ -24,7 +26,7 @@ class Company < ActiveRecord::Base
   def unique_company
     same_name = Company.find_by_company_key(self.company_key)
     if !same_name.nil?
-      errors.add(:name, "Somebody already has this company name!")
+      errors.add(:Another, "user already has this company name!")
     end
   end
 

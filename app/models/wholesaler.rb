@@ -4,6 +4,12 @@ class Wholesaler < ActiveRecord::Base
 
   has_many :products
 
+  # before_create(on: :save) do
+  #   self.approved = false
+  #   self.contactable_by_phone = false
+  #   self.contactable_by_email = false
+  # end
+
   def needs_attention?
     return !self.products.where('status = ?', 'needs_attention').empty?
   end

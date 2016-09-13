@@ -1,6 +1,6 @@
 <%= render partial: 'partials/retailer_profile_nav' %>
 
-<div class="col s12 m8 offset-m3 center-align row border">
+<div class="col s12 m8 offset-m3 center-align row">
 
   <div class="row col s12">
     <% if current_user.retailer.card_declined? %>
@@ -68,7 +68,7 @@
 </div>
 
 <div class="row">
-  <div class="col s12 order-box z-depth-2">
+  <div class="col s12 m8 offset-m3 order-box z-depth-2">
     <form class="credit-card-form col s8 offset-s2 center-align" autocomplete="off">
       <div class="input-field">
         <label>Card Holder Name</label>

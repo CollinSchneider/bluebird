@@ -201,11 +201,11 @@
       'PAST PRODUCTS' => '/past_products',
       'ANALYTICS' => '/analytics',
       'SETTINGS' => '/wholesaler/settings',
-      'MANAGE BANK ACCOUNT' => 'http://dashboard.stripe.com',
+      'BANK ACCOUNT' => 'http://dashboard.stripe.com',
       'LOGOUT' => '/logout',
     }
     items.each do |name, url|
-      link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'white-text'
+      link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
   %>
     <li><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></li>
   <% end %>

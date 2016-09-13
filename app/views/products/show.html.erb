@@ -15,6 +15,9 @@
               <% users_orders = current_user.retailer.commits.where('product_id = ?', @product.id) %>
               <% if users_orders.any? %>
                 <div class="edit-order center-align" style="display: none">
+                  <div class="right-align no-padding" style="padding: 0">
+                    <a class='cancel-edit btn-flat waves-effect' style="display: none">X</a>
+                  </div>
                   <% @commit_card = @stripe_customer.sources.retrieve(users_orders[0].card_id) %>
                   <div class="row">
                     <%= form_for users_orders[0] do |f| %>
@@ -33,7 +36,7 @@
                   </div>
                   <div class="row">
                     <h6>And shipped to this address:</h6>
-                    <h6><%= current_user.retailer.primary_address.street1 %></h6>
+                    <h6><%= current_user.retailer.primary_address.street_address_one %></h6>
                     <h6><%= current_user.retailer.primary_address.city %>, <%= current_user.retailer.primary_address.state %>, <%= current_user.retailer.primary_address.zip %></h6>
                   </div>
                   <div class="row">
@@ -311,7 +314,7 @@
   })
 
   $('.cancel-edit').click(function(){
-    $(this).toggle()
+    $('.cancel-edit').toggle()
     $('.edit-order-button').toggle()
     $('.edit-order').fadeOut()
     setTimeout(function(){
@@ -436,11 +439,13 @@
   // }
 
   function alternateImage(){
-    $('.alternate-image').mouseover(function(){
+    $('.alternate-image').click(function(){
       var makeMain = $(this).attr('src')
       var makeAlternate = $('.main-image').attr('src')
+      // $('.main-image').fadeOut()
       $('.main-image').attr('src', makeMain)
       $(this).attr('src', makeAlternate)
+      //   $('.main-image').fadeIn()
     })
   }
 </script>

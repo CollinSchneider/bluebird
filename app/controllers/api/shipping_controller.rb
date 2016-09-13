@@ -26,6 +26,11 @@ class Api::ShippingController < ApiController
       local_address.retailer_id = current_user.retailer.id
       local_address.address_id = verifiable_address.id
       local_address.primary = true
+      local_address.street_address_one = verifiable_address.street1
+      local_address.street_address_two = verifiable_address.street2
+      local_address.city = verifiable_address.city
+      local_address.zip =  verifiable_address.zip
+      local_address.state = verifiable_address.state
       local_address.save
       return redirect_to request.referrer
       # return render :json => {

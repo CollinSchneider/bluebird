@@ -18,13 +18,7 @@ class Retailer < ActiveRecord::Base
   end
 
   def primary_address
-    EasyPost.api_key = ENV['EASYPOST_API_KEY']
-    address = self.shipping_addresses.where(:primary => true).first
-    if !address.nil?
-      address = EasyPost::Address.retrieve(address.address_id)
-    else
-      nil
-    end
+    self.shipping_addresses.where(:primary => true).first
   end
 
   def primary_address_id

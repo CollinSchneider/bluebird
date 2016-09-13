@@ -3,11 +3,11 @@ class Users::ApplyController < UsersController
 
   def step1
     if request.post?
-      user = User.create(step_1_params)
-      if user.save(validate: false)
-        return redirect_to "/apply/step2?uuid=#{user.uuid}"
+      company = Company.create(company_params)
+      if company.save
+        return redirect_to "/apply/step2?uuid=#{company.uuid}"
       else
-        flash[:error] = user.errors.full_messages
+        flash[:error] = company.errors.full_messages
         return redirect_to request.referrer
       end
     end
@@ -15,19 +15,26 @@ class Users::ApplyController < UsersController
 
   def step2
     redirect_to '/apply/step1' if params[:uuid].nil?
-    @user = User.find_by_uuid(params[:uuid])
+    @company = Company.find_by_uuid(params[:uuid])
     if request.post?
-      @user.phone_number = params[:phone_number]
-      company = Company.new
-      company.company_name = params[:company_name]
-      company.website = params[:website]
-      company.bio = params[:bio]
-      company.user_id = @user.id
-      if company.save!
-        @user.save(validate: false)
-        return redirect_to "/apply/step3?uuid=#{@user.uuid}"
+      binding.pry
+      user = User.new
+      user.editing_user_info = true
+      user.update(user_params)
+      if user.save
+        @company.user_id = user.id
+        @company.save(validate: false)
+        wholesaler = Wholesaler.new
+        wholesaler.user_id = user.id
+        wholesaler.approved = false
+        wholesaler.contactable_by_phone = false
+        wholesaler.contactable_by_email = false
+        wholesaler.save!
+        Mailer.wholesaler_welcome_email(user, params[:user][:password]).deliver_later
+        binding.pry
+        return redirect_to "/thank_you?_user=#{user.first_name}"
       else
-        flash[:error] = company.errors
+        flash[:error] = user.errors.full_messages
         return redirect_to request.referrer
       end
     end
@@ -42,7 +49,6 @@ class Users::ApplyController < UsersController
         wholesaler = Wholesaler.new
         wholesaler.user_id = @user.id
         wholesaler.save
-        Mailer.wholesaler_welcome_email(@user, params[:user][:password]).deliver_later
         return redirect_to "/thank_you?_user=#{@user.first_name}"
       else
         flash[:error] = @user.errors.full_messages
@@ -53,11 +59,15 @@ class Users::ApplyController < UsersController
 
   private
   def user_params
-    params.require(:user).permit(:email, :password, :password_confirmation)
+    params.require(:user).permit(:first_name, :last_name, :phone_number, :email, :password, :password_confirmation)
+  end
+
+  def company_params
+    params.require(:company).permit(:bio, :website, :company_name, :location)
   end
 
   def step_1_params
-    params.require(:user).permit(:first_name, :last_name)
+    params.require(:user).permit(:first_name, :last_name, :email, )
   end
 
 end

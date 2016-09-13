@@ -4,12 +4,17 @@
 <%
   header_products = Product.where("status = 'live'").limit(4)
 -%>
+<script>
+  $(document).ready(function(){
+    $('.slides').fadeIn()
+  })
+</script>
 
-<div class="col s12">
+<div class="col s12 slider-div">
   <div class="slider">
-    <ul class="slides">
+    <ul class="slides" style='display: none'>
       <% header_products.each do|product| %>
-        <li>
+        <li class='slide'>
           <a href="/products/<%=product.id %>-<%=product.slug %>">
             <%= image_tag product.main_image.url(:medium), :style => 'height: 100%' %>
             <!-- <#%= image_tag Product.where("status = 'live'").last.main_image.url(:large), :class => 'responsive-img' %> -->

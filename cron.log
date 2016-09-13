@@ -4739,3 +4739,371 @@ Running via Spring preloader in process 11841
 Running via Spring preloader in process 11843
 Running via Spring preloader in process 12035
 Running via Spring preloader in process 12036
+/usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize': could not connect to server: No such file or directory (PG::ConnectionBad)
+	Is the server running locally and accepting
+	connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:87:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:139:in `replace_bind_variables'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:128:in `sanitize_sql_array'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:26:in `sanitize_sql_for_conditions'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:950:in `build_where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:584:in `where!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:574:in `where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/querying.rb:10:in `where'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:157:in `end_full_priced'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+/usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize': could not connect to server: No such file or directory (PG::ConnectionBad)
+	Is the server running locally and accepting
+	connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:87:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:139:in `replace_bind_variables'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:128:in `sanitize_sql_array'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:26:in `sanitize_sql_for_conditions'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:950:in `build_where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:584:in `where!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:574:in `where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/querying.rb:10:in `where'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:168:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 12337
+Running via Spring preloader in process 12338
+/usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize': could not connect to server: No such file or directory (PG::ConnectionBad)
+	Is the server running locally and accepting
+	connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:87:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:139:in `replace_bind_variables'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:128:in `sanitize_sql_array'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:26:in `sanitize_sql_for_conditions'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:950:in `build_where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:584:in `where!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:574:in `where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/querying.rb:10:in `where'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:157:in `end_full_priced'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+/usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize': could not connect to server: No such file or directory (PG::ConnectionBad)
+	Is the server running locally and accepting
+	connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:87:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:139:in `replace_bind_variables'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:128:in `sanitize_sql_array'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:26:in `sanitize_sql_for_conditions'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:950:in `build_where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:584:in `where!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:574:in `where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/querying.rb:10:in `where'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:168:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 12462
+Running via Spring preloader in process 12463
+/usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize': could not connect to server: No such file or directory (PG::ConnectionBad)
+	Is the server running locally and accepting
+	connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:87:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:139:in `replace_bind_variables'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:128:in `sanitize_sql_array'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:26:in `sanitize_sql_for_conditions'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:950:in `build_where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:584:in `where!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:574:in `where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/querying.rb:10:in `where'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:168:in `expire_product'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+/usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `initialize': could not connect to server: No such file or directory (PG::ConnectionBad)
+	Is the server running locally and accepting
+	connections on Unix domain socket "/tmp/.s.PGSQL.5432"?
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:651:in `connect'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:242:in `initialize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `new'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/postgresql_adapter.rb:44:in `postgresql_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:438:in `new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:448:in `checkout_new_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:422:in `acquire_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:349:in `block in checkout'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:348:in `checkout'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:263:in `block in connection'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/monitor.rb:214:in `mon_synchronize'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:262:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_adapters/abstract/connection_pool.rb:571:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:113:in `retrieve_connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/connection_handling.rb:87:in `connection'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:139:in `replace_bind_variables'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:128:in `sanitize_sql_array'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/sanitization.rb:26:in `sanitize_sql_for_conditions'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:950:in `build_where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:584:in `where!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/relation/query_methods.rb:574:in `where'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/querying.rb:10:in `where'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/app/models/product.rb:157:in `end_full_priced'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 12623
+Running via Spring preloader in process 12624
+Running via Spring preloader in process 12890
+Running via Spring preloader in process 12891
+Running via Spring preloader in process 13115
+Running via Spring preloader in process 13116
+Running via Spring preloader in process 13662
+Running via Spring preloader in process 13663
+Running via Spring preloader in process 13854
+Running via Spring preloader in process 13853
+Running via Spring preloader in process 14026
+Running via Spring preloader in process 14027
+Running via Spring preloader in process 14286
+Running via Spring preloader in process 14285
+Running via Spring preloader in process 14418
+Running via Spring preloader in process 14419
+Running via Spring preloader in process 14805
+Running via Spring preloader in process 14804
+Running via Spring preloader in process 15098
+Running via Spring preloader in process 15099
+Running via Spring preloader in process 15272
+Running via Spring preloader in process 15273
+Running via Spring preloader in process 15448
+Running via Spring preloader in process 15449
+Running via Spring preloader in process 15619
+Running via Spring preloader in process 15620
+Running via Spring preloader in process 15864
+Running via Spring preloader in process 15865
+Running via Spring preloader in process 15967
+Running via Spring preloader in process 15968
+Running via Spring preloader in process 19345
+Running via Spring preloader in process 19346
+Running via Spring preloader in process 19796
+Running via Spring preloader in process 19797
+Running via Spring preloader in process 19983
+Running via Spring preloader in process 19981
+Running via Spring preloader in process 20303
+Running via Spring preloader in process 20304
+Running via Spring preloader in process 20479
+Running via Spring preloader in process 20480
+Running via Spring preloader in process 20625
+Running via Spring preloader in process 20624
+Running via Spring preloader in process 20873
+Running via Spring preloader in process 20874
+Running via Spring preloader in process 20724
+Running via Spring preloader in process 20723
+Running via Spring preloader in process 20997
+Running via Spring preloader in process 20996
+Running via Spring preloader in process 21118
+Running via Spring preloader in process 21119
+Running via Spring preloader in process 21254
+Running via Spring preloader in process 21255
+Running via Spring preloader in process 21407
+Running via Spring preloader in process 21408
+Running via Spring preloader in process 21505
+Running via Spring preloader in process 21504
+Running via Spring preloader in process 21708
+Running via Spring preloader in process 21707

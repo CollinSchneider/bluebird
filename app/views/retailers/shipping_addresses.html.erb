@@ -2,8 +2,6 @@
 
   <%= render partial: 'partials/retailer_profile_nav' %>
 
-
-
   <% if @retailer.primary_address.nil? %>
     <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
       <h5>Before you can make any purchase orders, you must first add a shipping address</h5>
@@ -38,9 +36,9 @@
       <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
         <h4><%= @retailer.user.first_name %>'s Primary Address:</h4>
         <div class="row">
-          <h4><%= @retailer.primary_address.street1.capitalize %></h4>
-          <% if @retailer.primary_address.street2 != '' %>
-          <h4><%= @retailer.primary_address.street2.capitalize %></h4>
+          <h4><%= @retailer.primary_address.street_address_one.capitalize %></h4>
+          <% if @retailer.primary_address.street_address_two != '' %>
+          <h4><%= @retailer.primary_address.street_address_two.capitalize %></h4>
           <% end %>
           <h4><%= @retailer.primary_address.city.capitalize %>, <%= @retailer.primary_address.state %> <%= @retailer.primary_address.zip %></h4>
         </div>
@@ -51,17 +49,13 @@
         <% @retailer.shipping_addresses.each_slice(2) do |slice| %>
           <div class="row">
             <% slice.each do |address| %>
-              <%
-              EasyPost.api_key = ENV['EASYPOST_API_KEY']
-              easy_address = EasyPost::Address.retrieve(address.address_id)
-              %>
               <% if easy_address.id != @retailer.primary_address.id %>
                 <div class="col s12 m6 white border">
-                  <h6><%= easy_address.street1 %></h6>
-                  <% if easy_address.street2 != '' %>
-                    <h6><%= easy_address.street2 %></h6>
+                  <h6><%= address.street_address_one %></h6>
+                  <% if address.street_address_two != '' %>
+                    <h6><%= address.street_address_two %></h6>
                   <% end %>
-                  <h6><%= easy_address.city %>, <%= easy_address.state %> <%= easy_address.zip %></h6>
+                  <h6><%= address.city %>, <%= address.state %> <%= address.zip %></h6>
                   <a href="" class='make-primary' data='<%= address.id %>'>Make Primary Address</a> <br>
                   <a href="" class='delete-address red-text' data='<%= easy_address.id %>'>Delete Address</a>
                 </div>

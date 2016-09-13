@@ -44,11 +44,11 @@
       <span class='now-price'><strong>$<%= @product.discount %></strong></span>
     </h5>
     <div class="row">
-      <h5><%= @product.description %></h6>
+      <h6><%= simple_format(@product.long_description) %></h6>
     </div>
     <div class="row">
       <div class="<%= @product.percentage["class"] %>">
-        <span style="width: <%= @product.percentage["progress"] %>%"><span></span></span>
+        <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
       </div>
     </div>
 

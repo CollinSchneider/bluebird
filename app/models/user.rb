@@ -5,9 +5,9 @@ class User < ActiveRecord::Base
   attr_accessor :editing_password, :editing_user_info
 
   validates :password, presence: true, confirmation: true, length: 8..20, on: :editing_password
-  validates :email, presence: true, uniqueness: true, on: :user_info_create
-  validates :first_name, presence: true, on: :user_info_create
-  validates :last_name, presence: true, on: :user_info_create
+  validates :email, presence: true, uniqueness: true
+  validates :first_name, presence: true, on: :editing_user_info
+  validates :last_name, presence: true, on: :editing_user_info
 
   has_many :shipping_addresses
 
