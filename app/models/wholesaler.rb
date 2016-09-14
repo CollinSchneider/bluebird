@@ -3,6 +3,7 @@ class Wholesaler < ActiveRecord::Base
   belongs_to :user
 
   has_many :products
+  has_many :payments
 
   # before_create(on: :save) do
   #   self.approved = false

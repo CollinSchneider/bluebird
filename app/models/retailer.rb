@@ -4,6 +4,7 @@ class Retailer < ActiveRecord::Base
 
   has_many :commits
   has_many :shipping_addresses
+  has_many :payments
 
   before_create(on: :save) do
     self.stripe_id = make_stripe_customer
@@ -40,12 +41,14 @@ class Retailer < ActiveRecord::Base
   end
 
   def card_declined?
-    declined_commits = self.commits.where('card_declined = ?', true)
+    declined_commits = self.payments.where(:card_declined => true)
     return !declined_commits.empty?
   end
 
   def declined_order
-    declined_id = self.commits.where('card_declined = ?', true).order(card_decline_date: :asc).pluck(:uuid)
+    declined_id = self.commits.where("id in (
+      select commit_id from payments where card_declined = 't'
+    )").order(card_decline_date: :asc).pluck(:uuid)
     return declined_id.first
   end
 

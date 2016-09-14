@@ -6,8 +6,8 @@ class User < ActiveRecord::Base
 
   validates :password, presence: true, confirmation: true, length: 8..20, on: :editing_password
   validates :email, presence: true, uniqueness: true
-  validates :first_name, presence: true, on: :editing_user_info
-  validates :last_name, presence: true, on: :editing_user_info
+  validates :first_name, presence: true
+  validates :last_name, presence: true
 
   has_many :shipping_addresses
 
@@ -32,6 +32,7 @@ class User < ActiveRecord::Base
       {:customer => customer_stripe_id, :card => customer_card.id},
       {:stripe_account => self.wholesaler.stripe_id} # id of the connected account
     )
+    payment = Payment.new
 
     begin
       charge = Stripe::Charge.create({
@@ -43,17 +44,26 @@ class User < ActiveRecord::Base
         },
         {:stripe_account => self.wholesaler.stripe_id}
       )
-      commit.shipping_charge_id = charge.id
-      commit.save(validate: false)
-      success = true
-      return success, charge
+      if !charge.nil?
+        payment.retailer_id = commit.retailer.id
+        commit.wholesaler_id = commit.product.wholesaler.id
+        payment.commit_id = commit.id
+        payment.payment_type = 'shipping'
+        payment.amount = shipping_cost.floor/100
+        payment.stripe_charge_id = charge.id
+        payment.refunded = false
+        payment.card_failed = false
+        payment.save!
+        success = true
+        return success, charge
+      end
     rescue Stripe::CardError => e
       success = false
-      commit.card_declined = true
-      commit.card_decline_date = Time.now
-      commit.declined_reason = e.message
+      payment.card_declined = true
+      payment.card_decline_date = Time.now
+      payment.declined_reason = e.message
       Mailer.card_declined(commit.retailer.user, commit, customer_card)
-      commit.save(validate: false)
+      payment.save!
       return success, e.message
     end
   end
@@ -68,6 +78,7 @@ class User < ActiveRecord::Base
       {:customer => customer_stripe_id, :card => customer_card.id},
       {:stripe_account => self.wholesaler.stripe_id} # id of the connected account
     )
+    payment = Payment.new
 
     stripe_amount = amount.to_f*100
     bluebird_fee = (stripe_amount*0.05).floor
@@ -82,20 +93,25 @@ class User < ActiveRecord::Base
         {:stripe_account => self.wholesaler.stripe_id}
       )
       if !charge.nil?
+        payment.retailer_id = commit.retailer.id
+        commit.wholesaler_id = commit.product.wholesaler.id
+        payment.commit_id = commit.id
+        payment.payment_type = 'sale'
+        payment.amount = shipping_cost.floor/100
+        payment.stripe_charge_id = charge.id
+        payment.refunded = false
+        payment.card_failed = false
+        payment.save!
         success = true
-        commit.stripe_charge_id = charge.id
-        # commit.sale_amount = wholesaler_amount
-        commit.card_declined = false
-        commit.save(validate: false)
         return charge, success
       end
     rescue Stripe::CardError => e
       success = false
-      commit.card_declined = true
-      commit.card_decline_date = Time.now
-      commit.declined_reason = e.message
+      payment.card_declined = true
+      payment.card_decline_date = Time.now
+      payment.declined_reason = e.message
       Mailer.card_declined(commit.retailer.user, commit, customer_card)
-      commit.save(validate: false)
+      payment.save!
       return e.message, success
     end
   end

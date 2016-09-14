@@ -2,8 +2,9 @@ class Commit < ActiveRecord::Base
 
   belongs_to :retailer
   belongs_to :product
-
   belongs_to :shipping_address
+
+  has_many :payments
 
   validate :meets_minimum_order
   validate :enough_inventory

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160913183156) do
+ActiveRecord::Schema.define(version: 20160913224415) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -94,6 +94,24 @@ ActiveRecord::Schema.define(version: 20160913183156) do
 
   add_index "milestones", ["batch_id"], name: "index_milestones_on_batch_id", using: :btree
   add_index "milestones", ["product_id"], name: "index_milestones_on_product_id", using: :btree
+
+  create_table "payments", force: :cascade do |t|
+    t.integer  "commit_id"
+    t.integer  "retailer_id"
+    t.integer  "wholesaler_id"
+    t.string   "payment_type"
+    t.string   "stripe_charge_id"
+    t.decimal  "amount"
+    t.boolean  "refunded"
+    t.boolean  "card_failed"
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+    t.string   "card_declined_reason"
+  end
+
+  add_index "payments", ["commit_id"], name: "index_payments_on_commit_id", using: :btree
+  add_index "payments", ["retailer_id"], name: "index_payments_on_retailer_id", using: :btree
+  add_index "payments", ["wholesaler_id"], name: "index_payments_on_wholesaler_id", using: :btree
 
   create_table "product_features", force: :cascade do |t|
     t.integer  "product_id"
@@ -226,6 +244,9 @@ ActiveRecord::Schema.define(version: 20160913183156) do
   add_foreign_key "companies", "users"
   add_foreign_key "full_price_commits", "products"
   add_foreign_key "full_price_commits", "retailers"
+  add_foreign_key "payments", "commits"
+  add_foreign_key "payments", "retailers"
+  add_foreign_key "payments", "wholesalers"
   add_foreign_key "product_features", "products"
   add_foreign_key "product_images", "products"
   add_foreign_key "product_tokens", "products"
