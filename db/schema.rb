@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160913224415) do
+ActiveRecord::Schema.define(version: 20160919160410) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,74 +65,6 @@ ActiveRecord::Schema.define(version: 20160913224415) do
   end
 
   add_index "companies", ["user_id"], name: "index_companies_on_user_id", using: :btree
-
-  create_table "full_price_commits", force: :cascade do |t|
-    t.integer  "product_id"
-    t.integer  "retailer_id"
-    t.string   "uuid"
-    t.integer  "amount"
-    t.string   "stripe_charge_id"
-    t.boolean  "card_declined"
-    t.datetime "card_decline_date"
-    t.string   "declined_reason"
-    t.datetime "created_at",        null: false
-    t.datetime "updated_at",        null: false
-    t.string   "card_id"
-    t.string   "shipping_id"
-  end
-
-  add_index "full_price_commits", ["product_id"], name: "index_full_price_commits_on_product_id", using: :btree
-  add_index "full_price_commits", ["retailer_id"], name: "index_full_price_commits_on_retailer_id", using: :btree
-
-  create_table "milestones", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.string   "goal"
-    t.integer  "product_id"
-    t.integer  "batch_id"
-  end
-
-  add_index "milestones", ["batch_id"], name: "index_milestones_on_batch_id", using: :btree
-  add_index "milestones", ["product_id"], name: "index_milestones_on_product_id", using: :btree
-
-  create_table "payments", force: :cascade do |t|
-    t.integer  "commit_id"
-    t.integer  "retailer_id"
-    t.integer  "wholesaler_id"
-    t.string   "payment_type"
-    t.string   "stripe_charge_id"
-    t.decimal  "amount"
-    t.boolean  "refunded"
-    t.boolean  "card_failed"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.string   "card_declined_reason"
-  end
-
-  add_index "payments", ["commit_id"], name: "index_payments_on_commit_id", using: :btree
-  add_index "payments", ["retailer_id"], name: "index_payments_on_retailer_id", using: :btree
-  add_index "payments", ["wholesaler_id"], name: "index_payments_on_wholesaler_id", using: :btree
-
-  create_table "product_features", force: :cascade do |t|
-    t.integer  "product_id"
-    t.string   "feature"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  add_index "product_features", ["product_id"], name: "index_product_features_on_product_id", using: :btree
-
-  create_table "product_images", force: :cascade do |t|
-    t.integer  "product_id"
-    t.string   "image_file_name"
-    t.string   "image_content_type"
-    t.integer  "image_file_size"
-    t.datetime "image_updated_at"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
-  end
-
-  add_index "product_images", ["product_id"], name: "index_product_images_on_product_id", using: :btree
 
   create_table "product_tokens", force: :cascade do |t|
     t.integer  "product_id"
@@ -242,13 +174,6 @@ ActiveRecord::Schema.define(version: 20160913224415) do
 
   add_foreign_key "admins", "users"
   add_foreign_key "companies", "users"
-  add_foreign_key "full_price_commits", "products"
-  add_foreign_key "full_price_commits", "retailers"
-  add_foreign_key "payments", "commits"
-  add_foreign_key "payments", "retailers"
-  add_foreign_key "payments", "wholesalers"
-  add_foreign_key "product_features", "products"
-  add_foreign_key "product_images", "products"
   add_foreign_key "product_tokens", "products"
   add_foreign_key "retailers", "users"
   add_foreign_key "wholesalers", "users"
