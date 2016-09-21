@@ -31,12 +31,19 @@ class CommitsController < ApplicationController
     end
   end
 
+  # og_sale = 15 * 90 = 1350
+  # new_sale = 20 * 90 = 1800
+  # 5*90 = 450
+
   def update
     commit = Commit.find(params[:id])
     if commit.retailer_id == current_user.retailer.id
       og_quantity = commit.amount
+      og_sale_amount = commit.sale_amount
       commit.update(commit_params)
       commit_difference = commit.amount - og_quantity
+      sale_difference = commit_difference*commit.product.discount.to_f
+      commit.sale_amount = og_sale_amount.to_f + sale_difference.to_f
       if commit.save
         commit.product.quantity -= commit_difference
         commit.product.save(validate: false)

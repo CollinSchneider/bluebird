@@ -1,4 +1,32 @@
+<div class="row no-margin z-depth-2 col s12 sticky-navigation" style="padding-top: 10px; padding-bottom: 10px; position: fixed; width: 100%">
+  <div class="col s12 valign-wrapper">
+    <div class="col s4 m2 no-margin" style="margin: 0px">
+      <a href="/users">
+        <img src="/images/bluebird-blue-text.png" alt="" class="responsive-img"/>
+      </a>
+    </div>
+    <div class="col s8 right-align valign">
+      <a class="black-text" href="/apply/step1">
+        <div class='nav-category-div' style="display: inline-block">
+          <span class="nav-category bold">Sell on BlueBird</span>
+        </div>
+      </a>
+      <a class="black-text" href="/signup/step1">
+        <div class='nav-category-div' style="display: inline-block">
+          <span class="nav-category bold">Buy on BlueBird</span>
+        </div>
+      </a>
+      <a class="black-text" href="/users">
+        <div class='nav-category-div' style="display: inline-block">
+          <span class="nav-category bold">Login</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
 <%= render partial: 'partials/signed_out_nav' %>
+
 
 <div class="col s12">
 
@@ -194,6 +222,20 @@
     $('.parallax-div').css({
       marginTop: (-scroll/2) + 50
     })
+    if(scroll > 150) {
+      $('.sticky-navigation').fadeIn()
+      $('.sticky-navigation').css({
+        display: 'inherit'
+      })
+    }
+    if(scroll < 150) {
+      $('.sticky-navigation').css({
+        display: 'none'
+      })
+    }
+    if(scroll < 151) {
+      $('.sticky-navigation').fadeOut()
+    }
   })
 
   $('.how-it-works').click(function(){

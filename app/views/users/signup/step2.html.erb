@@ -1,7 +1,22 @@
+<div class="col s1" style="position: absolute; margin-top: 20px; margin-left: 20px">
+  <a href="/users">
+    <img src="/images/bluebird-white-text.png" class='responsive-img' style="width: 20%" />
+  </a>
+  <div class="row left-align white-text">
+    <h6>Wholesaler?</h6>
+    <a href="/apply/step2?uuid=<%= params[:uuid] %>" class='white-text waves-effect'>SIGN UP HERE</a>
+  </div>
+</div>
+
 <div class="row no-overflow no-bottom-margin">
 
-  <div class="apply-body bluebird white-text center-align col s12 valign-wrapper" style='height: 60vh'>
-    <div class="valign col s12">
+  <div class="apply-body bluebird white-text center-align col s12" style='height: 60vh'>
+    <div class="row">
+      <div class="col s12">
+        <h5>Retailer Sign Up</h5>
+      </div>
+    </div>
+    <div class="col s12">
       <div class="row col s8 offset-s2">
         <%= form_tag do |f| %>
           <% if !flash[:error].nil? %>
@@ -61,13 +76,17 @@
   </div>
 
   <div class="apply-body col s12 hidden-on-small-only valign-wrapper" style='height: 40vh'>
-    <div class="col s8 offset-s2 valign center-align">
+    <div class="valign">
       <div class="row">
-        <h5>Reach sales goals you never thought possible</h5>
+        <div class="col s12 center-align">
+          <h5>Reach sales goals you never thought possible</h5>
+        </div>
       </div>
       <div class="row">
-        <div class="col s8 offset-s2">
-          <img src="/images/target.jpg" class='responsive-img circle'/>
+        <div class="col s12">
+          <div class="col s4 offset-s4 m2 offset-m5 center-align">
+            <img src="/images/target.jpg" class='responsive-img circle'/>
+          </div>
         </div>
       </div>
     </div>

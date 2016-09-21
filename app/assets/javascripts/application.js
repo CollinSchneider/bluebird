@@ -15,38 +15,56 @@
 //= require_tree .
 //= require jquery
 //= require materialize-sprockets
-
-if($('.pagination').length){
-  $(window).scroll(function(){
-    var url = $('.pagination .next_page').attr('href')
-    if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
-      // replaceWithGif($('.pagination').text())
-      $('.pagination').text("Loading...")
-      console.log('getting?');
-      $.getScript(url)
-    }
+$(document).ready(function(){
+  formLoad()
+  pagination()
+  $('a[href="/discover"]').mouseover(function(){
+    $('.discover-sub-nav').css({
+      display: 'inherit'
+    })
   })
+
+  $('.body-div').mouseover(function(){
+    $(this).css({
+      marginTop: 0
+    })
+    $('.sub-nav-container').css({
+      display: 'none'
+    })
+    $('.sub-nav-triangle').css({
+      display: 'none'
+    })
+  })
+})
+
+function pagination(){
+  if($('.pagination').length){
+    $(window).scroll(function(){
+      var url = $('.pagination .next_page').attr('href')
+      if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
+        // replaceWithGif($('.pagination').text())
+        $('.pagination').text("Loading...")
+        console.log('getting?');
+        $.getScript(url)
+      }
+    })
+  }
 }
-
-$('a[href="/discover"]').mouseover(function(){
-  $('.discover-sub-nav').css({
-    display: 'inherit'
-  })
-})
-
-$('.body-div').mouseover(function(){
-  $(this).css({
-    marginTop: 0
-  })
-  $('.sub-nav-container').css({
-    display: 'none'
-  })
-  $('.sub-nav-triangle').css({
-    display: 'none'
-  })
-})
 
 function replaceWithGif(something) {
   var gif = $('<img class="responsive=img loading-gif" src="/images/loading.gif"/>')
   something.replaceWith(gif)
+}
+
+function formLoad(){
+  $('form').submit(function(){
+    var submitButton = $(this).find('.submit-button')
+    if(submitButton){
+      var width = submitButton.width()
+      submitButton.val('')
+      submitButton.prop('disabled', true)
+      submitButton.attr('class', 'submitted-button btn')
+      submitButton.width(width)
+    }
+  })
 }

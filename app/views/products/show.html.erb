@@ -25,7 +25,7 @@
                         <%= f.label "Order Amount" %>
                         <%= f.number_field :amount, :value => users_orders[0].amount %>
                       </div>
-                      <%= f.button "Update Order", :class => 'btn' %>
+                      <%= f.submit "Update Order", :class => 'btn submit-button' %>
                     <% end %>
                   </div>
                   <div class="row">
@@ -64,7 +64,7 @@
 
                 <div class="col s2">
                   <% if @product.photo_three.present? %>
-                      <%= image_tag @product.photo_three.url(:large), :class => 'responsive-img alternate-image' %>
+                    <%= image_tag @product.photo_three.url(:large), :class => 'responsive-img alternate-image' %>
                   <% end %>
                 </div>
 

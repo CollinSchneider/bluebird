@@ -69,15 +69,15 @@
           <div class="col s6 m4 center-align">
             <% if @stripe_customer.sources.count > 1 %>
               <h6>Change payment method:</h6>
-              <% @stripe_customer.sources.each do |source| %>
-                <% if source.id != @order.card_id %>
+              <% @stripe_customer.sources.each do |card| %>
+                <% if card.id != @order.card_id %>
                 <div class="border">
-                  <h6><%= source.brand %></h6>
-                  <h6>**** **** **** <%= source.last4 %></h6>
-                  <h6>Exp: <%= source.exp_month %>/<%= source.exp_year %></h6>
+                  <h6><%= card.brand %></h6>
+                  <h6>**** **** **** <%= card.last4 %></h6>
+                  <h6>Exp: <%= card.exp_month %>/<%= card.exp_year %></h6>
                   <form class='change-payment'>
                     <div class="input-field">
-                      <input type="hidden" class='card_id' value="<%= source.id %>">
+                      <input type="hidden" class='card_id' value="<%= card.id %>">
                     </div>
                     <input type='submit' class="submit-link" value="Use Card" />
                   </form>
@@ -315,7 +315,7 @@ function stripeResponseHandler(status, response){
   function changePaymentApi(cardId){
     $.ajax({
       method: 'POST',
-      url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_id=<%= @order.id %>',
+      url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_uuid=<%= @order.uuid %>',
       success: function(data){
         console.log(data);
         if(data.success){

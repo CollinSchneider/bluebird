@@ -44,7 +44,6 @@ class User < ActiveRecord::Base
         {:stripe_account => self.wholesaler.stripe_id}
       )
       if !charge.nil?
-        commit.wholesaler_id = commit.product.wholesaler.id
         commit.shipping_charge_id = charge.id
         commit.card_declined = false
         commit.card_decline_date = nil
@@ -88,7 +87,6 @@ class User < ActiveRecord::Base
         {:stripe_account => self.wholesaler.stripe_id}
       )
       if !charge.nil?
-        commit.wholesaler_id = commit.product.wholesaler.id
         commit.card_declined = false
         commit.sale_amount = amount
         commit.save(validate: false)
