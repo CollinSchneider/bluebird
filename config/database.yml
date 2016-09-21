@@ -24,10 +24,10 @@ default: &default
 development:
   <<: *default
   database: lowBid_development
-  host: localhost
-  port: 15432
-  username: jastr
-  password: jastr
+  # host: localhost
+  # port: 15432
+  # username: jastr
+  # password: jastr
 
   # The specified database role being used to connect to postgres.
   # To create additional roles in postgres see `$ createuser --help`.
@@ -84,6 +84,8 @@ test:
 #
 production:
   <<: *default
+  adapter: postgresql
+  encoding: unicode
   database: <%= ENV['RDS_DB_NAME'] %>
   username: <%= ENV['RDS_USERNAME'] %>
   password: <%= ENV['RDS_PASSWORD'] %>

@@ -134,6 +134,9 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
+    passenger (5.0.30)
+      rack
+      rake (>= 0.8.1)
     pdf-core (0.6.1)
     pg (0.18.4)
     prawn (2.1.0)
@@ -238,6 +241,7 @@ DEPENDENCIES
   materialize-sass
   omniauth-stripe-connect
   paperclip
+  passenger
   pg (~> 0.15)
   prawn
   pry-rails
