@@ -4,7 +4,8 @@
 
   <div class="row col s12">
     <% if current_user.retailer.card_declined? %>
-      <h6 class='red-text'><strong>Looks like your card got declined for your order of <%= current_user.retailer.commits.where('card_declined = ?', true).first.product.title %> on <%= current_user.retailer.commits.where('card_declined = ?', true).first.card_decline_date.strftime('%b %d') %>, update a new one?</strong></h6>
+      <h6 class='red-text'>Looks like we had some trouble with your card you used for your order of <%= current_user.retailer.commits.where('card_declined = ?', true).first.product.title %> on <%= current_user.retailer.commits.where('card_declined = ?', true).first.card_decline_date.strftime('%b %d') %></h6>
+      <h6><a href="/retailer/<%= current_user.retailer.declined_order %>/card_declined"></a></h6>
     <% end %>
 
     <% if @stripe_customer.default_source.nil? %>
@@ -12,7 +13,7 @@
           <h5>You need a credit card on file before making any orders</h5>
         </div>
       <% else %>
-        <div class="row order-box z-depth-2" style="margin-top: 25px">
+        <div class="row col s12 order-box z-depth-2" style="margin-top: 25px">
           <div class="row center-align col s12 credit-card">
             <h6>(Primary Payment Form)</h6>
             <h5>Card Holder: <%= @default_card.name %></h5>
@@ -32,28 +33,28 @@
     </div>
 
   <% if @stripe_customer.sources.count > 1 %>
-    <div class="row col s12 m8 offset-m3 order-box z-depth-2">
-      <h5 class='center-align'>Alternate Credit Cards:</h5>
+    <div class="row col s12 order-box z-depth-2 center-align">
+      <h5>Alternate Credit Cards:</h5>
     <% @stripe_customer.sources.each_slice(3) do |slice| %>
       <div class="row">
-        <% slice.each do |source| %>
-          <% if source.id != @stripe_customer.default_source %>
-            <div class="row">
-              <div class="row col s12 m4 center-align credit-card white">
-                <h6>Card Holder: <%= source.name %></h6>
-                <h6>Card Number: **** **** **** <%= source.last4 %></h6>
-                <h6> Zip: <%= source.address_zip %></h6>
+        <% slice.each do |card| %>
+          <% if card.id != @stripe_customer.default_source %>
+            <div class="row col s12 m6">
+              <div class="center-align credit-card white border">
+                <h6>Card Holder: <%= card.name %></h6>
+                <h6>Card Number: **** **** **** <%= card.last4 %></h6>
+                <h6> Zip: <%= card.address_zip %></h6>
                 <div class="row">
                   <div class="left-align col s5 offset-s1">
-                    <h6>Expiration: <%= source.exp_month %>/<%= source.exp_year %> </h6>
+                    <h6>Expiration: <%= card.exp_month %>/<%= card.exp_year %> </h6>
                   </div>
                   <div class="right-align col s5">
-                    <h6><%= source.brand %></h6>
+                    <h6><%= card.brand %></h6>
                   </div>
                 </div>
                 <div class="links">
-                  <a class='delete-card red-text' data="<%= source.id %>" href="">Delete</a><br>
-                  <a class='make-default-card' data="<%= source.id %>" href="">Make Default</a>
+                  <a class='delete-card red-text waves-effect' data="<%= card.id %>">Delete</a><br><br>
+                  <a class='make-default-card waves-effect' data="<%= card.id %>">Make Default</a>
                 </div>
                 <img src="/images/loading.gif" class='loading-gif' style="display: none" />
               </div>
@@ -62,6 +63,8 @@
         <% end %>
       </div>
     <% end %>
+    <h6 class='red-text delete-error' style='display: none'>Cannot remove a card that has a pending order tied to it.</h6>
+    <h6 class='red-text delete-error' style='display: none'><a class='delete-error-link' href="#"></a></h6>
   </div>
   <% end %>
 
@@ -113,17 +116,27 @@ $(document).ready(function(){
 
 function deleteCard(){
   $('.delete-card').click(function(){
-    $(this).prop('disabled', true)
-    $(this).text('Deleting...')
     var cardId = $(this).attr('data')
-    $(this).parent().toggle()
-    $(this).parent().parent().find('.loading-gif').toggle()
+    var linksDiv = $(this).parent()
+    var loadingGif = $(this).parent().parent().find('.loading-gif')
+    linksDiv.toggle()
+    loadingGif.toggle()
     $.ajax({
       method: 'POST',
-      url: '/api/payements/delete_credit_card?card_id=' + cardId,
+      url: '/api/payments/delete_credit_card?card_id=' + cardId,
       success: function(data){
         console.log(data);
-        location.reload()
+        if(data.success){
+          location.reload()
+        } else {
+          $('.delete-error-link').attr('href', "/retailer/order_history/" + data.commit)
+          $('.delete-error-link').text("Change it here")
+          $('.delete-error').css({
+            display: 'inherit'
+          })
+          linksDiv.toggle()
+          loadingGif.toggle()
+        }
       }
     })
   })
@@ -140,9 +153,7 @@ function makeDefaultCard(){
       url: '/api/payments/make_default_card?card_id=' + cardId,
       success: function(data){
         console.log(data);
-        if(data.success) {
-          location.reload()
-        }
+        location.reload()
       }
     })
   })
@@ -181,12 +192,6 @@ function stripeResponseHandler(status, response){
     submittedForm.find('#payment-errors').text(response.error.message)
     submittedForm.find('.submit').prop("disabled", false)
     submittedForm.find('.submit').val('Add Credit Card')
-    // submittedForm.find('#billing-zip').val('')
-    // submittedForm.find('#exp-year').val('')
-    // submittedForm.find('#exp-month').val('')
-    // submittedForm.find('#card-cvc').val('')
-    // submittedForm.find('#card-number').val('')
-    // submittedForm.find('#card-name').val('')
   } else {
     var token = response.id;
     console.log(token);

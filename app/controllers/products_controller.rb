@@ -1,7 +1,8 @@
 class ProductsController < ApplicationController
 
   def show
-    @product = Product.find(params[:id])
+    @product = Product.find_by(:id => params[:id], :slug => params[:slug])
+    return redirect_to '/shop' if @product.nil?
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id) if current_user.is_retailer?
     # if Time.now > @product.end_time

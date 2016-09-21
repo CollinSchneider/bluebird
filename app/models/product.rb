@@ -153,6 +153,44 @@ class Product < ActiveRecord::Base
     return self.status == 'full_price'
   end
 
+  def self.queried_products(query)
+    slug = query.downcase
+    slug.gsub!(',' '')
+    slug.gsub!("'", "")
+    slug.gsub!('.', '')
+    slug.gsub!(' ', '-')
+    slug.gsub!('?', '')
+    slug.gsub!('!', '')
+    @products = Product.where('slug LIKE ? AND end_time > ? AND status = ?
+                              OR LOWER(description) LIKE ? AND end_time > ? AND status = ?
+                              OR wholesaler_id in (
+                                select id from wholesalers where user_id in (
+                                  select user_id from companies where company_key like ?
+                                )
+                              ) AND end_time > ? AND status = ?',
+                              "%#{slug}%", Time.now, 'live',
+                              "%#{slug}%", Time.now, 'live',
+                              "%#{slug}%", Time.now, 'live')
+  end
+
+  def self.category_queried_products(query, category)
+    slug = query.downcase
+    slug.gsub!(',' '')
+    slug.gsub!("'", "")
+    slug.gsub!('.', '')
+    slug.gsub!(' ', '-')
+    @products = Product.where('slug LIKE ? AND end_time > ? AND category = ? AND status = ?
+                              OR LOWER(description) LIKE ? AND end_time > ? AND category = ? AND status = ?
+                              OR wholesaler_id in (
+                                select id from wholesalers where user_id in (
+                                  select user_id from companies where company_key like ?
+                                )
+                              ) AND end_time > ? AND category = ? AND status = ?',
+                              "%#{slug}%", Time.now, category, 'live',
+                              "%#{slug}%", Time.now, category, 'live',
+                              "%#{slug}%", Time.now, category, 'live')
+  end
+
   def self.end_full_priced
     products = Product.where('status = ? AND id in (
       select product_id from product_tokens where expiration_datetime <= ?

@@ -31,10 +31,6 @@ class CommitsController < ApplicationController
     end
   end
 
-  # og_sale = 15 * 90 = 1350
-  # new_sale = 20 * 90 = 1800
-  # 5*90 = 450
-
   def update
     commit = Commit.find(params[:id])
     if commit.retailer_id == current_user.retailer.id

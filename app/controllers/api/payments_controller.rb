@@ -36,9 +36,16 @@ class Api::PaymentsController < ApiController
 
   def delete_credit_card
     card_id = params[:card_id]
-    customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
-    card = customer.sources.retrieve(card_id).delete
-    redirect_to request.referrer
+    if commit = current_user.retailer.commits.where("card_id = ? AND status = ?", card_id, 'live').first
+      return render :json => {
+        success: false,
+        commit: commit.id
+      }
+    else
+      customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+      card = customer.sources.retrieve(card_id).delete
+      return render :json => {success: true}
+    end
   end
 
   def change_commit_card

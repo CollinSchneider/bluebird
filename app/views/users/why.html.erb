@@ -5,22 +5,23 @@
         <img src="/images/bluebird-blue-text.png" alt="" class="responsive-img"/>
       </a>
     </div>
-    <div class="col s8 right-align valign">
-      <a class="black-text" href="/apply/step1">
-        <div class='nav-category-div' style="display: inline-block">
-          <span class="nav-category bold">Sell on BlueBird</span>
-        </div>
-      </a>
-      <a class="black-text" href="/signup/step1">
-        <div class='nav-category-div' style="display: inline-block">
-          <span class="nav-category bold">Buy on BlueBird</span>
-        </div>
-      </a>
-      <a class="black-text" href="/users">
-        <div class='nav-category-div' style="display: inline-block">
-          <span class="nav-category bold">Login</span>
-        </div>
-      </a>
+    <div class="col hide-on-small-only m8 right-align valign">
+      <%
+       items = {
+         'Learn More' => '/why_bluebird',
+         'Sell on BlueBird' => '/apply/step1',
+         'Buy on BlueBird' => 'signup/step1',
+         'Login' => '/users',
+       }
+       items.each do |name, url|
+         link_class = request.fullpath.start_with?(url) ? 'active-sub-nav' : 'black-text'
+      %>
+        <a href="<%= url %>" class="<%=link_class%>">
+          <div class="nav-category-div" style='display: inline-block'>
+            <span class='nav-category bold'><%= name %></span>
+          </div>
+        </a>
+      <% end %>
     </div>
   </div>
 </div>

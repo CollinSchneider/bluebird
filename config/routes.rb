@@ -7,7 +7,8 @@ Rails.application.routes.draw do
 
   resources :users
   put 'users/password_reset/:id' => 'users#password_reset'
-  resources :products
+  resources :products, :except => ['show']
+  get '/products/:id-:slug' => 'products#show'
   resources :commits
   resources :wholesalers
   resources :retailers

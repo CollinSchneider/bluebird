@@ -160,7 +160,9 @@
       <form class='valign col s12'>
         <div class="input-field">
           <div class="col s1">
-            <i class="small material-icons nav-category">search</i>
+            <button type="submit" name="query" style='border: none; background: transparent'>
+              <i class="small material-icons nav-category">search</i>
+            </button>
           </div>
           <div class="col s10">
             <input type="text" name="query" placeholder="Search" id="search-input">
@@ -184,11 +186,6 @@
         </form>
       </div>
     </li>
-    <!-- <li>
-      <form class="col s10 offset-s1">
-        <input type="text" name="query" placeholder="Search Page">
-      </form>
-    </li> -->
   </div>
   <!-- PRODUCT STUFF  -->
   <li><div class="divider"></div></li>
@@ -209,19 +206,19 @@
   %>
     <li><a class="<%= link_class %>" href="<%= url %>"><%= name %></a></li>
   <% end %>
-  <!-- <li><a href="/wholesaler/profile">Profile</a></li>
-  <li><a href="/current_sales">Current Sales</a></li>
-  <li><a href="/past_products">Past Products</a></li>
-  <li><a href="/wholesaler/company">Company Info</a></li>
-  <li><a href="/analytics">Analytics</a></li>
-  <li><a href="/wholesaler/settings">Settings</a></li>
-  <li><a href="/logout">Logout</a></li> -->
 </ul>
 
 <ul id="retailer-slide-out" class="side-nav">
   <li><div class="userView">
     <a href="#!name"><%= current_user.full_name %></a>
   </div></li>
+  <li>
+    <div class="row">
+      <form class="col s10 offset-s1">
+        <input type="text" name="query" placeholder="Search Page">
+      </form>
+    </div>
+  </li>
   <li><div class="divider"></div></li>
   <%
     items = {
@@ -237,10 +234,6 @@
   %>
     <li><a class="<%=link_class %>" href="<%= url %>"><%= name %></a></li>
   <% end %>
-  <!-- <li><a href="#!"><i class="material-icons">cloud</i>First Link With Icon</a></li>
-  <li><a href="#!">Second Link</a></li>
-  <li><a class="subheader">Subheader</a></li>
-  <li><a class="waves-effect" href="#!">Third Link With Waves</a></li> -->
 </ul>
 
 <script>
