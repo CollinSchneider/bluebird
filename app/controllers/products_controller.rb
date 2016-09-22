@@ -5,9 +5,6 @@ class ProductsController < ApplicationController
     return redirect_to '/shop' if @product.nil?
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id) if current_user.is_retailer?
-    # if Time.now > @product.end_time
-    #   redirect_to shop_path
-    # end
     @company_products = Product.where('wholesaler_id = ? AND status = ? AND id != ?', @product.wholesaler_id, 'live', @product.id).order(current_sales: :desc).limit(3)
     @similar_products = Product.where('category = ? AND status = ? AND id != ?', @product.category, 'live', @product.id).order(current_sales: :desc).limit(3)
   end

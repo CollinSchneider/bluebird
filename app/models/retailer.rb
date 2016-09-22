@@ -56,7 +56,7 @@ class Retailer < ActiveRecord::Base
   def total_savings
     total_price = 0
     total_spent = 0
-    self.successful_orders.each do |order|
+    self.successful_ordersi.each do |order|
       total_spent += order.amount.to_f*order.product.discount.to_f
       total_price += order.amount.to_f*order.product.price.to_f
     end

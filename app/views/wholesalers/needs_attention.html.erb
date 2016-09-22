@@ -41,14 +41,14 @@
               <div class="buttons row">
                 <% if total_sales.to_f > 0 %>
                 <div class="col s4">
-                  <button class='grant-discount green btn' data='<%= product.id %>'>Grant Discount</button>
+                  <button class='grant-discount load-button green btn' data='<%= product.id %>'>Grant Discount</button>
                 </div>
                 <% end %>
                 <div class="col s4">
-                  <button class='expire-product btn red lighten-2' data='<%= product.id %>'>Expire Product</button>
+                  <button class='expire-product load-button btn red lighten-2' data='<%= product.id %>'>Expire Product</button>
                 </div>
                 <div class="col s4">
-                  <button class='extend-product btn green' data='<%= product.uuid %>'>Extend Product</button>
+                  <button class='extend-product load-button btn green' data='<%= product.uuid %>'>Extend Product</button>
                 </div>
               </div>
             </div>
@@ -74,7 +74,7 @@
       success: function(data) {
         console.log(data);
         $('#notice').text("You have successfully granted the discount to " + data.product.title + ", you must now ship it out and the funds will be transferred to your account (see your profile page)!")
-        div.fadeOut()
+        div.remove()
       }
     })
   })
@@ -87,8 +87,8 @@
       success: function(data) {
         console.log(data);
         $('#notice').text("You have successfully expired the product " + data.product.title + ", you are no longer guaranteed any sales.")
-        // div.fadeOut()
-        thisButton.parent().parent().parent().fadeOut()
+        // div.remove()
+        thisButton.parent().parent().parent().remove()
       }
     })
   })
@@ -101,7 +101,7 @@
       success: function(data){
         console.log(data);
         $('#notice').text(data.product.title + " has been extended 10 more days!")
-        thisButton.parent().parent().parent().fadeOut()
+        thisButton.parent().parent().parent().remove()
       }
     })
   })

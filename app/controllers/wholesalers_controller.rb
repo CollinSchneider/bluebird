@@ -36,15 +36,15 @@ class WholesalersController < ApplicationController
   def launch_product
     if request.put?
       @product = Product.find(params[:id])
-      # @product.update(product_params)
-      # if @product.save
       @product.set_product_start_data
       return redirect_to "/products/#{@product.id}-#{@product.slug}"
-      # else
-      #   flash[:error] = @product.errors
-      #   return redirect_to request.referrer
-      # end
     end
+  end
+
+  def start_over
+    product = Product.find_by(:uuid => params[:uuid])
+    product.destroy
+    return redirect_to "/new_product?duration=#{params[:duration]}&goal=#{params[:goal]}"
   end
 
   def relist

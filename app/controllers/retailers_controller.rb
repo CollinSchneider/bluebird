@@ -63,20 +63,24 @@ class RetailersController < ApplicationController
 
   def change_password
     if request.put?
-      if params[:user][:password] == params[:user][:password_confirmation]
-        if params[:user][:password].length > 7
-          current_user.update(user_password_params)
-          if current_user.save(validate: false)
-            flash[:success] = "Password Updated"
+      if current_user.authenticate(params[:old_password])
+        if params[:user][:password] == params[:user][:password_confirmation]
+          if params[:user][:password].length > 7
+            current_user.update(user_password_params)
+            if current_user.save(validate: false)
+              flash[:success] = "Password Updated"
+              return redirect_to request.referrer
+            end
+          else
+            flash[:error] = "Password must be at least 8 characters long."
             return redirect_to request.referrer
           end
         else
-          flash[:error] = "Password must be at least 8 characters long."
+          flash[:error] = "Password and Password Confirmation do not match."
           return redirect_to request.referrer
         end
       else
-        flash[:error] = "Password and Password Confirmation do not match."
-        return redirect_to request.referrer
+        flash[:error] = "Incorrect original password."
       end
     end
   end

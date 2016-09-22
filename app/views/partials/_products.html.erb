@@ -4,37 +4,28 @@
     <% slice.each do |product| %>
       <div class="col s12 m4 center-align no-padding" style="margin-top: 10px">
         <div class="product">
-          <% if current_user.is_wholesaler? && current_user.wholesaler.id == product.wholesaler_id %>
-            <a href="/wholesaler/product/<%=product.id %>-<%= product.slug %>">
-          <% else %>
-            <a href="/products/<%= product.id %>-<%= product.slug %>">
-          <% end %>
-          <div class="col s3 m1 white-text percent-box">
-            <h5><%= '%.0f' % (product.percent_discount*100) %>% Off</h5>
-          </div>
-          <!-- <div class="col s3 m1 bluebird-pick">
-            <img src="/images/bluebird-blue-mascot.png" class="responsive-img" />
-          </div> -->
-            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
-            <% if product.featured %>
-              <!-- <div class="bluebird-pick left-align"> -->
-                <h6 class='percent-box dark-bluebird-text'>BlueBird Pick!</h6>
-              <!-- </div> -->
-            <% end %>
-            <div class="content-div" style='margin-bottom: 0px'>
-              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
-              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
-              <h6>
-                <span class="was-price">Was $<%= product.price %></span>
-                <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
-              </h6>
+          <a href="/products/<%= product.id %>/<%= product.slug %>">
+            <div class="col s3 m1 white-text percent-box">
+              <h5><%= '%.0f' % (product.percent_discount*100) %>% Off</h5>
             </div>
-            <div class="description content-div" style='margin-top: 0px'>
-              <p style='font-size: 12px' style='margin-top: 0px'>
-                <%= product.description %>
-              </p>
-            </div>
-          </a>
+              <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+              <% if product.featured %>
+                  <h6 class='percent-box dark-bluebird-text'>BlueBird Pick!</h6>
+              <% end %>
+              <div class="content-div" style='margin-bottom: 0px'>
+                <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
+                <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
+                <h6>
+                  <span class="was-price">Was $<%= product.price %></span>
+                  <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
+                </h6>
+              </div>
+              <div class="description content-div" style='margin-top: 0px'>
+                <p style='font-size: 12px' style='margin-top: 0px'>
+                  <%= product.description %>
+                </p>
+              </div>
+            </a>
 
           <div class="row">
             <div class="<%= product.percentage["class"] %>">

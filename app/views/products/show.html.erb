@@ -175,7 +175,7 @@
                       <%= f.label "Order Quantity" %>
                       <%= f.number_field :amount, :minimum => @product.minimum_order %>
                     </div>
-                    <%= f.button "Make Order", :class => 'btn' %>
+                    <%= f.button "Make Order", :class => 'btn submit-button' %>
                     <% end %>
 
                   <% elsif users_orders != [] %>

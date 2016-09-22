@@ -36,12 +36,15 @@ class CommitsController < ApplicationController
     if commit.retailer_id == current_user.retailer.id
       og_quantity = commit.amount
       og_sale_amount = commit.sale_amount
+
       commit.update(commit_params)
       commit_difference = commit.amount - og_quantity
       sale_difference = commit_difference*commit.product.discount.to_f
       commit.sale_amount = og_sale_amount.to_f + sale_difference.to_f
       if commit.save
         commit.product.quantity -= commit_difference
+        new_sales = commit.product.current_sales.to_f + sale_difference
+        commit.product.current_sales = new_sales
         commit.product.save(validate: false)
       else
         flash[:error] = commit.errors.full_messages
@@ -54,6 +57,8 @@ class CommitsController < ApplicationController
     commit = Commit.find(params[:id])
     if commit.retailer_id == current_user.retailer.id
       commit.product.quantity += commit.amount
+      new_sales = (commit.product.current_sales.to_f) - (commit.amount.to_i*commit.product.discount.to_f)
+      commit.product.current_sales = new_sales
       commit.product.save
       commit.destroy
       return redirect_to request.referrer

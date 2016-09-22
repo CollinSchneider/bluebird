@@ -4,7 +4,10 @@
     <div class="row center-align col s10 offset-s1">
       <h5>This product is not yet live. If you like the way things look, go ahead and launch the product</h5>
       <%= form_for @product, url: "/launch_product/#{@product.id}", method: 'PUT' do |f| %>
-        <%= f.submit "LAUNCH PRODUCT", :class => 'btn' %>
+        <%= f.submit "LAUNCH PRODUCT", :class => 'btn submit-button' %>
+      <% end %>
+      <%= form_for @product, url: "/start_over?duration=#{@product.duration}&goal=#{@product.goal}&uuid=#{@product.uuid}", method: 'POST' do |f| %>
+        <%= f.submit "CANCEL", :class => 'btn-flat submit-button' %>
       <% end %>
     </div>
     <div class="col 12 valign-wrapper">

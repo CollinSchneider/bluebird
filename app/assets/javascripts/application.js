@@ -17,6 +17,7 @@
 //= require materialize-sprockets
 $(document).ready(function(){
   formLoad()
+  buttonLoad()
   pagination()
   mouseOvers()
 })
@@ -70,5 +71,15 @@ function formLoad(){
       submitButton.attr('class', 'submitted-button btn')
       submitButton.width(width)
     }
+  })
+}
+
+function buttonLoad(){
+  $('.button-load').click(function(){
+    var width = $(this).width()
+    $(this).text('')
+    $(this).prop('disabled', true)
+    $(this).attr('class', 'submitted-button btn')
+    $(this).width(width)
   })
 }

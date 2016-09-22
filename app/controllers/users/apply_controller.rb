@@ -17,7 +17,6 @@ class Users::ApplyController < UsersController
     redirect_to '/apply/step1' if params[:uuid].nil?
     @company = Company.find_by_uuid(params[:uuid])
     if request.post?
-      binding.pry
       user = User.new
       user.editing_user_info = true
       user.update(user_params)
@@ -30,8 +29,7 @@ class Users::ApplyController < UsersController
         wholesaler.contactable_by_phone = false
         wholesaler.contactable_by_email = false
         wholesaler.save!
-        Mailer.wholesaler_welcome_email(user, params[:user][:password]).deliver_later
-        binding.pry
+        # Mailer.wholesaler_welcome_email(user, params[:user][:password]).deliver_later
         return redirect_to "/thank_you?_user=#{user.first_name}"
       else
         flash[:error] = user.errors.full_messages

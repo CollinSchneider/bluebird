@@ -31,11 +31,24 @@ class Wholesaler < ActiveRecord::Base
   end
 
   def is_contactable?
-    if self.contactable_by_phone || self.contactable_by_email
-      return true
-    else
-      return false
+    self.contactable_by_phone || self.contactable_by_email ? true : false
+  end
+
+  def total_revenue
+    orders = Commit.where('status = ? AND product_id in (
+      select id from products where wholesaler_id = ?
+    ) OR status = ? AND product_id in (
+      select id from products where wholesaler_id = ?
+    )', 'live', self.id, 'full_price', self.id)
+    total_sales = 0
+    orders.each do |order|
+      if order.full_price
+        total_sales += order.amount.to_f*order.product.price.to_f
+      else
+        total_sales += order.amount.to_f*order.product.discount.to_f
+      end
     end
+    return total_sales
   end
 
 end

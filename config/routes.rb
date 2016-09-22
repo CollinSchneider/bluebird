@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   resources :users
   put 'users/password_reset/:id' => 'users#password_reset'
   resources :products, :except => ['show']
-  get '/products/:id-:slug' => 'products#show'
+  get '/products/:id/:slug' => 'products#show'
   resources :commits
   resources :wholesalers
   resources :retailers
@@ -50,6 +50,7 @@ Rails.application.routes.draw do
   get '/fix_product' => 'wholesalers#fix_product'
   get '/approve_product/:id' => 'wholesalers#approve_product'
   put '/launch_product/:id' => 'wholesalers#launch_product'
+  post '/start_over' => 'wholesalers#start_over'
   get '/past_products' => 'wholesalers#past_products'
   get '/manage_shipping' => 'wholesalers#manage_shipping'
   get '/analytics' => 'wholesalers#analytics'

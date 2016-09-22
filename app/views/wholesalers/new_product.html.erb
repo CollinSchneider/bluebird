@@ -42,7 +42,7 @@
             <div class="col s11 left-align valign-wrapper">
               <div class="col s11 input-field">
                 <label>Sales Goal ($)</label>
-                <input type="text" name="goal">
+                <input type="number" name="goal" required>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="right" data-delay="0" data-tooltip="<h6>This is your sales goal, if it is <br> met you will sell this product<br> for the discounted price you set.</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -85,7 +85,7 @@
                 <%= f.text_area :description, :id => "short-description", :class => "materialize-textarea", :length => 60 %> <br>
               </div>
               <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Short, 120 character maximum length product description</h6>"><i class="tiny material-icons">live_help</i></a>
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Short, 60 character maximum length product description</h6>"><i class="tiny material-icons">live_help</i></a>
               </div>
             </div>
             <div class="input-field valign-wrapper">
