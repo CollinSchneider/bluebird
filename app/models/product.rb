@@ -205,8 +205,8 @@ class Product < ActiveRecord::Base
   def self.expire_product
     products = Product.where('status = ? AND end_time <= ?', 'live', Time.now + 30.seconds)
     products.each do |product|
-      if product.commits.sum(:amount).to_f*product.discount.to_f >= product.goal.to_f
-      # if product.current_sales.to_f >= product.goal.to_f
+      # if product.commits.sum(:amount).to_f*product.discount.to_f >= product.goal.to_f
+      if product.current_sales.to_f >= product.goal.to_f
         product.status = 'goal_met'
         product.save
         product.commits.each do |commit|
