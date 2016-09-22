@@ -32,7 +32,7 @@ hour_array = [
 
 hour_array.each do |this_time|
   every 1.day, :at => this_time do
-    runner "Product.expire_product"
+    runner "Product.expire_products"
     runner "Product.end_full_priced"
   end
 end

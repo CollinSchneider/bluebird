@@ -47,7 +47,7 @@ class User < ActiveRecord::Base
         commit.shipping_charge_id = charge.id
         commit.card_declined = false
         commit.card_decline_date = nil
-        commit.card_declined_reason = nil
+        commit.declined_reason = nil
         commit.save(validate: false)
         success = true
         return success, charge

@@ -38,6 +38,14 @@ class Commit < ActiveRecord::Base
     end
   end
 
+  def destroy_commit
+    self.product.quantity += self.amount
+    new_sales = (self.product.current_sales.to_f) - (self.amount.to_i*self.product.discount.to_f)
+    self.product.current_sales = new_sales
+    self.product.save
+    self.destroy
+  end
+
   # VALIDATIONS
   def meets_minimum_order
     if !self.product.minimum_order.nil?
@@ -49,7 +57,13 @@ class Commit < ActiveRecord::Base
 
   def enough_inventory
     if self.amount.to_i > self.product.quantity.to_i
-      errors.add(:Whoops!, "Looks like there's only #{self.product.quantity} left in inventory, update your order accordingly.")
+      if !self.amount_was.nil?
+        if self.product.quantity.to_i - (self.amount - self.amount_was) < 0
+          return errors.add(:Whoops!, "Looks like there's only #{self.product.quantity} left in inventory, update your order accordingly.")
+        end
+      else
+        return errors.add(:Whoops!, "Looks like there's only #{self.product.quantity} left in inventory, update your order accordingly.")
+      end
     end
   end
 

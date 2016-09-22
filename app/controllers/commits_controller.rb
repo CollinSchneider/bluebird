@@ -8,13 +8,13 @@ class CommitsController < ApplicationController
         if commit.save
           commit.product.quantity -= commit.amount
           commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
-          commit.product.save
+          commit.product.save(validate: false)
           commit.retailer_id = current_user.retailer.id
-          commit.save!
+          commit.save(validate: false)
 
           if commit.full_price
             commit.status = 'full_price'
-            commit.save
+            commit.save(validate: false)
             amount = commit.product.price.to_f*commit.amount.to_i
             charge = commit.product.wholesaler.user.collect_payment(commit, amount)
             Mailer.retailer_full_price_email(commit, commit.retailer.user)
@@ -42,10 +42,14 @@ class CommitsController < ApplicationController
       sale_difference = commit_difference*commit.product.discount.to_f
       commit.sale_amount = og_sale_amount.to_f + sale_difference.to_f
       if commit.save
-        commit.product.quantity -= commit_difference
-        new_sales = commit.product.current_sales.to_f + sale_difference
-        commit.product.current_sales = new_sales
-        commit.product.save(validate: false)
+        if commit.amount == 0
+          commit.destroy_commit
+        else
+          commit.product.quantity -= commit_difference
+          new_sales = commit.product.current_sales.to_f + sale_difference
+          commit.product.current_sales = new_sales
+          commit.product.save(validate: false)
+        end
       else
         flash[:error] = commit.errors.full_messages
       end
@@ -56,11 +60,7 @@ class CommitsController < ApplicationController
   def destroy
     commit = Commit.find(params[:id])
     if commit.retailer_id == current_user.retailer.id
-      commit.product.quantity += commit.amount
-      new_sales = (commit.product.current_sales.to_f) - (commit.amount.to_i*commit.product.discount.to_f)
-      commit.product.current_sales = new_sales
-      commit.product.save
-      commit.destroy
+      commit.destroy_commit
       return redirect_to request.referrer
     end
   end

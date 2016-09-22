@@ -37,4 +37,14 @@ class Api::AdminController < ApiController
     end
   end
 
+  def expire_products
+    if current_user.is_admin?
+      products = Product.expire_products
+      return render :json => {
+        goal_met: products[0],
+        needs_attention: products[1]
+      }
+    end
+  end
+
 end

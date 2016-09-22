@@ -202,20 +202,24 @@ class Product < ActiveRecord::Base
     end
   end
 
-  def self.expire_product
+  def self.expire_products
     products = Product.where('status = ? AND end_time <= ?', 'live', Time.now + 30.seconds)
+    goal_met_products = 0
+    needs_attention_products = 0
     products.each do |product|
       # if product.commits.sum(:amount).to_f*product.discount.to_f >= product.goal.to_f
       if product.current_sales.to_f >= product.goal.to_f
+        goal_met_products += 1
         product.status = 'goal_met'
-        product.save
+        product.save(validate: false)
+        binding.pry
         product.commits.each do |commit|
           commit.status = 'goal_met'
           commit.save(validate: false)
           amount = product.discount.to_f*commit.amount.to_i
           charge = product.wholesaler.user.collect_payment(commit, amount)
           if charge[1]
-            Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
+            # Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
           else
             commit.card_declined = true
             commit.card_decline_date = Time.now
@@ -223,18 +227,20 @@ class Product < ActiveRecord::Base
             # Send card failure email
           end
         end
-        Mailer.wholesaler_discount_hit(product.wholesaler.user, product).deliver_later
+        # Mailer.wholesaler_discount_hit(product.wholesaler.user, product).deliver_later
       else
+        needs_attention_products += 1
         product.status = 'needs_attention'
-        product.save
+        product.save(validate: false)
         product.commits.each do |commit|
           commit.status = 'past'
           commit.save(validate: false)
           # Mailer.retailer_discount_missed(commit.user, product)
         end
-        Mailer.wholesaler_needs_attention(product.wholesaler.user, product).deliver_later
+        # Mailer.wholesaler_needs_attention(product.wholesaler.user, product).deliver_later
       end
     end
+    return goal_met_products, needs_attention_products
   end
 
   # VALIDATIONS

@@ -10,8 +10,11 @@ class AlreadyPrintedPdf < Prawn::Document
     bluebird_image
     start_new_page
 
+    total_commits = 0
     need_to_ship.each do |commit|
+      total_commits += 1
       pdf_sequence(commit)
+      start_new_page if total_commits != need_to_ship.length
     end
 
   end
@@ -30,7 +33,6 @@ class AlreadyPrintedPdf < Prawn::Document
     pad_bottom(10) {shipping_info}
     stroke_horizontal_rule
     order_total(commit)
-    start_new_page
   end
 
   def directions_title(user)
@@ -65,12 +67,10 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def buyer_info(retailer)
     move_down 15
-    EasyPost.api_key = ENV['EASYPOST_API_KEY']
-    address = EasyPost::Address.retrieve(retailer.shipping_addresses[0].address_id)
     text "Buyer: #{retailer.user.full_name} \n
     #{retailer.company.company_name} \n
-    #{address.street1.downcase.capitalize} \n
-    #{address.city.downcase.capitalize}, #{address.state}, #{address.zip}"
+    #{retailer.primary_address.street_address_one.downcase.capitalize} \n
+    #{retailer.primary_address.city.downcase.capitalize}, #{retailer.primary_address.state}, #{retailer.primary_address.zip}"
   end
 
   def seller_info(user)
