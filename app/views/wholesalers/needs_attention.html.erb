@@ -1,73 +1,73 @@
 
-<div class="container">
-  <h5>Needs Attention</h5>
+
+  <h5 class='center-align'>Needs Attention</h5>
 
   <h6 id="notice"></h6>
 
-  <% @products.each_slice(3) do |slice| %>
+  <% @products.each_slice(1) do |slice| %>
     <div class="row">
       <% slice.each do |product| %>
-        <div class="col s12 no-padding">
-          <div class="product row border">
-            <div class="row">
+        <div class="col s10 offset-s1 no-padding">
+          <div class="row border">
 
-              <div class="col s2">
-                <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
-              </div>
-              <div class="col s2">
-                <div class="row no-bottom-margin">
-                  <h6><%= product.title %></h6>
-                </div>
-                <div class="row no-bottom-margin">
-                  <h6 class='now-price'>$<%= product.discount %> each</h6>
-                  <h6><%= product.commits.count %> orders</h6>
-                  <% total_sales = (product.discount.to_f*product.commits.sum(:amount).to_i) %>
-                  <h6>$<%= '%.2f' % total_sales %> in sales</h6>
-                  <h6><%= product.percentage["percent_to_discount"] %>% of your goal</h6>
-                </div>
-              </div>
+            <div class="col s12 m3">
+              <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+            </div>
 
-              <div class="col s8 left-align" style="margin-top: 60px">
+            <div class="col s12 m5 center-align">
+                <h5><%= product.title %></h5>
+
+                <h6 class='now-price'>$<%= product.discount %> each</h6>
+                <h6><%= product.commits.count %> orders</h6>
+                <% total_sales = (product.discount.to_f*product.commits.sum(:amount).to_i) %>
+                <h6>$<%= '%.2f' % total_sales %> in sales</h6>
+                <h6><%= product.percentage["percent_to_discount"] %>% of your goal</h6>
+
+              <div class="col s8 offset-s2 left-align">
                 <div class="row">
                   <div class="<%= product.percentage["class"] %>">
                     <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
                   </div>
                 </div>
               </div>
-
             </div>
 
-            <div class="row">
-              <div class="buttons row">
+            <div class="col s12 m4 valign-wrapper">
+              <div class="row buttons center-align valign">
                 <% if total_sales.to_f > 0 %>
-                <div class="col s4">
-                  <button class='grant-discount load-button green btn' data='<%= product.id %>'>Grant Discount</button>
-                </div>
+                  <div class="row">
+                    <button class='grant-discount button-load green btn' data='<%= product.id %>'>Grant Discount</button><br>
+                  </div>
                 <% end %>
-                <div class="col s4">
-                  <button class='expire-product load-button btn red lighten-2' data='<%= product.id %>'>Expire Product</button>
+                <div class="row">
+                  <button class='expire-product button-load btn red lighten-2' data='<%= product.id %>'>Expire Product</button><br>
                 </div>
-                <div class="col s4">
-                  <button class='extend-product load-button btn green' data='<%= product.uuid %>'>Extend Product</button>
+                <div class="row">
+                  <button class='extend-product button-load btn green' data='<%= product.uuid %>'>Extend Product</button><br>
+                </div>
+                <div class="row">
+                  <button class='button-load btn green test-button'>Test</button>
                 </div>
               </div>
             </div>
 
           </div>
         </div>
-    <% end %>
-  </div>
-<% end %>
+      <% end %>
+    </div>
+  <% end %>
 
-</div>
 
 <script>
   // $('.btn').click(function(){
   //   replaceWithGif($(this).parent())
   // })
+  $('.test-button').click(function(){
+    var div = $(this).parent().parent().parent().parent().parent().fadeOut()
+  })
 
   $('.grant-discount').click(function(){
-    var div = $(this).parent()
+    var div = $(this).parent().parent().parent().parent().parent()
     var productId = $(this).attr('data')
     $.ajax({
       url: '/api/products/grant_discount?product_id=' + productId,
@@ -88,7 +88,7 @@
         console.log(data);
         $('#notice').text("You have successfully expired the product " + data.product.title + ", you are no longer guaranteed any sales.")
         // div.remove()
-        thisButton.parent().parent().parent().remove()
+        thisButton.parent().parent().parent().parent().parent().remove()
       }
     })
   })
@@ -101,7 +101,7 @@
       success: function(data){
         console.log(data);
         $('#notice').text(data.product.title + " has been extended 10 more days!")
-        thisButton.parent().parent().parent().remove()
+        thisButton.parent().parent().parent().parent().parent().remove()
       }
     })
   })

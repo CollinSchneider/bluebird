@@ -76,6 +76,7 @@ function formLoad(){
 
 function buttonLoad(){
   $('.button-load').click(function(){
+    console.log('button click');
     var width = $(this).width()
     $(this).text('')
     $(this).prop('disabled', true)
