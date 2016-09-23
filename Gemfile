@@ -43,7 +43,7 @@ gem 'stripe'
 
 gem 'paperclip'
 
-# gem 'omniauth-stripe-connect'
+gem 'omniauth-stripe-connect'
 
 gem 'easypost'
 
