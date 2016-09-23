@@ -24,7 +24,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Needed for EB?
-gem 'passenger'
+gem 'passenger', '~> 4.0.59'
 
 gem 'dotenv-rails'
 
@@ -43,13 +43,13 @@ gem 'stripe'
 
 gem 'paperclip'
 
-gem 'omniauth-stripe-connect'
+# gem 'omniauth-stripe-connect'
 
 gem 'easypost'
 
 gem 'prawn'
 
-gem 'mailgun-ruby', require: 'mailgun'
+# gem 'mailgun-ruby', require: 'mailgun'
 
 gem 'will_paginate'
 
