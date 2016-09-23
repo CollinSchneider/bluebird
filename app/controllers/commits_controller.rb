@@ -4,29 +4,31 @@ class CommitsController < ApplicationController
   def create
     if current_user.is_retailer?
       commit = Commit.create(commit_params)
-      commit.set_commit
-        if commit.save
-          commit.product.quantity -= commit.amount
-          commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
-          commit.product.save(validate: false)
-          commit.retailer_id = current_user.retailer.id
-          commit.save(validate: false)
+      if commit.set_commit(current_user)
+        commit.product.quantity -= commit.amount
+        commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
+        commit.product.save(validate: false)
 
-          if commit.full_price
-            commit.status = 'full_price'
-            commit.save(validate: false)
-            amount = commit.product.price.to_f*commit.amount.to_i
-            charge = commit.product.wholesaler.user.collect_payment(commit, amount)
+        if commit.full_price
+          commit.status = 'full_price'
+          commit.save(validate: false)
+          amount = commit.product.price.to_f*commit.amount.to_i
+          charge = commit.product.wholesaler.user.collect_payment(commit, amount)
+          if !charge.nil? && !charge[1]
+            return redirect_to "/retailer/#{commit.uuid}/card_declined"
+          else
             Mailer.retailer_full_price_email(commit, commit.retailer.user)
             Mailer.wholesaler_full_price_email(commit, commit.product.wholesaler.user)
-            if !charge.nil? && !charge[1]
-              return redirect_to "/retailer/#{commit.uuid}/card_declined"
-            end
-          else
+            return redirect_to '/order_history'
           end
         else
-          flash[:error] = commit.errors.full_messages
+          # Not full price
         end
+      else
+        # Didn't save
+        flash[:error] = commit.errors.full_messages
+      end
+      # return to same page if it saves or not
       return redirect_to request.referrer
     end
   end
@@ -42,14 +44,10 @@ class CommitsController < ApplicationController
       sale_difference = commit_difference*commit.product.discount.to_f
       commit.sale_amount = og_sale_amount.to_f + sale_difference.to_f
       if commit.save
-        if commit.amount == 0
-          commit.destroy_commit
-        else
-          commit.product.quantity -= commit_difference
-          new_sales = commit.product.current_sales.to_f + sale_difference
-          commit.product.current_sales = new_sales
-          commit.product.save(validate: false)
-        end
+        commit.product.quantity -= commit_difference
+        new_sales = commit.product.current_sales.to_f + sale_difference
+        commit.product.current_sales = new_sales
+        commit.product.save(validate: false)
       else
         flash[:error] = commit.errors.full_messages
       end

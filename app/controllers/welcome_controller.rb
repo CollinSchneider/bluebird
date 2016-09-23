@@ -98,8 +98,8 @@ class WelcomeController < ApplicationController
   end
 
   def company_show
-    @company = Company.find_by(:company_key => params[:key])
-    redirect_to '/shop' if @company.nil?
+    @company = Company.find_by(:company_key => params[:key], :id => params[:id])
+    return redirect_to '/shop' if @company.nil?
     @products = Product.where('wholesaler_id = ? AND status = ? AND end_time >= ?', @company.user.wholesaler.id, 'live', Time.now)
   end
 

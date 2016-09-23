@@ -24,7 +24,7 @@ class ProductsController < ApplicationController
     if product.wholesaler_id == current_user.wholesaler.id
       product.update(product_params)
       if product.save!
-        return redirect_to "/product/#{product.id}-#{product.slug}"
+        return redirect_to "/product/#{product.id}/#{product.slug}"
       else
         flash[:error] = product.errors.full_messages
         return redirect_to request.referrer

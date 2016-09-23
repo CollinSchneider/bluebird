@@ -28,6 +28,9 @@
             </a>
 
           <div class="row">
+            <% if product.is_users?(current_user) %>
+              <%= product.result %>
+            <% end %>
             <div class="<%= product.percentage["class"] %>">
               <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
             </div>

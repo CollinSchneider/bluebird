@@ -104,7 +104,7 @@ Rails.application.routes.draw do
   get '/best_sellers' => 'welcome#best_sellers'
   get '/new_arrivals' => 'welcome#new_arrivals'
   get '/regularly_priced' => 'welcome#regularly_priced'
-  get '/company/:key' => 'welcome#company_show'
+  get '/company/:id/:key' => 'welcome#company_show'
   get '/products/:token/:slug' => 'products#full_price'
   get '/discover' => 'products#discover'
   get '/bluebird_choice' => 'products#bluebird_choice'

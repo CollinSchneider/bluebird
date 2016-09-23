@@ -1,6 +1,5 @@
 class Company < ActiveRecord::Base
 
-  # validate :unique_company
   validates :company_name, presence: true
 
   belongs_to :user
@@ -20,14 +19,6 @@ class Company < ActiveRecord::Base
     key = key.gsub('!', '')
     key = key.gsub("'", "")
     return key
-  end
-
-  # VALIDATIONS
-  def unique_company
-    same_name = Company.find_by_company_key(self.company_key)
-    if !same_name.nil?
-      errors.add(:Another, "user already has this company name!")
-    end
   end
 
 end

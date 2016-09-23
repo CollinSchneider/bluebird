@@ -16,6 +16,7 @@
   <div class="col s12 m8 offset-m3 center-align order-box z-depth-2">
     <div class="row">
       <h4><%= @company.company_name%></h4>
+      <h6><a href="/company/<%= @company.id %>/<%= @company.company_key %>">View Store Front</a></h6>
     </div>
     <% if @company.logo.present? %>
       <div class="row">

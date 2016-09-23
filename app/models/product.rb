@@ -103,6 +103,22 @@ class Product < ActiveRecord::Base
     return total_commits*self.discount.to_f
   end
 
+  def result
+    result = case self.status
+      when "goal_met" then "Goal Met"
+      when "discount_granted" then "Discount Granted"
+      when "past" then "Discount Missed"
+      else nil
+    end
+    return result
+  end
+
+  def is_users?(user)
+    if user.is_wholesaler?
+      return self.wholesaler_id == user.wholesaler.id ? true : false
+    end
+  end
+
   def calc_end_time
     return self.end_time.strftime('%l:%M %P on %b %d, %Y')
   end
@@ -233,7 +249,7 @@ class Product < ActiveRecord::Base
         product.status = 'needs_attention'
         product.save(validate: false)
         product.commits.each do |commit|
-          commit.status = 'past'
+          commit.status = 'pending'
           commit.save(validate: false)
           # Mailer.retailer_discount_missed(commit.user, product)
         end

@@ -50,7 +50,7 @@ class Retailer < ActiveRecord::Base
   end
 
   def successful_orders
-    self.commits.where(:status => 'goal_met')
+    self.commits.where('status = ? OR status = ?', 'goal_met', 'discount_granted')
   end
 
   def total_savings

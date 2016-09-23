@@ -50,7 +50,7 @@
             <div class="info-box z-depth-1">
               <div class="row">
                 <h5 class='bold'><%= @product.title %></h5>
-                <a class='black-text' href="/company/<%=@product.wholesaler.user.company.company_key%>">
+                <a class='black-text' href="/company/<%= @product.wholesaler.user.company.id %>/<%=@product.wholesaler.user.company.company_key%>">
                   <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
                 </a>
                 <h6 class='was-price' style="display: inline-block">$<%= @product.price %></h6>
@@ -204,13 +204,13 @@
 
 <% if !@company_products.empty? %>
   <div class="col s10 offset-s1 row">
-    <h5><a href="/company/<%= @product.wholesaler.user.company.company_key %>">More products from <%= @product.wholesaler.user.company.company_name %></a></h5>
+    <h5><a href="/company/<%= @product.wholesaler.user.company.id %>/<%= @product.wholesaler.user.company.company_key %>">More products from <%= @product.wholesaler.user.company.company_name %></a></h5>
   </div>
   <div class="row">
     <% @company_products.each do |product| %>
       <div class="col s12 m4 center-align no-padding">
         <div class="product">
-          <%= link_to "/products/#{product.id}-#{product.slug}" do %>
+          <%= link_to "/products/#{product.id}/#{product.slug}" do %>
             <div class="percent-box col s3 m1 white-text">
               <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
             </div>
@@ -258,7 +258,7 @@
     <% @similar_products.each do |product| %>
       <div class="col s12 m4 center-align no-padding">
         <div class="product">
-          <%= link_to "/products/#{product.id}-#{product.slug}" do %>
+          <%= link_to "/products/#{product.id}/#{product.slug}" do %>
             <div class="percent-box col s3 m1 white-text">
               <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
             </div>

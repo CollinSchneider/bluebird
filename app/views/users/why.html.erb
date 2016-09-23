@@ -51,17 +51,13 @@
   <% end %>
 </ul>
 
-<script>
-  $(".button-collapse").sideNav();
-</script>
-
 <%= render partial: 'partials/signed_out_nav' %>
 
 
 <div class="col s12">
 
   <div id="first-div" class="section">
-    <div class="parallax-div col s8">
+    <div class="parallax-div col s8" style='margin-top: 25vh'>
       <div class="row center-align">
         <img src="/images/bluebird-white-text.png" class="responsive-img"/>
       </div>
@@ -237,16 +233,15 @@
 </div>
 
 <script>
-  // var height = $('.section-white').height()
-  // var navHeight = $('.navigation').height()
-  // $('#first-div').css({
-  //   height: height - navHeight
-  // })
+
+  $(document).ready(function(){
+    $(".button-collapse").sideNav();
+  })
 
   $(window).scroll(function(){
     var scroll = $(window).scrollTop()
     $('.parallax-div').css({
-      marginTop: (-scroll/2) + 50
+      marginTop: (-scroll/2) + 100
     })
     if(scroll > 150) {
       $('.sticky-navigation').fadeIn()

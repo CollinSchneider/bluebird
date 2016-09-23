@@ -1,7 +1,7 @@
 
   <% @past_orders.each do |order| %>
     <% if order.product.status == 'live' %>
-      <% link = "/products/#{order.product.id}-#{order.product.slug}" %>
+      <% link = "/products/#{order.product.id}/#{order.product.slug}" %>
     <% else %>
       <% link = "/retailer/order_history/#{order.id}" %>
     <% end %>

@@ -55,7 +55,7 @@
             <div class="info-box z-depth-1">
               <div class="row">
                 <h5 class='bold'><%= @product.title %></h5>
-                <a class='black-text' href="/company/<%=@product.wholesaler.user.company.company_key%>">
+                <a class='black-text' href="/company/<%= @product.wholesaler.user.company.id %>/<%=@product.wholesaler.user.company.company_key%>">
                   <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
                 </a>
                 <h6 class='was-price' style="display: inline-block">$<%= @product.price %></h6>

@@ -15,7 +15,7 @@
     <ul class="slides" style='display: none'>
       <% header_products.each do|product| %>
         <li class='slide'>
-          <a href="/products/<%=product.id %>-<%=product.slug %>">
+          <a href="/products/<%=product.id %>/<%=product.slug %>">
             <%= image_tag product.main_image.url(:medium), :style => 'height: 100%' %>
             <!-- <#%= image_tag Product.where("status = 'live'").last.main_image.url(:large), :class => 'responsive-img' %> -->
             <div class="caption center-align">

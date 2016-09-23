@@ -2,11 +2,37 @@
 
   <div class="center-align row">
     <h3><%= @company.company_name %></h3>
+    <h5 class='pointer about-company'>About Us</h5>
     <div class="col s12">
-      <%= image_tag @company.logo.url(:medium), :class => 'responsive-img' %>
+      <% if @company.logo %>
+        <%= image_tag @company.logo.url(:medium), :class => 'responsive-img' %>
+      <% end %>
     </div>
 
     <%= render partial: 'partials/products' %>
   </div>
 
+  <% if @company.location || @company.bio %>
+    <div class="company-bio row col s12 m6 offset-m3 border center-align">
+      <% if @company.location %>
+        <h5>Location: <%= @company.location %></h5>
+      <% end %>
+      <% if @company.bio %>
+        <h5><%= simple_format(@company.bio) %></h5>
+      <% end %>
+    </div>
+  <% end %>
+
 </div>
+
+<script>
+  $('.about-company').click(function(){
+    animateScrollTo($('.company-bio'))
+  })
+
+    function animateScrollTo(div) {
+      $('html, body').animate({
+        scrollTop: div.offset().top
+      }, 700)
+    }
+</script>

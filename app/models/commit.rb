@@ -14,13 +14,14 @@ class Commit < ActiveRecord::Base
   #   self.refunded = false
   # end
 
-  def set_commit
+  def set_commit(user)
     self.uuid = SecureRandom.uuid
     self.status = 'live'
     self.refunded = false
+    self.retailer_id = user.retailer.id
     self.set_primary_card_id_and_address
     self.set_sale_amount
-    self.save
+    return self.save ? true : false
   end
 
   def set_primary_card_id_and_address
@@ -38,12 +39,20 @@ class Commit < ActiveRecord::Base
     end
   end
 
+  def update_commit
+
+  end
+
   def destroy_commit
     self.product.quantity += self.amount
     new_sales = (self.product.current_sales.to_f) - (self.amount.to_i*self.product.discount.to_f)
     self.product.current_sales = new_sales
     self.product.save
     self.destroy
+  end
+
+  def amount_saved
+    return self.product.price.to_f - (self.amount.to_f*self.product.discount.to_f)
   end
 
   # VALIDATIONS

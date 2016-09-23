@@ -6,6 +6,8 @@ class Api::ProductsController < ApiController
     product.status = 'live'
     if product.save(validate: false)
       product.commits.each do |commit|
+        commit.status = 'live'
+        commit.save(validate: false)
         Mailer.retailer_product_extended(commit.retailer.user, product)
       end
       render :json => {
