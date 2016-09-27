@@ -24,7 +24,7 @@ gem 'jbuilder', '~> 2.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 # Needed for EB?
-gem 'passenger', '~> 4.0.59'
+gem 'passenger'
 
 gem 'dotenv-rails'
 
