@@ -15,7 +15,6 @@
     <div class="col hide-on-small-only m8 right-align valign">
       <%
        items = {
-         'Learn More' => '/why_bluebird',
          'Sell on BlueBird' => '/apply/step1',
          'Buy on BlueBird' => 'signup/step1',
          'Login' => '/users',
@@ -40,7 +39,57 @@
   <li><div class="divider"></div></li>
   <%
     items = {
-      'Learn More' => '/why_bluebird',
+      'Sell on BlueBird' => '/apply/step1',
+      'Buy on BlueBird' => 'signup/step1',
+      'Login' => '/users',
+    }
+    items.each do |name, url|
+      link_class = request.fullpath.start_with?(url) ? 'blue-text' : nil
+  %>
+    <li><a class="<%=link_class %>" href="<%= url %>"><%= name %></a></li>
+  <% end %>
+</ul>
+
+<div class="row no-margin z-depth-2 col s12 sticky-navigation" style="padding-top: 10px; padding-bottom: 10px; position: fixed; width: 100%; z-index: 100; margin-top: -60px">
+  <div class="col s12 valign-wrapper">
+    <div class="col s4 m2 no-margin" style="margin: 0px">
+      <a href="/users">
+        <img src="/images/bluebird-blue-text.png" alt="" class="responsive-img"/>
+      </a>
+    </div>
+    <div class="hide-on-med-and-up col s4 right-align valign">
+      <a class='black-text account-side-nav-link button-collapse' data-activates="slide-out">
+        <div class="nav-category-div" style="display: inline-block">
+          <span class='nav-category bold'><i class='material-icons'>reorder</i></span>
+        </div>
+      </a>
+    </div>
+    <div class="col hide-on-small-only m8 right-align valign">
+      <%
+       items = {
+         'Sell on BlueBird' => '/apply/step1',
+         'Buy on BlueBird' => 'signup/step1',
+         'Login' => '/users',
+       }
+       items.each do |name, url|
+         link_class = request.fullpath.start_with?(url) ? 'active-sub-nav' : 'black-text'
+      %>
+        <a href="<%= url %>" class="<%=link_class%>">
+          <div class="nav-category-div" style='display: inline-block'>
+            <span class='nav-category bold'><%= name %></span>
+          </div>
+        </a>
+      <% end %>
+    </div>
+  </div>
+</div>
+<ul id="slide-out" class="side-nav">
+  <li><div class="userView">
+
+  </div></li>
+  <li><div class="divider"></div></li>
+  <%
+    items = {
       'Sell on BlueBird' => '/apply/step1',
       'Buy on BlueBird' => 'signup/step1',
       'Login' => '/users',

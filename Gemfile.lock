@@ -62,6 +62,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     concurrent-ruby (1.0.2)
+    daemon_controller (1.2.0)
     debug_inspector (0.0.2)
     domain_name (0.5.20160615)
       unf (>= 0.0.5, < 1.0.0)
@@ -97,9 +98,6 @@ GEM
       nokogiri (>= 1.5.9)
     mail (2.6.4)
       mime-types (>= 1.16, < 4)
-    mailgun-ruby (1.1.0)
-      json (~> 1.8)
-      rest-client (~> 1.6)
     materialize-sass (0.97.6)
       sass (~> 3.3)
     method_source (0.8.2)
@@ -134,7 +132,8 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
-    passenger (5.0.30)
+    passenger (4.0.60)
+      daemon_controller (>= 1.2.0)
       rack
       rake (>= 0.8.1)
     pdf-core (0.6.1)
@@ -237,11 +236,10 @@ DEPENDENCIES
   groupdate
   jbuilder (~> 2.0)
   jquery-rails
-  mailgun-ruby
   materialize-sass
   omniauth-stripe-connect
   paperclip
-  passenger
+  passenger (~> 4.0.59)
   pg (~> 0.15)
   prawn
   pry-rails

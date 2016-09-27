@@ -3,6 +3,11 @@ class ProductsController < ApplicationController
   def show
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
     return redirect_to '/shop' if @product.nil?
+    if @product.end_time < Time.now && !@product.is_users?(current_user)
+      Product.expire_products
+      flash[:notice] = "Sorry about that, #{@product.title} has already expired."
+      return redirect_to '/shop'
+    end
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id) if current_user.is_retailer?
     @company_products = Product.where('wholesaler_id = ? AND status = ? AND id != ?', @product.wholesaler_id, 'live', @product.id).order(current_sales: :desc).limit(3)

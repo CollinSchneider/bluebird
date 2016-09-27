@@ -133,6 +133,7 @@
               </div>
 
               <div class="row no-bottom-margin">
+                <h6><%= @product.purchases_to_discount %> orders away from discount</h6>
                 <div class="<%= @product.percentage["class"] %>">
                   <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
                 </div>

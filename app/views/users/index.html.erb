@@ -1,22 +1,19 @@
 <%= render partial: 'partials/signed_out_nav' %>
 
-<div id="login-body">
-</div>
-
-<div class="center-align login-content">
+<div id='login-body' class="center-align login-content white" style='height: 100vh'>
     <div class="row">
       <div class="col s12">
         <div class="col s10 m4 offset-s1 offset-m1 border center black-text z-depth-5" id='login-container'>
           <div class="card-content">
-            <span class="card-title center-block" id='logo'><h4 style='display: inline-block'>Login</h4><img src="/images/bluebird-blue-mascot.png" style='width: 40px; height: 50px; bottom: -100px' /></span>
+            <span class="card-title center-block" id='logo'><h4 style='display: inline-block'>Login</h4><img src="/images/bluebird-blue-mascot.png" style='width: 40px; height: 50px' /></span>
             <div class="row">
-              <div class="input-field col s12" id='login-content' style="color:black">
+              <div id='login-content' style="color:black">
                 <form class="" action="/sessions" method="post">
                   <div class="input-field ">
-                    <input type="text" name="email" placeholder="email">
+                    <input class='full-box-input' type="text" name="email" placeholder="email">
                   </div>
                   <div class="input-field">
-                    <input type="password" name="password" placeholder="password">
+                    <input class='full-box-input' type="password" name="password" placeholder="password">
                   </div>
                   <input type="submit" value="Login" class="btn submit-button">
                 </form>
@@ -31,6 +28,208 @@
         </div>
       </div>
     </div>
+    <div class="row center-align white-text">
+      <h5 class='pointer how-it-works'>Learn More</h5>
+      <img src="/images/down-icon.png" style='width: 5vw' class='how-it-works pointer' />
+    </div>
   </div>
 
-<!-- </div> -->
+  <div class="row no-margin col s12">
+    <div class="how-it-works-div section-white center-align col s12">
+      <div class="row">
+        <h1 class='bold'>How it Works</h1>
+      </div>
+      <div class="row col s10 offset-s1 left-align">
+        <div class="row">
+          <div class="col s6">
+            <h5 class='bold'>1) Wholesaler Sells a Product</h5>
+          </div>
+          <div class="col s6">
+            <h6>-Decide the duration of the sale (7, 10, 14, or 30 days).</h6>
+            <h6>-Sets a sale goal in dollars that they want to meet in that duration.</h6>
+            <h6>-Offer a discounted price for the product, which will be given if the sales goal is reached.</h6>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <h5 class='bold'>2) Retailers Make Purchase Orders</h5>
+          </div>
+          <div class="col s6">
+            <h6>-BlueBird retailers place purchase orders on the discounted product.</h6>
+            <h6>-As the purchase orders are made, the product gets that much closer to the discounted price.</h6>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s6">
+            <h5 class='bold'>3) The Sale Ends</h5>
+          </div>
+          <div class="col s6">
+            <h6>-Once the product has reached its duration, the sale is closed.</h6>
+            <h6>-If the product <span style='text-decoration: underline'>has</span> reached the sales goal, the wholesaler gets paid, retailers receive their discount, and the product is shipped.</h6>
+            <h6>-If the product <span style='text-decoration: underline'>doesn't</span> reach the sales goal, the wholesaler decides what to do, but retailers are not obligated to purchase.</h6>
+          </div>
+        </div>
+      </div>
+      <div class="col s10 offset-s1 center-align">
+        <div class="row">
+          <h5>Seem to good to be true? It's not</h5>
+          <a href="/signup" class="btn">Sign Up Today</a>
+        </div>
+        <div class="row center-align">
+          <div class="col s2 offset-s5">
+            <h6 class="learn-more" style="cursor: pointer"><img src="/images/black-down-icon.png" class='down-icon responsive-img'/></h6>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row no-margin col s12">
+    <div class="retailers-div section-blue center-align col s12" style="padding-top: 15vh">
+      <div class="row">
+        <h1><strong>Retailers</strong></h1>
+      </div>
+      <div class="row col s10 offset-s1">
+        <div class="row">
+          <div class="col s12 m4 valign">
+            <div class="row">
+              <div class='white col s6 offset-s3' style='border-radius: 50%; padding: 0'>
+                <img src="/images/piggy-bank.png" class='responsive-img' />
+              </div>
+            </div>
+            <div style="margin: 5px; padding: 10px">
+              <h5>Unparalled Prices.</h5>
+              <h6>
+                Everybody receives a discount. Guaranteed.
+              </h6>
+            </div>
+          </div>
+          <div class="col s12 m4 valign">
+            <div class="row">
+              <div class='white col s6 offset-s3' style='border-radius: 50%; padding: 0'>
+                <img src="/images/many.png" class='responsive-img' />
+              </div>
+            </div>
+            <div style="margin: 5px; padding: 10px">
+              <h5>Access Thousands of Products all in one Place.</h5>
+              <h6>
+                One signin, unlimited products and vendors.
+              </h6>
+            </div>
+          </div>
+          <div class="col s12 m4 valign">
+            <div class="row">
+              <div class='white col s6 offset-s3' style='border-radius: 50%; padding: 0'>
+                <img src="/images/cursor.png" class='responsive-img' />
+              </div>
+            </div>
+            <div style="margin: 5px; padding: 10px">
+              <h5>Automate Your Purchasing Power.</h5>
+              <h6>
+                Place a purchase order in one click.
+              </h6>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="row">
+      <a href="/signup" class="white btn black-text">Sign Up Today</a>
+    </div>
+      <div class="col s2 offset-s5">
+        <h6 class="wholesaler" style="cursor: pointer"><img src="/images/down-icon.png" class='down-icon responsive-img'/></h6>
+      </div>
+    </div>
+  </div>
+
+  <div class="row no-margin">
+    <div class="wholesalers-div section-white center-align col s12" style="padding-top: 15vh">
+      <div class="row">
+        <div class="col s12">
+          <h1><strong>Wholesalers</strong></h1>
+        </div>
+      </div>
+      <div class="row col s10 offset-s1">
+        <div class="row">
+          <div class="col s12 m4">
+            <div class="row">
+              <div class='white row col s6 offset-s3' style='border-radius: 50%; padding: 0'>
+                <img src="/images/handing-money.png" class='responsive-img' />
+              </div>
+            </div>
+            <div style='margin: 5px; padding: 10px'>
+              <h5>Reach a New Market</h5>
+              <h6>
+                BlueBird will put your product in front of retailers who are ready to purchase.
+              </h6>
+            </div>
+          </div>
+          <div class="col s12 m4 valign">
+            <div class="row">
+              <div class='white row col s6 offset-s3' style='border-radius: 50%; padding: 0'>
+                <img src="/images/no-phone.png" class='responsive-img' />
+              </div>
+            </div>
+            <div style='margin: 5px; padding: 10px'>
+              <h5>No More Tracking Down Payments</h5>
+              <h6>
+                You worry about perfecting your product,
+                we'll put the money in your bank account.
+              </h6>
+            </div>
+          </div>
+          <div class="col s12 m4 valign">
+            <div class="row">
+              <div class='white row col s6 offset-s3' style='border-radius: 50%; padding: 0'>
+                <img src="/images/sales-rep.png" class='responsive-img' />
+              </div>
+            </div>
+            <div style='margin: 5px; padding: 10px'>
+              <h5>Goodbye to sales reps.</h5>
+              <h6>
+                No more managing and paying expensive sales reps, let BlueBird handle it.
+              </h6>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a href="/signup" class="btn">Sign Up Today</a>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  $(document).ready(function(){
+    $(".button-collapse").sideNav();
+  })
+
+  $(window).scroll(function(){
+    var scroll = $(window).scrollTop()
+    $('.parallax-div').css({
+      marginTop: (-scroll/2) + 100
+    })
+    if(scroll > 150) {
+      $('.sticky-navigation').fadeIn()
+    }
+    if(scroll < 150) {
+      $('.sticky-navigation').fadeOut()
+    }
+  })
+
+  $('.how-it-works').click(function(){
+    animateScrollTo($('.how-it-works-div'))
+  })
+
+  $('.wholesaler').click(function(){
+    animateScrollTo($('.wholesalers-div'))
+  })
+
+  $('.learn-more').click(function(){
+    animateScrollTo($('.retailers-div'))
+  })
+
+  function animateScrollTo(div) {
+    $('html, body').animate({
+      scrollTop: div.offset().top - 60
+    }, 700)
+  }
+</script>

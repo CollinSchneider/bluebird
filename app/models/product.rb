@@ -93,14 +93,18 @@ class Product < ActiveRecord::Base
 
   def percent_to_discount
     total_orders = Commit.where('product_id = ?', self.id).sum(:amount).to_i
-    total_sales = total_orders*self.discount.to_f
-    percentage = ((total_sales/self.goal.to_f)*100)
+    percentage = ((self.total_sales/self.goal.to_f)*100)
     return percentage
   end
 
   def total_sales
     total_commits = self.commits.sum(:amount).to_f
     return total_commits*self.discount.to_f
+  end
+
+  def purchases_to_discount
+    sales_left = self.goal.to_f - self.total_sales
+    return (sales_left/self.discount.to_f).ceil
   end
 
   def result
@@ -115,7 +119,7 @@ class Product < ActiveRecord::Base
 
   def is_users?(user)
     if user.is_wholesaler?
-      return self.wholesaler_id == user.wholesaler.id ? true : false
+      return self.wholesaler_id == user.wholesaler.id
     end
   end
 
