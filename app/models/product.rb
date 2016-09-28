@@ -15,6 +15,7 @@ class Product < ActiveRecord::Base
   validates :price, presence: true
   validates :discount, presence: true
   validates :category, presence: true
+  validates :retail_price, presence: true
 
   validate :enough_inventory_for_sale
 
