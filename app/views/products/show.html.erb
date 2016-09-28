@@ -108,7 +108,7 @@
                 <% end %>
                 <h6 class='was-price' style="display: inline-block">$<%= @product.price %></h6>
                 <h6 class='now-price bold' style="display: inline-block">$<%= @product.discount %></h6>
-                <h6>Suggested Retail Price: $<%= @product.retail_price %></h6>
+                <h6>Suggested Retail Price: <span class='bold'>$<%= '%.2f' % @product.retail_price %></span></h6>
               </div>
 
               <div class="row">
