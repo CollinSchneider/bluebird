@@ -10,17 +10,17 @@
   })
 </script>
 
-<div class="col s12 slider-div">
+<div class="col s12 slider-div row">
   <div class="slider">
     <ul class="slides" style='display: none'>
       <% header_products.each do|product| %>
-        <li class='slide'>
+        <li class='slide border col s12 center-align'>
           <a href="/products/<%=product.id %>/<%=product.slug %>">
-            <%= image_tag product.main_image.url(:medium), :style => 'height: 100%' %>
+            <%= image_tag product.main_image.url(:large), :class => 'slider-image' %>
             <!-- <#%= image_tag Product.where("status = 'live'").last.main_image.url(:large), :class => 'responsive-img' %> -->
-            <div class="caption center-align">
+            <div class="caption center-align black-text" style='background: rgba(255, 255, 255, .85)'>
               <h3><%= product.title %></h3>
-              <h5 class="light grey-text text-lighten-3"><%= product.description %></h5>
+              <h5><%= product.description %></h5>
             </div>
           </a>
         </li>

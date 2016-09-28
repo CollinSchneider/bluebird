@@ -1,4 +1,4 @@
-<div class="row col s12" style='position: fixed; top: 5px'>
+<div class="row col m12 hide-on-small-only" style='position: fixed; top: 5px'>
   <div class="col s4 white-text center-align">
     <a href="/users">
       <img src="/images/bluebird-white-text.png" class='responsive-img' style='width: 80%' />
@@ -9,29 +9,29 @@
 </div>
 
 <div class="row no-overflow">
-  <div class="apply-body bluebird white-text center-align col s12 valign-wrapper" style='height: 60vh'>
+  <div class="apply-body bluebird center-align col s12 valign-wrapper" style='height: 60vh'>
 
-    <div class="valign col s12">
-      <div class="row col s8 offset-s2">
-        <form method="post">
+    <div class="valign col s12 white-text">
+      <h4>Wholesaler Application</h4>
+      <div class="row col s12 l8 offset-l2">
         <%= form_tag do %>
-          <div class="input-field">
-            <label>Company Name</label>
-            <input type="text" name="company[company_name]">
+          <div class="input-field col s12 m6">
+            <!-- <label>Company Name</label> -->
+            <input class='full-box-input' type="text" name="company[company_name]" placeholder="Company Name">
           </div>
-          <div class="input-field">
-            <label>Location</label>
-            <input type="text" name="company[location]">
+          <div class="input-field col s12 m6">
+            <!-- <label>Location</label> -->
+            <input class='full-box-input' type="text" name="company[location]" placeholder="Location">
           </div>
-          <div class="input-field">
-            <label>Website</label>
-            <input type="text" name="company[website]">
+          <div class="input-field col s12 m6">
+            <!-- <label>Website</label> -->
+            <input class='full-box-input' type="text" name="company[website]" placeholder='Website'>
           </div>
-          <div class="input-field">
-            <label>Bio</label>
-            <input type="text" name="company[bio]">
+          <div class="input-field col s12 m6">
+            <!-- <label>Bio</label> -->
+            <input class='full-box-input' type="text" name="company[bio]" placeholder='Bio'>
           </div>
-          <%= submit_tag "NEXT", :class => 'white black-text btn' %>
+          <%= submit_tag "NEXT", :class => 'white black-text btn submit-button' %>
         <% end %>
       </div>
     </div>
@@ -41,7 +41,6 @@
   <div class="apply-body col s12 hidden-on-small-only valign-wrapper" style='max-height: 40vh'>
     <div class="col s8 offset-s2 valign center-align">
       <div class="row">
-        <h4>Wholesalers</h4>
         <h5>Beat out competitors by constantly generating new sales.</h5>
       </div>
       <div class="row">
