@@ -1,12 +1,11 @@
 <div class="container">
 
   <div class="center-align row">
-    <h3><%= @company.company_name %></h3>
-    <h5 class='pointer about-company'>About Us</h5>
-    <div class="col s12">
-      <% if @company.logo %>
-        <%= image_tag @company.logo.url(:medium), :class => 'responsive-img' %>
-      <% end %>
+    <div class="company-logo-banner" style='background: url(<%= @company.logo.url(:large) %>)'>
+      <div style='background: rgba(255, 255, 255, .8)'>
+        <h3><%= @company.company_name %></h3>
+        <h5 class='no-bottom-margin pointer about-company'>About Us</h5>
+      </div>
     </div>
 
     <%= render partial: 'partials/products' %>
@@ -30,9 +29,9 @@
     animateScrollTo($('.company-bio'))
   })
 
-    function animateScrollTo(div) {
-      $('html, body').animate({
-        scrollTop: div.offset().top
-      }, 700)
-    }
+  function animateScrollTo(div) {
+    $('html, body').animate({
+      scrollTop: div.offset().top
+    }, 700)
+  }
 </script>

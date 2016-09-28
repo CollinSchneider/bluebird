@@ -4,7 +4,7 @@ class Company < ActiveRecord::Base
 
   belongs_to :user
 
-  has_attached_file :logo, styles: {large: "600x300!", medium: "400x200!", thumb: "300x150!" }, default_url: "/images/:style/missing.png"
+  has_attached_file :logo, styles: {large: "600x300!", medium: "400x200!", thumb: "300x150!" }
   validates_attachment_content_type :logo, content_type: /\Aimage\/.*\Z/
 
   before_create(on: :save) do
