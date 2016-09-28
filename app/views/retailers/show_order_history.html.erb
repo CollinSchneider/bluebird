@@ -45,7 +45,7 @@
         <div class="row order-box">
           <div class="col s6 m4 center-align">
             <% if @order.retailer.shipping_addresses.count > 1 %>
-              <h6>Change Shipping Address:</h6>
+              <h6 class='bold'>Change Shipping Address:</h6>
               <% @order.retailer.shipping_addresses.each do |local_address| %>
                 <% if local_address.id != @order.shipping_address_id %>
                 <%
@@ -68,7 +68,7 @@
           </div>
           <div class="col s6 m4 center-align">
             <% if @stripe_customer.sources.count > 1 %>
-              <h6>Change payment method:</h6>
+              <h6 class='bold'>Change payment method:</h6>
               <% @stripe_customer.sources.each do |card| %>
                 <% if card.id != @order.card_id %>
                 <div class="border">
@@ -90,6 +90,7 @@
 
         <div class="row order-box center-align z-depth-1">
           <form class="add-shipping">
+          <%= form_tag('/api/shipping/create_shipping_address') do %>
             <div class="input-field">
               <label>Street Address One</label>
               <input class="street-line-one" type="text" name="street_one">
@@ -113,8 +114,9 @@
             <div class='errors-div'>
             </div>
             <div class="shipping-errors"></div>
-            <input class="submit-address btn btn-primary" type="submit" value="New Address">
-          </form>
+            <input class="btn submit-button" type="submit" value="Add Address">
+          <% end %>
+          <!-- </form> -->
         </div>
 
         <div class="row order-box center-align z-depth-1">
@@ -271,11 +273,13 @@ function stripeResponseHandler(status, response){
             changeShippingApi(data.local_address.id)
           } else {
             $('.submit-address').prop('disabled', false)
-            for (var i = 0; i < data.errors.length; i++) {
-              var error = data.errors[i]
-              var errorText = $('<h6 class="red-text">').text(error.message)
-              $('.shipping-errors').append(errorText)
-            }
+            console.log('ERROR');
+            console.log(data);
+            // for (var i = 0; i < data.errors.length; i++) {
+            //   var error = data.errors[i]
+            //   var errorText = $('<h6 class="red-text">').text(error.message)
+            //   $('.shipping-errors').append(errorText)
+            // }
           }
         }
       })

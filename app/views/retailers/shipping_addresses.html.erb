@@ -49,15 +49,15 @@
         <% @retailer.shipping_addresses.each_slice(2) do |slice| %>
           <div class="row">
             <% slice.each do |address| %>
-              <% if easy_address.id != @retailer.primary_address.id %>
+              <% if address.id != @retailer.primary_address.id %>
                 <div class="col s12 m6 white border">
                   <h6><%= address.street_address_one %></h6>
                   <% if address.street_address_two != '' %>
                     <h6><%= address.street_address_two %></h6>
                   <% end %>
                   <h6><%= address.city %>, <%= address.state %> <%= address.zip %></h6>
-                  <a href="" class='make-primary' data='<%= address.id %>'>Make Primary Address</a> <br>
-                  <a href="" class='delete-address red-text' data='<%= easy_address.id %>'>Delete Address</a>
+                  <a class='pointer make-primary' data='<%= address.id %>'>Make Primary Address</a> <br>
+                  <a class='pointer delete-address red-text' data='<%= address.id %>'>Delete Address</a>
                 </div>
               <% end %>
             <% end %>

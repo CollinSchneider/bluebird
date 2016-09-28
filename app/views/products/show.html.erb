@@ -11,43 +11,6 @@
           </div>
 
           <div class="image-box z-depth-1 valign">
-            <% if current_user.is_retailer? %>
-              <% users_orders = current_user.retailer.commits.where('product_id = ?', @product.id) %>
-              <% if users_orders.any? %>
-                <div class="edit-order center-align" style="display: none">
-                  <div class="right-align no-padding" style="padding: 0">
-                    <a class='cancel-edit btn-flat waves-effect' style="display: none">X</a>
-                  </div>
-                  <% @commit_card = @stripe_customer.sources.retrieve(users_orders[0].card_id) %>
-                  <div class="row">
-                    <%= form_for users_orders[0] do |f| %>
-                      <div class="input-field">
-                        <%= f.label "Order Amount" %>
-                        <%= f.number_field :amount, :value => users_orders[0].amount %>
-                      </div>
-                      <%= f.submit "Update Order", :class => 'btn submit-button' %>
-                    <% end %>
-                  </div>
-                  <div class="row">
-                    <h6>Upon expiration, you would be charged from this credit card:</h6>
-                    <h6>**** **** **** <%= @commit_card.last4 %></h6>
-                    <h6><%= @commit_card.brand %></h6>
-                    <h6>Exp: <%= @commit_card.exp_month %>/<%= @commit_card.exp_year %></h6>
-                  </div>
-                  <div class="row">
-                    <h6>And shipped to this address:</h6>
-                    <h6><%= current_user.retailer.primary_address.street_address_one %></h6>
-                    <h6><%= current_user.retailer.primary_address.city %>, <%= current_user.retailer.primary_address.state %>, <%= current_user.retailer.primary_address.zip %></h6>
-                  </div>
-                  <div class="row">
-                    <a href="/retailer/order_history/<%= users_orders[0].id %>">Edit</a>
-                  </div>
-                  <div class="row">
-                    <%= button_to "Delete Purchase Order", commit_path(users_orders[0].id), method: :delete, :class => 'btn red' %> <br>
-                  </div>
-                </div>
-              <% end %>
-            <% end %>
 
             <div class="images">
               <div class="row">
@@ -182,8 +145,13 @@
 
                   <% elsif users_orders != [] %>
                     <h5>Ordered <%= users_orders[0].amount %></h5>
-                    <h6>Credit Card to be charged: **** **** **** <%= @commit_card.last4 %> (<%=@commit_card.brand %>)</h6>
-                    <button class='edit-order-button btn'>Edit</button>
+                    <%
+                      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+                      customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+                      commit_card = customer.sources.retrieve(users_orders[0].card_id)
+                    %>
+                    <h6>Credit Card to be charged: **** **** **** <%= commit_card.last4 %> (<%=commit_card.brand %>)</h6>
+                    <a href="/retailer/order_history/<%= users_orders[0].id %>" class='btn'>Edit</a>
                     <button class='cancel-edit' style='display: none'>Cancel Edit</button>
                   <% end %>
                 <% end %>
