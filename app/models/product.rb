@@ -1,5 +1,7 @@
 class Product < ActiveRecord::Base
 
+  BLUEBIRD_PERCENT_FEE = 0.05
+
   belongs_to :wholesaler
 
   has_many :commits

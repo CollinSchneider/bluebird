@@ -75,7 +75,7 @@ class User < ActiveRecord::Base
     )
 
     stripe_amount = amount.to_f*100
-    bluebird_fee = (stripe_amount*0.05).floor
+    bluebird_fee = (stripe_amount*Product::BLUEBIRD_PERCENT_FEE).floor
     begin
       charge = Stripe::Charge.create({
           :amount => stripe_amount.floor, # amount in cents

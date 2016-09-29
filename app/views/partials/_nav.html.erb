@@ -1,15 +1,20 @@
 <div class="sub-nav-triangle">
 </div>
 
-<div class="navigation row no-margin z-depth-1" style="padding-top: 10px; margin: 0px">
-  <div class="col s12 valign-wrapper main-nav">
-    <div class="col s4 m2 offset-s4 valign">
+<div class="navigation row no-margin z-depth-1" style="padding: 0px; margin: 0px">
+  <div class="col s12 valign-wrapper main-nav border no-margin" style='margin:0px'>
+    <div class="hide-on-med-and-down valign left">
       <a href="/shop">
-        <img src="/images/bluebird-blue-text.png" alt="" class="responsive-img"/>
+        <img src="/images/bluebird-blue-text.png" style='height: 40px'/>
+      </a>
+    </div>
+    <div class="hide-on-large-only valign center-align">
+      <a href="/shop">
+        <img src="/images/bluebird-blue-text.png" style='height: 40px'/>
       </a>
     </div>
     <% if current_user.is_retailer? %>
-      <div class="hide-on-med-and-up col s4 right-align valign">
+      <div class="hide-on-large-only col s4 right-align valign">
         <a class='black-text account-side-nav-link button-collapse' data-activates="retailer-slide-out">
           <div class="nav-category-div" style="display: inline-block">
             <span class='nav-category bold'><i class='material-icons'>reorder</i></span>
@@ -17,7 +22,7 @@
         </a>
       </div>
     <% elsif current_user.is_wholesaler? %>
-      <div class="hide-on-med-and-up col s4 right-align valign">
+      <div class="hide-on-large-only col s4 right-align valign">
         <a class='black-text account-side-nav-link button-collapse' data-activates="wholesaler-slide-out">
           <div class="nav-category-div" style="display: inline-block">
             <span class='nav-category bold'><i class='material-icons'>reorder</i></span>
@@ -25,7 +30,7 @@
         </a>
       </div>
     <% end %>
-    <div class="col s7 valign hide-on-small-only">
+    <div class="col s7 valign hide-on-med-and-down">
       <h6>
         <%
           items = {
@@ -49,7 +54,7 @@
       <div class="offset-s4 offset-m1">
       <% if current_user.is_retailer? %>
         <h6>
-          <div class="hide-on-small-only">
+          <div class="hide-on-med-and-down">
             <a class="black-text account-link" href="/retailer/pending_orders">
               <div class='nav-category-div' style="display: inline-block">
                 <span class="nav-category bold">Account</span>
@@ -59,7 +64,7 @@
         </h6>
       <% elsif current_user.is_wholesaler? %>
       <h6>
-        <div class="hide-on-small-only">
+        <div class="hide-on-med-and-down">
           <a class="black-text account-link" href="/wholesaler/profile">
             <div class='nav-category-div' style="display: inline-block">
               <span class="nav-category bold">Account</span>
@@ -69,7 +74,7 @@
       </h6>
       <% elsif current_user.is_admin? %>
         <h6>
-          <div class="hide-on-small-only">
+          <div class="hide-on-med-and-down">
             <a class="black-text account-link" href="/admin">
               <div class='nav-category-div' style="display: inline-block">
                 <span class="nav-category bold">Account</span>
@@ -79,11 +84,11 @@
         </h6>
       <% end %>
     </div>
-    <div class="col s1 hide-on-small-only valign nav-category-div">
+    <div class="col s1 hide-on-med-and-down valign nav-category-div">
       <a href="#" class="search nav-category"><i class=" nav-categorysmall material-icons black-text">search</i></a>
     </div>
   </div>
-  <div class="row col s12 sub-nav-container">
+  <div class="row col s12 sub-nav-container" style='padding: 0px; margin: 0px'>
     <div class="no-margin sub-nav discover-sub-nav">
       <h6 class="no-padding no-margin">
         <%
@@ -241,11 +246,11 @@
   $(".button-collapse").sideNav();
 
   function movePointer(position, width){
-    var height = $('.main-nav').height() - 25
+    // var height = $('.main-nav').height() - 50
     $('.sub-nav-triangle').css({
       display: 'inherit',
       marginLeft: position.left + (width/2 - 5),
-      marginTop: 47
+      marginTop: 40
     })
     $('.body-div').css({
       marginTop: 60
