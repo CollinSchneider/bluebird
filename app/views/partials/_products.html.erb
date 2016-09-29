@@ -11,7 +11,9 @@
               <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
               <div class="content-div" style='margin-bottom: 0px'>
                 <h6 class="truncate no-margin"><strong><%= product.title.upcase %></strong></h6>
-                <span class='valign-wrapper center-block no-padding no-margin'><img src="/images/bluebird-blue-mascot.png" style="height: 20px; display: inline-block" /> <h6 class='truncate bluebird-text' style='display: inline-block'>BlueBird Favorite!</h6></span>
+                <% if product.featured %>
+                  <span class='valign-wrapper center-block no-padding no-margin'><img src="/images/bluebird-blue-mascot.png" style="height: 20px; display: inline-block" /> <h6 class='truncate bluebird-text' style='display: inline-block'>BlueBird Favorite!</h6></span>
+                <% end %>
                 <h6 class='truncate no-margin'>From <%= product.wholesaler.user.company.company_name %></h6>
                 <h6>
                   <span class="was-price">Was $<%= product.price %></span>
