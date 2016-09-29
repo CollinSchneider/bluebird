@@ -14,7 +14,7 @@
   <div class="slider">
     <ul class="slides" style='display: none'>
       <% header_products.each do|product| %>
-        <li class='slide border col s12 center-align'>
+        <li class='slide col s12 center-align'>
           <a href="/products/<%=product.id %>/<%=product.slug %>">
             <%= image_tag product.main_image.url(:large), :class => 'slider-image' %>
             <!-- <#%= image_tag Product.where("status = 'live'").last.main_image.url(:large), :class => 'responsive-img' %> -->

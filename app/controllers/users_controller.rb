@@ -49,7 +49,7 @@ class UsersController < ApplicationController
             retailer = Retailer.new
             retailer.user_id = user.id
             retailer.save
-            # Mailer.retailer_welcome_email(user).deliver_later
+            Mailer.retailer_welcome_email(user).deliver_later
             redirect_to '/retailer/accounts'
           elsif params[:user_type] == 'wholesaler'
             wholesaler = Wholesaler.new

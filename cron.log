@@ -1911,3 +1911,57 @@ Did you mean?  expire_products
 	from -e:1:in `<main>'
 Running via Spring preloader in process 51018
 Running via Spring preloader in process 51017
+/usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/dynamic_matchers.rb:26:in `method_missing': undefined method `expire_product' for Product (call 'Product.connection' to establish a connection):Class (NoMethodError)
+Did you mean?  expire_products
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 52899
+Running via Spring preloader in process 52898
+/usr/local/lib/ruby/gems/2.3.0/gems/activerecord-4.2.5/lib/active_record/dynamic_matchers.rb:26:in `method_missing': undefined method `expire_product' for Product (call 'Product.connection' to establish a connection):Class (NoMethodError)
+Did you mean?  expire_products
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `eval'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/runner.rb:62:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:123:in `require_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:90:in `runner'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands/commands_tasks.rb:39:in `run_command!'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/commands.rb:17:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `block in require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/bin/rails:9:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `block in load'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:240:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:268:in `load'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+Running via Spring preloader in process 54373
+Running via Spring preloader in process 54374
