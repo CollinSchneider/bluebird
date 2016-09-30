@@ -1,7 +1,5 @@
 class Product < ActiveRecord::Base
 
-  BLUEBIRD_PERCENT_FEE = 0.05
-
   belongs_to :wholesaler
 
   has_many :commits
@@ -19,7 +17,7 @@ class Product < ActiveRecord::Base
   validates :category, presence: true
   validates :retail_price, presence: true
 
-  validate :enough_inventory_for_sale
+  validate :enough_inventory_for_sale, :discount_price_is_lower, :retail_price_is_more
 
   has_attached_file :main_image, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
   validates_attachment_content_type :main_image, content_type: /\Aimage\/.*\Z/
@@ -98,6 +96,10 @@ class Product < ActiveRecord::Base
     total_orders = Commit.where('product_id = ?', self.id).sum(:amount).to_i
     percentage = ((self.total_sales/self.goal.to_f)*100)
     return percentage
+  end
+
+  def price_with_fee
+    return self.discount.to_f + (self.price.to_f-self.discount.to_f)*Commit::BLUEBIRD_PERCENT_FEE
   end
 
   def total_sales
@@ -235,18 +237,17 @@ class Product < ActiveRecord::Base
         goal_met_products += 1
         product.status = 'goal_met'
         product.save(validate: false)
-        binding.pry
         product.commits.each do |commit|
           commit.status = 'goal_met'
+          commit.sale_made = true
           commit.save(validate: false)
-          amount = product.discount.to_f*commit.amount.to_i
-          charge = product.wholesaler.user.collect_payment(commit, amount)
+          charge = product.wholesaler.user.collect_payment(commit)
           if charge[1]
-            # Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
+            Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
           else
-            commit.card_declined = true
-            commit.card_decline_date = Time.now
-            commit.save(validate: false)
+            # commit.card_declined = true
+            # commit.card_decline_date = Time.now
+            # commit.save(validate: false)
             # Send card failure email
           end
         end
@@ -269,7 +270,19 @@ class Product < ActiveRecord::Base
   # VALIDATIONS
   def enough_inventory_for_sale
     if self.goal.to_f > self.discount.to_f*self.quantity.to_f
-      errors.add(:inventory_amount, "Your sales goal is not attainable with your current discount price and inventory selling")
+      errors.add(:error, ": Your sales goal is not attainable with your current discount price and inventory selling.")
+    end
+  end
+
+  def retail_price_is_more
+    if self.retail_price.to_f < self.price.to_f
+      errors.add(:error, ": Your retail price must be higher than your full wholesale price.")
+    end
+  end
+
+  def discount_price_is_lower
+    if self.discount.to_f >= self.price.to_f
+      errors.add(:error, ": Your discounted wholesale price must be lower than your full wholesale price.")
     end
   end
 

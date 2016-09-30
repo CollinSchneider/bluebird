@@ -58,9 +58,9 @@
   <% end %>
 <% end %>
 
-<% if @commits_where_card_declined > 0 %>
+<% if current_user.wholesaler.declined_commits > 0 %>
   <div class="col s12 row center-align">
-    <h6>*Note: <%= @commits_where_card_declined  %> of your purchase orders have been declined because the retailer's card defaulted.</h6>
+    <h6>*Note: <%= current_user.wholesaler.declined_commits  %> of your purchase orders have been declined because the retailer's card defaulted.</h6>
     <h6>We will keep an eye on this, and you will be notified shortly when this is resolved.</h6>
   </div>
 <% end %>

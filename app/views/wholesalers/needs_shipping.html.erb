@@ -7,41 +7,42 @@
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
   %>
 
-  <% @need_to_ship.each_slice(3) do |slice| %>
+  <% current_user.wholesaler.products_to_ship.each_slice(3) do |slice| %>
     <div class="row">
       <% slice.each do |commit| %>
-        <div class="col s12 m4 border center-align">
-          <h4><%= commit.product.title %></h4>
-          <%= image_tag commit.product.main_image.url(:medium), :class => 'responsive-img' %>
-          <h5><%= commit.amount %> Orders</h5>
-          <% if !commit.full_price %>
-            <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.discount.to_f*commit.amount.to_f) %></h5>
-          <% else %>
-            <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.price.to_f*commit.amount.to_f) %></h5>
-            <h6>(Purchased for full price)</h6>
-          <% end %>
-          <% address = EasyPost::Address.retrieve(commit.shipping_address.address_id) %>
-          <h6>Ship to:</h6>
-          <h6><%= commit.retailer.user.full_name %></h6>
-          <h6><%= commit.retailer.user.company.company_name %></h6>
-          <h6><%= address.street1 %></h6>
-          <% if address.street2 != '' %>
-            <h6><%= address.street2 %></h6>
-          <% end %>
-          <h6><%= address.city %>, <%= address.state %></h6>
-          <h6><%= address.zip %></h6>
-          <div class="submit-tracking">
-            <form class="tracking-form">
-              <div class="input-field">
-                <input type="hidden" class="sale-amount" value="<%= sale_amount %>">
-                <label>Tracking Number</label>
-                <input class="tracking-number" data="<%= commit.uuid %>" type="text" value="EZ3000000003">
-              </div>
-              <input type="submit" value="Enter Tracking Number" class='btn submit-tracking'>
-            </form>
+        <div class="col s12 m6 l4 center-align" style='padding: 10px !important'>
+          <div class='border'>
+            <h4><%= commit.product.title %></h4>
+            <%= image_tag commit.product.main_image.url(:medium), :class => 'responsive-img' %>
+            <h5><%= commit.amount %> Orders</h5>
+            <% if !commit.full_price %>
+              <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.discount.to_f*commit.amount.to_f) %></h5>
+            <% else %>
+              <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.price.to_f*commit.amount.to_f) %></h5>
+              <h6>(Purchased for full price)</h6>
+            <% end %>
+            <h6>Ship to:</h6>
+            <h6><%= commit.retailer.user.full_name %></h6>
+            <h6><%= commit.retailer.user.company.company_name %></h6>
+            <h6><%= commit.shipping_address.street_address_one %></h6>
+            <% if commit.shipping_address.street_address_two != '' %>
+              <h6><%= commit.shipping_address.street_address_two %></h6>
+            <% end %>
+            <h6><%= commit.shipping_address.city %>, <%= commit.shipping_address.state %></h6>
+            <h6><%= commit.shipping_address.zip %></h6>
+            <div class="submit-tracking">
+              <form class="tracking-form">
+                <div class="input-field">
+                  <input type="hidden" class="sale-amount" value="<%= sale_amount %>">
+                  <label>Tracking Number</label>
+                  <input class="tracking-number" data="<%= commit.uuid %>" type="text" value="EZ3000000003">
+                </div>
+                <input type="submit" value="Enter Tracking Number" class='btn submit-tracking'>
+              </form>
+            </div>
+            <!-- <button class='submit-tracker btn'>Enter Tracking Number</button> -->
+            <h6 class='error-message red-text'></h6>
           </div>
-          <!-- <button class='submit-tracker btn'>Enter Tracking Number</button> -->
-          <h6 class='error-message red-text'></h6>
         </div>
       <% end %>
     </div>

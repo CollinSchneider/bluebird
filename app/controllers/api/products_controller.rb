@@ -28,10 +28,10 @@ class Api::ProductsController < ApiController
     product.save
     render :json => {:product => product}
     product.commits.each do |commit|
-      # Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
+      Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
       commit.status = 'discount_granted'
-      amount = product.discount.to_f*commit.amount.to_f
-      current_user.collect_payment(commit, amount)
+      commit.sale_made = true
+      current_user.collect_payment(commit)
       commit.save(validate: false)
     end
   end
@@ -49,6 +49,7 @@ class Api::ProductsController < ApiController
       original_inventory += commit.amount.to_i
       Mailer.retailer_discount_missed(commit.retailer.user, product).deliver_later
       commit.status = 'past'
+      commit.sale_made = false
       commit.save(validate: false)
     end
     product.status = 'full_price'

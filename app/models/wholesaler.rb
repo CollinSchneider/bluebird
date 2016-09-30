@@ -3,6 +3,9 @@ class Wholesaler < ActiveRecord::Base
   belongs_to :user
 
   has_many :products
+  has_many :commits
+  has_many :sales
+  has_many :shippings
 
   # before_create(on: :save) do
   #   self.approved = false
@@ -15,11 +18,19 @@ class Wholesaler < ActiveRecord::Base
   end
 
   def needs_to_ship?
-    return !self.products.where('
-                    products.status = ? OR products.status = ? OR products.status = ?',
-                    'goal_met', 'discount_granted', 'full_price').joins(:commits).where('
-                      shipping_id IS NULL AND card_declined != ?
-                    ', true).empty?
+    return self.commits.where("sale_made = 't' AND has_shipped = 'f' AND id NOT IN (
+      select commit_id from sales where card_failed = 't'
+    )").any?
+  end
+
+  def products_to_ship
+    return self.commits.where("sale_made = 't' AND has_shipped = 'f' AND id NOT IN (
+      select commit_id from sales where card_failed = 't'
+    )")
+  end
+
+  def declined_commits
+    declined_commits = self.sales.where(:card_failed => true).count
   end
 
   def needs_stripe_connect?

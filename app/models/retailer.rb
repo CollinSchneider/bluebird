@@ -4,6 +4,8 @@ class Retailer < ActiveRecord::Base
 
   has_many :commits
   has_many :shipping_addresses
+  has_many :sales
+  has_many :shippings
 
   before_create(on: :save) do
     self.stripe_id = make_stripe_customer
@@ -40,13 +42,14 @@ class Retailer < ActiveRecord::Base
   end
 
   def card_declined?
-    declined_commits = self.commits.where(:card_declined => true)
-    return !declined_commits.empty?
+    return self.sales.where(:card_failed => true).any? || self.shippings.where(:card_failed => true).any?
   end
 
   def declined_order
-    declined_id = self.commits.where(:card_declined => true).order(card_decline_date: :asc).pluck(:uuid)
-    return declined_id.first
+    sale_failed = self.sales.where(:card_failed => true).order(card_failed_date: :asc).first.commit_id
+    return sale_failed if !sale_failed.nil?
+    shipping_failed = self.shipping.where(:card_failed => true).order(card_failed_date: :asc).first.commit_id
+    return shipping_failed if !shipping_failed.nil?
   end
 
   def successful_orders
@@ -54,13 +57,11 @@ class Retailer < ActiveRecord::Base
   end
 
   def total_savings
-    total_price = 0
-    total_spent = 0
-    self.successful_orders.each do |order|
-      total_spent += order.amount.to_f*order.product.discount.to_f
-      total_price += order.amount.to_f*order.product.price.to_f
+    total_savings = 0
+    self.sales.each do |sale|
+      total_savings += (sale.commit.product.price.to_f*sale.commit.amount.to_f) - (sale.sale_amount + sale.charge_amount)
     end
-    return total_price - total_spent
+    return total_savings
   end
 
 end

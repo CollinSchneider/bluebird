@@ -1,26 +1,27 @@
 
 
-  <h5 class='center-align'>Needs Attention</h5>
-
-  <h6 id="notice"></h6>
+  <div class="row center-align">
+    <h4>Your Decision...</h4>
+    <h6 id="notice"></h6>
+  </div>
 
   <% @products.each_slice(1) do |slice| %>
     <div class="row">
       <% slice.each do |product| %>
         <div class="col s10 offset-s1 no-padding">
-          <div class="row border">
+          <div class="row border valign-wrapper">
 
-            <div class="col s12 m3">
+            <div class="col s12 m4">
               <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
             </div>
 
-            <div class="col s12 m5 center-align">
+            <div class="col s12 m4 center-align">
                 <h5><%= product.title %></h5>
 
                 <h6 class='now-price'>$<%= product.discount %> each</h6>
-                <h6><%= product.commits.count %> orders</h6>
+                <h6>8 purchase orders</h6>
                 <% total_sales = (product.discount.to_f*product.commits.sum(:amount).to_i) %>
-                <h6>$<%= '%.2f' % total_sales %> in sales</h6>
+                <h6><%= number_to_currency(product.current_sales) %> in sales</h6>
                 <h6><%= product.percentage["percent_to_discount"] %>% of your goal</h6>
 
               <div class="col s8 offset-s2 left-align">
@@ -32,8 +33,8 @@
               </div>
             </div>
 
-            <div class="col s12 m4 valign-wrapper">
-              <div class="row buttons center-align valign">
+            <div class="col s12 m4">
+              <div class="row buttons center-align">
                 <% if total_sales.to_f > 0 %>
                   <div class="row">
                     <button class='grant-discount button-load green btn' data='<%= product.id %>'>Grant Discount</button><br>
@@ -43,10 +44,7 @@
                   <button class='expire-product button-load btn red lighten-2' data='<%= product.id %>'>Expire Product</button><br>
                 </div>
                 <div class="row">
-                  <button class='extend-product button-load btn green' data='<%= product.uuid %>'>Extend Product</button><br>
-                </div>
-                <div class="row">
-                  <button class='button-load btn green test-button'>Test</button>
+                  <button class='extend-product button-load btn green' data='<%= product.uuid %>'>Extend 10 Days</button><br>
                 </div>
               </div>
             </div>
@@ -59,49 +57,42 @@
 
 
 <script>
-  // $('.btn').click(function(){
-  //   replaceWithGif($(this).parent())
-  // })
-  $('.test-button').click(function(){
-    var div = $(this).parent().parent().parent().parent().parent().fadeOut()
-  })
 
   $('.grant-discount').click(function(){
     var div = $(this).parent().parent().parent().parent().parent()
     var productId = $(this).attr('data')
+    $(this).prop('disabled', true)
     $.ajax({
       url: '/api/products/grant_discount?product_id=' + productId,
       success: function(data) {
-        console.log(data);
         $('#notice').text("You have successfully granted the discount to " + data.product.title + ", you must now ship it out and the funds will be transferred to your account (see your profile page)!")
-        div.remove()
+        slideOut(div)
       }
     })
   })
 
   $('.expire-product').click(function(){
     var thisButton = $(this)
+    thisButton.prop('disbaled', true)
     var productId = $(this).attr('data')
     $.ajax({
       url: '/api/products/expire_product?product_id=' + productId,
       success: function(data) {
-        console.log(data);
         $('#notice').text("You have successfully expired the product " + data.product.title + ", you are no longer guaranteed any sales.")
-        // div.remove()
-        thisButton.parent().parent().parent().parent().parent().remove()
+        slideOut(thisButton.parent().parent().parent().parent().parent())
       }
     })
   })
 
   $('.extend-product').click(function(){
     var thisButton = $(this)
+    thisButton.prop('disabled', true)
     var productUuid = $(this).attr('data')
     $.ajax({
       url: '/api/products/extend_product?uuid=' + productUuid,
       success: function(data){
-        console.log(data);
         $('#notice').text(data.product.title + " has been extended 10 more days!")
-        thisButton.parent().parent().parent().parent().parent().remove()
+        slideOut(thisButton.parent().parent().parent().parent().parent())
       }
     })
   })

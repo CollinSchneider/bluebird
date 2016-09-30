@@ -3,21 +3,6 @@ class WholesalersController < ApplicationController
   layout 'wholesaler'
   before_action :authenticate_wholesaler
 
-  def profile
-    @commits_where_card_declined = current_user.wholesaler.products.where('
-                                              products.status = ? OR products.status = ? OR products.status = ?',
-                                              'goal_met', 'discount_granted', 'full_price').joins(:commits).where('
-                                                shipping_id IS NULL AND card_declined = ?
-                                              ', true).count
-    # @needs_attention = current_user.wholesaler.products.where('status = ?', 'needs_attention')
-    # @needs_shipping = current_user.wholesaler.products.where('
-    #                                           products.status = ? OR products.status = ? OR products.status = ?',
-    #                                           'goal_met', 'discount_granted', 'full_price').joins(:commits).where('
-    #                                             shipping_id IS NULL AND card_declined != ?
-    #                                           ', true)
-    # @receipts_to_generate = @needs_shipping.where('pdf_generated != ?', false)
-  end
-
   def new_product
     redirect_to '/wholesaler/profile' if current_user.wholesaler.needs_to_ship? || current_user.wholesaler.needs_attention? || current_user.wholesaler.needs_stripe_connect?
     @product = Product.new

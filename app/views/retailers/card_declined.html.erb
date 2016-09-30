@@ -3,38 +3,36 @@
     <h5>Whoops! Looks like your card was declined for a previous purchase.</h5>
     <h5>Let's fix this as soon as possible, otherwise we may have to cancel your order</h5>
     <div class="row">
-      <div class="row border col s6 offset-s3">
+      <div class="row border col s12 m8 offset-m2">
         <% declined_card = @stripe_customer.sources.retrieve(@commit.card_id) %>
         <h6><%= @commit.product.title %></h6>
-        <% if @commit.shipping_id.nil? %>
-          <% if !@commit.full_price %>
-            <h6>You still owe $<%= @commit.amount.to_f*@commit.product.discount.to_f%></h6>
-          <% else %>
-            <h6>You still owe $<%= @commit.amount.to_f*@commit.product.price.to_f%></h6>
-          <% end %>
-        <% else %>
-          <h6>You still owe $something for shipping</h6>
-        <% end %>
         <h6>Declined Card: <%= declined_card.brand %> **** **** **** <%= declined_card.last4%></h6>
-        <h6>Declined on: <%= @commit.card_decline_date.strftime('%b %d') %></h6>
-        <h6>Declined reason: <%= @commit.declined_reason %></h6>
+        <% if @commit.sale.card_failed %>
+          <h6>You owe <%= number_to_currency(@commit.sale.sale_amount) %></h6>
+          <h6>Declined on: <%= @commit.sale.card_failed_date.strftime('%b, %d') %></h6>
+        <% else %>
+          <h6>You owe <%= number_to_currency(@commit.shipping.shipping_amount) %></h6>
+          <h6>Declined on: <%= @commit.shipping.card_failed_date.strftime('%b, %d') %></h6>
+        <% end %>
       </div>
     </div>
 
     <div class="row">
       <h4 class='red-text error-message'></h4>
-      <h5>Change form of payment:</h5>
-      <% @stripe_customer.sources.each do |source| %>
-        <% if source.id != declined_card.id %>
-          <div class="row">
-            <button data="<%= source.id %>" class='update-payment btn'><%= source.brand %>: <%= source.last4 %></button>
-          </div>
+      <% if @stripe_customer.sources.count > 1 %>
+        <h5>Change form of payment:</h5>
+        <% @stripe_customer.sources.each do |card| %>
+          <% if card.id != declined_card.id %>
+            <div class="row">
+              <button data="<%= card.id %>" class='update-payment btn'><%= card.brand %>: <%= card.last4 %></button>
+            </div>
+          <% end %>
         <% end %>
       <% end %>
     </div>
     <div class="row">
       <h5>Add new card:</h5>
-      <form class="credit-card-form col s8 offset-s2 center-align">
+      <form class="credit-card-form col s12 border center-align">
         <div class="input-field">
           <label>Card Holder Name</label>
           <input id="card-name" type="text">

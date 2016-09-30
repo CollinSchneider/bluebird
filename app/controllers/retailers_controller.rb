@@ -4,7 +4,7 @@ class RetailersController < ApplicationController
   layout 'retailer'
 
   def index
-    redirect_to "/retailer/#{current_user.retailer.declined_order}/card_declined" if current_user.retailer.card_declined?
+    return redirect_to "/retailer/#{current_user.retailer.declined_order}/card_declined" if current_user.retailer.card_declined?
     @products = Product.where('id in (
       select product_id from commits where retailer_id = ? AND status = ? AND full_price != ?
     )', current_user.retailer.id, 'live', true)
@@ -32,9 +32,6 @@ class RetailersController < ApplicationController
       ).order(created_at: :desc).page(params[:page]).per_page(9)
     else
       @past_orders = current_user.retailer.commits.order(created_at: :desc).page(params[:page]).per_page(9)
-      # @past_orders = current_user.retailer.commits.where('stripe_charge_id IS NOT NULL AND product_id in (
-      #   select id from products where status = ? OR status = ? or status = ?
-      # )', 'full_price', 'discount_granted', 'goal_met').order(created_at: :desc).page(params[:page]).per_page(9)
     end
   end
 
@@ -44,13 +41,6 @@ class RetailersController < ApplicationController
     @stripe_customer = Stripe::Customer.retrieve(@order.retailer.stripe_id)
     @commit_card = @stripe_customer.sources.retrieve(@order.card_id)
     redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
-    if !@order.shipping_id.nil?
-      EasyPost.api_key = ENV['EASYPOST_API_KEY']
-      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-      @easypost = EasyPost::Tracker.retrieve(@order.shipping_id)
-      charge = Stripe::Charge.retrieve(@order.shipping_charge_id, :stripe_account => @order.product.wholesaler.stripe_id)
-      @shipping_amount = '%.2f' % (charge.amount/100)
-    end
   end
 
   def accounts
@@ -86,13 +76,13 @@ class RetailersController < ApplicationController
   end
 
   def card_declined
-    @commit = Commit.find_by_uuid(params[:order_uuid])
-    redirect_to '/retailer' if !@commit.card_declined
+    @commit = Commit.find(params[:order_id])
+    return redirect_to '/retailer' if @commit.retailer_id != current_user.retailer.id || !@commit.retailer.card_declined?
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
     @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
-    if !@commit.shipping_id.nil?
-      tracker = EasyPost::Tracker.retrieve(@commit.shipping_id)
+    if @commit.shipping.present?
+      tracker = EasyPost::Tracker.retrieve(@commit.shipping.tracking_id)
       fees = 0
       tracker.fees.each do |fee|
         fees += fee.amount

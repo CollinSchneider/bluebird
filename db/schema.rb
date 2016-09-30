@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160928011134) do
+ActiveRecord::Schema.define(version: 20160930025928) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,25 +25,21 @@ ActiveRecord::Schema.define(version: 20160928011134) do
   add_index "admins", ["user_id"], name: "index_admins_on_user_id", using: :btree
 
   create_table "commits", force: :cascade do |t|
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
     t.integer  "amount"
     t.string   "status"
     t.integer  "product_id"
-    t.string   "shipping_id"
-    t.string   "stripe_charge_id"
     t.string   "sale_amount"
-    t.boolean  "pdf_generated"
     t.string   "uuid"
     t.integer  "retailer_id"
-    t.boolean  "card_declined"
-    t.datetime "card_decline_date"
     t.string   "card_id"
-    t.string   "declined_reason"
     t.boolean  "full_price"
     t.boolean  "refunded"
-    t.string   "shipping_charge_id"
     t.integer  "shipping_address_id"
+    t.boolean  "sale_made"
+    t.integer  "wholesaler_id"
+    t.boolean  "has_shipped",         default: false
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
@@ -135,6 +131,24 @@ ActiveRecord::Schema.define(version: 20160928011134) do
 
   add_index "retailers", ["user_id"], name: "index_retailers_on_user_id", using: :btree
 
+  create_table "sales", force: :cascade do |t|
+    t.integer  "commit_id"
+    t.integer  "retailer_id"
+    t.integer  "wholesaler_id"
+    t.float    "sale_amount"
+    t.string   "stripe_charge_id"
+    t.boolean  "card_failed"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.string   "card_failed_reason"
+    t.float    "charge_amount"
+    t.datetime "card_failed_date"
+  end
+
+  add_index "sales", ["commit_id"], name: "index_sales_on_commit_id", using: :btree
+  add_index "sales", ["retailer_id"], name: "index_sales_on_retailer_id", using: :btree
+  add_index "sales", ["wholesaler_id"], name: "index_sales_on_wholesaler_id", using: :btree
+
   create_table "shipping_addresses", force: :cascade do |t|
     t.string   "address_id"
     t.datetime "created_at",         null: false
@@ -147,6 +161,24 @@ ActiveRecord::Schema.define(version: 20160928011134) do
     t.string   "zip"
     t.string   "state"
   end
+
+  create_table "shippings", force: :cascade do |t|
+    t.integer  "commit_id"
+    t.integer  "retailer_id"
+    t.integer  "wholesaler_id"
+    t.float    "shipping_amount"
+    t.string   "tracking_id"
+    t.string   "stripe_charge_id"
+    t.boolean  "card_failed"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.string   "card_failed_reason"
+    t.datetime "card_failed_date"
+  end
+
+  add_index "shippings", ["commit_id"], name: "index_shippings_on_commit_id", using: :btree
+  add_index "shippings", ["retailer_id"], name: "index_shippings_on_retailer_id", using: :btree
+  add_index "shippings", ["wholesaler_id"], name: "index_shippings_on_wholesaler_id", using: :btree
 
   create_table "users", force: :cascade do |t|
     t.string   "email"
@@ -177,5 +209,11 @@ ActiveRecord::Schema.define(version: 20160928011134) do
   add_foreign_key "companies", "users"
   add_foreign_key "product_tokens", "products"
   add_foreign_key "retailers", "users"
+  add_foreign_key "sales", "commits"
+  add_foreign_key "sales", "retailers"
+  add_foreign_key "sales", "wholesalers"
+  add_foreign_key "shippings", "commits"
+  add_foreign_key "shippings", "retailers"
+  add_foreign_key "shippings", "wholesalers"
   add_foreign_key "wholesalers", "users"
 end

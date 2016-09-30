@@ -60,7 +60,7 @@
 <% if params[:goal] && params[:duration] %>
   <div class="row center-align">
     <h5>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h5>
-    <h5>Sales Goal: $<%= params[:goal] %></h5>
+    <h5>Sales Goal: <%= number_to_currency(params[:goal]) %></h5>
     <% if flash.now[:error] %>
       <% flash.now[:error].each do |err, msg| %>
         <h6 class="red-text error-field"><i span="tiny material-icons">error_outline</i> <%= msg.first %></h6>
@@ -77,12 +77,12 @@
             <h5>Describe your product.</h5>
             <div class="input-field">
               <%= f.label 'Product Title*' %>
-              <%= f.text_field :title %> <br>
+              <%= f.text_field :title, :required => true %> <br>
             </div>
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <label for="short-description">Short Description*</label>
-                <%= f.text_area :description, :id => "short-description", :class => "materialize-textarea", :length => 60 %> <br>
+                <%= f.text_area :description, :id => "short-description", :class => "materialize-textarea", :length => 60, :required => true %> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Short, 60 character maximum length product description</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -91,7 +91,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <label for="long-description">Long Description</label>
-                <%= f.text_area :long_description, :id => "long-description", :class => "materialize-textarea" %> <br>
+                <%= f.text_area :long_description, :id => "long-description", :class => "materialize-textarea", :required => true %> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Longer, detailed product description</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -99,7 +99,7 @@
             </div>
             <div class="input-field">
               <%= f.label "Feature One*" %>
-              <%= f.text_field :feature_one %>
+              <%= f.text_field :feature_one, :required => true %>
             </div>
             <div class="input-field">
               <%= f.label "Feature Two" %>
@@ -119,7 +119,7 @@
             </div>
 
             <div class="input-field">
-              <select name="product[category]">
+              <select name="product[category]" required>
                 <option selected="selected" disabled>Choose Category*</option>
                 <option value="Home Goods">Home Goods</option>
                 <option value="Accessories">Accessories</option>
@@ -138,7 +138,7 @@
             <div class="file-field input-field">
               <div class="btn">
                 <span>Main Image*</span>
-                <%= f.file_field :main_image %>
+                <%= f.file_field :main_image, :required => true %>
               </div>
               <div class="file-path-wrapper">
                 <input class="file-path validate" type="text">
@@ -190,7 +190,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Product Full Wholesale Price*' %>
-                <%= f.number_field :price %> <br>
+                <%= f.number_field :price, :required => true %> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the full wholesale price. <br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -199,7 +199,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Product Discounted Wholesale Price*' %>
-                <%= f.number_field :discount, :class => 'product-discount' %> <br>
+                <%= f.number_field :discount, :class => 'product-discount', :required => true %> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
@@ -208,7 +208,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Suggested Retailer Price*' %>
-                <%= f.number_field :retail_price, :class => 'retail-price' %> <br>
+                <%= f.number_field :retail_price, :class => 'retail-price', :required => true %> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
@@ -217,7 +217,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Product Inventory For Sale*' %>
-                <%= f.number_field :quantity, :class => 'product-quantity' %> <br>
+                <%= f.number_field :quantity, :class => 'product-quantity', :required => true %> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>How much inventory you are listing for sale <br> Tip: must be possible to reach $<%=params[:goal]%> in sales at your<br> discounted price with this amount of inventory.</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -226,10 +226,10 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Minimum Allowed Order' %>
-                <%= f.number_field :minimum_order %> <br>
+                <%= f.number_field :minimum_order, :required => true %> <br>
               </div>
               <div class="col s1 valign">
-                <a class="tooltipped" data-position="top" data-delay="0" data-tooltip="<h6>The lowest quantity of product a retailer can order.</h6>"><i class="tiny material-icons">live_help</i></a>
+                <a class="tooltipped" data-position="top" data-delay="0" data-tooltip="<h6>The lowest number of units a retailer can order.</h6>"><i class="tiny material-icons">live_help</i></a>
               </div>
             </div>
 
@@ -262,9 +262,4 @@
       span.remove();
     });
   });
-
-  $('form').submit(function(){
-    $('.submit-button').remove()
-    $('.loading-wheel').attr('class', 'responsive-img')
-  })
 </script>

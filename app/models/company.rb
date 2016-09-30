@@ -1,4 +1,5 @@
 class Company < ActiveRecord::Base
+  after_create :strip_fields
 
   validates :company_name, presence: true
 
@@ -8,7 +9,7 @@ class Company < ActiveRecord::Base
   validates_attachment_content_type :logo, content_type: /\Aimage\/.*\Z/
 
   before_create(on: :save) do
-    self.company_key = create_company_key
+    # self.company_key = create_company_key
     self.uuid = SecureRandom.uuid
   end
 
@@ -19,6 +20,14 @@ class Company < ActiveRecord::Base
     key = key.gsub('!', '')
     key = key.gsub("'", "")
     return key
+  end
+
+  def strip_fields
+    self.company_name = self.company_name.strip
+    self.location = self.location.strip if !self.location.nil?
+    self.website = self.website.strip if !self.website.nil?
+    self.company_key = self.create_company_key
+    self.save!
   end
 
 end

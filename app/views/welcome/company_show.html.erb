@@ -1,8 +1,9 @@
 <div class="container">
 
   <div class="center-align row">
-    <div class="company-logo-banner" style='background: url(<%= @company.logo.url(:large) %>)'>
-      <div style='background: rgba(255, 255, 255, .8)'>
+    <!-- <div class="company-logo-banner"> -->
+    <div class="col s12 m8 offset-m2 company-logo-banner" style='background: url(<%= @company.logo.url(:large) %>)'>
+      <div style='background: rgba(255, 255, 255, .8); z-index: 100'>
         <h3><%= @company.company_name %></h3>
         <h5 class='no-bottom-margin pointer about-company'>About Us</h5>
       </div>

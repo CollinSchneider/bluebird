@@ -9,15 +9,16 @@
         <h5><%= @order.product.time_to_expiration %></h5>
         <%= image_tag @order.product.main_image.url(:medium), :class => 'responsive-img' %>
           <h4 class='bold'><%= @order.product.title %></h4>
-          <h6 class='green-text'>$<%= @order.product.discount %></h6>
+          <h6 class='green-text'><%= number_to_currency(@order.product.price_with_fee) %>/unit</h6>
           <div class="row">
             <%= form_for @order do |f| %>
               <div class="input-field">
                 <%= f.label "Order Amount" %>
                 <%= f.number_field :amount, :value => @order.amount %>
               </div>
-            <%= f.button "Update Order", :class => 'btn' %>
+            <%= f.button "Update Order", :class => 'btn submit-button' %>
             <% end %>
+            <%= button_to "Cancel Order", commit_path(@order.id), :class => 'btn red submit-button', method: :delete %>
             <% if !flash[:error].nil? %>
               <% flash[:error].each do |err| %>
                 <h6 class='red-text'><%= err %></h6>
@@ -34,12 +35,8 @@
           </div>
           <div class="row">
             <h6>And shipped to this address:</h6>
-            <%
-              EasyPost.api_key = ENV['EASYPOST_API_KEY']
-              shipping_address = EasyPost::Address.retrieve(@order.shipping_address.address_id)
-            %>
-            <h6><%= shipping_address.street1 %></h6>
-            <h6><%= shipping_address.city %>, <%= shipping_address.state %>, <%= shipping_address.zip %></h6>
+            <h6><%= @order.shipping_address.street_address_one %></h6>
+            <h6><%= @order.shipping_address.city %>, <%= @order.shipping_address.state %>, <%= @order.shipping_address.zip %></h6>
           </div>
         </div>
         <div class="row order-box">
@@ -48,13 +45,9 @@
               <h6 class='bold'>Change Shipping Address:</h6>
               <% @order.retailer.shipping_addresses.each do |local_address| %>
                 <% if local_address.id != @order.shipping_address_id %>
-                <%
-                EasyPost.api_key = ENV['EASYPOST_API_KEY']
-                address = EasyPost::Address.retrieve(local_address.address_id)
-                %>
                 <div class="border">
-                  <h6><%= address.street1 %></h6>
-                  <h6><%= address.city %>, <%= address.state %>, <%= address.zip %></h6>
+                  <h6><%= local_address.street_address_one %></h6>
+                  <h6><%= local_address.city %>, <%= local_address.state %>, <%= local_address.zip %></h6>
                   <form class="change-address">
                     <div class="input-field">
                       <input type="hidden" class="address-id" value="<%= local_address.id %>">
@@ -156,37 +149,51 @@
 
     <% else %>
 
-      <div class="col s12 center-align">
-        <div class="col s4 center-align">
-          <%= image_tag @order.product.main_image.url(:medium), :class => 'responsive-img' %>
-        </div>
-        <div class="row">
-          <h4><%= @order.product.title %></h4>
-          <% if !@order.full_price %>
-            <h6><%= @order.amount %> x $<%= '%.2f' % (@order.product.discount) %>: <span class='bold'>$<%= '%.2f' % (@order.amount.to_i*@order.product.discount.to_f) %></span></h6>
-            <h6>Shipping: $<%= @shipping_amount %></h6>
-            <hr>
-            <h6 class="bold">$<%= '%.2f' % ((@order.amount.to_i*@order.product.discount.to_f)+(@shipping_amount.to_f)) %> total</h6>
+        <div class="col s12 center-align">
+          <div class="col s4 center-align">
+            <%= image_tag @order.product.main_image.url(:medium), :class => 'responsive-img' %>
+          </div>
+          <div class="row">
+            <h4><%= @order.product.title %></h4>
+            <% if !@order.full_price %>
+              <h6><%= @order.amount %> units x <%= number_to_currency(@order.product.price_with_fee) %>/each</h6>
+              <% shipping_cost = @order.shipping ? @order.shipping.shipping_amount/100 : 0 %>
+              <% if shipping_cost > 0 %>
+                <h6>Shipping: <%= number_to_currency(shipping_cost) %></h6>
+              <% end %>
+              <hr>
+              <h6 class="bold"><%= number_to_currency((@order.total_price)+(shipping_cost)) %> total</h6>
+              <h6 class='green-text bold'><%= number_to_currency(@order.amount_saved - shipping_cost) %> saved</h6>
+            <% else %>
+              <h6><%= @order.amount %> units x <%= number_to_currency(@order.product.price) %>/each</h6>
+              <h6><%= number_to_currency(@order.bluebird_fee) %> fee</h6>
+              <% shipping_cost = @order.shipping ? @order.shipping.shipping_amount/100 : 0 %>
+              <% if shipping_cost > 0 %>
+                <h6>Shipping: <%= number_to_currency(shipping_cost) %></h6>
+              <% end %>
+              <hr>
+              <h6 class="bold"><%= number_to_currency((@order.total_price)+(shipping_cost)) %></h6>
+              <h6 class='green-text bold'><%= number_to_currency(@order.amount_saved - shipping_cost) %> saved</h6>
+            <% end %>
+          </div>
+          <% if @order.shipping %>
+            <div class="row">
+              <%
+                EasyPost.api_key = ENV['EASYPOST_API_KEY']
+                shipping_info = EasyPost::Tracker.retrieve(@order.shipping.tracking_id)
+              %>
+              <h6>Tracking Code: <%= shipping_info.tracking_code %></h6>
+              <h6>Estimate Delivery Date: <%= DateTime.parse(shipping_info.est_delivery_date).strftime('%B %d, %Y') %></h6>
+              <h6>Currently In: <%= shipping_info.tracking_details.last.tracking_location.city %>, <%= shipping_info.tracking_details.last.tracking_location.state%> <%=shipping_info.tracking_details.last.tracking_location.zip %></h6>
+              <h6><a href="<%= shipping_info.public_url %>" target="_blank">More Details</a></h6>
+            </div>
           <% else %>
-            <h6><%= @order.amount %> x $<%= '%.2f' % (@order.product.price) %>: <span class='bold'>$<%= '%.2f' % (@order.amountl.to_i*@order.product.price.to_f) %></span></h6>
-            <h6>Shipping: $<%= @shipping_amount %></h6>
-            <hr>
-            <h6 class="bold">$<%= '%.2f' % ((@order.amount.to_i*@order.product.price.to_f)+(@shipping_amount.to_f)) %></h6>
+            <h6>Your order is yet to be shipped, you will be updated with the info when it is sent out!</h6>
           <% end %>
-        </div>
-        <div class="row">
-          <%
-            EasyPost.api_key = ENV['EASYPOST_API_KEY']
-            shipping_info = EasyPost::Tracker.retrieve(@order.shipping_id)
-          %>
-          <h6>Tracking Code: <%= shipping_info.tracking_code %></h6>
-          <h6>Estimate Delivery Date: <%= DateTime.parse(shipping_info.est_delivery_date).strftime('%B %d, %Y') %></h6>
-          <h6>Currently In: <%= shipping_info.tracking_details.last.tracking_location.city %>, <%= shipping_info.tracking_details.last.tracking_location.state%> <%=shipping_info.tracking_details.last.tracking_location.zip %></h6>
-          <h6><a href="<%= shipping_info.public_url %>" target="_blank">More Details</a></h6>
-        </div>
-      </div>
-    <% end %>
 
+        </div>
+
+    <% end %>
   </div>
 
 </div>

@@ -32,19 +32,19 @@ class Api::ShippingController < ApiController
       local_address.zip =  verifiable_address.zip
       local_address.state = verifiable_address.state
       local_address.save
-      return redirect_to request.referrer
-      # return render :json => {
-      #   success: true,
-      #   easy_address: verifiable_address,
-      #   local_address: local_address
-      # }
+      # return redirect_to request.referrer
+      return render :json => {
+        success: true,
+        easy_address: verifiable_address,
+        local_address: local_address
+      }
     else
       flash[:error] = verifiable_address.verifications.delivery.errors
-      return redirect_to request.referrer
-      # return render :json => {
-      #   success: false,
-      #   errors: verifiable_address.verifications.delivery.errors
-      # }
+      # return redirect_to request.referrer
+      return render :json => {
+        success: false,
+        errors: verifiable_address.verifications.delivery.errors
+      }
     end
   end
 
@@ -84,38 +84,34 @@ class Api::ShippingController < ApiController
       tracker = EasyPost::Tracker.create({
         tracking_code: tracking_code
       })
+      binding.pry
       if !tracker.nil?
         shipping_cost = 0
+        commit.shipping.tracking_id = tracker.id
+        commit.shipping.save!
         tracker.fees.each do |fee|
           shipping_cost += fee.amount.to_f
         end
         charge = current_user.collect_shipping_charge(commit, shipping_cost)
+        commit.has_shipped = true
+        commit.save(validate: false)
         if charge[0] == true
           Mailer.retailer_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
-          commit.shipping_id = tracker.id
-          commit.card_declined = false
-          commit.card_decline_date = nil
-          commit.save(validate: false)
-          render :json => {
+          return render :json => {
             success: true,
             charge: charge[1],
             tracking: tracker
           }
         else
-          declined_charge = "$#{ '%.2f' % shipping_cost.to_f}"
           Mailer.retailer_declined_card_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url, declined_charge)
-          commit.card_declined = true
-          commit.card_decline_date = Time.now
-          commit.declined_reason = charge[1]
-          commit.save(validate: false)
-          render :json => {
+          return render :json => {
             success: false,
             error: charge[1]
           }
         end
       end
     rescue EasyPost::Error => e
-      render :json => {
+      return render :json => {
         success: false,
         error: e.message
       }

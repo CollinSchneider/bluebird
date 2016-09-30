@@ -53,60 +53,35 @@ class Api::PaymentsController < ApiController
     card_id = params[:card_id]
     commit.card_id = card_id
     commit.save(validate: false)
-    if commit.card_declined
-      commit.card_declined = false
-      commit.card_decline_date = nil
-      commit.declined_reason = nil
-      commit.save(validate: false)
+    if !commit.sale.nil? && commit.sale.card_failed
 
-      # Charge originally failed
-      if commit.stripe_charge_id.nil?
-
-        if commit.full_price
-          amount = commit.product.price.to_f*commit.amount.to_f
-        elsif commit.status == 'goal_met' || commit.status == 'discount_granted'
-          amount = commit.product.discount.to_f*commit.amount.to_f
-        end
-        charge = commit.product.wholesaler.user.collect_payment(commit, amount)
-
-        if charge[1]
-          commit.save(validate: false)
-          return render :json => {
-            success: true,
-            charge: charge[0]
-          }
-
-        else
-          commit.card_declined = true
-          commit.card_decline_date = Time.now
-          commit.card_declined_reason = charge[0]
-          commit.save(validate: false)
-          return render :json => {
-            success: false,
-            error: charge[0]
-          }
-        end
-      # Shipping charge failed
-      elsif !commit.stripe_charge_id.nil? && commit.shipping_charge_id.nil?
-        charge = commit.product.wholesaler.user.collect_shipping_charge(commit)
-        if charge[1]
-          commit.save(validate: false)
-          return render :json => {success: true}
-
-        else
-          commit.card_declined = true
-          commit.card_decline_date = Time.now
-          commit.card_declined_reason = charge[0]
-          commit.save(validate: false)
-          return render :json => {
-            success: false,
-            error: charge[0]
-          }
-        end
-
+      charge = commit.product.wholesaler.user.collect_payment(commit)
+      if charge[1]
+        commit.save(validate: false)
+        return render :json => {
+          success: true,
+          charge: charge[0]
+        }
       else
-        return render :json => {success: true}
+        return render :json => {
+          success: false,
+          error: charge[0]
+        }
       end
+
+    elsif !commit.shipping.nil? && commit.shipping.card_failed
+
+      charge = commit.product.wholesaler.user.collect_shipping_charge(commit)
+      if charge[1]
+        commit.save(validate: false)
+        return render :json => {success: true}
+      else
+        return render :json => {
+          success: false,
+          error: charge[0]
+        }
+      end
+
     end
     return render :json => {success: true}
   end

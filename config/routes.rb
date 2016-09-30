@@ -81,7 +81,7 @@ Rails.application.routes.draw do
   get '/retailer/last_chance' => 'retailers#last_chance'
   get '/retailer/settings/change_password' => 'retailers#change_password'
   put '/retailer/settings/change_password' => 'retailers#change_password'
-  get '/retailer/:order_uuid/card_declined' => 'retailers#card_declined'
+  get '/retailer/:order_id/card_declined' => 'retailers#card_declined'
 
                 #///////////////////#
                 #   ADMIN ROUTES    #

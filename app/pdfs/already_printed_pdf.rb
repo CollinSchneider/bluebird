@@ -2,19 +2,16 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def initialize(user)
     super()
-    product_array = user.wholesaler.products.where('status = ? OR status = ? OR status = ?', 'goal_met', 'discount_granted', 'full_price').pluck(:id).to_a
-    need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL AND card_declined != ?', product_array, true)
-
     directions_title(user)
     directions
     bluebird_image
     start_new_page
 
     total_commits = 0
-    need_to_ship.each do |commit|
+    user.wholesaler.products_to_ship.each do |commit|
       total_commits += 1
       pdf_sequence(commit)
-      start_new_page if total_commits != need_to_ship.length
+      start_new_page if total_commits != user.wholesaler.products_to_ship.length
     end
 
   end

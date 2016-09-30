@@ -1,8 +1,14 @@
 class Commit < ActiveRecord::Base
 
+  BLUEBIRD_PERCENT_FEE = 0.2
+
   belongs_to :retailer
+  belongs_to :wholesaler
   belongs_to :product
   belongs_to :shipping_address
+
+  has_one :sale
+  has_one :shipping
 
   validate :meets_minimum_order
   validate :enough_inventory
@@ -19,6 +25,7 @@ class Commit < ActiveRecord::Base
     self.status = 'live'
     self.refunded = false
     self.retailer_id = user.retailer.id
+    self.wholesaler_id = self.product.wholesaler_id
     self.set_primary_card_id_and_address
     self.set_sale_amount
     return self.save ? true : false
@@ -39,10 +46,6 @@ class Commit < ActiveRecord::Base
     end
   end
 
-  def update_commit
-
-  end
-
   def destroy_commit
     self.product.quantity += self.amount
     new_sales = (self.product.current_sales.to_f) - (self.amount.to_i*self.product.discount.to_f)
@@ -52,7 +55,15 @@ class Commit < ActiveRecord::Base
   end
 
   def amount_saved
-    return self.product.price.to_f - (self.amount.to_f*self.product.discount.to_f)
+    return (self.product.price.to_f*self.amount.to_f) - (self.amount.to_f*self.product.discount.to_f)
+  end
+
+  def total_price
+    return self.product.discount.to_f*self.amount.to_f + self.amount_saved*Commit::BLUEBIRD_PERCENT_FEE
+  end
+
+  def bluebird_fee
+    return self.amount_saved*Commit::BLUEBIRD_PERCENT_FEE
   end
 
   # VALIDATIONS

@@ -22,6 +22,16 @@ $(document).ready(function(){
   mouseOvers()
 })
 
+function slideOut(div){
+  var windowWidth = $(window).width()
+  div.animate({
+    marginLeft: windowWidth + 100
+  })
+  setTimeout(function(){
+    div.remove()
+  }, 750)
+}
+
   function mouseOvers(){
     $('a[href="/discover"]').mouseover(function(){
       $('.discover-sub-nav').css({

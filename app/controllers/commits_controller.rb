@@ -11,9 +11,9 @@ class CommitsController < ApplicationController
 
         if commit.full_price
           commit.status = 'full_price'
+          commit.sale_made = true
           commit.save(validate: false)
-          amount = commit.product.price.to_f*commit.amount.to_i
-          charge = commit.product.wholesaler.user.collect_payment(commit, amount)
+          charge = commit.product.wholesaler.user.collect_payment(commit)
           if !charge.nil? && !charge[1]
             return redirect_to "/retailer/#{commit.uuid}/card_declined"
           else
@@ -51,15 +51,16 @@ class CommitsController < ApplicationController
       else
         flash[:error] = commit.errors.full_messages
       end
-      return redirect_to request.referrer
+      return redirect_to "/products/#{commit.product.id}/#{commit.product.slug}"
     end
   end
 
   def destroy
     commit = Commit.find(params[:id])
+    product = Product.find(commit.product_id)
     if commit.retailer_id == current_user.retailer.id
       commit.destroy_commit
-      return redirect_to request.referrer
+      return redirect_to "/products/#{product.id}/#{product.slug}"
     end
   end
 

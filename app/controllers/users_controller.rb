@@ -101,32 +101,35 @@ class UsersController < ApplicationController
     scope = params[:scope]
     auth_code = params[:code]
 
-    uri = URI.parse("https://connect.stripe.com/oauth/token")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-    request = Net::HTTP::Post.new(uri.request_uri)
-    request.set_form_data({
-      "client_secret" => "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn",
-      "code" => auth_code,
-      "grant_type" => "authorization_code"
-    })
-    response = http.request(request)
-    data = JSON.parse(response.body)
+    if !auth_code.nil? && !scope.nil?
+      uri = URI.parse("https://connect.stripe.com/oauth/token")
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.set_form_data({
+        "client_secret" => "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn",
+        "code" => auth_code,
+        "grant_type" => "authorization_code"
+      })
+      response = http.request(request)
+      data = JSON.parse(response.body)
 
-    stripe_publishable_key = data["stripe_publishable_key"]
-    access_token = data["access_token"]
-    stripe_user_id = data["stripe_user_id"]
-    wholesaler = current_user.wholesaler
-    wholesaler.stripe_id = stripe_user_id
-    wholesaler.save!
+      stripe_publishable_key = data["stripe_publishable_key"]
+      access_token = data["access_token"]
+      stripe_user_id = data["stripe_user_id"]
+      wholesaler = current_user.wholesaler
+      wholesaler.stripe_id = stripe_user_id
+      wholesaler.save!
+      binding.pry
+      
+      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+      customer = Stripe::Customer.create(
+        {:description => "Customer for: #{current_user.full_name}"},
+        {:stripe_account => current_user.wholesaler.stripe_id}
+      )
 
-    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    customer = Stripe::Customer.create(
-      {:description => "Customer for: #{current_user.full_name}"},
-      {:stripe_account => current_user.wholesaler.stripe_id}
-    )
-
-    redirect_to '/wholesaler/profile'
+      return redirect_to '/wholesaler/profile'
+    end
   end
 
   def settings

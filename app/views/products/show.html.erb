@@ -72,8 +72,8 @@
                     <% end %>
                   </div>
                 <% end %>
-                <h6 class='was-price' style="display: inline-block">$<%= @product.price %></h6>
-                <h6 class='now-price bold' style="display: inline-block">$<%= @product.discount %></h6>
+                <h6 class='was-price' style="display: inline-block"><%= number_to_currency(@product.price) %></h6>
+                <h6 class='now-price bold' style="display: inline-block"><%= number_to_currency(@product.price_with_fee) %></h6>
                 <h6>Suggested Retail Price: <span class='bold'>$<%= '%.2f' % @product.retail_price %></span></h6>
               </div>
 
@@ -100,7 +100,11 @@
               </div>
 
               <div class="row no-bottom-margin">
-                <h6><%= @product.purchases_to_discount %> orders away from discount</h6>
+                <% if @product.purchases_to_discount > 0 %>
+                  <h6><%= @product.purchases_to_discount %> orders away from discount</h6>
+                <% else %>
+                  <h6>Discount reached!</h6>
+                <% end %>
                 <div class="<%= @product.percentage["class"] %>">
                   <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
                 </div>
@@ -135,16 +139,42 @@
                 <% users_orders = current_user.retailer.commits.where('product_id = ?', @product.id) %>
                 <% if users_orders == [] %>
                   <h6>Minimum Order Amount: <%= @product.minimum_order %> products</h6>
-                    <%= form_for Commit.new do |f| %>
-                    <%= f.hidden_field :product_id, :value => @product.id %>
-                    <%= f.hidden_field :full_price, :value => false %>
-                    <%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
-                    <div class="input-field">
-                      <%= f.label "Order Quantity" %>
-                      <%= f.number_field :amount, :minimum => @product.minimum_order %>
+                    <form class="commit-step-one">
+                      <div class="input-field">
+                        <label>Order Quantity</label>
+                        <input type="text" class="order-amount" min="<%= @product.minimum_order.to_i %>" required>
+                      </div>
+                      <input type="submit" value="Make Order" class='btn'>
+                    </form>
+                    <div class="hidden real-commit-div">
+                      <%= form_for Commit.new, :class => 'real-order-form' do |f| %>
+                        <%= f.hidden_field :product_id, :value => @product.id %>
+                        <%= f.hidden_field :full_price, :value => false %>
+                        <%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
+                        <label>Order Quantity</label>
+                        <div class="input-field">
+                          <input type="text" name="commit[amount]" class='real-order-amount' readonly>
+                        </div>
+                        <%= f.button "Confirm Order", :class => 'btn submit-button real-order-button' %>
+                      <% end %>
+                      <button class='btn-flat white black-text waves-effect cancel-order-form'>Cancel</button>
                     </div>
-                    <%= f.button "Make Order", :class => 'btn submit-button' %>
-                    <% end %>
+
+                    <script>
+                      $('.commit-step-one').submit(function(e){
+                        e.preventDefault()
+                        var amount = $(this).find('.order-amount').val()
+                        $(this).find('.order-amount').val(null)
+                        $(this).hide()
+                        $('.real-commit-div').attr('class', 'real-commit-div')
+                        $('.real-order-amount').val(amount)
+                      })
+                      $('.cancel-order-form').click(function(){
+                        $('.real-order-amount').val(null)
+                        $('.real-commit-div').attr('class', 'real-commit-div hidden')
+                        $('.commit-step-one').show()
+                      })
+                    </script>
 
                   <% elsif users_orders != [] %>
                     <h5>Ordered <%= users_orders[0].amount %></h5>
