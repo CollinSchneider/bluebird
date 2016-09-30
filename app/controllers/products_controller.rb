@@ -77,9 +77,9 @@ class ProductsController < ApplicationController
                                 ) AND end_time > ? AND status = ?',
                                 "%#{slug}%", Time.now, 'live',
                                 "%#{slug}%", Time.now, 'live',
-                                "%#{slug}%", Time.now, 'live').page(params[:page]).per_page(3)
+                                "%#{slug}%", Time.now, 'live').page(params[:page]).per_page(6)
     else
-      @products = Product.where('status = ? AND end_time > ? AND featured = ?', 'live', Time.now, true).page(params[:page]).per_page(3)
+      @products = Product.where('status = ? AND end_time > ? AND featured = ?', 'live', Time.now, true).page(params[:page]).per_page(6)
     end
   end
 

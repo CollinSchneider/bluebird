@@ -95,7 +95,7 @@ class RetailersController < ApplicationController
       select product_id from commits where retailer_id = ?)
     AND id in
       (select product_id from product_tokens where expiration_datetime > ?)
-    ', current_user.retailer.id, Time.now).page(params[:page]).per_page(3)
+    ', current_user.retailer.id, Time.now).page(params[:page]).per_page(6)
     # @products = current_user.retailer.commits.where('product_id in (select product_id from product_tokens where expiration_datetime > ?)', Time.now)
   end
 
