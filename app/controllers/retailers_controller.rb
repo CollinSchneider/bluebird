@@ -6,8 +6,8 @@ class RetailersController < ApplicationController
   def index
     return redirect_to "/retailer/#{current_user.retailer.declined_order}/card_declined" if current_user.retailer.card_declined?
     @products = Product.where('id in (
-      select product_id from commits where retailer_id = ? AND status = ? AND full_price != ?
-    )', current_user.retailer.id, 'live', true)
+      select product_id from commits where retailer_id = ? AND (status = ? OR status = ?) AND full_price != ?
+    )', current_user.retailer.id, 'live', 'pending', true)
   end
 
   def order_history
@@ -20,15 +20,13 @@ class RetailersController < ApplicationController
       slug.gsub!(' ', '-')
       slug.gsub!('?', '')
       slug.gsub!('!', '')
-      @past_orders = current_user.retailer.commits.where('stripe_charge_id IS NOT NULL AND product_id in (
-        select id from products where status = ? OR status = ? or status = ?
-      ) AND product_id in (
+      @past_orders = current_user.retailer.commits.where('status != ? AND product_id in (
         select id from products where slug LIKE ? OR LOWER(description) LIKE ? OR wholesaler_id in (
           select id from wholesalers where user_id in (
             select user_id from companies where company_key LIKE ?
           )
         )
-      )', 'full_price', 'discount_granted', 'goal_met', "%#{slug}%", "%#{slug}%", "%#{slug}%"
+      )', 'past', "%#{slug}%", "%#{slug}%", "%#{slug}%"
       ).order(created_at: :desc).page(params[:page]).per_page(9)
     else
       @past_orders = current_user.retailer.commits.order(created_at: :desc).page(params[:page]).per_page(9)

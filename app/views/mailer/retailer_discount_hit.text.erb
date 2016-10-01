@@ -2,9 +2,9 @@
 Congrats <%= @user.first_name %>!
 
 You hit your discount! Your order of <%= @commit.amount %> <%= @product.title.pluralize %>
-reached its discounted price of $<%= @product.discount %>.
+reached its discounted price of <%= number_to_currency(@product.discount) %>.
 
-When <%= @product.user.company_name %> ships your order, we will send you your tracking information
+When <%= @product.wholesaler.user.company.company_name %> ships your order, we will send you your tracking information
 and transfer your funds from your account.
 
 As always, feel free to reach out with any questions.

@@ -28,11 +28,11 @@ class Api::ProductsController < ApiController
     product.save
     render :json => {:product => product}
     product.commits.each do |commit|
-      Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
       commit.status = 'discount_granted'
       commit.sale_made = true
       current_user.collect_payment(commit)
       commit.save(validate: false)
+      Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
     end
   end
 

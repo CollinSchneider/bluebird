@@ -90,7 +90,7 @@ class Api::PaymentsController < ApiController
   def refund_order
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     order = Commit.find(params[:order_id])
-    charge = Stripe::Charge.retrieve(order.stripe_charge_id, :stripe_account => order.product.wholesaler.stripe_id)
+    charge = Stripe::Charge.retrieve(order.sale.stripe_charge_id, :stripe_account => order.product.wholesaler.stripe_id)
     begin
       refund = charge.refunds.create(:amount => charge.amount, :refund_application_fee => true)
     rescue => e
@@ -101,6 +101,10 @@ class Api::PaymentsController < ApiController
     end
     if !refund.nil?
       order.refunded = true
+      order.sale_made = false
+      product_sales = order.product.current_sales.to_f
+      new_sales = order.full_price ? product_sales+order.amount.to_f*order.product.price.to_f : product_sales+order.amount.to_f*order.product.discount.to_f
+      order.product.current_sales = new_sales
       order.save(validate: false)
       return render :json => {
         success: true,

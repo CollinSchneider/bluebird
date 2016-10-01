@@ -30,6 +30,8 @@
             <h6>Sale Completed</h6>
           <% elsif order.product.status == 'not_met' %>
             <h6>Sale Not Made</h6>
+          <% elsif order.product.status == 'needs_attention' %>
+            <h6>Sale is Pending</h6>
           <% end %>
         </div>
       </div>

@@ -188,7 +188,16 @@
               <h6><a href="<%= shipping_info.public_url %>" target="_blank">More Details</a></h6>
             </div>
           <% else %>
-            <h6>Your order is yet to be shipped, you will be updated with the info when it is sent out!</h6>
+            <% if @order.sale_made %>
+              <h6>Your order is yet to be shipped, you will be updated with the info when it is sent out!</h6>
+            <% else %>
+              <h6>This product did not meet its sale goal, therefore we are waiting on the wholesaler to make one of three choices:</h6>
+              <ul>
+                <li>Grant the discounted price anyway, and proceed with the sale.</li>
+                <li>Extend the product another 10 days in hopes of reaching the goal.</li>
+                <li>Expire the product, in which the discount is not given, and you have the opportunity to by it for <%= number_to_currency(@order.product.price) %></li>
+              </ul>
+            <% end %>
           <% end %>
 
         </div>

@@ -13,14 +13,9 @@ class AdminController < ApplicationController
   end
 
   def unshipped
-    # orders = Commit.includes(:perks).where('shipping_id IS NULL AND status = ? refunded != "t"
-    #   OR shipping_id IS NULL AND status = ? refunded != "t"
-    #   OR shipping_id IS NULL AND status = ? refunded != "t"', 'goal_met', 'discount_granted', 'full_price')
-    orders = Commit.where('shipping_id IS NULL AND status = ?
-      OR shipping_id IS NULL AND status = ?
-      OR shipping_id IS NULL AND status = ?', 'goal_met', 'discount_granted', 'full_price')
+    orders = Commit.where("sale_made = 't' AND has_shipped = 'f' AND refunded = 'f'")
     if params[:query]
-      @orders = orders.where('uuid = ?', params[:query])
+      @orders = orders.where('uuid = ?', params[:query]).order(updated_at: :asc)
     else
       @orders = orders.order(updated_at: :asc)
     end
