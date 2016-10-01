@@ -2,9 +2,6 @@
 <%= render partial: 'partials/retailer_profile_nav' %>
 
 <div class="col s12 m8 offset-m3">
-  <% if current_user.retailer.total_savings > 0 %>
-    <h5 class='green-text'>$<%= '%.2f' % current_user.retailer.total_savings %> in savings</h5>
-  <% end %>
   <div class="row">
     <h4>Pending Orders</h4>
     <div id="products">

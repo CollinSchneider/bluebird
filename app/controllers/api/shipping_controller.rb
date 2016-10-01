@@ -49,9 +49,17 @@ class Api::ShippingController < ApiController
   end
 
   def delete_address
-    address = ShippingAddress.find_by_address_id(params[:address_id])
-    address.delete
-    render :json => {success: true}
+    address = ShippingAddress.find(params[:id])
+    address_commits = current_user.retailer.commits.where('shipping_address_id = ?', address.id)
+    if address_commits.any?
+      return render :json => {
+        success: false,
+        addresses: address_commits
+      }
+    else
+      address.delete
+      render :json => {success: true}
+    end
   end
 
   def make_primary_address
@@ -84,15 +92,15 @@ class Api::ShippingController < ApiController
       tracker = EasyPost::Tracker.create({
         tracking_code: tracking_code
       })
-      binding.pry
       if !tracker.nil?
         shipping_cost = 0
-        commit.shipping.tracking_id = tracker.id
-        commit.shipping.save!
         tracker.fees.each do |fee|
           shipping_cost += fee.amount.to_f
         end
         charge = current_user.collect_shipping_charge(commit, shipping_cost)
+        binding.pry
+        commit.shipping.tracking_id = tracker.id
+        commit.shipping.save!
         commit.has_shipped = true
         commit.save(validate: false)
         if charge[0] == true

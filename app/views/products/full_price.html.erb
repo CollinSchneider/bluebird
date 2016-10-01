@@ -4,61 +4,80 @@
     <div class="col 12 valign-wrapper">
       <div class="row">
 
-        <div class="col s6">
+        <div class="col s12 m6">
 
           <div class="title-box z-depth-1 center-align">
-            <h4 id="timer"></h4>
+            <h4 id="timer" class='dark-bluebird-text bold'></h4>
           </div>
 
           <div class="image-box z-depth-1 valign">
-            <div class="row">
-              <div class="col s12">
-                <%= image_tag @product.main_image.url(:large), :class => 'responsive-img main-image materialboxed' %>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col s2">
-                <% if !@product.photo_two.nil? %>
-                  <%= image_tag @product.photo_two.url(:large), :class => 'responsive-img alternate-image' %>
-                <% end %>
-              </div>
 
-              <div class="col s2">
-                <% if !@product.photo_three.nil? %>
+            <div class="images">
+              <div class="row">
+                <div class="col s12">
+                  <%= image_tag @product.main_image.url(:large), :class => 'responsive-img main-image materialboxed' %>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col s2">
+                  <% if @product.photo_two.present? %>
+                    <%= image_tag @product.photo_two.url(:large), :class => 'responsive-img alternate-image' %>
+                  <% end %>
+                </div>
+
+                <div class="col s2">
+                  <% if @product.photo_three.present? %>
                     <%= image_tag @product.photo_three.url(:large), :class => 'responsive-img alternate-image' %>
-                <% end %>
-              </div>
+                  <% end %>
+                </div>
 
-              <div class="col s2">
-                <% if !@product.photo_four.nil? %>
-                  <%= image_tag @product.photo_four.url(:large), :class => 'responsive-img alternate-image' %>
-                <% end %>
-              </div>
+                <div class="col s2">
+                  <% if @product.photo_four.present? %>
+                    <%= image_tag @product.photo_four.url(:large), :class => 'responsive-img alternate-image' %>
+                  <% end %>
+                </div>
 
-              <div class="col s2">
-                <% if @product.photo_five.present? %>
-                    <%= image_tag @product.photo_five.url(:large), :class => 'responsive-img alternate-image' %>
-                <% end %>
+                <div class="col s2">
+                  <% if @product.photo_five.present? %>
+                      <%= image_tag @product.photo_five.url(:large), :class => 'responsive-img alternate-image' %>
+                  <% end %>
+                </div>
               </div>
             </div>
+
           </div>
         </div>
 
-        <div class="col s6">
+        <div class="col s12 m6">
+          <div class="row center-align no-bottom-margin">
 
-          <div class="row center-align">
             <div class="info-box z-depth-1">
               <div class="row">
                 <h5 class='bold'><%= @product.title %></h5>
+                <% if @product.featured %>
+                  <span class='valign-wrapper center-block'><img src="/images/bluebird-blue-mascot.png" style="height: 20px; display: inline-block" /> <h6 class='truncate bluebird-text bold' style='display: inline-block'>BlueBird Favorite!</h6></span>
+                <% end %>
                 <a class='black-text' href="/company/<%= @product.wholesaler.user.company.id %>/<%=@product.wholesaler.user.company.company_key%>">
                   <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
                 </a>
-                <h6 class='was-price' style="display: inline-block">$<%= @product.price %></h6>
-                <h6 class='now-price bold' style="display: inline-block">$<%= @product.discount %></h6>
+                <% if @product.wholesaler.is_contactable? %>
+                  <h6><a href="#" class='contact-info-toggle-on'>Contact</a></h6>
+                  <div class="contact-info" style='display: none'>
+                    <h6><a href="#" class='contact-info-toggle-off'>Done</a></h6>
+                    <% if @product.wholesaler.contactable_by_phone %>
+                      <h6><%= @product.wholesaler.user.phone_number %></h6>
+                    <% end %>
+                    <% if @product.wholesaler.contactable_by_email %>
+                      <h6><a href="mailto:<%= @product.wholesaler.user.email %>"><%= @product.wholesaler.user.email %></a></h6>
+                    <% end %>
+                  </div>
+                <% end %>
+                <h6 class='now-price bold' style="display: inline-block"><%= number_to_currency(@product.price) %></h6>
+                <h6>Suggested Retail Price: <span class='bold'>$<%= '%.2f' % @product.retail_price %></span></h6>
               </div>
 
               <div class="row">
-                <h6><%= simple_format(@product.description) %></h6>
+                <h6><%= simple_format(@product.long_description) %></h6>
               </div>
 
               <div class="row">
@@ -79,122 +98,67 @@
                 </ul>
               </div>
 
-              <div class="row">
-                <div class="<%= @product.percentage["class"] %>">
-                  <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
-                </div>
-                <div class="row col s12">
-                  <div class="col s6">
-                    <h6><%= '%.0f' % @product.percentage["percent_to_discount"] %>% to discount</h6>
-                  </div>
-                  <div class="col s6">
-                    <h6><%= @product.time_to_expiration %></h6>
-                  </div>
-                </div>
+              <div class="row no-bottom-margin center-align">
+                <h6 class='bold'><%= @product.time_to_full_price_expiration %></h6>
               </div>
 
             </div>
           </div>
 
-          <div class="row center-align">
-            <div class="edit-order-box z-depth-1">
-              <a href="#" id='exit-edit-div'>Cancel</a>
-              <h4>Edit div</h4>
-            </div>
-          </div>
-
-          <div class="row center-align">
-            <div class="order-box z-depth-1">
-              <% if current_user.is_retailer? %>
-
-                <!-- <#% if current_user.retailer.needs_credit_card? %>
-                  <h6><a href="/retailer/accounts">We need a credit card on file before you can make an order</a></h6>
-                <#% elsif current_user.retailer.needs_shipping_info? %>
-                  <h6><a href="/retailer/shipping_addresses">We need your shipping info before you can make an order</a></h6>
-                <#% else %> -->
-
-                <% users_orders = current_user.retailer.commits.where('product_id = ?', @product.id) %>
-                <% if users_orders == [] %>
-
-                    <%= form_for Commit.new do |f| %>
-                    <%= f.hidden_field :product_id, :value => @product.id %>
-                    <%= f.hidden_field :full_price, :value => false %>
-                    <div class="input-field">
-                      <%= f.label "Order Quantity" %>
-                      <%= f.number_field :amount %>
-                    </div>
-                    <%= f.button "Make Order", :class => 'btn' %>
-                    <% end %>
-
-                <% elsif users_orders != [] %>
-                <h4><a href="#" id="edit-order">Ordered <%= users_orders[0].amount %></a></h4>
-
-                <script>
-                  $('#edit-order').click(function(){
-                    var div = $(this).parent().parent()
-                    div.animate({
-                      marginLeft: 1000
-                    })
-                    div.css({
-                      position: 'absolute'
-                    })
-                    enterEditDiv()
-                  })
-
-                  function enterEditDiv(){
-                    $('.edit-order-box').animate({
-                      marginLeft: 30,
-                      position: 'relative'
-                    })
-                  }
-
-                  $('#exit-edit-div').click(function(){
-                    console.log('enter orders div');
-                    var div = $(this).parent().parent()
-                    console.log(div);
-                    div.animate({
-                      marginLeft: 1000
-                    })
-                    div.css({
-                      position: 'absolute'
-                    })
-                    enterOrderDiv()
-                  })
-
-                  function enterOrderDiv(){
-                    $('.order-box').animate({
-                      marginLeft: 30,
-                      position: 'relative'
-                    })
-                  }
-
-                </script>
-                  <!-- <h4><#%= link_to "Ordered #{users_orders[0].amount}", commit_path(users_orders[0].id) %> </h4> -->
-
-                  <!-- <div class="row">
-                    <h6>Upon expiration, you would be charged from this credit card:</h6>
-                    <#% @commit_card = @stripe_customer.sources.retrieve(users_orders[0].card_id) %>
-                    <h6>**** **** **** <#%= @commit_card.last4 %></h6>
-                    <h6><#%= @commit_card.brand %></h6>
-                    <h6>Exp: <#%= @commit_card.exp_month %>/<#%= @commit_card.exp_year %></h6>
-                  </div>
-                  <div class="row">
-                    <h6>Change payment method:</h6>
-                    <#% @stripe_customer.sources.each do |source| %>
-                      <#% if source.id != users_orders[0].card_id %>
-                        <form class='change-payment'>
-                          <input type="hidden" class='card_id' value="<#%= source.id %>">
-                          <input type="hidden" class='commit_id' value="<#%= users_orders[0].id %>">
-                          <input type='submit' class="btn" value="<#%= source.brand %>: <#%= source.last4 %>" />
-                        </form>
-                      <#% end %>
-                    <#% end %>
-                  </div> -->
+            <% if current_user.is_retailer? %>
+            <div class="row center-align">
+              <div class="order-box z-depth-1">
+                <% if !flash[:error].nil? %>
+                  <% flash[:error].each do |err| %>
+                    <h6 class='red-text'><%= err %></h6>
+                  <% end %>
                 <% end %>
-              <!-- <#% end %> -->
-            <% end %>
+
+                <% if current_user.retailer.needs_credit_card? %>
+                  <h6><a href="/retailer/accounts">We need a credit card on file before you can make an order</a></h6>
+                <% elsif current_user.retailer.needs_shipping_info? %>
+                  <h6><a href="/retailer/shipping_addresses">We need your shipping info before you can make an order</a></h6>
+                <% else %>
+
+                <% users_orders = current_user.retailer.commits.where("product_id = ? AND full_price = 't'", @product.id) %>
+                <% if users_orders == [] %>
+                  <h6>Minimum Order Amount: <%= @product.minimum_order %> products</h6>
+                    <form class="commit-step-one">
+                      <div class="input-field">
+                        <label>Order Quantity</label>
+                        <input type="text" class="order-amount" min="<%= @product.minimum_order.to_i %>" required>
+                      </div>
+                      <input type="submit" value="Make Order" class='btn'>
+                    </form>
+                    <div class="hidden real-commit-div">
+                      <%= form_for Commit.new, :class => 'real-order-form' do |f| %>
+                        <%= f.hidden_field :product_id, :value => @product.id %>
+                        <%= f.hidden_field :full_price, :value => true %>
+                        <%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
+                        <label>Order Quantity</label>
+                        <div class="input-field">
+                          <input type="text" name="commit[amount]" class='real-order-amount' readonly>
+                        </div>
+                        <%= f.button "Confirm Order", :class => 'btn submit-button real-order-button' %>
+                      <% end %>
+                      <button class='btn-flat white black-text waves-effect cancel-order-form'>Cancel</button>
+                    </div>
+                  <% elsif users_orders != [] %>
+                    <h5>Ordered <%= users_orders[0].amount %> units</h5>
+                    <h5><%= number_to_currency(users_orders[0].total_price) %> transaction</h5>
+                    <%
+                      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+                      customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+                      commit_card = customer.sources.retrieve(users_orders[0].card_id)
+                    %>
+                    <h6>Credit Card to be charged: **** **** **** <%= commit_card.last4 %> (<%=commit_card.brand %>)</h6>
+                    <a href="/retailer/order_history/<%= users_orders[0].id %>" class='btn'>Edit</a>
+                    <button class='cancel-edit' style='display: none'>Cancel Edit</button>
+                  <% end %>
+                <% end %>
+              </div>
             </div>
-          </div>
+          <% end %>
 
         </div>
       </div>
@@ -203,44 +167,42 @@
   </div>
 
 <% if !@company_products.empty? %>
-  <div class="col s10 offset-s1 row">
-    <h5><a href="/company/<%= @product.wholesaler.user.company.id %>/<%= @product.wholesaler.user.company.company_key %>">More products from <%= @product.wholesaler.user.company.company_name %></a></h5>
-  </div>
-  <div class="row">
+<div class="row other-products z-depth-1">
+  <h5><a href="/company/<%= @product.wholesaler.user.company.id %>/<%= @product.wholesaler.user.company.company_key %>">More products from <%= @product.wholesaler.user.company.company_name %></a></h5>
     <% @company_products.each do |product| %>
       <div class="col s12 m4 center-align no-padding">
-        <div class="product">
+        <div class="product white">
           <%= link_to "/products/#{product.id}/#{product.slug}" do %>
             <div class="percent-box col s3 m1 white-text">
               <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
             </div>
             <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
-            <div class="content-div">
-              <h5 class="truncate"><%= product.title %></h5>
-              <h6>From <%= product.wholesaler.user.company.company_name %></h6>
+            <div class="content-div" style='margin-bottom: 0px'>
+              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
+              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
               <h6>
-                <span class="was-price">$<%= product.price %></span>
-                <span class="now-price"><strong>$<%= product.discount %></strong></span>
+                <span class="was-price">Was $<%= product.price %></span>
+                <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
               </h6>
+            </div>
+            <div class="description content-div" style='margin-top: 0px'>
+              <p style='font-size: 12px' style='margin-top: 0px'>
+                <%= product.description %>
+              </p>
             </div>
           <% end %>
 
           <div class="row">
-            <%= product.description %>
-          </div>
-
-          <div class="row">
             <div class="<%= product.percentage["class"] %>">
-              <span style="width: <%= product.percentage["progress"] %>%"><span></span></span>
+              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
             </div>
-          </div>
-
-          <div class="row" style="margin-bottom: 0px">
-            <div class="col s12 m6">
-              <h6><strong><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</strong></h6>
-            </div>
-            <div class="col s12 m6">
-              <h6><%= product.time_to_expiration %></h6>
+            <div class="row col s12">
+              <div class="col s6">
+                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
+              </div>
+              <div class="col s6">
+                <h6><%= product.time_to_expiration %></h6>
+              </div>
             </div>
           </div>
 
@@ -250,62 +212,97 @@
   <% end %>
 </div>
 
-<% if !@similar_products.nil? %>
-  <div class="col s10 offset-s1 row">
-    <h5>Similar Products</h5>
-  </div>
-  <div class="row">
+<% if !@similar_products.empty? %>
+<div class="row other-products z-depth-1">
+  <h5>Similar Products</h5>
     <% @similar_products.each do |product| %>
       <div class="col s12 m4 center-align no-padding">
-        <div class="product">
+        <div class="product white">
           <%= link_to "/products/#{product.id}/#{product.slug}" do %>
             <div class="percent-box col s3 m1 white-text">
               <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
             </div>
             <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
-            <div class="content-div">
-              <h5 class="truncate"><%= product.title %></h5>
-              <h6>From <%= product.wholesaler.user.company.company_name %></h6>
-              <h6 class="was-price">Was $<%= product.price %></h6>
-              <h6 class="now-price"><strong>Now $<%= product.discount %></strong></h6>
-              <%= product.description %>
+            <div class="content-div" style='margin-bottom: 0px'>
+              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
+              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
+              <h6>
+                <span class="was-price">Was $<%= product.price %></span>
+                <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
+              </h6>
+            </div>
+            <div class="description content-div" style='margin-top: 0px'>
+              <p style='font-size: 12px' style='margin-top: 0px'>
+                <%= product.description %>
+              </p>
             </div>
           <% end %>
 
-          <% total_orders = Commit.where('product_id = ?', product.id).sum(:amount).to_i %>
-          <% total_sales = total_orders*product.discount.to_f %>
-          <% percentage = ((total_sales/product.goal.to_f)*100) %>
-          <% if percentage >= 100 %>
-            <% percentage = 100 %>
-          <% end %>
           <div class="row">
-            <% if percentage == 100 %>
-              <div class="meter-striped col s8 offset-s2 no-padding">
-                <span style="width: <%= percentage %>%"><span></span></span>
+            <div class="<%= product.percentage["class"] %>">
+              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+            </div>
+            <div class="row col s12">
+              <div class="col s6">
+                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
               </div>
-            <% else %>
-              <div class="meter col s8 offset-s2 no-padding">
-                <span style="width: <%= percentage %>%"><span></span></span>
-              </div>
-            <% end %>
-            <div class="row">
-              <div class="col s4 offset-s2">
-                <h6><%= '%.0f' % percentage %>% to discount</h6>
-              </div>
-              <div class="col s4">
+              <div class="col s6">
                 <h6><%= product.time_to_expiration %></h6>
               </div>
             </div>
           </div>
+
         </div>
       </div>
     <% end %>
-  </div>
-<% end %>
+  <% end %>
+</div>
 
 </div>
 
 <script>
+   $('.commit-step-one').submit(function(e){
+     e.preventDefault()
+     var amount = $(this).find('.order-amount').val()
+     $(this).find('.order-amount').val(null)
+     $(this).hide()
+     $('.real-commit-div').attr('class', 'real-commit-div')
+     $('.real-order-amount').val(amount)
+   })
+   $('.cancel-order-form').click(function(){
+     $('.real-order-amount').val(null)
+     $('.real-commit-div').attr('class', 'real-commit-div hidden')
+     $('.commit-step-one').show()
+   })
+   
+  $('.contact-info-toggle-on').click(function(){
+    $(this).toggle()
+    $('.contact-info').toggle()
+  })
+
+  $('.contact-info-toggle-off').click(function(){
+    $('.contact-info-toggle-on').toggle()
+    $('.contact-info').toggle()
+  })
+
+  $('.edit-order-button').click(function(){
+    $(this).toggle()
+    $('.cancel-edit').toggle()
+    $('.images').fadeOut()
+    setTimeout(function(){
+      $('.edit-order').fadeIn()
+    }, 400)
+  })
+
+  $('.cancel-edit').click(function(){
+    $('.cancel-edit').toggle()
+    $('.edit-order-button').toggle()
+    $('.edit-order').fadeOut()
+    setTimeout(function(){
+      $('.images').fadeIn()
+    }, 400)
+  })
+
   $(document).ready(function(){
     changePayment()
     alternateImage()
@@ -321,7 +318,7 @@
   })
 
   function setTime(){
-    var seconds = <%= @product.end_time - Time.now %>;
+    var seconds = <%= @product.product_token.expiration_datetime - Time.now %>;
     var days        = Math.floor(seconds/24/60/60);
     var hoursLeft   = Math.floor((seconds) - (days*86400));
     var hours       = Math.floor(hoursLeft/3600);
@@ -340,7 +337,7 @@
     document.getElementById('timer').innerHTML = days + ":" + hours + ":" + minutes + ":" + remainingSeconds;
   }
 
-  var seconds = <%= @product.end_time - Time.now %>;
+  var seconds = <%= @product.product_token.expiration_datetime - Time.now %>;
   function timer() {
     var days        = Math.floor(seconds/24/60/60);
     var hoursLeft   = Math.floor((seconds) - (days*86400));
@@ -423,11 +420,13 @@
   // }
 
   function alternateImage(){
-    $('.alternate-image').mouseover(function(){
+    $('.alternate-image').click(function(){
       var makeMain = $(this).attr('src')
       var makeAlternate = $('.main-image').attr('src')
+      // $('.main-image').fadeOut()
       $('.main-image').attr('src', makeMain)
       $(this).attr('src', makeAlternate)
+      //   $('.main-image').fadeIn()
     })
   }
 </script>

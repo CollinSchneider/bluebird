@@ -115,6 +115,7 @@ class User < ActiveRecord::Base
         },
         {:stripe_account => self.wholesaler.stripe_id}
       )
+      binding.pry
       if !charge.nil?
         commit_charge.stripe_charge_id = charge.id
         commit_charge.card_failed = false

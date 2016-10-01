@@ -1,4 +1,5 @@
 class ProductsController < ApplicationController
+  before_action :redirect_if_not_logged_in
 
   def show
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
@@ -62,8 +63,8 @@ class ProductsController < ApplicationController
   end
 
   def full_price
-    @product = Product.where('id in (select product_id from product_tokens where token = ?)', params[:token]).first
-    redirect_to "/shop" if @product.status == 'past' || @product.product_token.expiration_datetime <= Time.now
+    @product = Product.where('id in (select product_id from product_tokens where token = ?) AND slug = ?', params[:token], params[:slug]).first
+    return redirect_to "/shop" if @product.status == 'past' || @product.product_token.expiration_datetime <= Time.now
     @company_products = Product.where('wholesaler_id = ? AND status = ? AND id != ?', @product.wholesaler.id, 'live', @product.id).order(current_sales: :desc).limit(3)
     @similar_products = Product.where('category = ? AND status = ? AND id != ?', @product.category, 'live', @product.id).order(current_sales: :desc).limit(3)
   end

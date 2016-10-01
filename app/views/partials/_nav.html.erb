@@ -118,11 +118,12 @@
               'SETTINGS' => '/retailer/settings',
               'SHIPPING INFORMATION' => '/retailer/shipping_addresses',
               'MANAGE PAYMENTS' => '/retailer/accounts',
+              'LAST CHANCE' => '/retailer/last_chance',
               'ORDER HISTORY' => '/retailer/order_history',
               'PENDING ORDERS' => '/retailer/pending_orders'
             }
             items.each do |name, url|
-              link_class = request.fullpath.start_with?(url) ? 'active-sub-nav-category' : 'white-text'
+              link_class = request.fullpath.start_with?(url) ? 'active-sub-nav-category white-text' : 'white-text'
           %>
             <a href="<%= url %>">
               <div class='sub-nav-category nav-category-div center-align <%= link_class %>'>

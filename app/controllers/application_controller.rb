@@ -7,17 +7,8 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
 
   private
-  def check_for_email_click
-    if !params[:email_click].nil?
-      user = User.find_by_uuid(params[:email_click])
-      if !user.nil?
-        return session[:user_id] = user.id
-      else
-        return redirect_to "/users"
-      end
-    else
-      return redirect_to "/users"
-    end
+  def redirect_if_not_logged_in
+    redirect_to '/users' if current_user.nil?
   end
 
 end

@@ -20,13 +20,13 @@ class RetailersController < ApplicationController
       slug.gsub!(' ', '-')
       slug.gsub!('?', '')
       slug.gsub!('!', '')
-      @past_orders = current_user.retailer.commits.where('status != ? AND product_id in (
-        select id from products where slug LIKE ? OR LOWER(description) LIKE ? OR wholesaler_id in (
+      @past_orders = current_user.retailer.commits.where('uuid like ? OR product_id in (
+        select id from products where slug LIKE ? OR LOWER(description) LIKE ? OR LOWER(long_description) like ? OR wholesaler_id in (
           select id from wholesalers where user_id in (
             select user_id from companies where company_key LIKE ?
           )
         )
-      )', 'past', "%#{slug}%", "%#{slug}%", "%#{slug}%"
+      )', "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%" 
       ).order(created_at: :desc).page(params[:page]).per_page(9)
     else
       @past_orders = current_user.retailer.commits.order(created_at: :desc).page(params[:page]).per_page(9)
@@ -38,7 +38,21 @@ class RetailersController < ApplicationController
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     @stripe_customer = Stripe::Customer.retrieve(@order.retailer.stripe_id)
     @commit_card = @stripe_customer.sources.retrieve(@order.card_id)
-    redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
+    return redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
+  end
+
+  def show_order_not_reached
+    @order = Commit.find(params[:id])
+    return redirect_to "/retailer/order_history" if @order.status != ('pending' && 'past')
+  end
+
+  def show_order_sale_made
+    @order = Commit.find(params[:id])
+    return redirect_to "/retailer/order_history" if !@order.sale_made
+    if !@order.shipping.nil?
+      EasyPost.api_key = ENV['EASYPOST_API_KEY']
+      @shipping_info = EasyPost.retrieve(@order.shipping.tracking_id)
+    end
   end
 
   def accounts

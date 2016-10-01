@@ -78,7 +78,7 @@ $(document).ready(function(){
       success: function(data){
         console.log(data);
         if(data.success){
-          div.fadeOut(2000)
+          slideOut(div)
         } else {
           div.find('.error-message').text(data.error)
           div.find('.submit-tracking').prop('disabled', false)

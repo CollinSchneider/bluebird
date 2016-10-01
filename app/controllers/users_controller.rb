@@ -121,7 +121,7 @@ class UsersController < ApplicationController
       wholesaler.stripe_id = stripe_user_id
       wholesaler.save!
       binding.pry
-      
+
       Stripe.api_key = ENV['STRIPE_SECRET_KEY']
       customer = Stripe::Customer.create(
         {:description => "Customer for: #{current_user.full_name}"},
@@ -130,10 +130,6 @@ class UsersController < ApplicationController
 
       return redirect_to '/wholesaler/profile'
     end
-  end
-
-  def settings
-    authenticate_anybody
   end
 
   private

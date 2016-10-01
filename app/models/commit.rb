@@ -66,6 +66,15 @@ class Commit < ActiveRecord::Base
     return self.amount_saved*Commit::BLUEBIRD_PERCENT_FEE
   end
 
+  def current_status
+    return 'Refunded' if self.refunded
+    return 'Sale Still Live' if self.status == 'live'
+    return 'Sale Reached' if self.sale_made
+    return 'Pending' if self.status == 'pending'
+    return 'Last Chance' if self.status == 'past' && self.product.product_token.expiration_datetime > Time.now
+    return 'Sale Not Reached' if self.status = 'past'
+  end
+
   # VALIDATIONS
   def meets_minimum_order
     if !self.product.minimum_order.nil?

@@ -82,9 +82,9 @@ class AlreadyPrintedPdf < Prawn::Document
   def order_info(commit)
     move_down 10
     if !commit.full_price
-      text "#{commit.product.title.pluralize}                   #{number_to_currency(commit.product.discount)}                    #{commit.amount}                    #{number_to_currency(commit.product.discount.to_f*commit.amount.to_f)}", align: :right
+      text "#{commit.product.title.pluralize}                   $#{'%.2f' % (commit.product.discount)}                    #{commit.amount}                    $#{'%.2f' % (commit.product.discount.to_f*commit.amount.to_f)}", align: :right
     else
-      text "#{commit.product.title.pluralize}                   #{number_to_currency(commit.product.price)}                    #{commit.amount}                    #{number_to_currency(commit.product.price.to_f*commit.amount.to_f)}", align: :right
+      text "#{commit.product.title.pluralize}                   $#{'%.2f' % (commit.product.price)}                    #{commit.amount}                    $#{'%.2f' % (commit.product.price.to_f*commit.amount.to_f)}", align: :right
     end
   end
 
@@ -96,9 +96,9 @@ class AlreadyPrintedPdf < Prawn::Document
   def order_total(commit)
     move_down 10
     if !commit.full_price
-      text "Total: #{number_to_currency(commit.amount.to_f*commit.product.discount.to_f)}", align: :right, style: :bold
+      text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.discount.to_f)}", align: :right, style: :bold
     else
-      text "Total: #{number_to_currency(commit.amount.to_f*commit.product.price.to_f)}", align: :right, style: :bold
+      text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.price.to_f)}", align: :right, style: :bold
     end
   end
 

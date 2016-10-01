@@ -22,10 +22,6 @@ class AdminController < ApplicationController
   end
 
   private
-  def redirect_if_not_logged_in
-    redirect_to '/users' if current_user.nil?
-  end
-
   def redirect_if_not_admin
     redirect_to '/shop' if current_user.is_retailer?
     redirect_to '/wholesaler/profile' if current_user.is_wholesaler?

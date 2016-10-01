@@ -75,6 +75,8 @@ Rails.application.routes.draw do
   get '/retailer/accounts' => 'retailers#accounts'
   get '/retailer/order_history' => 'retailers#order_history'
   get '/retailer/order_history/:id' => 'retailers#show_order_history'
+  get '/retailer/order_history/sale_made/:id' => 'retailers#show_order_sale_made'
+  get '/retailer/order_history/not_reached/:id' => 'retailers#show_order_not_reached'
   get '/retailer/settings' => 'retailers#settings'
   get '/retailer/shipping_addresses' => 'retailers#shipping_addresses'
   get '/retailer/company' => 'retailers#company'
@@ -105,7 +107,7 @@ Rails.application.routes.draw do
   get '/new_arrivals' => 'welcome#new_arrivals'
   get '/regularly_priced' => 'welcome#regularly_priced'
   get '/company/:id/:key' => 'welcome#company_show'
-  get '/products/:token/:slug' => 'products#full_price'
+  get '/last_chance/:token/:slug' => 'products#full_price'
   get '/discover' => 'products#discover'
   get '/bluebird_choice' => 'products#bluebird_choice'
 

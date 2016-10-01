@@ -159,25 +159,9 @@
                       <% end %>
                       <button class='btn-flat white black-text waves-effect cancel-order-form'>Cancel</button>
                     </div>
-
-                    <script>
-                      $('.commit-step-one').submit(function(e){
-                        e.preventDefault()
-                        var amount = $(this).find('.order-amount').val()
-                        $(this).find('.order-amount').val(null)
-                        $(this).hide()
-                        $('.real-commit-div').attr('class', 'real-commit-div')
-                        $('.real-order-amount').val(amount)
-                      })
-                      $('.cancel-order-form').click(function(){
-                        $('.real-order-amount').val(null)
-                        $('.real-commit-div').attr('class', 'real-commit-div hidden')
-                        $('.commit-step-one').show()
-                      })
-                    </script>
-
                   <% elsif users_orders != [] %>
-                    <h5>Ordered <%= users_orders[0].amount %></h5>
+                    <h5>Ordered <%= users_orders[0].amount %> units</h5>
+                    <h5><%= number_to_currency(users_orders[0].total_price) %> transaction</h5>
                     <%
                       Stripe.api_key = ENV['STRIPE_SECRET_KEY']
                       customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
@@ -293,6 +277,20 @@
 </div>
 
 <script>
+   $('.commit-step-one').submit(function(e){
+     e.preventDefault()
+     var amount = $(this).find('.order-amount').val()
+     $(this).find('.order-amount').val(null)
+     $(this).hide()
+     $('.real-commit-div').attr('class', 'real-commit-div')
+     $('.real-order-amount').val(amount)
+   })
+   $('.cancel-order-form').click(function(){
+     $('.real-order-amount').val(null)
+     $('.real-commit-div').attr('class', 'real-commit-div hidden')
+     $('.commit-step-one').show()
+   })
+
   $('.contact-info-toggle-on').click(function(){
     $(this).toggle()
     $('.contact-info').toggle()

@@ -148,11 +148,10 @@
   })
 
   $('.delete-address').click(function(){
-    var easyAddressId = $(this).attr('data')
-    console.log(easyAddressId);
+    var id = $(this).attr('data')
     $.ajax({
       method: 'POST',
-      url: '/api/shipping/delete_address?address_id=' + easyAddressId,
+      url: '/api/shipping/delete_address?id=' + id,
       success: function(data){
         location.reload()
       }

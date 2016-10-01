@@ -162,18 +162,16 @@
                 <h6>Shipping: <%= number_to_currency(shipping_cost) %></h6>
               <% end %>
               <hr>
-              <h6 class="bold"><%= number_to_currency((@order.total_price)+(shipping_cost)) %> total</h6>
+              <h6 class="bold">Total: <%= number_to_currency((@order.total_price)+(shipping_cost)) %> total</h6>
               <h6 class='green-text bold'><%= number_to_currency(@order.amount_saved - shipping_cost) %> saved</h6>
             <% else %>
               <h6><%= @order.amount %> units x <%= number_to_currency(@order.product.price) %>/each</h6>
-              <h6><%= number_to_currency(@order.bluebird_fee) %> fee</h6>
               <% shipping_cost = @order.shipping ? @order.shipping.shipping_amount/100 : 0 %>
               <% if shipping_cost > 0 %>
                 <h6>Shipping: <%= number_to_currency(shipping_cost) %></h6>
               <% end %>
               <hr>
-              <h6 class="bold"><%= number_to_currency((@order.total_price)+(shipping_cost)) %></h6>
-              <h6 class='green-text bold'><%= number_to_currency(@order.amount_saved - shipping_cost) %> saved</h6>
+              <h6 class="bold">Total: <%= number_to_currency((@order.product.price.to_f*@order.amount.to_f)+(shipping_cost)) %></h6>
             <% end %>
           </div>
           <% if @order.shipping %>
@@ -190,13 +188,18 @@
           <% else %>
             <% if @order.sale_made %>
               <h6>Your order is yet to be shipped, you will be updated with the info when it is sent out!</h6>
-            <% else %>
+            <% elsif @order.status == 'pending' %>
               <h6>This product did not meet its sale goal, therefore we are waiting on the wholesaler to make one of three choices:</h6>
               <ul>
                 <li>Grant the discounted price anyway, and proceed with the sale.</li>
                 <li>Extend the product another 10 days in hopes of reaching the goal.</li>
                 <li>Expire the product, in which the discount is not given, and you have the opportunity to by it for <%= number_to_currency(@order.product.price) %></li>
               </ul>
+            <% elsif @order.product.full_price? && @order.product.product_token.expiration_datetime > Time.now %>
+              <h5>This product did not hit the discount</h5>
+              <h5>You can purchase it <a href ="/last_chance/<%= @order.product.product_token.token %>/<%= @order.product.slug %>">here for <%= number_to_currency(@order.product.price) %></a></h5>
+            <% elsif @order.product.status == 'past' %>
+              <h5>This product did not hit the discount.</h5>
             <% end %>
           <% end %>
 
