@@ -1,7 +1,7 @@
 require 'easypost'
 class WholesalersController < ApplicationController
   layout 'wholesaler'
-  before_action :authenticate_wholesaler
+  before_action :redirect_if_not_logged_in, :authenticate_wholesaler
 
   def new_product
     redirect_to '/wholesaler/profile' if current_user.wholesaler.needs_to_ship? || current_user.wholesaler.needs_attention? || current_user.wholesaler.needs_stripe_connect?
@@ -142,8 +142,7 @@ class WholesalersController < ApplicationController
   end
 
   def authenticate_wholesaler
-    redirect_to '/users' if current_user.nil?
-    redirect_to '/shop' if current_user.is_retailer?
+    return redirect_to '/shop' if current_user.is_retailer?
   end
 
 end

@@ -109,9 +109,4 @@ class WelcomeController < ApplicationController
     )', Time.now).page(params[:page]).per_page(6)
   end
 
-  private
-  def redirect_if_not_logged_in
-    redirect_to '/users' if current_user.nil?
-  end
-
 end

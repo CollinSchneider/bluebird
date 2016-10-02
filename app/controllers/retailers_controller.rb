@@ -1,6 +1,6 @@
 require 'easypost'
 class RetailersController < ApplicationController
-  before_action :authenticate_retailer
+  before_action :redirect_if_not_logged_in, :authenticate_retailer
   layout 'retailer'
 
   def index
@@ -26,7 +26,7 @@ class RetailersController < ApplicationController
             select user_id from companies where company_key LIKE ?
           )
         )
-      )', "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%" 
+      )', "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%"
       ).order(created_at: :desc).page(params[:page]).per_page(9)
     else
       @past_orders = current_user.retailer.commits.order(created_at: :desc).page(params[:page]).per_page(9)
@@ -117,7 +117,6 @@ class RetailersController < ApplicationController
   end
 
   def authenticate_retailer
-    return redirect_to "/users" if current_user.nil?
     return redirect_to "/wholesaler" if current_user.is_wholesaler?
     @retailer = current_user.retailer
   end

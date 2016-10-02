@@ -8,7 +8,7 @@ class ApplicationController < ActionController::Base
 
   private
   def redirect_if_not_logged_in
-    redirect_to '/users' if current_user.nil?
+    return redirect_to "/users?redirect_url=#{request.fullpath}" if current_user.nil?
   end
 
 end
