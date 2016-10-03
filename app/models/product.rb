@@ -59,15 +59,15 @@ class Product < ActiveRecord::Base
     self.percent_discount = '%.2f' % (self.percent_discount*100)
     self.make_slug
     if self.duration == '1_day'
-      self.end_time = (Time.now + 1.hour).beginning_of_hour + 1.day
+      self.end_time = Time.now.beginning_of_day + 1.day + 21.hours
     elsif self.duration == '7_days'
-      self.end_time = (Time.now + 1.hour).beginning_of_hour + 7.days
+      self.end_time = Time.now.beginning_of_day + 7.days + 21.hours
     elsif self.duration == '10_days'
-      self.end_time = (Time.now + 1.hour).beginning_of_hour + 10.days
+      self.end_time = Time.now.beginning_of_day + 10.days + 21.hours
     elsif self.duration == '14_days'
-      self.end_time = (Time.now + 1.hour).beginning_of_hour + 14.days
+      self.end_time = Time.now.beginning_of_day + 14.days + 21.hours
     elsif self.duration == '30_days'
-      self.end_time = (Time.now + 1.hour).beginning_of_hour + 30.days
+      self.end_time = Time.now.beginning_of_day + 30.days + 21.hours
     elsif self.duration = '5_minutes'
       self.end_time = (Time.now + 2.minutes)
     end
@@ -171,7 +171,7 @@ class Product < ActiveRecord::Base
   end
 
   def percent_discount
-    return 1 - (self.discount.to_f/self.price.to_f)
+    return 1 - (self.discount.to_f/self.price_with_fee.to_f)
   end
 
   def full_price?

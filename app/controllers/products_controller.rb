@@ -47,10 +47,10 @@ class ProductsController < ApplicationController
     if product.save
       # current_products = current_user.products.where('status = live')
       # product.create_uuid
-      redirect_to "/approve_product/#{product.id}"
+      return redirect_to "/approve_product/#{product.id}"
     else
       flash[:error] = product.errors
-      redirect_to request.referrer
+      return redirect_to request.referrer
     end
   end
 

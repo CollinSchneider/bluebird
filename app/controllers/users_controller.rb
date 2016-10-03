@@ -8,6 +8,10 @@ class UsersController < ApplicationController
     redirect_if_logged_in
   end
 
+  def why
+    redirect_if_logged_in
+  end
+
   def reset_password
     @user = User.find_by_password_reset_token(params[:token])
   end
@@ -89,12 +93,12 @@ class UsersController < ApplicationController
     user = User.find(params[:id])
     session.destroy
     user.destroy
-    redirect_to root_path
+    return redirect_to "/users"
   end
 
   def logout
     session.destroy
-    redirect_to '/users'
+    return redirect_to '/users'
   end
 
   def accounts_verify

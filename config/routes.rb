@@ -115,7 +115,7 @@ Rails.application.routes.draw do
   delete '/sessions' => 'sessions#destroy'
   get '/logout' => 'users#logout'
 
-  root 'users#index'
+  root 'users#why'
   get '/forgot_password' => 'users#forgot_password'
   get '/reset_password/:token' => 'users#reset_password'
   get '/about' => 'users#about'
@@ -128,6 +128,7 @@ Rails.application.routes.draw do
   get '/signup/:action' => 'users/signup'
   post '/signup/:action' => 'users/signup'
   get '/thank_you' => 'users#thank_you'
+  get '/choose' => 'users#choose'
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'

@@ -17,12 +17,12 @@
         <h4>Retailer Signup</h4>
         <%= form_tag(method: 'POST') do %>
           <div class="input-field">
-            <label>Company Name</label>
-            <input type="text" name="company[company_name]" required>
+            <!-- <label>Company Name</label> -->
+            <input type="text" name="company[company_name]" class='full-box-input' placeholder='Company Name' required>
           </div>
           <div class="input-field">
-            <label>City</label>
-            <input type="text" name="company[location]" required>
+            <!-- <label>City</label> -->
+            <input type="text" name="company[location]" class='full-box-input' placeholder='Location' required>
           </div>
         <%= submit_tag "Next", :class => 'white black-text btn' %>
         <!-- <input type="submit" value="Next" class='white black-text btn'> -->
@@ -39,7 +39,6 @@
   <div class="apply-body col s12 hidden-on-small-only valign-wrapper" style='height: 40vh'>
     <div class="col s8 offset-s2 valign center-align">
       <div class="row no-bottom-margin">
-        <h4>Retailers</h4>
         <h5>Never pay full wholesale price again. Discounts. Every. Single. Time.</h5>
       </div>
       <div class="row">

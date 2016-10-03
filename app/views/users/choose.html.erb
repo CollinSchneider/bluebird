@@ -1,0 +1,33 @@
+<style media="screen">
+  body {
+    overflow: hidden;
+  }
+</style>
+
+<div class="row">
+  <%= render partial: 'partials/signed_out_nav' %>
+</div>
+
+<div class="row center-align valign-wrapper">
+  <div class="col s12">
+    <div class="row">
+      <h3>What are you signing up as?</h3>
+    </div>
+    <div class="row">
+      <div class="col s12 m6">
+        <a href="/signup/step1">
+          <div class="col s8 offset-s2 border choose">
+            <h5>Retailer</h5>
+          </div>
+        </div>
+      </a>
+      <a href="/apply/step1">
+        <div class="col s12 m6">
+          <div class="col s8 offset-s2 border choose">
+            <h5>Wholesaler</h5>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
