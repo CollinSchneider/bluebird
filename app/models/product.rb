@@ -171,7 +171,7 @@ class Product < ActiveRecord::Base
   end
 
   def percent_discount
-    return 1 - (self.discount.to_f/self.price_with_fee.to_f)
+    return 1 - (self.price_with_fee.to_f/self.price.to_f)
   end
 
   def full_price?
