@@ -1,5 +1,11 @@
 <html>
+  <%= stylesheet_link_tag    'mailer', media: 'all' %>
   <body>
+
     <%= yield %>
+
+    <div class="footer center-align">
+      <h6>This email was intended for <%= @user.email %></h6>
+    </div>
   </body>
 </html>

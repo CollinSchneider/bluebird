@@ -1,16 +1,14 @@
 class Mailer < ApplicationMailer
   default from: 'info@bluebird.club'
 
-  def retailer_welcome_email(user, password)
+  def retailer_welcome_email(user)
     @user = user
-    @password = password
     email_with_name = %("#{@user.full_name}" <#{@user.email}>)
     mail(to: @user.email, subject: "Welcome to BlueBird.club, #{@user.first_name}")
   end
 
-  def wholesaler_welcome_email(user, password)
+  def wholesaler_welcome_email(user)
     @user = user
-    @password = password
     email_with_name = %("#{@user.full_name}" <#{@user.email}>)
     mail(to: @user.email, subject: "Welcome to BlueBird.club, #{@user.first_name}")
   end
