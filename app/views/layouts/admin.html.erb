@@ -11,7 +11,11 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <script type="text/javascript" src="https://js.stripe.com/v2/"></script>
   <script>
-    Stripe.setPublishableKey('pk_test_A1E9FwserSpqc63UDg09WWo2');
+    <% if Rails.env == 'development' %>
+      Stripe.setPublishableKey('pk_test_A1E9FwserSpqc63UDg09WWo2');
+    <% elsif Rails.env == 'production' %>
+      Stripe.setPublishableKey('pk_live_WpLW7zL0afVFpS7ce30Izu8E');
+    <% end %>
   </script>
 </head>
 <body>
