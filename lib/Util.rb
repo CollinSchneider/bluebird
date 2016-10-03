@@ -18,7 +18,9 @@ class Util
   end
 
   def self.current_environment
-    return Rails.env == development ? 'http://localhost:3000' : 'https://bluebirdclub.herokuapp.com'
+    return "http://localhost:3000" if Rails.env == "development"
+    return "http://bluebirdclub-staging.herokuapp.com" if Rails.env == "bluebirdclub-staging"
+    return "http://bluebirdclub.herokuapp.com" if Rails.env == "bluebirdclub"
   end
 
 end

@@ -16,6 +16,8 @@ module LowBid
     # Run "rake -D time" for a list of tasks for finding time zone names. Default is UTC.
     config.time_zone = 'Eastern Time (US & Canada)'
 
+    config.autoload_paths << Rails.root.join('lib')
+
     # config.active_job.queue_adapter = :delayed_job
 
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
