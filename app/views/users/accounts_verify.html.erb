@@ -1,4 +1,8 @@
 <div class="container center-align">
   <h4>Sorry, we didn't quite get that...</h4>
-  <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Let's Try that Again</a>
+  <% if Rails.env == 'development' %>
+    <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Let's Try that Again</a>
+  <% elsif Rails.env == 'production' %>
+    <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42iyNmEsw1vdfJKOiphbNMsQZriYQc&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Let's Try that Again</a>
+  <% end %>
 </div>

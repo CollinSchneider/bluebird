@@ -8,11 +8,7 @@ class Util
     slug.gsub!(' ', '-')
     return slug
   end
-
-  def self.test
-    return "Is this working?"
-  end
-
+  
   def generate_token
     return SecureRandom.uuid
   end

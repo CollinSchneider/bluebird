@@ -9,7 +9,11 @@
   <div class="center-align col s10 offset-s1">
     <h5>Ready to take <%= current_user.company.company_name %> to the next level?</h5>
     <h5>First let's get you connected to our trusty payment processor; Stripe, so you can get paid!</h5>
-    <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Connect with Stripe</a>
+    <% if Rails.env == 'development' %>
+      <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Connect with Stripe</a>
+    <% elsif Rails.env == 'production' %>
+      <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42iyNmEsw1vdfJKOiphbNMsQZriYQc&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Connect with Stripe</a>
+    <% end %>
   </div>
 
 <% else %>
