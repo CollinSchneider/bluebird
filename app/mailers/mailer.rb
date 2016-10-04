@@ -4,7 +4,7 @@ class Mailer < ApplicationMailer
   def retailer_welcome_email(user)
     @user = user
     email_with_name = %("#{@user.full_name}" <#{@user.email}>)
-    mail(to: @user.email, subject: "Welcome to BlueBird.club, #{@user.first_name}")
+    mail(to: @user.email, subject: "Welcome to BlueBird.club, #{@user.first_name}", from: "welcome@bluebird.club", reply_to: "collin@bluebird.club")
   end
 
   def wholesaler_welcome_email(user)
