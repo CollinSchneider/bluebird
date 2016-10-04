@@ -30,6 +30,7 @@ class Api::WholesalersController < ApiController
     wholesaler.approved = true
     if wholesaler.save
       #TODO  congrats on being accepted email
+      Mailer.wholesaler_welcome_email(wholesaler.user).deliver_later
       render :json => {
         success: true,
         message: "Approved #{wholesaler.user.company.company_name}"
