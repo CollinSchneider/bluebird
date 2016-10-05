@@ -28,7 +28,7 @@
         </div>
         <div class='errors-div'>
         </div>
-        <input id="submit-address" class="btn btn-primary submit-button" type="submit" value="Create Address">
+        <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
       </div>
     </form>
 
@@ -106,8 +106,8 @@
   $('form').submit(function(e){
     e.preventDefault()
     var form = $(this)
-    var streetLine1 = form.find('#street-line-one').val()
-    var streetLine2 = form.find('#street-line-two').val()
+    var street_one = form.find('#street-line-one').val()
+    var street_two = form.find('#street-line-two').val()
     var city = form.find('#city').val()
     var state = form.find('#state').val()
     var zip = form.find('#zip').val()
@@ -116,7 +116,7 @@
     $('.errors-div').text('')
     $.ajax({
       method: 'POST',
-      url: '/api/shipping/create_shipping_address?street_line_1=' +streetLine1+ '&street_line_2=' +streetLine2+
+      url: '/api/shipping/create_shipping_address?street_one=' +street_one+ '&street_two=' +street_two+
         '&city=' +city+ '&state=' +state+ '&city=' +city+ '&zip=' +zip,
       success: function(data){
         console.log(data);
@@ -125,7 +125,7 @@
           form.find('#submit-address').text('Create Address')
           for (var i = 0; i < data.errors.length; i++) {
             var error = data.errors[i]
-            var message = $('<h6 class="red-text">').text("Address Error: " + error.message)
+            var message = $('<h6 class="red-text">').text("Address Error: " + error.field + " " + error.message)
             $('.errors-div').append(message)
           }
         } else {

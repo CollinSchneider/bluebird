@@ -82,8 +82,8 @@
         </div>
 
         <div class="row order-box center-align z-depth-1">
-          <form class="add-shipping">
-          <%= form_tag('/api/shipping/create_shipping_address') do %>
+          <form class="add-shipping-address">
+          <!-- <#%= form_tag('/api/shipping/create_shipping_address') do %> -->
             <div class="input-field">
               <label>Street Address One</label>
               <input class="street-line-one" type="text" name="street_one">
@@ -108,8 +108,8 @@
             </div>
             <div class="shipping-errors"></div>
             <input class="btn submit-button" type="submit" value="Add Address">
-          <% end %>
-          <!-- </form> -->
+          <!-- <#% end %> -->
+          </form>
         </div>
 
         <div class="row order-box center-align z-depth-1">
