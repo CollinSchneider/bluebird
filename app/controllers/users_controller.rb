@@ -111,7 +111,7 @@ class UsersController < ApplicationController
       http.use_ssl = true
       request = Net::HTTP::Post.new(uri.request_uri)
       request.set_form_data({
-        "client_secret" => "sk_test_TI9EamOjFwLiHOvvNF6Q1cIn",
+        "client_secret" => ENV['STRIPE_SECRET_KEY'],
         "code" => auth_code,
         "grant_type" => "authorization_code"
       })
@@ -124,7 +124,6 @@ class UsersController < ApplicationController
       wholesaler = current_user.wholesaler
       wholesaler.stripe_id = stripe_user_id
       wholesaler.save!
-      binding.pry
 
       Stripe.api_key = ENV['STRIPE_SECRET_KEY']
       customer = Stripe::Customer.create(

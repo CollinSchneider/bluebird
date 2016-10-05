@@ -121,6 +121,7 @@ Rails.application.routes.draw do
   get '/about' => 'users#about'
   get '/faq' => 'users#faq'
   get '/why_bluebird' => 'users#why'
+  # get '/about' => 'users#how'
   get '/apply' => redirect('/users/apply/step1')
   get '/apply/:action' => 'users/apply'
   post '/apply/:action' => 'users/apply'
