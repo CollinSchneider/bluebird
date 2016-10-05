@@ -51,7 +51,7 @@ class RetailersController < ApplicationController
     return redirect_to "/retailer/order_history" if !@order.sale_made
     if !@order.shipping.nil?
       EasyPost.api_key = ENV['EASYPOST_API_KEY']
-      @shipping_info = EasyPost.retrieve(@order.shipping.tracking_id)
+      @shipping_info = EasyPost::Tracker.retrieve(@order.shipping.tracking_id)
     end
   end
 

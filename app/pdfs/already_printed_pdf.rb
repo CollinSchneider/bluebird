@@ -1,3 +1,4 @@
+require "open-uri"
 class AlreadyPrintedPdf < Prawn::Document
 
   def initialize(user)
@@ -19,7 +20,9 @@ class AlreadyPrintedPdf < Prawn::Document
   def pdf_sequence(commit)
     image_header
     product_title(commit.product)
+    move_down 15
     pad_bottom(30) {seller_info(commit.product.wholesaler.user)}
+    image open(commit.product.main_image.url(:medium)), :position => :left, width: 75
     stroke_horizontal_rule
     pad_bottom(15) {buyer_info(commit.retailer)}
     stroke_horizontal_rule
@@ -61,6 +64,8 @@ class AlreadyPrintedPdf < Prawn::Document
     move_down 20
     text "#{product.title} Shipment", size: 25, style: :bold, align: :center
   end
+
+
 
   def buyer_info(retailer)
     move_down 15

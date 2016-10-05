@@ -19,7 +19,7 @@
                 <h5><%= product.title %></h5>
 
                 <h6 class='now-price'>$<%= product.discount %> each</h6>
-                <h6>8 purchase orders</h6>
+                <h6><%= product.commits.count %> purchase orders</h6>
                 <% total_sales = (product.discount.to_f*product.commits.sum(:amount).to_i) %>
                 <h6><%= number_to_currency(product.current_sales) %> in sales</h6>
                 <h6><%= product.percentage["percent_to_discount"] %>% of your goal</h6>

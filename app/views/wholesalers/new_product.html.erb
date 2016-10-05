@@ -42,7 +42,7 @@
             <div class="col s11 left-align valign-wrapper">
               <div class="col s11 input-field">
                 <label>Sales Goal ($)</label>
-                <input type="number" name="goal" required>
+                <input type="number" name="goal" step="0.1" required>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="right" data-delay="0" data-tooltip="<h6>This is your sales goal, if it is <br> met you will sell this product<br> for the discounted price you set.</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -190,7 +190,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Product Full Wholesale Price*' %>
-                <%= f.number_field :price, :required => true %> <br>
+                <input type="number" name="product[price]" class='retail-price' step="0.01" required> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the full wholesale price. <br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -199,7 +199,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Product Discounted Wholesale Price*' %>
-                <%= f.number_field :discount, :class => 'product-discount', :required => true %> <br>
+                <input type="number" name="product[discount]" class='product-discount' step="0.01" required> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
@@ -208,7 +208,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Suggested Retailer Price*' %>
-                <%= f.number_field :retail_price, :class => 'retail-price', :required => true %> <br>
+                <input type="number" name="product[retailer_price]" class='retail-price' step="0.01" required> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>

@@ -35,7 +35,11 @@
                 <div class="input-field">
                   <input type="hidden" class="sale-amount" value="<%= sale_amount %>">
                   <label>Tracking Number</label>
-                  <input class="tracking-number" data="<%= commit.uuid %>" type="text" value="EZ3000000003">
+                  <input class="tracking-number" data="<%= commit.uuid %>" type="text" required>
+                </div>
+                <div class="input-field">
+                  <label>Shipping Cost</label>
+                  <input class="shipping-amount" type="number" step='0.01' required>
                 </div>
                 <input type="submit" value="Enter Tracking Number" class='btn submit-tracking'>
               </form>
@@ -55,34 +59,35 @@ $(document).ready(function(){
 
   $('.tracking-form').submit(function(e){
       e.preventDefault()
-      var div = $(this).parent().parent()
+      var div = $(this).parent().parent().parent()
       var form = $(this)
       var trackingInput = form.find($('.tracking-number'))
       var trackingNumber = trackingInput.val()
       var commitUuid = trackingInput.attr('data')
-      var saleAmount = form.find($('.sale-amount')).val()
+      var shippingAmountInput = form.find($('.shipping-amount'))
+      var shippingAmount = shippingAmountInput.val()
+      shippingAmountInput.val('')
+      trackingInput.val('')
       var submitButton = form.find('.submit-tracking')
       replaceWithGif(submitButton)
-      console.log('replace..');
 
-      createTracking(commitUuid, trackingNumber, form, saleAmount, div)
+      createTracking(commitUuid, trackingNumber, shippingAmount, form, div)
       $(this).find('.submit-tracking').prop('disabled', true)
       $(this).find('.submit-tracking').text("Sending tracking info")
     })
   })
 
-  function createTracking(commitUuid, trackingNumber, form, saleAmount, div) {
+  function createTracking(commitUuid, trackingNumber, shippingAmount, form, div) {
     $.ajax({
       method: 'POST',
-      url: '/api/shipping/ship_order?commit_uuid=' + commitUuid + '&tracking_code=' + trackingNumber,
+      url: '/api/shipping/ship_order?commit_uuid=' + commitUuid + '&tracking_code=' + trackingNumber + '&shipping_amount=' + shippingAmount,
       success: function(data){
-        console.log(data);
         if(data.success){
           slideOut(div)
         } else {
           div.find('.error-message').text(data.error)
           div.find('.submit-tracking').prop('disabled', false)
-          div.find('.submit-tracling').text('Enter Tracking Number')
+          div.find('.submit-tracking').text('Enter Tracking Number')
         }
       }
     })

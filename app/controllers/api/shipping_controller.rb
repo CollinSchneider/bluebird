@@ -87,31 +87,28 @@ class Api::ShippingController < ApiController
   def ship_order
     commit = Commit.find_by_uuid(params[:commit_uuid])
     tracking_code = params[:tracking_code]
+    shipping_cost = params[:shipping_amount]
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
     begin
       tracker = EasyPost::Tracker.create({
         tracking_code: tracking_code
       })
       if !tracker.nil?
-        shipping_cost = 0
-        tracker.fees.each do |fee|
-          shipping_cost += fee.amount.to_f
-        end
         charge = current_user.collect_shipping_charge(commit, shipping_cost)
-        binding.pry
-        commit.shipping.tracking_id = tracker.id
-        commit.shipping.save!
+        shipment = Shipping.where('commit_id = ?', commit.id).first
+        shipment.tracking_id = tracker.id
+        shipment.save!
         commit.has_shipped = true
         commit.save(validate: false)
         if charge[0] == true
-          Mailer.retailer_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
+          # Mailer.retailer_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
           return render :json => {
             success: true,
             charge: charge[1],
             tracking: tracker
           }
         else
-          Mailer.retailer_declined_card_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url, declined_charge)
+          # Mailer.retailer_declined_card_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url, declined_charge)
           return render :json => {
             success: false,
             error: charge[1]

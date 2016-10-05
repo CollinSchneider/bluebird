@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
   end
 
   def collect_shipping_charge(commit, shipping_cost)
+    shipping_cost = shipping_cost.to_f
     shipping = commit.shipping.nil? ? Shipping.new : commit.shipping
     shipping.commit_id = commit.id
     shipping.retailer_id = commit.retailer_id
@@ -40,7 +41,7 @@ class User < ActiveRecord::Base
     customer_stripe_id = commit.retailer.stripe_id
     customer = Stripe::Customer.retrieve(customer_stripe_id)
     customer_card = customer.sources.retrieve(commit.card_id)
-    shipping_cost = 1000
+    shipping_cost += (shipping_cost*0.029+0.29)
 
     shipping.shipping_amount = shipping_cost
 
@@ -51,7 +52,7 @@ class User < ActiveRecord::Base
 
     begin
       charge = Stripe::Charge.create({
-          :amount => shipping_cost.floor, # amount in cents
+          :amount => (shipping_cost*100).ceil, # amount in cents
           :currency => "usd",
           :source => token,
           :description => "#{commit.retailer.user.full_name}'s BlueBird.club shipment"
@@ -115,7 +116,6 @@ class User < ActiveRecord::Base
         },
         {:stripe_account => self.wholesaler.stripe_id}
       )
-      binding.pry
       if !charge.nil?
         commit_charge.stripe_charge_id = charge.id
         commit_charge.card_failed = false

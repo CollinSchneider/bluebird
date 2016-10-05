@@ -1,9 +1,24 @@
-<div class="row">
+<div class="row center-align">
+  <h3><%= @order.product.title.pluralize %></h3>
   <div class="col s5">
     <%= image_tag @order.product.main_image.url(:medium), :class => 'responsive-img' %>
   </div>
   <div class="col s7">
-    <%= @order.product.title %>
-    <%= @order.current_status %>
+    <div class="row">
+      <% product_price = @order.full_price ? @order.product.price : @order.product.discount %>
+      <h5><%= @order.current_status %></h5>
+      <h5><%= @order.amount %> units x <%=number_to_currency(product_price) %>/each</h5>
+      <% shipping_price = @order.shipping.nil? ? 0 : @order.shipping.shipping_amount %>
+      <h5>Shipping: <%= number_to_currency(shipping_price) %></h5>
+      <h5><%= number_to_currency(@order.total_price + shipping_price) %></h5>
+    </div>
+    <div class="row">
+      <% if @order.shipping.nil? %>
+        <h6>Order not yet out for shipping, we will update you with the info once it is shipped.</h6>
+      <% else %>
+        <h6>Estimated Arrival: <%= DateTime.parse(@shipping_info.est_delivery_date).strftime('%B %d, %Y') %></h6>
+        <h6><a href="<%= @shipping_info.public_url %>" target="_blank">More Info</a>
+      <% end %>
+    </div>
   </div>
 </div>

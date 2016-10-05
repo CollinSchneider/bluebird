@@ -243,7 +243,7 @@ class Product < ActiveRecord::Base
           commit.save(validate: false)
           charge = product.wholesaler.user.collect_payment(commit)
           if charge[1]
-            Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
+            # Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
           else
             # commit.card_declined = true
             # commit.card_decline_date = Time.now

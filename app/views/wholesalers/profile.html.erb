@@ -5,11 +5,18 @@
 <div class="col s12 m9 offset-m2">
   <h4 class="center-align">Welcome, <%= current_user.first_name %>!</h4>
 
+  <!-- <#%
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    account = Stripe::Account.retrieve(current_user.wholesaler.stripe_id)
+  %>
+  <#%= account %> -->
+
   <% if current_user.wholesaler.needs_stripe_connect? %>
   <div class="center-align col s10 offset-s1">
     <h5>Ready to take <%= current_user.company.company_name %> to the next level?</h5>
     <h5>First let's get you connected to our trusty payment processor; Stripe, so you can get paid!</h5>
     <% if Rails.env == 'development' %>
+      DEVELOPMENT
       <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42Ug20wJITOMQzM5WvBYUjun4TpdHJ&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Connect with Stripe</a>
     <% elsif Rails.env == 'production' %>
       <a class="btn btn-primary" href="https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_8Y42iyNmEsw1vdfJKOiphbNMsQZriYQc&scope=read_write&stripe_user[email]=<%= current_user.email %>&stripe_user[first_name]=<%= current_user.first_name %>&stripe_user[last_name]=<%= current_user.last_name %>">Connect with Stripe</a>
