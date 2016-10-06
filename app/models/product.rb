@@ -259,9 +259,9 @@ class Product < ActiveRecord::Base
         product.commits.each do |commit|
           commit.status = 'pending'
           commit.save(validate: false)
-          # Mailer.retailer_discount_missed(commit.user, product)
+          BlueBirdEmail.retailer_discount_missed(commit.user, product)
         end
-        # Mailer.wholesaler_needs_attention(product.wholesaler.user, product).deliver_later
+        BlueBirdEmail.wholesaler_needs_attention(product.wholesaler.user, product)
       end
     end
     return goal_met_products, needs_attention_products
