@@ -29,7 +29,7 @@ class Api::WholesalersController < ApiController
     wholesaler = Wholesaler.find(params[:id])
     wholesaler.approved = true
     if wholesaler.save
-      BlueBirdEmail.wholesaler_welcome_email(wholesaler.user).deliver_now!
+      BlueBirdEmail.wholesaler_welcome_email(wholesaler.user)
       render :json => {
         success: true,
         message: "Approved #{wholesaler.user.company.company_name}"

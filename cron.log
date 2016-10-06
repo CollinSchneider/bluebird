@@ -4179,3 +4179,95 @@ Did you mean?  expire_products
 	from -e:1:in `<main>'
 Running via Spring preloader in process 65202
 Running via Spring preloader in process 65201
+/usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:244:in `rescue in load_dependency': /Users/cschneider/PersonalCode/BlueBirdClub/config/environments/development.rb:23: syntax error, unexpected tSYMBEG, expecting '}'
+    :password => ENV['SENDGRID_PASSWORD']
+     ^
+/Users/cschneider/PersonalCode/BlueBirdClub/config/environments/development.rb:24: syntax error, unexpected =>, expecting keyword_end
+    :domain => ENV['SENDGRID_DOMAIN']
+              ^
+/Users/cschneider/PersonalCode/BlueBirdClub/config/environments/development.rb:25: syntax error, unexpected =>, expecting keyword_end
+    :address => 'smtp.sendgrid.net',
+               ^
+/Users/cschneider/PersonalCode/BlueBirdClub/config/environments/development.rb:25: syntax error, unexpected ',', expecting keyword_end (SyntaxError)
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:237:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/engine.rb:598:in `block (2 levels) in <class:Engine>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/engine.rb:597:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/engine.rb:597:in `block in <class:Engine>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:30:in `instance_exec'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:30:in `run'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:55:in `block in run_initializers'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:228:in `block in tsort_each'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:350:in `block (2 levels) in each_strongly_connected_component'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:422:in `block (2 levels) in each_strongly_connected_component_from'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:431:in `each_strongly_connected_component_from'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:421:in `block in each_strongly_connected_component_from'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:44:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:44:in `tsort_each_child'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:415:in `call'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:415:in `each_strongly_connected_component_from'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:349:in `block in each_strongly_connected_component'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:347:in `each'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:347:in `call'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:347:in `each_strongly_connected_component'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:226:in `tsort_each'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:205:in `tsort_each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:54:in `run_initializers'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/application.rb:352:in `initialize!'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/config/environment.rb:5:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:92:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:92:in `preload'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:143:in `serve'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:131:in `block in run'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:125:in `loop'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:125:in `run'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application/boot.rb:19:in `<top (required)>'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'
+/usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:244:in `rescue in load_dependency': /Users/cschneider/PersonalCode/BlueBirdClub/config/environments/development.rb:23: syntax error, unexpected tSYMBEG, expecting '}'
+    :password => ENV['SENDGRID_PASSWORD']
+     ^
+/Users/cschneider/PersonalCode/BlueBirdClub/config/environments/development.rb:24: syntax error, unexpected =>, expecting keyword_end
+    :domain => ENV['SENDGRID_DOMAIN']
+              ^
+/Users/cschneider/PersonalCode/BlueBirdClub/config/environments/development.rb:25: syntax error, unexpected =>, expecting keyword_end
+    :address => 'smtp.sendgrid.net',
+               ^
+/Users/cschneider/PersonalCode/BlueBirdClub/config/environments/development.rb:25: syntax error, unexpected ',', expecting keyword_end (SyntaxError)
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:237:in `load_dependency'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/activesupport-4.2.5/lib/active_support/dependencies.rb:274:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/engine.rb:598:in `block (2 levels) in <class:Engine>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/engine.rb:597:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/engine.rb:597:in `block in <class:Engine>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:30:in `instance_exec'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:30:in `run'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:55:in `block in run_initializers'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:228:in `block in tsort_each'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:350:in `block (2 levels) in each_strongly_connected_component'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:422:in `block (2 levels) in each_strongly_connected_component_from'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:431:in `each_strongly_connected_component_from'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:421:in `block in each_strongly_connected_component_from'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:44:in `each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:44:in `tsort_each_child'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:415:in `call'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:415:in `each_strongly_connected_component_from'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:349:in `block in each_strongly_connected_component'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:347:in `each'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:347:in `call'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:347:in `each_strongly_connected_component'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:226:in `tsort_each'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/tsort.rb:205:in `tsort_each'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/initializable.rb:54:in `run_initializers'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/railties-4.2.5/lib/rails/application.rb:352:in `initialize!'
+	from /Users/cschneider/PersonalCode/BlueBirdClub/config/environment.rb:5:in `<top (required)>'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:92:in `require'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:92:in `preload'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:143:in `serve'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:131:in `block in run'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:125:in `loop'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application.rb:125:in `run'
+	from /usr/local/lib/ruby/gems/2.3.0/gems/spring-1.7.1/lib/spring/application/boot.rb:19:in `<top (required)>'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from /usr/local/Cellar/ruby/2.3.0/lib/ruby/2.3.0/rubygems/core_ext/kernel_require.rb:55:in `require'
+	from -e:1:in `<main>'

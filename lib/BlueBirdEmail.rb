@@ -33,7 +33,7 @@ class BlueBirdEmail
     self.send_email(COLLIN_EMAIL, user.email, "Welcome to BlueBird.club, #{user.first_name}", content)
   end
 
-  def wholesaler_welcome_email(user)
+  def self.wholesaler_welcome_email(user)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/wholesaler_welcome_email.html.erb',
       :locals => {
@@ -42,7 +42,7 @@ class BlueBirdEmail
     self.send_email(COLLIN_EMAIL, user.email, "Welcome to BlueBird.club, #{user.first_name}", content)
   end
 
-  def wholesaler_needs_attention(user, product)
+  def self.wholesaler_needs_attention(user, product)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/wholesaler_needs_attention.html.erb',
       :locals => {
@@ -52,7 +52,7 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "Your move, #{user.first_name}", content)
   end
 
-  def wholesaler_discount_hit(user, product)
+  def self.wholesaler_discount_hit(user, product)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/wholesaler_discount_hit.html.erb',
       :locals => {
@@ -62,7 +62,7 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "Your sales are in, #{user.first_name}", content)
   end
 
-  def retailer_sale_shipped(user, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url)
+  def self.retailer_sale_shipped(user, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_sale_shipped.html.erb',
       :locals => {
@@ -75,7 +75,7 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "Your order is on the way, #{user.first_name}", content)
   end
 
-  def retailer_declined_card_sale_shipped(user, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url, charge)
+  def self.retailer_declined_card_sale_shipped(user, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url, charge)
       controller = ActionController::Base.new()
       content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_declined_card_sale_shipped.html.erb',
         :locals => {
@@ -89,7 +89,7 @@ class BlueBirdEmail
       self.send_email(SALES_EMAIL, user.email, "Your sales are in, #{user.first_name}", content)
   end
 
-  def retailer_discount_hit(user, commit, product)
+  def self.retailer_discount_hit(user, commit, product)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_discount_hit.html.erb',
       :locals => {
@@ -100,7 +100,7 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "Your savings are in, #{user.first_name}", content)
   end
 
-  def retailer_discount_missed(user, product)
+  def self.retailer_discount_missed(user, product)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_discount_missed.html.erb',
       :locals => {
@@ -110,7 +110,7 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "BlueBird.club results", content)
   end
 
-  def retailer_product_extended(user, product)
+  def self.retailer_product_extended(user, product)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_product_extended.html.erb',
       :locals => {
@@ -120,7 +120,7 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "Product Update from BlueBird.club", content)
   end
 
-  def forgot_password(user)
+  def self.forgot_password(user)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/forgot_password.html.erb',
       :locals => {
@@ -129,7 +129,7 @@ class BlueBirdEmail
     self.send_email(SUPPORT_EMAIL, user.email, "BlueBird.club reset password", content)
   end
 
-  def card_declined(user, commit, card)
+  def self.card_declined(user, commit, card)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/card_declined.html.erb',
       :locals => {
@@ -140,7 +140,7 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "BlueBird.club Credit Card Error", content)
   end
 
-  def wholesaler_full_price_email(commit, user)
+  def self.wholesaler_full_price_email(commit, user)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/wholesaler_full_price_email.html.erb',
       :locals => {
@@ -150,7 +150,7 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "New BlueBird.club Purchase Order!", content)
   end
 
-  def retailer_full_price_email(commit, user)
+  def self.retailer_full_price_email(commit, user)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_full_price_email.html.erb',
       :locals => {

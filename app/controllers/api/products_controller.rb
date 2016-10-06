@@ -32,7 +32,7 @@ class Api::ProductsController < ApiController
       commit.sale_made = true
       current_user.collect_payment(commit)
       commit.save(validate: false)
-      BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
+      BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, product)
     end
   end
 
@@ -47,7 +47,7 @@ class Api::ProductsController < ApiController
     original_inventory = product.quantity.to_i
     product.commits.each do |commit|
       original_inventory += commit.amount.to_i
-      BlueBirdEmail.retailer_discount_missed(commit.retailer.user, product).deliver_later
+      BlueBirdEmail.retailer_discount_missed(commit.retailer.user, product)
       commit.status = 'past'
       commit.sale_made = false
       commit.save(validate: false)

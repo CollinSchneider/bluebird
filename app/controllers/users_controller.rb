@@ -19,16 +19,15 @@ class UsersController < ApplicationController
   def password_reset
     @user = User.find(params[:id])
     @user.update(user_params)
-    @user.skip_user_validation
     if @user.save
       session[:user_id] = @user.id
       @user.password_reset_token = nil
       @user.password_reset_expiration = nil
       @user.save!
-      redirect_to shop_path
+      return redirect_to "/shop"
     else
-      redirect_to request.referrer
       flash[:error] = @user.errors.full_messages
+      return redirect_to request.referrer
     end
   end
 
