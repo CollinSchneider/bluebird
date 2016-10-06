@@ -237,22 +237,21 @@ class Product < ActiveRecord::Base
         goal_met_products += 1
         product.status = 'goal_met'
         product.save(validate: false)
-        BlueBirdEmail.wholesaler_discount_hit(product.wholesaler.user, product)
         product.commits.each do |commit|
           commit.status = 'goal_met'
           commit.sale_made = true
           commit.save(validate: false)
-          BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, commit.product)
-          product.wholesaler.user.collect_payment(commit)
-          # if charge[1]
-          #   BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, product)
-          # else
-          #   # commit.card_declined = true
-          #   # commit.card_decline_date = Time.now
-          #   # commit.save(validate: false)
-          #   # Send card failure email
-          # end
+          charge = product.wholesaler.user.collect_payment(commit)
+          if charge[1]
+            # Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
+          else
+            # commit.card_declined = true
+            # commit.card_decline_date = Time.now
+            # commit.save(validate: false)
+            # Send card failure email
+          end
         end
+        # Mailer.wholesaler_discount_hit(product.wholesaler.user, product).deliver_later
       else
         needs_attention_products += 1
         product.status = 'needs_attention'
@@ -260,8 +259,9 @@ class Product < ActiveRecord::Base
         product.commits.each do |commit|
           commit.status = 'pending'
           commit.save(validate: false)
+          # Mailer.retailer_discount_missed(commit.user, product)
         end
-        BlueBirdEmail.wholesaler_needs_attention(product.wholesaler.user, product)
+        # Mailer.wholesaler_needs_attention(product.wholesaler.user, product).deliver_later
       end
     end
     return goal_met_products, needs_attention_products

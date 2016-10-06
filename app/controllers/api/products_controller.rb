@@ -8,7 +8,7 @@ class Api::ProductsController < ApiController
       product.commits.each do |commit|
         commit.status = 'live'
         commit.save(validate: false)
-        BlueBirdEmail.retailer_product_extended(commit.retailer.user, product)
+        Mailer.retailer_product_extended(commit.retailer.user, product)
       end
       render :json => {
         success: true,

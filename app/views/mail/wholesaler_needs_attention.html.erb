@@ -10,16 +10,15 @@
       <div class="row">
         <p>
           Your product <%= @product.title %> on BlueBird.club has expired and you finished
-          your sale with <%= number_to_currency(@product.current_sales) %> in sales, missing your goal of
-          <%= number_to_currency(@product.goal) %>.
+          your sale with $<%= @product.current_sales %> in sales, missing your goal of
+          $<%= @product.goal %>.
         </p>
         <h6>
-          At this point you have a few choices:
+          At this point you have two choices:
         </h6>
         <ul>
-          <li><a href="https://www.bluebird.club/uesrs?redirect=/needs_attention">Grant the discount of $<%= @product.discount %>, and receive $<%= @product.current_sales %> in sales</a></li>
-          <li><a href="https://www.bluebird.club/users?redirect=/needs_attention">Extend the product 10 more days</a></li>
-          <li><a href="https://www.bluebird.club/users?redirect=/needs_attention">Expire the product, receive no sales</a></li>
+          <li><a href="localhost:3000/users?redirect=/needs_attention">Expire the product, receive no sales</a></li>
+          <li><a href="localhost:3000/uesrs?redirect=/needs_attention">Grant the discount of $<%= @product.discount %>, and receive $<%= @product.current_sales %> in sales</a></li>
         </ul>
       </div>
       <div class="row">
@@ -29,7 +28,7 @@
       </div>
       <div class="row">
         Your friends, <br>
-        BlueBird.club Team
+        BlueBird.club
       </div>
     </div>
 

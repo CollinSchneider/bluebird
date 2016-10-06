@@ -9,9 +9,9 @@ class Api::UsersController < ApiController
       user.password_reset_expiration = Time.now + 1.hour
       user.save(validate: false)
       BlueBirdEmail.forgot_password(user)
-      render :json => {message: "Instructions has been sent to #{email}, you have 30 minutes to reset your password."}
+      return render :json => {message: "Instructions has been sent to #{email}, you have 30 minutes to reset your password."}
     else
-      render :json => {message: "No users found with the email of #{email}."}
+      return render :json => {message: "No users found with the email of #{email}."}
     end
   end
 
