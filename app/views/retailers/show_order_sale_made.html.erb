@@ -5,7 +5,7 @@
   </div>
   <div class="col s7">
     <div class="row">
-      <% product_price = @order.full_price ? @order.product.price : @order.product.discount %>
+      <% product_price = @order.full_price ? @order.product.price_with_fee : @order.product.discount %>
       <h5><%= @order.current_status %></h5>
       <h5><%= @order.amount %> units x <%=number_to_currency(product_price) %>/each</h5>
       <% shipping_price = @order.shipping.nil? ? 0 : @order.shipping.shipping_amount %>
