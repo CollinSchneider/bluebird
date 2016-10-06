@@ -61,8 +61,9 @@
                 <a class='black-text' href="/company/<%= @product.wholesaler.user.company.id %>/<%=@product.wholesaler.user.company.company_key%>">
                   <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
                 </a>
-                <h6 class='was-price' style="display: inline-block">$<%= @product.price %></h6>
-                <h6 class='now-price bold' style="display: inline-block">$<%= @product.discount %></h6>
+                <h6 class='was-price bold' style="display: inline-block"><%= number_to_currency(@product.price) %></h6>
+                <h6 class='now-price bold' style="display: inline-block"><%= number_to_currency(@product.discount) %></h6>
+                <h6 class='bold'>Retails for <%= number_to_currency(@product.retail_price) %></h6>
               </div>
 
               <div class="row">

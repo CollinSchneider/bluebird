@@ -207,8 +207,8 @@
             </div>
             <div class="input-field valign-wrapper">
               <div class="col s11">
-                <%= f.label 'Suggested Retailer Price*' %>
-                <input type="number" name="product[retailer_price]" class='retail-price' step="0.01" required> <br>
+                <%= f.label 'Suggested Retail Price*' %>
+                <input type="number" name="product[retail_price]" class='retail-price' step="0.01" required> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>

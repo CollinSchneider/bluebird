@@ -43,7 +43,7 @@ class RetailersController < ApplicationController
 
   def show_order_not_reached
     @order = Commit.find(params[:id])
-    return redirect_to "/retailer/order_history" if @order.status != ('pending' && 'past')
+    return redirect_to "/retailer/order_history" if @order.status != 'pending' && @order.status != 'past'
   end
 
   def show_order_sale_made

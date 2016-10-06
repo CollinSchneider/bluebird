@@ -2,7 +2,7 @@
   <% @past_orders.each do |order| %>
     <% if order.status == 'live' %>
       <% link = "/products/#{order.product.id}/#{order.product.slug}" %>
-    <% elsif order.status == ('past' || 'pending') %>
+    <% elsif order.status == 'past' || order.status == 'pending' %>
       <% link = "/retailer/order_history/not_reached/#{order.id}" %>
     <% elsif order.sale_made %>
       <% link = "/retailer/order_history/sale_made/#{order.id}" %>

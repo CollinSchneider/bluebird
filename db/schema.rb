@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160930025928) do
+ActiveRecord::Schema.define(version: 20161006002145) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -74,11 +74,9 @@ ActiveRecord::Schema.define(version: 20160930025928) do
 
   create_table "products", force: :cascade do |t|
     t.string   "title"
-    t.string   "price"
     t.string   "description"
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
-    t.string   "discount"
     t.string   "status"
     t.string   "category"
     t.string   "main_image_file_name"
@@ -106,8 +104,6 @@ ActiveRecord::Schema.define(version: 20160930025928) do
     t.datetime "start_time"
     t.datetime "end_time"
     t.string   "slug"
-    t.string   "goal"
-    t.string   "current_sales"
     t.string   "percent_discount"
     t.boolean  "featured",                 default: false
     t.string   "uuid"
@@ -120,6 +116,10 @@ ActiveRecord::Schema.define(version: 20160930025928) do
     t.string   "feature_five"
     t.integer  "minimum_order"
     t.float    "retail_price"
+    t.float    "discount"
+    t.float    "price"
+    t.float    "goal"
+    t.float    "current_sales"
   end
 
   create_table "retailers", force: :cascade do |t|
