@@ -23,7 +23,7 @@ class Users::SignupController < UsersController
         retailer = Retailer.new
         retailer.user_id = user.id
         retailer.save!
-        BlueBirdEmail.retailer_welcome_email(user)
+        # BlueBirdEmail.retailer_welcome_email(user)
         session[:user_id] = user.id
         return redirect_to '/shop'
       else

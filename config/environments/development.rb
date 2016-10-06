@@ -27,15 +27,15 @@ Rails.application.configure do
   #   password: ENV['GMAIL_PASSWORD'],
   #   enable_starttls_auto: true
   # }
-config.action_mailer.smtp_settings = {
-  :user_name => ENV['SENDGRID_USERNAME'],
-  :password => ENV['SENDGRID_PASSWORD'],
-  :domain => ENV['SENDGRID_DOMAIN'],
-  :address => 'smtp.sendgrid.net',
-  :port => 587,
-  :authentication => :plain,
-  :enable_starttls_auto => true
-}
+# config.action_mailer.smtp_settings = {
+#   :user_name => ENV['SENDGRID_USERNAME'],
+#   :password => ENV['SENDGRID_PASSWORD'],
+#   :domain => ENV['SENDGRID_DOMAIN'],
+#   :address => 'smtp.sendgrid.net',
+#   :port => 587,
+#   :authentication => :plain,
+#   :enable_starttls_auto => true
+# }
 
 
   # Print deprecation notices to the Rails logger.

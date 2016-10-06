@@ -18,8 +18,8 @@ class CommitsController < ApplicationController
           if !charge.nil? && !charge[1]
             return redirect_to "/retailer/#{commit.uuid}/card_declined"
           else
-            BlueBirdEmail.retailer_full_price_email(commit, commit.retailer.user)
-            BlueBirdEmail.wholesaler_full_price_email(commit, commit.product.wholesaler.user)
+            # BlueBirdEmail.retailer_full_price_email(commit, commit.retailer.user)
+            # BlueBirdEmail.wholesaler_full_price_email(commit, commit.product.wholesaler.user)
             return redirect_to '/retailer/order_history'
           end
         else
