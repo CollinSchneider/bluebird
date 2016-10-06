@@ -69,7 +69,7 @@ class Product < ActiveRecord::Base
     elsif self.duration == '30_days'
       self.end_time = Time.now.beginning_of_day + 30.days + 21.hours
     elsif self.duration = '5_minutes'
-      self.end_time = (Time.now + 2.minutes)
+      self.end_time = (Time.now + 20.minutes)
     end
     self.save
   end
