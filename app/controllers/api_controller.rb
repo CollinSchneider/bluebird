@@ -25,7 +25,7 @@ class ApiController < ApplicationController
     product.save
     render :json => {:product => product}
     product.commits.each do |commit|
-      Mailer.retailer_discount_hit(commit.retailer.user, commit, product).deliver_later
+      BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, product)
       commit.status = 'discount_granted'
       current_user.collect_payment(commit)
       commit.save(validate: false)
@@ -43,7 +43,7 @@ class ApiController < ApplicationController
     original_inventory = product.quantity.to_i
     product.commits.each do |commit|
       original_inventory += commit.amount.to_i
-      Mailer.retailer_discount_missed(commit.retailer.user, product).deliver_later
+      BlueBirdEmail.retailer_discount_missed(commit.retailer.user, product)
       commit.status = 'past'
       commit.save(validate: false)
     end
@@ -62,7 +62,7 @@ class ApiController < ApplicationController
       user.password_reset_token = token
       user.password_reset_expiration = Time.now + 30.minutes
       user.save(validate: false)
-      Mailer.forgot_password(user).deliver_later
+      BlueBirdEmail.forgot_password(user)
       render :json => {message: "Instructions has been sent to #{email}, you have 30 minutes to reset your password."}
     else
       render :json => {message: "No users found with the email of #{email}."}

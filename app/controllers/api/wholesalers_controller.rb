@@ -1,36 +1,35 @@
 class Api::WholesalersController < ApiController
 
-  def apply
-    if params[:user][:password] == params[:user][:password_confirmation]
-      user = User.create(user_params)
-      if user.save
-        company = Company.new
-        company.company_name = params[:company][:company_name]
-        company.website = params[:company][:website]
-        company.user_id = user.id
-        company.save
-        wholesaler = Wholesaler.new
-        wholesaler.approved = false
-        wholesaler.user_id = user.id
-        wholesaler.save
-        #TODO thanks for applying email
-        redirect_to "/thank_you?_user=#{user.first_name}"
-      else
-        flash[:error] = user.errors.full_messages
-        redirect_to request.referrer
-      end
-    else
-      redirect_to request.referrer
-      flash[:error] = ["Password and Password Confirmation does not match"]
-    end
-  end
+  # def apply
+  #   if params[:user][:password] == params[:user][:password_confirmation]
+  #     user = User.create(user_params)
+  #     if user.save
+  #       company = Company.new
+  #       company.company_name = params[:company][:company_name]
+  #       company.website = params[:company][:website]
+  #       company.user_id = user.id
+  #       company.save
+  #       wholesaler = Wholesaler.new
+  #       wholesaler.approved = false
+  #       wholesaler.user_id = user.id
+  #       wholesaler.save
+  #       #TODO thanks for applying email
+  #       redirect_to "/thank_you?_user=#{user.first_name}"
+  #     else
+  #       flash[:error] = user.errors.full_messages
+  #       redirect_to request.referrer
+  #     end
+  #   else
+  #     redirect_to request.referrer
+  #     flash[:error] = ["Password and Password Confirmation does not match"]
+  #   end
+  # end
 
   def approve
     wholesaler = Wholesaler.find(params[:id])
     wholesaler.approved = true
     if wholesaler.save
-      #TODO  congrats on being accepted email
-      Mailer.wholesaler_welcome_email(wholesaler.user).deliver_later
+      BlueBirdEmail.wholesaler_welcome_email(wholesaler.user).deliver_now!
       render :json => {
         success: true,
         message: "Approved #{wholesaler.user.company.company_name}"
