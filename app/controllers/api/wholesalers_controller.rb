@@ -13,7 +13,6 @@ class Api::WholesalersController < ApiController
         wholesaler.approved = false
         wholesaler.user_id = user.id
         wholesaler.save
-        #TODO thanks for applying email
         redirect_to "/thank_you?_user=#{user.first_name}"
       else
         flash[:error] = user.errors.full_messages
