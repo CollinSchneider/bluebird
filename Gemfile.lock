@@ -62,6 +62,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     concurrent-ruby (1.0.2)
+    daemon_controller (1.2.0)
     debug_inspector (0.0.2)
     domain_name (0.5.20160615)
       unf (>= 0.0.5, < 1.0.0)
@@ -131,6 +132,10 @@ GEM
       cocaine (~> 0.5.5)
       mime-types
       mimemagic (= 0.3.0)
+    passenger (4.0.60)
+      daemon_controller (>= 1.2.0)
+      rack
+      rake (>= 0.8.1)
     pdf-core (0.6.1)
     pg (0.18.4)
     prawn (2.1.0)
@@ -237,6 +242,7 @@ DEPENDENCIES
   materialize-sass
   omniauth-stripe-connect
   paperclip
+  passenger
   pg (~> 0.15)
   prawn
   pry-rails

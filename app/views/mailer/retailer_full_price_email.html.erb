@@ -4,15 +4,16 @@
     <meta charset="utf-8">
   </head>
   <body>
-    <h5><%= @user.first_name %>,</h5>
+    <h6><%= @user.first_name %>,</h6>
 
-    <div class="center-align">
+    <div class="center-align col s8 offset-s2">
       <div class="row">
         <p>
-          Your product <%= @commit.product.title %> on BlueBird.club has received a new purchase order for your full price of <%= '%.2f' % (@commit.product.price.to_f) %>.
+          This is your confirmation email of your purchase order of <%= @commit.product.title %> from <%= @commit.product.wholesaler.user.company.company_name %>.
+          We will notify you with the shipping details when your order is shipped out.
         </p>
         <p>
-          It is now your job to get this shipped to your customer as soon as possible! Below is the order breakdown.
+          You can keep an eye the status <a href="localhost:3000/retailer/order_history/<%=@commit.id %>?email_click=<%= @user.uuid%>">here</a>
         </p>
       </div>
 
@@ -32,21 +33,20 @@
             <tr>
               <td><%= @commit.product.title %></td>
               <td><%= @commit.amount %></td>
-              <td><%= number_to_currency(@commit.product.price.to_f) %></td>
+              <td>$<%= '%.2f' % (@commit.product.price.to_f) %></td>
               <td>Determined Upon Shipment</td>
-              <td><%= number_to_currency(@commit.product.price.to_f*@commit.amount.to_i) %></td>
+              <td>$<%+ '%.2f' % (@commit.product.price.to_f*@commit.amount.to_i) %></td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="row">
-        <p>
-          If you need any help with the process, don't hesitate to reach out to us.
-        </p>
-      </div>
-      <div class="row">
         Your friends, <br>
         BlueBird.club
       </div>
     </div>
+
+
+  </body>
+</html>

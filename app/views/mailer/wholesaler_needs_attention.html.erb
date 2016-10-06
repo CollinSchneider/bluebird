@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <h5><%= @user.first_name %>,</h5>
+
+    <div class="center-align">
+      <div class="row">
+        <p>
+          Your product <%= @product.title %> on BlueBird.club has expired and you finished
+          your sale with <%= number_to_currency(@product.current_sales) %> in sales, missing your goal of
+          <%= number_to_currency(@product.goal) %>.
+        </p>
+        <h6>
+          At this point you have a few choices:
+        </h6>
+        <ul>
+          <li><a href="https://www.bluebird.club/uesrs?redirect=/needs_attention">Grant the discount of $<%= @product.discount %>, and receive $<%= @product.current_sales %> in sales</a></li>
+          <li><a href="https://www.bluebird.club/users?redirect=/needs_attention">Extend the product 10 more days</a></li>
+          <li><a href="https://www.bluebird.club/users?redirect=/needs_attention">Expire the product, receive no sales</a></li>
+        </ul>
+      </div>
+      <div class="row">
+        <p>
+          If you need any help with the process, don't hesitate to reach out to us.
+        </p>
+      </div>
+      <div class="row">
+        Your friends, <br>
+        BlueBird.club Team
+      </div>
+    </div>
+
+
+  </body>
+</html>

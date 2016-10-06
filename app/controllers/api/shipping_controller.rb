@@ -110,7 +110,7 @@ class Api::ShippingController < ApiController
             tracking: tracker
           }
         else
-          BlueBirdEmail.retailer_declined_card_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url, declined_charge)
+          BlueBirdEmail.retailer_declined_card_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url, shipping_cost)
           return render :json => {
             success: false,
             error: charge[1]
