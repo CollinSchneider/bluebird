@@ -16,13 +16,13 @@
           <h6><%= order.uuid %></h6>
         </div>
         <div class="col m2 valign">
-          <h6><%= order.product.price_with_fee %></h6>
+          <h6><%= order.product.title %></h6>
         </div>
         <div class="col m2 valign">
           <% if order.full_price? %>
-            <h6>$<%= '%.2f' % (order.amount.to_i*order.product.price.to_f) %></h6>
+            <h6><%= number_to_currency(order.amount.to_i*order.product.price) %></h6>
           <% else %>
-            <h6>$<%= '%.2f' % (order.amount.to_i*order.product.discount.to_f) %></h6>
+            <h6><%= number_to_currency(order.amount.to_i*order.product.price_with_fee) %></h6>
           <% end %>
         </div>
         <div class="col m2 valign">
