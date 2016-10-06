@@ -10,7 +10,8 @@
       <h5><%= @order.amount %> units x <%=number_to_currency(product_price) %>/each</h5>
       <% shipping_price = @order.shipping.nil? ? 0 : @order.shipping.shipping_amount %>
       <h5>Shipping: <%= number_to_currency(shipping_price) %></h5>
-      <h5><%= number_to_currency(@order.total_price + shipping_price) %></h5>
+      <% total_price = @order.full_price ? @order.amount*@order.product.price + shipping_price : @order.total_price + shipping_price %>
+      <h5><%= number_to_currency(total_price) %></h5>
     </div>
     <div class="row">
       <% if @order.shipping.nil? %>

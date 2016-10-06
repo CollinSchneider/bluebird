@@ -131,16 +131,26 @@
                       <input type="submit" value="Make Order" class='btn'>
                     </form>
                     <div class="hidden real-commit-div">
-                      <%= form_for Commit.new, :class => 'real-order-form' do |f| %>
-                        <%= f.hidden_field :product_id, :value => @product.id %>
-                        <%= f.hidden_field :full_price, :value => true %>
-                        <%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
+                      <!-- <form action="/commits?full_price=t" method="post" class='real-order-amount'> -->
+                      <%= form_for Commit.new, url: '/commits?full_price=t' do |f| %>
+                        <input type="hidden" name="commit[product_id]" value="<%= @product.id %>">
+                        <input type="hidden" name="commit[retailer_id]" value="<%= current_user.retailer.id %>">
+                        <div class="input-field">
+                          <input type="text" name="commit[amount]" class='real-order-amount' readonly>
+                        </div>
+                        <input type="submit" value="Confirm Order" class='btn submit-button real-order-button'>
+                      <% end %>
+                      <!-- </form> -->
+                      <!-- <#%= form_for Commit.new, :class => 'real-order-form' do |f| %>
+                        <#%= f.hidden_field :product_id, :value => @product.id %>
+                        <#%= f.hidden_field :full_price, :value => true %>
+                        <#%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
                         <label>Order Quantity</label>
                         <div class="input-field">
                           <input type="text" name="commit[amount]" class='real-order-amount' readonly>
                         </div>
-                        <%= f.button "Confirm Order", :class => 'btn submit-button real-order-button' %>
-                      <% end %>
+                        <#%= f.button "Confirm Order", :class => 'btn submit-button real-order-button' %>
+                      <#% end %> -->
                       <button class='btn-flat white black-text waves-effect cancel-order-form'>Cancel</button>
                     </div>
                   <% elsif users_orders != [] %>
@@ -274,7 +284,7 @@
      $('.real-commit-div').attr('class', 'real-commit-div hidden')
      $('.commit-step-one').show()
    })
-   
+
   $('.contact-info-toggle-on').click(function(){
     $(this).toggle()
     $('.contact-info').toggle()

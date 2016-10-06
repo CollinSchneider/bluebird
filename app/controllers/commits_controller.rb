@@ -9,7 +9,8 @@ class CommitsController < ApplicationController
         commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
         commit.product.save(validate: false)
 
-        if commit.full_price
+        if params[:full_price] == 't'
+          commit.full_price = true
           commit.status = 'full_price'
           commit.sale_made = true
           commit.save(validate: false)

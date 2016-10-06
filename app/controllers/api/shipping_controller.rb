@@ -86,8 +86,10 @@ class Api::ShippingController < ApiController
 
   def ship_order
     commit = Commit.find_by_uuid(params[:commit_uuid])
-    tracking_code = params[:tracking_code]
+    tracking_code = params[:tracking_code].gsub(' ', '')
     shipping_cost = params[:shipping_amount]
+    tracking_code = tracking_code.gsub('-', '')
+    tracking_code = tracking_code.gsub('.', '')
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
     begin
       tracker = EasyPost::Tracker.create({
