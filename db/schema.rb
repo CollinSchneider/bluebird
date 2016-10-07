@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161006002145) do
+ActiveRecord::Schema.define(version: 20161007183053) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -174,6 +174,7 @@ ActiveRecord::Schema.define(version: 20161006002145) do
     t.datetime "updated_at",         null: false
     t.string   "card_failed_reason"
     t.datetime "card_failed_date"
+    t.datetime "shipped_on"
   end
 
   add_index "shippings", ["commit_id"], name: "index_shippings_on_commit_id", using: :btree

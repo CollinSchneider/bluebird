@@ -99,6 +99,7 @@ class Api::ShippingController < ApiController
         charge = current_user.collect_shipping_charge(commit, shipping_cost)
         shipment = Shipping.where('commit_id = ?', commit.id).first
         shipment.tracking_id = tracker.id
+        shipment.shipped_on = DateTime.now
         shipment.save!
         commit.has_shipped = true
         commit.save(validate: false)
