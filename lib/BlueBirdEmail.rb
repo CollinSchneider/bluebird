@@ -1,27 +1,65 @@
 require 'sendgrid-ruby'
 include SendGrid
+require 'json'
 class BlueBirdEmail
 
   COLLIN_EMAIL = "collin@bluebird.club"
   SALES_EMAIL = "sales@bluebird.club"
   SUPPORT_EMAIL = "support@bluebird.club"
 
+  def self.test_email
+    from = Email.new(email: SALES_EMAIL)
+    subject = 'Hello World from the SendGrid Ruby Library!'
+    to = Email.new(email: 'collin@jastr.co')
+    content = Content.new(type: 'text/plain', value: 'Hello, Email!')
+    mail = Mail.new(from, subject, to, content)
+    binding.pry
+    sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
+    binding.pry
+    response = sg.client.mail._('send').post(request_body: json_mail)
+    binding.pry
+    puts response.status_code
+    puts response.body
+    puts response.headers
+  end
+
   def self.send_email(from_email, to_email, subject, content)
-    email = SendGrid::Mail.new
-    email.from = SendGrid::Email.new(email: from_email)
-    email.subject = subject
+    data = JSON.parse('{
+      "personalizations": [
+        {
+          "to": [
+            {
+              "email": "collin.thomas.schneider@gmail.com"
+            }
+          ],
+          "subject": "Hello World from the SendGrid Ruby Library!"
+        }
+      ],
+      "from": {
+        "email": "test@bluebird.club"
+      },
+      "content": [
+        {
+          "type": "text/plain",
+          "value": "Hello, Email!"
+        }
+      ]
+    }')
 
-    per = SendGrid::Personalization.new
-    per.to = SendGrid::Email.new(email: to_email)
-
-    email.personalizations = per
-
-    email.contents = SendGrid::Content.new(type: 'text/plain', value: content)
-    email.contents = Content.new(type: 'text/html', value: content)
+    # email.from = SendGrid::Email.new(email: from_email)
+    # email.subject = subject
+    #
+    # per = SendGrid::Personalization.new
+    # per.to = SendGrid::Email.new(email: to_email)
+    #
+    # email.personalizations = per
+    #
+    # email.contents = SendGrid::Content.new(type: 'text/plain', value: content)
+    # email.contents = Content.new(type: 'text/html', value: content)
 
     sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
 
-    response = sg.client.mail._('send').post(request_body: email.to_json)
+    response = sg.client.mail._('send').post(request_body: data)
   end
 
   def self.retailer_welcome_email(user)
