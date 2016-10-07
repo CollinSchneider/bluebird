@@ -57,6 +57,8 @@ gem 'will_paginate'
 
 gem 'aws-sdk', '< 2.0'
 
+gem 'rails_12factor', group: :production
+
 # Use Unicorn as the app server
 # gem 'unicorn'
 

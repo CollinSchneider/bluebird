@@ -7,41 +7,7 @@ class BlueBirdEmail
   SALES_EMAIL = "sales@bluebird.club"
   SUPPORT_EMAIL = "support@bluebird.club"
 
-  def self.test_email
-    from = Email.new(email: SALES_EMAIL)
-    subject = 'Hello World from the SendGrid Ruby Library!'
-    to = Email.new(email: 'collin@jastr.co')
-    content = Content.new(type: 'text/plain', value: 'Hello, Email!')
-    mail = Mail.new(from, subject, to, content)
-    sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
-    response = sg.client.mail._('send').post(request_body: json_mail)
-    puts response.status_code
-    puts response.body
-    puts response.headers
-  end
-
   def self.send_email(from_email, to_email, subject, content)
-    # data = JSON.parse("{
-    #   \"personalizations\": [
-    #     {
-    #       \"to\": [
-    #       {
-    #       \"email\": \"#{to_email}\"
-    #       }
-    #     ],
-    #     \"subject\": \"#{subject}\"
-    #     }
-    #   ],
-    #   \"from\": {
-    #     \"email\": \"#{from_email}\"
-    #   },
-    #   \"content\": [
-    #     {
-    #       \"type\": \"text/html\",
-    #       \"value\": \"'test'\"
-    #     }
-    #   ]
-    #
     email = SendGrid::Mail.new
     email.from = SendGrid::Email.new(email: from_email)
     email.subject = subject
