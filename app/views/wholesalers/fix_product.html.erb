@@ -6,30 +6,51 @@
 </div>
 
   <div class="row center-align">
-    <h5>Duration of Listing: <%= @product.duration.gsub('_', ' ') %></h5>
-    <h5>Sales Goal: $<%= @product.goal%></h5>
-    <% if flash.now[:error] %>
-      <% flash.now[:error].each do |err, msg| %>
+    <% if !flash[:error].nil? %>
+      <% flash[:error].each do |err, msg| %>
         <h6 class="red-text error-field"><i span="tiny material-icons">error_outline</i> <%= msg.first %></h6>
       <% end %>
     <% end %>
     <div class="col s12">
-      <%= form_for Product.new, :html => {:class => 'new-product-form'} do |f| %>
-        <%= f.hidden_field :duration, :value => params[:duration] %>
-        <%= f.hidden_field :goal, :value => params[:goal] %>
+      <%= form_tag("/fix_product/#{@product.uuid}", multipart: true) do %>
+        <div class="col s8 offset-s2">
+          <div class="product-form-div z-depth-2">
+
+            <div class="input-field">
+              <label>Duration</label>
+              <select name="product[duration]">
+              <%
+                ['5_minutes', '1_day', '7_days', '14_days', '30_days'].each do |dur|
+                  if dur == @product.duration
+              %>
+                    <option value="<%= dur %>" selected="selected"><%= dur.gsub('_', ' ').capitalize %></option>
+                  <% else %>
+                    <option value="<%= dur %>"><%= dur.gsub('_', ' ').capitalize %></option>
+                <% end %>
+              <% end %>
+            </select>
+            </div>
+            <div class="input-field">
+              <label>Sales Goal ($)</label>
+              <input type="number" name="product[goal]" value="<%= @product.goal %>" step="0.01">
+            </div>
+
+          </div>
+        </div>
+
 
         <div class="col s8 offset-s2">
           <div class="product-form-div z-depth-2">
 
             <h5>Describe your product.</h5>
             <div class="input-field">
-              <%= f.label 'Product Title*' %>
-              <%= f.text_field :title, :value => @product.title %> <br>
+              <%= label_tag 'Product Title*' %>
+              <input type="text" name="product[title]" value="<%= @product.title %>">
             </div>
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <label for="short-description">Short Description*</label>
-                <%= f.text_area :description, :id => "short-description", :class => "materialize-textarea", :length => 60, :value => @product.description %> <br>
+                <textarea name="product[description]" rows="8" cols="40" class="materialize-textarea" required><%= @product.description %></textarea>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Short, 120 character maximum length product description</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -38,57 +59,45 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <label for="long-description">Long Description</label>
-                <%= f.text_area :long_description, :id => "long-description", :class => "materialize-textarea", :value => @product.long_description %> <br>
+                <textarea name="product[long_description]" rows="8" cols="40" class="materialize-textarea" required><%= @product.long_description %></textarea>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Longer, detailed product description</h6>"><i class="tiny material-icons">live_help</i></a>
               </div>
             </div>
             <div class="input-field">
-              <%= f.label "Feature One*" %>
-              <%= f.text_field :feature_one, :value => @product.feature_one %>
+              <%= label_tag "Feature One*" %>
+              <input type="text" name="product[feature_one]" value="<%= @product.feature_one %>">
             </div>
             <div class="input-field">
-              <%= f.label "Feature Two" %>
-              <%= f.text_field :feature_two, :value => @product.feature_two %>
+              <%= label_tag "Feature Two" %>
+              <input type="text" name="product[feature_two]" value="<%= @product.feature_two %>">
             </div>
             <div class="input-field">
-              <%= f.label "Feature Three" %>
-              <%= f.text_field :feature_three, :value => @product.feature_three %>
+              <%= label_tag "Feature Three" %>
+              <input type="text" name="product[feature_three]" value="<%= @product.feature_three %>">
             </div>
             <div class="input-field">
-              <%= f.label "Feature Four" %>
-              <%= f.text_field :feature_four, :value => @product.feature_four %>
+              <%= label_tag "Feature Four" %>
+              <input type="text" name="product[feature_four]" value="<%= @product.feature_four %>">
             </div>
             <div class="input-field">
-              <%= f.label "Feature Five" %>
-              <%= f.text_field :feature_five, :value => @product.feature_five %>
+              <%= label_tag "Feature Five" %>
+              <input type="text" name="product[feature_five]" value="<%= @product.feature_five %>">
             </div>
 
             <div class="input-field">
-              <select name="product[category]">
-                <option disabled>Choose Category*</option>
-                <% if @product.category == 'Home Goods' %>
-                  <option value="Home Goods" selected="selected">Home Goods</option>
-                <% else %>
-                  <option value="Home Goods">Home Goods</option>
+              <select name="product[duration]">
+              <%
+                ['Home Goods', 'Accessories', 'Tech', 'Apparel'].each do |cat|
+                  if cat == @product.category
+              %>
+                    <option value="<%= cat %>" selected="selected"><%= cat.gsub('_', ' ').capitalize %></option>
+                  <% else %>
+                    <option value="<%= cat %>"><%= cat.gsub('_', ' ').capitalize %></option>
                 <% end %>
-                <% if @product.category == 'Accessories' %>
-                  <option value="Accessories" selected="selected">Accessories</option>
-                <% else %>
-                  <option value="Accessories">Home Goods</option>
-                <% end %>
-                <% if @product.category == 'Apparel' %>
-                  <option value="Apparel" selected="selected">Apparel</option>
-                <% else %>
-                  <option value="Apparel">Home Goods</option>
-                <% end %>
-                <% if @product.category == 'Tech' %>
-                  <option value="Tech" selected="selected">Tech</option>
-                <% else %>
-                  <option value="Tech">Home Goods</option>
-                <% end %>
-              </select>
+              <% end %>
+            </select>
             </div>
 
           </div>
@@ -97,36 +106,86 @@
         <div class="col s8 offset-s2">
           <div class="product-form-div z-depth-2">
             <h5>Show off your product.</h5>
-            <div class="col 2">
-              <span>Main Image</span>
-              <%= image_tag @product.main_image.url(:thumb), :class => 'responsive-img' %>
-            </div>
-            <div class="col s2">
-              <span>Image Two</span>
-              <%= image_tag @product.photo_two.url(:thumb), :class => 'responsive-img' %>
-            </div>
-            <div class="col s2">
-              <span>Image Three</span>
-              <%= image_tag @product.photo_three.url(:thumb), :class => 'responsive-img' %>
-            </div>
-            <div class="col s2">
-              <span>Image Four</span>
-              <%= image_tag @product.photo_four.url(:thumb), :class => 'responsive-img' %>
-            </div>
-            <div class="col s2">
-              <span>Image Five</span>
-              <%= image_tag @product.photo_five.url(:thumb), :class => 'responsive-img' %>
+            <div class="row">
+              <div class="col s12 center-align">
+                <h6>Main Image</h6>
+                <%= image_tag @product.main_image.url(:thumb), :class => 'responsive-img' %>
+              </div>
+              <% if @product.photo_two.present? %>
+                <div class="col s12 center-align">
+                  <h6>Image Two</h6>
+                  <%= image_tag @product.photo_two.url(:thumb), :class => 'responsive-img' %>
+                </div>
+              <% else %>
+                <div class="file-field input-field">
+                  <div class="btn">
+                    <span>Image Two</span>
+                    <input type="file" name="product[photo_two]">
+                  </div>
+                  <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                  </div>
+                </div>
+              <% end %>
+              <% if @product.photo_three.present? %>
+                <div class="col s12 center-align">
+                  <h6>Image Three</h6>
+                  <%= image_tag @product.photo_three.url(:thumb), :class => 'responsive-img' %>
+                </div>
+              <% else %>
+              <div class="file-field input-field">
+                <div class="btn">
+                  <span>Image Three</span>
+                  <input type="file" name="product[photo_three]">
+                </div>
+                <div class="file-path-wrapper">
+                  <input class="file-path validate" type="text">
+                </div>
+              </div>
+              <% end %>
+              <% if @product.photo_four.present? %>
+                <div class="col s12 center-align">
+                  <h6>Image Four</h6>
+                  <%= image_tag @product.photo_four.url(:thumb), :class => 'responsive-img' %>
+                </div>
+              <% else %>
+                <div class="file-field input-field">
+                  <div class="btn">
+                    <span>Image Four</span>
+                    <input type="file" name="product[photo_four]">
+                  </div>
+                  <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                  </div>
+                </div>
+              <% end %>
+              <% if @product.photo_five.present? %>
+                <div class="col s12 center-align">
+                  <h6>Image Five</h6>
+                  <%= image_tag @product.photo_five.url(:thumb), :class => 'responsive-img' %>
+                </div>
+              <% else %>
+                <div class="file-field input-field">
+                  <div class="btn">
+                    <span>Image Five</span>
+                    <input type="file" name="product[photo_five]">
+                  </div>
+                  <div class="file-path-wrapper">
+                    <input class="file-path validate" type="text">
+                  </div>
+                </div>
+              <% end %>
             </div>
           </div>
         </div>
 
-        <div class="col s8 offset-s2">
+        <div class="col s12 m8 offset-m2">
           <div class="product-form-div z-depth-2">
             <h5>Set the numbers.</h5>
             <div class="input-field valign-wrapper">
               <div class="col s11">
-                <%= f.label 'Product Full Wholesale Price*' %>
-                <%= f.number_field :price, :value => @product.price %> <br>
+                <%= label_tag 'Product Full Wholesale Price*' %>
+                <input type="number" name="product[price]" class='product-wholesale-price' step="0.01" value="<%= @product.price %>" required> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the full wholesale price. <br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -134,20 +193,38 @@
             </div>
             <div class="input-field valign-wrapper">
               <div class="col s11">
-                <%= f.label 'Product Discounted Wholesale Price*' %>
-                <%= f.number_field :discount, :class => 'product-discount', :value => @product.discount %> <br>
+                <%= label_tag 'Product Discounted Wholesale Price*' %>
+                <input type="number" name="product[discount]" class='product-discount-price' step="0.01" value="<%= @product.discount %>" required> <br>
               </div>
               <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%= @product.goal %> is met<br> within <%= @product.duration.gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=@product.goal%> is met<br> within <%= @product.duration.gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
               </div>
             </div>
             <div class="input-field valign-wrapper">
               <div class="col s11">
-                <%= f.label 'Product Inventory For Sale*' %>
-                <%= f.number_field :quantity, :class => 'product-quantity', :value => @product.quantity %> <br>
+                <%= label_tag 'Suggested Retail Price*' %>
+                <input type="number" name="product[retail_price]" class='product-retail-price' step="0.01" value="<%= @product.retail_price %>" required> <br>
               </div>
               <div class="col s1 valign">
-                <a class="tooltipped" data-position="top" data-delay="0" data-tooltip="<h6>How much inventory you are listing for sale <br> Tip: must be possible to reach $<%=params[:goal]%> in sales at your<br> discounted price with this amount of inventory.</h6>"><i class="tiny material-icons">live_help</i></a>
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=@product.goal%> is met<br> within <%= @product.duration.gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
+            </div>
+            <div class="input-field valign-wrapper">
+              <div class="col s11">
+                <%= label_tag 'Product Inventory For Sale*' %>
+                <input type="number" name="product[quantity]" step="0.01" value="<%= @product.quantity %>" required> <br>
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>How much inventory you are listing for sale <br> Tip: must be possible to reach $<%=params[:goal]%> in sales at your<br> discounted price with this amount of inventory.</h6>"><i class="tiny material-icons">live_help</i></a>
+              </div>
+            </div>
+            <div class="input-field valign-wrapper">
+              <div class="col s11">
+                <%= label_tag 'Minimum Allowed Order' %>
+                <input type="number" name="product[minimum_order]" step="0.01" value="<%= @product.minimum_order %>" required> <br>
+              </div>
+              <div class="col s1 valign">
+                <a class="tooltipped" data-position="top" data-delay="0" data-tooltip="<h6>The lowest number of units a retailer can order.</h6>"><i class="tiny material-icons">live_help</i></a>
               </div>
             </div>
 
@@ -156,7 +233,7 @@
 
         <div class="row col s12">
           <div class="row">
-            <%= f.submit 'Create Product', :class => 'submit-button btn' %>
+            <%= submit_tag 'Create Product', :class => 'submit-button btn' %>
           </div>
           <div class="row">
             <div class="col s2 offset-s5">

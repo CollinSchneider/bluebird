@@ -14,8 +14,19 @@ class WholesalersController < ApplicationController
   end
 
   def fix_product
-    @product = Product.find(params[:product])
-    redirect_to "/wholesaler/profile" if @product.wholesaler_id != current_user.wholesaler.id
+    @product = Product.find_by(:uuid => params[:uuid])
+    return redirect_to "/wholesaler/profile" if @product.nil? || @product.wholesaler_id != current_user.wholesaler.id
+
+    if request.post?
+      product = Product.find_by(:uuid => params[:uuid])
+      product.update(product_params)
+      if product.save
+        return redirect_to "/approve_product/#{product.id}"
+      else
+        flash[:error] = product.errors.full_messages
+        return redirect_to request.referrer
+      end
+    end
   end
 
   def launch_product
@@ -137,8 +148,9 @@ class WholesalersController < ApplicationController
 
   def product_params
     params.require(:product).permit(:user_id, :percent_discont, :goal, :company_name, :current_sales,
-      :duration, :title, :price, :description, :discount, :status, :category, :quantity, :minimum_order,
-      :main_image, :photo_two, :photo_three, :photo_four, :photo_five)
+      :duration, :title, :price, :description, :long_description, :retail_price, :discount, :status, :category, :quantity,
+      :feature_one, :feature_two, :feature_three, :feature_four, :feature_five, :minimum_order, :main_image,
+      :photo_two, :photo_three, :photo_four, :photo_five)
   end
 
   def authenticate_wholesaler

@@ -47,7 +47,8 @@ Rails.application.routes.draw do
   get '/wholesaler/accounts' => 'wholesalers#accounts', as: :wholesaler_accounts
   get '/wholesaler/company' => 'wholesalers#company'
   get '/new_product' => 'wholesalers#new_product'
-  get '/fix_product' => 'wholesalers#fix_product'
+  get '/fix_product/:uuid' => 'wholesalers#fix_product'
+  post '/fix_product/:uuid' => 'wholesalers#fix_product'
   get '/approve_product/:id' => 'wholesalers#approve_product'
   put '/launch_product/:id' => 'wholesalers#launch_product'
   post '/start_over' => 'wholesalers#start_over'
