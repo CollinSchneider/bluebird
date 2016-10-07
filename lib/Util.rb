@@ -2,10 +2,12 @@ class Util
 
   def self.slug(string)
     slug = string.downcase
-    slug.gsub!(',' '')
-    slug.gsub!("'", "")
-    slug.gsub!('.', '')
-    slug.gsub!(' ', '-')
+    slug = slug.gsub!(',' '')
+    slug = slug.gsub!("'", "")
+    slug = slug.gsub!('.', '')
+    slug = slug.gsub!(' ', '-')
+    slug = slug.gsub!('!', '')
+    slug = slug.gsub!('?', '')
     return slug
   end
 
@@ -15,7 +17,7 @@ class Util
 
   def self.current_environment
     return "http://localhost:3000" if Rails.env == "development"
-    return "http://bluebirdclub.herokuapp.com" if Rails.env == "production"
+    return "https://www..bluebird.club" if Rails.env == "production"
   end
 
   def self.bluebird_logo_url
