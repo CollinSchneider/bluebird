@@ -18,6 +18,7 @@ class Util
   def self.current_environment
     return "http://localhost:3000" if Rails.env == "development"
     return "https://www..bluebird.club" if Rails.env == "production"
+    return "https://bluebirdclub-testing.herokuapp.com" if Rails.env == "testing"
   end
 
   def self.bluebird_logo_url
