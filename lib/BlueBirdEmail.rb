@@ -7,7 +7,7 @@ class BlueBirdEmail
   SUPPORT_EMAIL = "support@bluebird.club"
 
   def self.send_email(from_email, to_email, subject, content)
-    email = SendGrid::Mail.new
+    email = SendGrid::Email.new
     email.from = SendGrid::Email.new(email: from_email)
     email.subject = subject
 
