@@ -49,7 +49,8 @@ class ProductsController < ApplicationController
       # product.create_uuid
       return redirect_to "/approve_product/#{product.id}"
     else
-      flash[:error] = product.errors
+      binding.pry
+      flash[:error] = product.errors.full_messages
       return redirect_to request.referrer
     end
   end

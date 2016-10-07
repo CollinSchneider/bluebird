@@ -1,3 +1,6 @@
+
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
 <div class="row center-align">
   <div class="right-align">
     <a href="/wholesaler" class="btn-flat waves-effect border">Cancel</a>
@@ -61,13 +64,13 @@
   <div class="row center-align">
     <h5>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h5>
     <h5>Sales Goal: <%= number_to_currency(params[:goal]) %></h5>
-    <% if flash.now[:error] %>
-      <% flash.now[:error].each do |err, msg| %>
-        <h6 class="red-text error-field"><i span="tiny material-icons">error_outline</i> <%= msg.first %></h6>
+    <% if !flash[:error].nil? %>
+      <% flash.now[:error].each do |err| %>
+        <h6 class="red-text error-field"><i span="tiny material-icons">error_outline</i> <%= err %></h6>
       <% end %>
     <% end %>
     <div class="col s12">
-      <%= form_for Product.new, :html => {:class => 'new-product-form'} do |f| %>
+      <%= form_for Product.new, :html => {:class => 'new-product-form', :onsubmit => "return validateForm()"} do |f| %>
         <%= f.hidden_field :duration, :value => params[:duration] %>
         <%= f.hidden_field :goal, :value => params[:goal] %>
 
@@ -133,8 +136,12 @@
 
         <div class="col s12 m8 offset-m2">
           <div class="product-form-div z-depth-2">
-
-            <h5>Show off your product.</h5>
+            <div class="row">
+              <h5>Show off your product.</h5>
+              <h6 class='bold'>Tips:</h6>
+              <h6>Image format <span class='bold'>must</span> be either JPEG, PNG, or GIF.</h6>
+              <h6>Product images are displayed as squares, so please upload a 1:1 ratio image for it to not become distorted.</h6>
+            </div>
             <div class="file-field input-field">
               <div class="btn">
                 <span>Main Image*</span>
@@ -180,7 +187,6 @@
                 <input class="file-path validate" type="text">
               </div>
             </div>
-
           </div>
         </div>
 
@@ -190,7 +196,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Product Full Wholesale Price*' %>
-                <input type="number" name="product[price]" class='retail-price' step="0.01" required> <br>
+                <input type="number" name="product[price]" class='product-wholesale-price' step="0.01" required> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the full wholesale price. <br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -199,7 +205,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Product Discounted Wholesale Price*' %>
-                <input type="number" name="product[discount]" class='product-discount' step="0.01" required> <br>
+                <input type="number" name="product[discount]" class='product-discount-price' step="0.01" required> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
@@ -208,7 +214,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <%= f.label 'Suggested Retail Price*' %>
-                <input type="number" name="product[retail_price]" class='retail-price' step="0.01" required> <br>
+                <input type="number" name="product[retail_price]" class='product-retail-price' step="0.01" required> <br>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
@@ -238,7 +244,8 @@
 
         <div class="row col s12">
           <div class="row">
-            <%= f.submit 'Create Product', :class => 'submit-button btn' %>
+            <div class='red-text front-end-validate'></div>
+            <%= f.submit 'Create Product', :class => 'btn' %>
           </div>
           <div class="row">
             <div class="col s2 offset-s5">
@@ -262,4 +269,38 @@
       span.remove();
     });
   });
+
+  // $('.new-product-form').submit(function(e){
+  //   $(this).find('.btn').prop('disabled', true)
+  //   $(this).find('.btn').val('Saving product...')
+  //   $(this).find('.front-end-validate').text('')
+  //   var inventory = parseInt($(this).find('.product-quantity').val())
+  //   var retailPrice = parseInt($(this).find('.product-retail-price').val())
+  //   var fullPrice = parseInt($(this).find('.product-wholesale-price').val())
+  //   var discountedPrice = parseInt($(this).find('.product-discount-price').val())
+  //   var errors = []
+  //   if(discountedPrice*inventory < "<%= params[:goal] %>") {
+  //     errors.push("Your inventory and discounted price makes it impossible to reach your goal of <%= number_to_currency(params[:goal]) %> ($"+discountedPrice+" discounted x "+inventory+" inventory = $"+discountedPrice*inventory+"; must be higher than <%= number_to_currency(params[:goal]) %>)")
+  //   }
+  //   if(discountedPrice >= fullPrice){
+  //     errors.push("Your discounted price must be lower than your full wholesale price.")
+  //   }
+  //   if(retailPrice <= fullPrice){
+  //     errors.push("Your retail price must be higher than your full wholesale price.")
+  //   }
+  //   console.log(errors.length);
+  //   console.log(errors.length > 0)
+  //   if(errors.length > 0){
+  //     var div = $('.front-end-validate')
+  //     for (var i = 0; i < errors.length; i++) {
+  //       var error = $('<h6>').text(errors[i])
+  //       div.append(error)
+  //     }
+  //     $(this).find('.btn').prop('disabled', false)
+  //     $(this).find('.btn').val('Create Product')
+  //     e.preventDefault()
+  //     return false
+  //   }
+  //   replaceWithGif($(this).find('.btn'))
+  // })
 </script>
