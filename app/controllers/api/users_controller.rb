@@ -6,9 +6,9 @@ class Api::UsersController < ApiController
     if user
       token = SecureRandom.uuid
       user.password_reset_token = token
-      user.password_reset_expiration = Time.now + 30.minutes
+      user.password_reset_expiration = Time.now + 60.minutes
       user.save(validate: false)
-      # BlueBirdEmail.forgot_password(user).deliver_later
+      BlueBirdEmail.forgot_password(user)
       render :json => {message: "Instructions has been sent to #{email}, you have 30 minutes to reset your password."}
     else
       render :json => {message: "No users found with the email of #{email}."}

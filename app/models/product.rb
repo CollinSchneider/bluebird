@@ -237,12 +237,12 @@ class Product < ActiveRecord::Base
         goal_met_products += 1
         product.status = 'goal_met'
         product.save(validate: false)
-        # BlueBirdEmail.wholesaler_discount_hit(product.wholesaler.user, product)
+        BlueBirdEmail.wholesaler_discount_hit(product.wholesaler.user, product)
         product.commits.each do |commit|
           commit.status = 'goal_met'
           commit.sale_made = true
           commit.save(validate: false)
-          # BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, commit.product)
+          BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, commit.product)
           product.wholesaler.user.collect_payment(commit)
           # if charge[1]
             # BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, product)
@@ -261,7 +261,7 @@ class Product < ActiveRecord::Base
           commit.status = 'pending'
           commit.save(validate: false)
         end
-        # BlueBirdEmail.wholesaler_needs_attention(product.wholesaler.user, product)
+        BlueBirdEmail.wholesaler_needs_attention(product.wholesaler.user, product)
       end
     end
     return goal_met_products, needs_attention_products
