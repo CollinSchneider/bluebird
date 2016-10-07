@@ -13,11 +13,8 @@ class BlueBirdEmail
     to = Email.new(email: 'collin@jastr.co')
     content = Content.new(type: 'text/plain', value: 'Hello, Email!')
     mail = Mail.new(from, subject, to, content)
-    binding.pry
     sg = SendGrid::API.new(api_key: ENV['SENDGRID_API_KEY'])
-    binding.pry
     response = sg.client.mail._('send').post(request_body: json_mail)
-    binding.pry
     puts response.status_code
     puts response.body
     puts response.headers
