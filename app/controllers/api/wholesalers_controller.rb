@@ -57,10 +57,12 @@ class Api::WholesalersController < ApiController
       end
       current_user.wholesaler.save!
       flash[:success] = "Updated Info Successfully"
+      return redirect_to request.referrer
     else
       flash[:error] = current_user.errors.full_messages
+      flash[:notice] = "Email is already taken, or all fields must be filled out completely." if current_user.errors.empty?
+      return redirect_to request.referrer
     end
-    redirect_to request.referrer
   end
 
   private

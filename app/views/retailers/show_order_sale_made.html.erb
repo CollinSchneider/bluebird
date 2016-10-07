@@ -9,7 +9,11 @@
       <h5><%= @order.current_status %></h5>
       <h5><%= @order.amount %> units x <%=number_to_currency(product_price) %>/each</h5>
       <% shipping_price = @order.shipping.nil? ? 0 : @order.shipping.shipping_amount %>
-      <h5>Shipping: <%= number_to_currency(shipping_price) %></h5>
+      <% if shipping_price == 0 %>
+        <h5>Shipping is calculated upon shipment departure.</h5>
+      <% else %>
+        <h5>Shipping: <%= number_to_currency(shipping_price) %></h5>
+      <% end %>
       <% total_price = @order.full_price ? @order.amount*@order.product.price + shipping_price : @order.total_price + shipping_price %>
       <h5><%= number_to_currency(total_price) %></h5>
     </div>

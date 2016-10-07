@@ -1,7 +1,7 @@
 <div class="row">
-  <div class="col s12 m5 center-align border" style='margin-top: 50px'>
+  <div class="col s12 m5 center-align" style='margin-top: 50px'>
     <h5><%= @order.product.title %></h5>
-    <h6><%= @order.product.description %></h6>
+    <h5><%= @order.product.description %></h5>
     <div class="col s8 offset-s2 m6 offset-m3 center-align">
       <%= image_tag @order.product.main_image.url(:large), :class => 'responsive-img' %>
     </div>
@@ -15,12 +15,13 @@
       <% end %>
     <% elsif @order.status == 'pending' %>
       <div class="row">
-        <h6><%= @order.amount %> units x  <%= number_to_currency(@order.product.price_with_fee) %>/each</h6>
+        <h5><%= @order.amount %> units x  <%= number_to_currency(@order.product.price_with_fee) %>/each</h5>
+        <h5>Shipping: Calculated upon shipment departure.</h5>
         <hr/>
-        <h6 class='bold'>Total: <%= number_to_currency(@order.total_price) %></h6>
+        <h5 class='bold'>Total: <%= number_to_currency(@order.total_price) %></h5>
       </div>
       <div class="row">
-        <h6>This product did not reach the discounted price, we are now waiting for the wholesaler to either:</h6>
+        <h5>This product did not reach the discounted price, we are now waiting for the wholesaler to either:</h5>
         <ul>
           <li>Grant the discount of <%= number_to_currency(@order.product.price_with_fee) %> and proceed with the sale</li>
           <li>Extend the product 10 more days, in hopes of reaching the discount (your purchase order will continue as planned)</li>
