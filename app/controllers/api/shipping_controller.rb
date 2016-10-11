@@ -143,7 +143,7 @@ class Api::ShippingController < ApiController
     shipment.save!
     charge = current_user.collect_shipping_charge(shipment)
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
-    tracker = EasyPost::Tracker.retreive(shipment.tracking_id)
+    tracker = EasyPost::Tracker.retrieve(shipment.tracking_id)
     if charge[0] == true
       BlueBirdEmail.retailer_sale_shipped(shipment.retailer.user, shipment, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
     else
