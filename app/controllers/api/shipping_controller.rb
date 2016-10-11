@@ -142,7 +142,16 @@ class Api::ShippingController < ApiController
     shipment.retailer_id = retailer_id
     shipment.save!
     charge = current_user.collect_shipping_charge(shipment)
-    return render :json => {success: true}
+    if charge[0] == true
+      # BlueBirdEmail.retailer_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
+    else
+      # BlueBirdEmail.retailer_declined_card_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url, shipping_cost)
+    end
+    return render :json => {
+      success: true,
+      charge: charge[1],
+      tracking: tracker
+    }
   end
 
   def delete_address
