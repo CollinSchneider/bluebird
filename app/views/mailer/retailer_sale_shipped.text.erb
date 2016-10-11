@@ -1,6 +1,12 @@
 
 Your order is on it's way, <%= @user.first_name %>!
 
+You can expect your order(s) of:
+<% @shipment.commits.each do |commit| %>
+  <%= commit.amount %> <%= commit.product.title.pluralize %>
+<% end %>
+To arrive on <%= @tracking_delivery_date %> (estimated)
+
 The shipping carrier is <%= @tracking_carrier %>
 Your tracking number: <%= @tracking_code %>
 Estimated Delivery Date: <%= @tracking_delivery_date %>

@@ -1,12 +1,17 @@
 
 Your order is on it's way, <%= @user.first_name %>!
 
+You can expect your order(s) of:
+<% @shipment.commits.each do |commit| %>
+  <%= commit.amount %> <%= commit.product.title.pluralize %>
+<% end %>
+To arrive on <%= @tracking_delivery_date %> (estimated)
+
 However, it looks like your card had some issues processing the <%= @charge %> fee.
-This is not a big deal though, navigate to your profile and you will be instructed on how to fix this.
+This is not a big deal though, navigate to your profile and you will be instructed on how to fix this quickly.
 
 The shipping carrier is <%= @tracking_carrier %>
 Your tracking number: <%= @tracking_code %>
-Estimated Delivery Date: <%= @tracking_delivery_date %>
 For more information: <%= @tracking_url %>
 
 As always, if you have any questions, feel free to reach out.

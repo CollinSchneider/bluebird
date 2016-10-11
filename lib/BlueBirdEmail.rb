@@ -62,11 +62,12 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "Your sales are in, #{user.first_name}", content)
   end
 
-  def self.retailer_sale_shipped(user, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url)
+  def self.retailer_sale_shipped(user, shipment, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_sale_shipped.html.erb',
       :locals => {
         :@user => user,
+        :@shipment => shipment,
         :@tracking_carrier => tracking_carrier,
         :@tracking_code => tracking_code,
         :@tracking_delivery_date => tracking_delivery_date,
@@ -75,11 +76,12 @@ class BlueBirdEmail
     self.send_email(SALES_EMAIL, user.email, "Your order is on the way, #{user.first_name}", content)
   end
 
-  def self.retailer_declined_card_sale_shipped(user, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url, charge)
+  def self.retailer_declined_card_sale_shipped(user, shipment, tracking_carrier, tracking_code, tracking_delivery_date, tracking_url, charge)
       controller = ActionController::Base.new()
       content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_declined_card_sale_shipped.html.erb',
         :locals => {
           :@user => user,
+          :@shipment => shipment,
           :@tracking_carrier => tracking_carrier,
           :@tracking_code => tracking_code,
           :@tracking_delivery_date => tracking_delivery_date,

@@ -72,6 +72,8 @@ class User < ActiveRecord::Base
     end
   end
 
+
+
   def collect_payment(commit)
     commit_charge = commit.sale.nil? ? Sale.new : commit.sale
     commit_charge.commit_id = commit.id
