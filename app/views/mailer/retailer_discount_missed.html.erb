@@ -4,7 +4,7 @@
     <meta charset="utf-8">
   </head>
   <body>
-    <h6><%= @user.first_name %>,</h6>
+    <p><%= @user.first_name %>,</p>
 
     <div class="center-align">
       <div class="row">
@@ -13,16 +13,18 @@
         </p>
       </div>
       <div class="row">
-        <h6>
+        <p>
           You now have 7 days to purchase <%= @product.title %> for the full wholesale price of $<%= @product.price %> by folling the link below.
-        </h6>
-        <h6>
+        </p>
+        <p>
           <a href="localhost:3000/full_price/<%= @product.product_token.token %>/<%= @product.slug %>">Purchase Here</a>
-        </h6>
+        </p>
       </div>
       <div class="row">
-        Your friends, <br>
-        BlueBird.club
+        <p>
+          Your friends, <br>
+          BlueBird.club
+        </p>
       </div>
     </div>
 

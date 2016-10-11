@@ -4,13 +4,15 @@
     <meta charset="utf-8">
   </head>
   <body>
-    <h5>Your order is on it's way, <%= @user.first_name %>!</h5>
+    <p>Your order is on it's way, <%= @user.first_name %>!</p>
 
-    <h5>You can expect your order(s) of:</h5>
-    <% @shipment.commits.each do |commit| %>
-      <h5><%= commit.amount %> <%= commit.product.title.pluralize %></h5>
-    <% end %>
-    <h5>To arrive on <%= @tracking_delivery_date %> (estimated)</h5>
+    <p>You can expect your order(s) of:</p>
+    <ul>
+      <% @shipment.commits.each do |commit| %>
+        <li><%= commit.amount %> <%= commit.product.title.pluralize %></li>
+      <% end %>
+    </ul>
+    <p>To arrive on <%= @tracking_delivery_date %> (estimated)</p>
 
     <p>
       However, it looks like your card had some issues processing the <%= @charge %> fee.
@@ -21,18 +23,20 @@
 
     <div class="center-align">
       <div class="row">
-        <h5>The shipping carrier is <%= @tracking_carrier %></h5>
-        <h5>Your tracking number: <%= @tracking_code %></h5>
-        <h5>For more information: <%= @tracking_url %></h5>
+        <p>The shipping carrier is <%= @tracking_carrier %></p>
+        <p>Your tracking number: <%= @tracking_code %></p>
+        <p>For more information: <%= @tracking_url %></p>
       </div>
       <div class="row">
-        <h5>
+        <p>
           As always, if you have any questions, feel free to reach out.
-        </h5>
+        </p>
       </div>
       <div class="row">
-        Your friends, <br>
-        BlueBird.club Team
+        <p>
+          Your friends, <br>
+          BlueBird.club Team
+        </p>
       </div>
     </div>
 
