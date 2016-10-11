@@ -19,19 +19,19 @@ class Product < ActiveRecord::Base
 
   validate :enough_inventory_for_sale, :discount_price_is_lower, :retail_price_is_more
 
-  has_attached_file :main_image, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
+  has_attached_file :main_image, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, :s3_protocol => 'https'
   validates_attachment_content_type :main_image, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :photo_two, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
+  has_attached_file :photo_two, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, :s3_protocol => 'https'
   validates_attachment_content_type :photo_two, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :photo_three, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
+  has_attached_file :photo_three, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, :s3_protocol => 'https'
   validates_attachment_content_type :photo_three, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :photo_four, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
+  has_attached_file :photo_four, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, :s3_protocol => 'https'
   validates_attachment_content_type :photo_four, content_type: /\Aimage\/.*\Z/
 
-  has_attached_file :photo_five, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }
+  has_attached_file :photo_five, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, :s3_protocol => 'https'
   validates_attachment_content_type :photo_five, content_type: /\Aimage\/.*\Z/
 
   before_validation(on: :create) do
