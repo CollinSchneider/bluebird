@@ -98,17 +98,27 @@ class WholesalersController < ApplicationController
   end
 
   def needs_shipping
-    product_array = current_user.wholesaler.products.where('status = ? OR status = ? OR status = ?', 'goal_met', 'discount_granted', 'full_price').pluck(:id).to_a
-    @need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL AND card_declined != ?', product_array, true)
+    return redirect_to '/wholesaler' if !current_user.wholesaler.products_to_ship.any?
+    @retailer_orders = Retailer.all.where("id in (
+      select retailer_id from commits where wholesaler_id = ? AND has_shipped = 'f' AND refunded = 'f'
+    )", current_user.wholesaler.id)
+    # product_array = current_user.wholesaler.products.where('status = ? OR status = ? OR status = ?', 'goal_met', 'discount_granted', 'full_price').pluck(:id).to_a
+    # @need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL AND card_declined != ?', product_array, true)
 
-    @receipts_to_generate = @need_to_ship.where('pdf_generated != ?', false)
+    if !params[:shipment].nil?
+      @shipment = Shipping.find_by(:id => params[:shipment])
+      return redirect_to "/needs_shipping" if @shipment.nil? || @shipment.wholesaler_id != current_user.wholesaler.id
+      EasyPost.api_key = ENV['EASYPOST_API_KEY']
+      @ez_shipment = EasyPost::Tracker.retrieve(@shipment.tracking_id)
+      @shipments = current_user.wholesaler.products_to_ship.order(shipping_address_id: :asc)
+    end
 
     respond_to do |format|
       format.html
       format.pdf do
-        pdf = OrderPdf.new(current_user)
+        pdf = AlreadyPrintedPdf.new(current_user)
         send_data pdf.render,
-            filename: "#{Time.now.strftime('%B/%d/%Y')}-Order.pdf",
+            filename: "BlueBird_#{Time.now.strftime('%B/%d/%Y')}_Order.pdf",
             type: 'application/pdf'
       end
     end

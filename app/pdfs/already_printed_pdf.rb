@@ -8,13 +8,41 @@ class AlreadyPrintedPdf < Prawn::Document
     bluebird_image
     start_new_page
 
-    total_commits = 0
-    user.wholesaler.products_to_ship.each do |commit|
-      total_commits += 1
-      pdf_sequence(commit)
-      start_new_page if total_commits != user.wholesaler.products_to_ship.length
-    end
+    addresses = ShippingAddress.where("id in (
+      select shipping_address_id from commits where wholesaler_id = ? AND sale_made = 't' AND has_shipped = 'f' AND refunded = 'f' AND id not in (
+        select id from sales where card_failed = 't'
+      )
+    )", user.wholesaler.id)
 
+    total_addresses = 0
+    addresses.each do |address|
+      total_addresses += 1
+      pdf_seller_info(user)
+      pdf_buyer_sequence(address)
+      start_new_page if total_addresses != addresses.length
+    end
+  end
+
+  def pdf_seller_info(user)
+    image_header
+    move_down 15
+    text "Seller: #{user.company.company_name}"
+    stroke_horizontal_rule
+  end
+
+  def pdf_buyer_sequence(address)
+    buyer_info(address)
+    stroke_horizontal_rule
+    pad_bottom(10) {column_headers}
+    order_total = 0
+    address.orders_to_ship.each do |commit|
+      order_total += commit.full_price? ? commit.product.price*commit.amount : commit.product.discount*commit.amount
+      pad_bottom(10) {order_info(commit)}
+      stroke_horizontal_rule
+    end
+    pad_bottom(10) {shipping_info}
+    stroke_horizontal_rule
+    order_total(order_total)
   end
 
   def pdf_sequence(commit)
@@ -22,9 +50,8 @@ class AlreadyPrintedPdf < Prawn::Document
     product_title(commit.product)
     move_down 15
     pad_bottom(30) {seller_info(commit.product.wholesaler.user)}
-    image open(commit.product.main_image.url(:medium)), :position => :left, width: 75
     stroke_horizontal_rule
-    pad_bottom(15) {buyer_info(commit.retailer)}
+    pad_bottom(15) {buyer_info(commit)}
     stroke_horizontal_rule
     pad_bottom(10) {column_headers}
     stroke_horizontal_rule
@@ -65,14 +92,12 @@ class AlreadyPrintedPdf < Prawn::Document
     text "#{product.title} Shipment", size: 25, style: :bold, align: :center
   end
 
-
-
-  def buyer_info(retailer)
+  def buyer_info(address)
     move_down 15
-    text "Buyer: #{retailer.user.full_name} \n
-    #{retailer.company.company_name} \n
-    #{retailer.primary_address.street_address_one.downcase.capitalize} \n
-    #{retailer.primary_address.city.downcase.capitalize}, #{retailer.primary_address.state}, #{retailer.primary_address.zip}"
+    text "Buyer: #{address.retailer.user.full_name} \n
+    #{address.retailer.company.company_name} \n
+    #{address.street_address_one.downcase.capitalize} \n
+    #{address.city.downcase.capitalize}, #{address.state}, #{address.zip}"
   end
 
   def seller_info(user)
@@ -86,6 +111,7 @@ class AlreadyPrintedPdf < Prawn::Document
 
   def order_info(commit)
     move_down 10
+    "#{image open(commit.product.main_image.url(:medium)), :position => :left, width: 75}"
     if !commit.full_price
       text "#{commit.product.title.pluralize}                   $#{'%.2f' % (commit.product.discount)}                    #{commit.amount}                    $#{'%.2f' % (commit.product.discount.to_f*commit.amount.to_f)}", align: :right
     else
@@ -98,13 +124,14 @@ class AlreadyPrintedPdf < Prawn::Document
     text "Shipping: (Calculated Later)", align: :right
   end
 
-  def order_total(commit)
+  def order_total(order_total)
     move_down 10
-    if !commit.full_price
-      text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.discount.to_f)}", align: :right, style: :bold
-    else
-      text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.price.to_f)}", align: :right, style: :bold
-    end
+    text "Total: $#{'%.2f' % order_total}", align: :right, style: :bold
+    # if !commit.full_price
+    #   text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.discount.to_f)}", align: :right, style: :bold
+    # else
+    #   text "Total: $#{'%.2f' % (commit.amount.to_f*commit.product.price.to_f)}", align: :right, style: :bold
+    # end
   end
 
 end

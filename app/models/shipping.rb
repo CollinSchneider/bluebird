@@ -1,6 +1,6 @@
 class Shipping < ActiveRecord::Base
 
-  belongs_to :commit
+  has_many :commits
   belongs_to :retailer
   belongs_to :wholesaler
 

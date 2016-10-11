@@ -6,9 +6,9 @@ class Commit < ActiveRecord::Base
   belongs_to :wholesaler
   belongs_to :product
   belongs_to :shipping_address
+  belongs_to :shipping
 
   has_one :sale
-  has_one :shipping
 
   validate :meets_minimum_order
   validate :enough_inventory

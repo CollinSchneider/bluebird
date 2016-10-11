@@ -30,20 +30,14 @@ class User < ActiveRecord::Base
     self.save!
   end
 
-  def collect_shipping_charge(commit, shipping_cost)
-    shipping_cost = shipping_cost.to_f
-    shipping = commit.shipping.nil? ? Shipping.new : commit.shipping
-    shipping.commit_id = commit.id
-    shipping.retailer_id = commit.retailer_id
-    shipping.wholesaler_id = commit.wholesaler_id
+  def collect_shipping_charge(shipping)
+    shipping_cost = shipping.shipping_amount.to_f
 
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
-    customer_stripe_id = commit.retailer.stripe_id
+    customer_stripe_id = shipping.retailer.stripe_id
     customer = Stripe::Customer.retrieve(customer_stripe_id)
-    customer_card = customer.sources.retrieve(commit.card_id)
+    customer_card = customer.sources.retrieve(shipping.commits.first.card_id)
     shipping_cost += (shipping_cost*0.029+0.29)
-
-    shipping.shipping_amount = shipping_cost
 
     token = Stripe::Token.create(
       {:customer => customer_stripe_id, :card => customer_card.id},
@@ -55,7 +49,7 @@ class User < ActiveRecord::Base
           :amount => (shipping_cost*100).ceil, # amount in cents
           :currency => "usd",
           :source => token,
-          :description => "#{commit.retailer.user.full_name}'s BlueBird.club shipment"
+          :description => "#{shipping.retailer.user.full_name}'s BlueBird.club shipment"
         },
         {:stripe_account => self.wholesaler.stripe_id}
       )

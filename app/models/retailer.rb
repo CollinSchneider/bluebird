@@ -31,6 +31,10 @@ class Retailer < ActiveRecord::Base
     self.user.company
   end
 
+  def wholesalers_orders(wholesaler)
+    return self.commits.where('wholesaler_id = ?', wholesaler.id)
+  end
+
   def needs_credit_card?
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
     customer = Stripe::Customer.retrieve(self.stripe_id)
@@ -54,6 +58,12 @@ class Retailer < ActiveRecord::Base
 
   def successful_orders
     self.commits.where('status = ? OR status = ?', 'goal_met', 'discount_granted')
+  end
+
+  def orders_to_ship
+    self.commits.where("sale_made = 't' AND has_shipped = 'f' AND refunded = 'f' AND id not in (
+      select commit_id from sales where card_failed = 't'
+    )")
   end
 
   def total_savings

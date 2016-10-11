@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161007183053) do
+ActiveRecord::Schema.define(version: 20161007223155) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -30,7 +30,6 @@ ActiveRecord::Schema.define(version: 20161007183053) do
     t.integer  "amount"
     t.string   "status"
     t.integer  "product_id"
-    t.string   "sale_amount"
     t.string   "uuid"
     t.integer  "retailer_id"
     t.string   "card_id"
@@ -40,6 +39,8 @@ ActiveRecord::Schema.define(version: 20161007183053) do
     t.boolean  "sale_made"
     t.integer  "wholesaler_id"
     t.boolean  "has_shipped",         default: false
+    t.float    "sale_amount"
+    t.integer  "shipping_id"
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
@@ -163,7 +164,6 @@ ActiveRecord::Schema.define(version: 20161007183053) do
   end
 
   create_table "shippings", force: :cascade do |t|
-    t.integer  "commit_id"
     t.integer  "retailer_id"
     t.integer  "wholesaler_id"
     t.float    "shipping_amount"
@@ -177,7 +177,6 @@ ActiveRecord::Schema.define(version: 20161007183053) do
     t.datetime "shipped_on"
   end
 
-  add_index "shippings", ["commit_id"], name: "index_shippings_on_commit_id", using: :btree
   add_index "shippings", ["retailer_id"], name: "index_shippings_on_retailer_id", using: :btree
   add_index "shippings", ["wholesaler_id"], name: "index_shippings_on_wholesaler_id", using: :btree
 
@@ -213,7 +212,6 @@ ActiveRecord::Schema.define(version: 20161007183053) do
   add_foreign_key "sales", "commits"
   add_foreign_key "sales", "retailers"
   add_foreign_key "sales", "wholesalers"
-  add_foreign_key "shippings", "commits"
   add_foreign_key "shippings", "retailers"
   add_foreign_key "shippings", "wholesalers"
   add_foreign_key "wholesalers", "users"

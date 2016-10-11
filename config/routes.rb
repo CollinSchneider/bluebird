@@ -44,7 +44,7 @@ Rails.application.routes.draw do
               #///////////////////#
   get '/wholesaler' => redirect('/wholesaler/profile')
   get '/wholesaler/profile' => 'wholesalers#profile'
-  get '/wholesaler/accounts' => 'wholesalers#accounts', as: :wholesaler_accounts
+  get '/wholesaler/accounts' => 'wholesalers#accounts'
   get '/wholesaler/company' => 'wholesalers#company'
   get '/new_product' => 'wholesalers#new_product'
   get '/fix_product/:uuid' => 'wholesalers#fix_product'
@@ -56,15 +56,16 @@ Rails.application.routes.draw do
   get '/manage_shipping' => 'wholesalers#manage_shipping'
   get '/analytics' => 'wholesalers#analytics'
   get '/needs_attention' => 'wholesalers#needs_attention'
-  get '/account_verify' => 'users#accounts_verify', as: :accounts_verify
-  get '/needs_shipping' => 'wholesalers#needs_shipping', as: :needs_shipping
+  get '/account_verify' => 'users#accounts_verify'
+  get '/needs_shipping' => 'wholesalers#needs_shipping'
+  get '/needs_shipping.pdf' => 'wholesalers#needs_shipping'
   get '/needs_shipping/:product_id' => 'wholesalers#show_needs_shipping'
   get '/wholesaler/settings' => 'wholesalers#settings'
   get '/settings/wholesaler/change_password' => 'wholesalers#change_password'
   put '/settings/wholesaler/change_password' => 'wholesalers#change_password'
   get '/wholesaler/product/:id' => 'products#wholesaler_show'
   get '/current_sales' => 'wholesalers#current_sales'
-  get '/already_printed' => 'wholesalers#already_printed'
+  get '/already_printed.pdf' => 'wholesalers#already_printed'
   get '/relist' => 'wholesalers#relist'
 
 

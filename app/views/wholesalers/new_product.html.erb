@@ -70,7 +70,7 @@
       <% end %>
     <% end %>
     <div class="col s12">
-      <%= form_for Product.new, :html => {:class => 'new-product-form', :onsubmit => "return validateForm()"} do |f| %>
+      <%= form_for Product.new, :html => {:class => 'new-product-form'} do |f| %>
         <%= f.hidden_field :duration, :value => params[:duration] %>
         <%= f.hidden_field :goal, :value => params[:goal] %>
 

@@ -50,7 +50,6 @@ class WelcomeController < ApplicationController
 
   def tech
     if params[:products] == 'discounted'
-      # TODO: Come back to this, not sure when product becomes 'goal_met'
       @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.now, 'Tech').page(params[:page]).per_page(6)
     elsif params[:query]
         @products = Product.category_queried_products(params[:query], 'Tech').page(params[:page]).per_page(6)

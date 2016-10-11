@@ -1,95 +1,116 @@
+<div class="add-order-error-div white-text red center-align">
+  <div class="center-align col s8 offset-s2">
+    <h5>All orders in a shipment must be going to the same address.</h5>
+  </div>
+  <div class="center-align col s2">
+    <h5 class='pointer exit-error-div'>X</h5>
+  </div>
+</div>
+
+
 <div class="container">
 
   <div class="center-align">
     <h3>Orders to be shipped:</h3>
   </div>
-  <%
+  <!-- <%
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
-  %>
+  %> -->
 
-  <% current_user.wholesaler.products_to_ship.each_slice(3) do |slice| %>
-    <div class="row">
-      <% slice.each do |commit| %>
-        <div class="col s12 m6 l4 center-align" style='padding: 10px !important'>
-          <div class='border'>
-            <h4><%= commit.product.title %></h4>
-            <%= image_tag commit.product.main_image.url(:medium), :class => 'responsive-img' %>
-            <h5><%= commit.amount %> Orders</h5>
-            <% if !commit.full_price %>
-              <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.discount.to_f*commit.amount.to_f) %></h5>
-            <% else %>
-              <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.price.to_f*commit.amount.to_f) %></h5>
-              <h6>(Purchased for full price)</h6>
-            <% end %>
-            <h6>Ship to:</h6>
-            <h6><%= commit.retailer.user.full_name %></h6>
-            <h6><%= commit.retailer.user.company.company_name %></h6>
-            <h6><%= commit.shipping_address.street_address_one %></h6>
-            <% if commit.shipping_address.street_address_two != '' %>
-              <h6><%= commit.shipping_address.street_address_two %></h6>
-            <% end %>
-            <h6><%= commit.shipping_address.city %>, <%= commit.shipping_address.state %></h6>
-            <h6><%= commit.shipping_address.zip %></h6>
-            <div class="submit-tracking">
-              <form class="tracking-form">
-                <div class="input-field">
-                  <input type="hidden" class="sale-amount" value="<%= sale_amount %>">
-                  <label>Tracking Number</label>
-                  <input class="tracking-number" data="<%= commit.uuid %>" type="text" required>
-                </div>
-                <div class="input-field">
-                  <label>Shipping Cost</label>
-                  <input class="shipping-amount" type="number" step='0.01' required>
-                </div>
-                <input type="submit" value="Enter Tracking Number" class='btn submit-tracking'>
-              </form>
-            </div>
-            <!-- <button class='submit-tracker btn'>Enter Tracking Number</button> -->
-            <h6 class='error-message red-text'></h6>
+  <% if params[:shipment].nil? %>
+    <div class="border center-align col s12">
+      <h4>New Shipment Info</h4>
+      <div class="col s8 offset-s2">
+        <form class='set-initial-shipment'>
+          <div class="input-field">
+            <label>Tracking Number</label>
+            <input type="text" class="tracking-number" value="EZ3000000003">
           </div>
+          <div class="input-field">
+            <label>Shipping Cost</label>
+            <input type="text" class="shipping-cost">
+          </div>
+          <h6 class='red-text error-message'></h6>
+          <input type="submit" value="Enter Shipment Info" class='submit btn'>
+        </form>
+      </div>
+    </div>
+
+  <% elsif !params[:shipment].nil? %>
+
+  <div class="border col s12 center-align">
+    <% if @shipment.stripe_charge_id.nil? %>
+      <h5>Click orders below to add to your shipment to: <%= @ez_shipment.carrier_detail.destination_location.downcase.capitalize %></h5>
+      <h5>Tracking Code: <%= @ez_shipment.tracking_code %></h5>
+      <h6 class='remove-hint hidden'>(Click orders to remove from shipment)</h6>
+      <div class="col s12 shipment-orders">
+      </div>
+      <h4 class='green-text add-order-success'></h4>
+      <div class="row col s12">
+        <button class='btn complete-shipment hidden' data-shipment='<%=@shipment.id %>'>Complete Shipment</button>
+      </div>
+    <% else %>
+      <h5>Shipment to <%= @ez_shipment.carrier_detail.destination_location.downcase.capitalize %> is out for shipping.</h5>
+      <div class="row col s12">
+        <% if current_user.wholesaler.products_to_ship.count > 0 %>
+          <a href="/needs_shipping" class='btn'>More Orders to Ship</a>
+        <% else %>
+          <a href="/wholesaler" class='btn'>No More Pending Orders</a>
+        <% end %>
+      </div>
+    <% end %>
+    <div class="completion-button-div">
+    </div>
+  </div>
+  
+  <% if @shipment.stripe_charge_id.nil? %>
+    <div class="available-orders">
+      <% @shipments.each_slice(3) do |slice| %>
+        <div class="row">
+          <% slice.each do |commit| %>
+            <div class="col s12 m6 l4 center-align" style='padding: 10px !important'>
+              <div class='border add-order-to-shipment' data-uuid='<%= commit.uuid %>' data-retailer='<%= commit.retailer_id %>' data-address='<%= commit.shipping_address_id %>' style='min-height: 650px'>
+                <h5><%= commit.product.title %></h5>
+                <%= image_tag commit.product.main_image.url(:medium), :class => 'responsive-img' %>
+                <h5><%= commit.amount %> Orders</h5>
+                <% if !commit.full_price %>
+                  <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.discount.to_f*commit.amount.to_f) %></h5>
+                <% else %>
+                  <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.price.to_f*commit.amount.to_f) %></h5>
+                  <h6>(Purchased for full price)</h6>
+                <% end %>
+                <h6>Ship to:</h6>
+                <h6><%= commit.retailer.user.full_name %></h6>
+                <h6><%= commit.retailer.user.company.company_name %></h6>
+                <h6><%= commit.shipping_address.street_address_one %></h6>
+                <% if commit.shipping_address.street_address_two != '' %>
+                  <h6><%= commit.shipping_address.street_address_two %></h6>
+                <% end %>
+                <h6><%= commit.shipping_address.city %>, <%= commit.shipping_address.state %></h6>
+                <h6><%= commit.shipping_address.zip %></h6>
+                <!-- <div class="submit-tracking">
+                  <form class="tracking-form">
+                    <div class="input-field">
+                      <input type="hidden" class="sale-amount" value="<%= sale_amount %>">
+                      <label>Tracking Number</label>
+                      <input class="tracking-number" data="<%= commit.uuid %>" type="text" required>
+                    </div>
+                    <div class="input-field">
+                      <label>Shipping Cost</label>
+                      <input class="shipping-amount" type="number" step='0.01' required>
+                    </div>
+                    <input type="submit" value="Enter Tracking Number" class='btn submit-tracking'>
+                  </form>
+                </div> -->
+                <!-- <button class='submit-tracker btn'>Enter Tracking Number</button> -->
+                <h6 class='error-message red-text'></h6>
+              </div>
+            </div>
+          <% end %>
         </div>
       <% end %>
     </div>
   <% end %>
 
+<% end %>
 </div>
-
-<script>
-$(document).ready(function(){
-
-  $('.tracking-form').submit(function(e){
-      e.preventDefault()
-      var div = $(this).parent().parent().parent()
-      var form = $(this)
-      var trackingInput = form.find($('.tracking-number'))
-      var trackingNumber = trackingInput.val()
-      var commitUuid = trackingInput.attr('data')
-      var shippingAmountInput = form.find($('.shipping-amount'))
-      var shippingAmount = shippingAmountInput.val()
-      shippingAmountInput.val('')
-      trackingInput.val('')
-      var submitButton = form.find('.submit-tracking')
-      replaceWithGif(submitButton)
-
-      createTracking(commitUuid, trackingNumber, shippingAmount, form, div)
-      $(this).find('.submit-tracking').prop('disabled', true)
-      $(this).find('.submit-tracking').text("Sending tracking info")
-    })
-  })
-
-  function createTracking(commitUuid, trackingNumber, shippingAmount, form, div) {
-    $.ajax({
-      method: 'POST',
-      url: '/api/shipping/ship_order?commit_uuid=' + commitUuid + '&tracking_code=' + trackingNumber + '&shipping_amount=' + shippingAmount,
-      success: function(data){
-        if(data.success){
-          slideOut(div)
-        } else {
-          div.find('.error-message').text(data.error)
-          div.find('.submit-tracking').prop('disabled', false)
-          div.find('.submit-tracking').text('Enter Tracking Number')
-        }
-      }
-    })
-  }
-</script>
