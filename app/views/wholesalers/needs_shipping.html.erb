@@ -40,7 +40,9 @@
 
   <div class="border col s12 center-align">
     <% if @shipment.stripe_charge_id.nil? %>
-      <h5>Click orders below to add to your shipment to: <%= @ez_shipment.carrier_detail.destination_location.downcase.capitalize %></h5>
+      <% if !@ez_shipment.carrier_detail.nil? %>
+        <h5>Destination: <%= @ez_shipment.carrier_detail.destination_location.downcase.capitalize %></h5>
+      <% end %>
       <h5>Tracking Code: <%= @ez_shipment.tracking_code %></h5>
       <h6 class='remove-hint hidden'>(Click orders to remove from shipment)</h6>
       <div class="col s12 shipment-orders">
@@ -62,7 +64,7 @@
     <div class="completion-button-div">
     </div>
   </div>
-  
+
   <% if @shipment.stripe_charge_id.nil? %>
     <div class="available-orders">
       <% @shipments.each_slice(3) do |slice| %>
