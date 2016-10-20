@@ -3,7 +3,6 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
-    binding.pry
     return redirect_to '/shop' if @product.nil?
     if @product.end_time < Time.now && !@product.is_users?(current_user)
       Product.expire_products
