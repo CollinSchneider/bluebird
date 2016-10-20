@@ -8,9 +8,10 @@
           <% product_link = product.status == 'live' ? "/products/#{product.id}/#{product.slug}" : "/retailer/order_history/#{product_order.id}" %>
           <a href="<%= product_link %>">
             <div class="col s3 m1 white-text percent-box">
-              <h5><%= '%.0f' % (product.percent_discount*100) %>% Off</h5>
+              <h5><%= '%.0f' % (product.percent_discount_with_fee*100) %>% Off</h5>
             </div>
               <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+              <h6 style='font-size: 8px'>*Note: this image does not denote the exact product(s) you ordered.</h6>
               <div class="content-div" style='margin-bottom: 0px'>
                 <h6 class="truncate no-margin"><strong><%= product.title.upcase %></strong></h6>
                 <% if product.featured %>
@@ -18,13 +19,13 @@
                 <% end %>
                 <h6 class='truncate no-margin'>From <%= product.wholesaler.user.company.company_name %></h6>
                 <h6>
-                  <span class="was-price"><%= number_to_currency(product.price) %></span>
-                  <span class="now-price"><strong><%= number_to_currency(product.price_with_fee) %></strong></span>
+                  <span class="was-price no-margin"><%= product.average_full_price %></span>
+                  <span class="now-price"><strong><%= product.average_discount_price %></strong></span>
                 </h6>
               </div>
               <div class="description content-div" style='margin-top: 0px'>
                 <p style='font-size: 12px' style='margin-top: 0px'>
-                  <%= product.description %>
+                  <%= product.short_description %>
                 </p>
               </div>
             </a>

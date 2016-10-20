@@ -36,7 +36,7 @@ class User < ActiveRecord::Base
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
     customer_stripe_id = shipping.retailer.stripe_id
     customer = Stripe::Customer.retrieve(customer_stripe_id)
-    customer_card = customer.sources.retrieve(shipping.commits.first.card_id)
+    customer_card = customer.sources.retrieve(shipping.purchase_orders.first.commit.card_id)
     shipping_cost += (shipping_cost*0.029+0.29)
 
     token = Stripe::Token.create(
@@ -89,13 +89,16 @@ class User < ActiveRecord::Base
       bluebird_fee = 0
       amount = commit.amount.to_f*commit.product.price.to_f
     else
-      amount = commit.amount.to_f*commit.product.discount.to_f
-      money_saved = commit.amount_saved*100
+      amount = commit.amount*100
+      real_total = (commit.sale_amount*(1+(1/commit.product.percent_discount)))*100
+      money_saved = real_total - amount
       bluebird_fee = (money_saved*Commit::BLUEBIRD_PERCENT_FEE).floor
     end
-    commit_charge.sale_amount = amount
+    commit_charge.sale_amount = commit.sale_amount
     commit_charge.charge_amount = bluebird_fee/100
-    stripe_amount = amount.to_f*100 + bluebird_fee
+    stripe_amount = commit.sale_amount*100 + bluebird_fee
+    commit.product.total_bluebird_fee = bluebird_fee
+    commit.product.save!
 
     token = Stripe::Token.create(
       {:customer => customer_stripe_id, :card => customer_card.id},

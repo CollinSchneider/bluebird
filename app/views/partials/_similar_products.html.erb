@@ -1,0 +1,91 @@
+<% if !@company_products.empty? %>
+<div class="row other-products z-depth-1">
+  <h5><a href="/company/<%= @product.wholesaler.user.company.id %>/<%= @product.wholesaler.user.company.company_key %>">More products from <%= @product.wholesaler.user.company.company_name %></a></h5>
+    <% @company_products.each do |product| %>
+      <div class="col s12 m4 center-align no-padding">
+        <div class="product white">
+          <%= link_to "/products/#{product.id}/#{product.slug}" do %>
+            <div class="percent-box col s3 m1 white-text">
+              <h6><%= product.percent_discount %>% discount</h6>
+            </div>
+            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+            <div class="content-div" style='margin-bottom: 0px'>
+              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
+              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
+              <h6>
+                <span class="was-price no-margin"><%= product.average_full_price %></span>
+                <span class="now-price"><strong><%= product.average_discount_price %></strong></span>
+              </h6>
+            </div>
+            <div class="description content-div" style='margin-top: 0px'>
+              <p style='font-size: 12px' style='margin-top: 0px'>
+                <%= product.short_description %>
+              </p>
+            </div>
+          <% end %>
+
+          <div class="row">
+            <div class="<%= product.percentage["class"] %>">
+              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+            </div>
+            <div class="row col s12">
+              <div class="col s6">
+                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
+              </div>
+              <div class="col s6">
+                <h6><%= product.time_to_expiration %></h6>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>
+
+<% if !@similar_products.empty? %>
+<div class="row other-products z-depth-1">
+  <h5>Similar Products</h5>
+    <% @similar_products.each do |product| %>
+      <div class="col s12 m4 center-align no-padding">
+        <div class="product white">
+          <%= link_to "/products/#{product.id}/#{product.slug}" do %>
+            <div class="percent-box col s3 m1 white-text">
+              <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
+            </div>
+            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+            <div class="content-div" style='margin-bottom: 0px'>
+              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
+              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
+              <h6>
+                <span class="was-price">Was $<%= product.price %></span>
+                <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
+              </h6>
+            </div>
+            <div class="description content-div" style='margin-top: 0px'>
+              <p style='font-size: 12px' style='margin-top: 0px'>
+                <%= product.short_description %>
+              </p>
+            </div>
+          <% end %>
+
+          <div class="row">
+            <div class="<%= product.percentage["class"] %>">
+              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+            </div>
+            <div class="row col s12">
+              <div class="col s6">
+                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
+              </div>
+              <div class="col s6">
+                <h6><%= product.time_to_expiration %></h6>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+</div>

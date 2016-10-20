@@ -24,7 +24,7 @@
 
 <% else %>
 
-  <% if !current_user.wholesaler.needs_to_ship? && !current_user.wholesaler.needs_attention? %>
+  <% if !current_user.wholesaler.orders_to_ship.any? && !current_user.wholesaler.needs_attention? %>
     <div class="row center-align">
       <h5>What are you waiting for? Post a new product</h5>
       <div class="col s6 m4 offset-s3 offset-m4">
@@ -48,7 +48,7 @@
       <% if current_user.wholesaler.needs_attention? %>
         <h5>Before you can post another product, you have to satisfy some products that need your attention!</h5>
         <h4><%= link_to 'Need Attention', '/needs_attention', :class => 'btn' %></h4>
-      <% elsif current_user.wholesaler.needs_to_ship? %>
+      <% elsif current_user.wholesaler.orders_to_ship.any? %>
       <div class="row">
         <!-- <#% if !@receipts_to_generate.nil? %> -->
           <h5>Let's ship these orders and get paid!</h5>

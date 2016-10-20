@@ -1,0 +1,91 @@
+<div class="row">
+  <div class="progress col s8 offset-s2">
+    <div class="determinate" style="width: 100%"></div>
+  </div>
+</div>
+
+<div class="row center-align">
+  <h4>Set the Numbers for you SKUS.</h4>
+  <div class="col s8 offset-s2 product-form-div z-depth-2">
+    <div class="row">
+      <h5><%= @product.title %></h5>
+      <div class="row">
+        <div class="col s8 offset-s2">
+          <%= image_tag @sku.image.url(:medium), :class => 'responsive-img' %>
+        </div>
+      </div>
+      <h5><%= @sku.description %></h5>
+    </div>
+    <div class="row col s8 offset-s2">
+      <%= form_tag("/new_product_skus?sku=#{@sku.id}", method: 'POST') do %>
+      <div class="input-field">
+        <input type="number" name="inventory" class='full-box-input' placeholder='Inventory For Sale' step='1' value="<%= @sku.inventory %>">
+      </div>
+        <div class="input-field">
+          <input type="number" name="price" class='full-box-input' placeholder='Full Wholesale Price' step='0.01' value="<%= @sku.price %>">
+        </div>
+        <div class="input-field">
+          <input type="number" name="suggested_retail" class='full-box-input' placeholder='Suggested Retail Price' step='0.01' value="<%= @sku.suggested_retail %>">
+        </div>
+        <% if @sku.is_first? && @product.skus.count > 1 %>
+          <p class='center-align'>
+            <input type="checkbox" id="inventory" name="same-inventory" value=true />
+            <label for="inventory">Inventory is the same for each SKU.</label>
+          </p>
+          <p class='center-align'>
+            <input type="checkbox" id="wholesale" name="same-wholesale" value=true />
+            <label for="wholesale">Full wholesale price is the same for each SKU.</label>
+          </p>
+          <p class='center-align'>
+            <input type="checkbox" id="retail" name="same-retail" value=true />
+            <label for="retail">Suggested retail price is the same for each SKU.</label>
+          </p>
+        <% end %>
+        <% if !flash[:error].nil? %>
+          <% flash[:error].each do |err| %>
+            <h6 class='red-text'><%= err %></h6>
+          <% end %>
+        <% end %>
+        <input type="submit" value="Set SKU Info" class='btn submit-button'>
+      <% end %>
+    </div>
+  </div>
+
+</div>
+
+<!-- <div class="input-field valign-wrapper">
+  <div class="col s11">
+    <#%= f.label 'Product Full Wholesale Price*' %>
+    <input type="number" name="product[price]" class='product-wholesale-price' step="0.01" required> <br>
+  </div>
+  <div class="col s1 valign">
+    <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the full wholesale price. <br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
+  </div>
+</div>
+<div class="input-field valign-wrapper">
+  <div class="col s11">
+    <#%= f.label 'Product Discounted Wholesale Price*' %>
+    <input type="number" name="product[discount]" class='product-discount-price' step="0.01" required> <br>
+  </div>
+  <div class="col s1 valign">
+    <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<#%=params[:goal] %> is met<br> within <#%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
+  </div>
+</div>
+<div class="input-field valign-wrapper">
+  <div class="col s11">
+    <#%= f.label 'Suggested Retail Price*' %>
+    <input type="number" name="product[retail_price]" class='product-retail-price' step="0.01" required> <br>
+  </div>
+  <div class="col s1 valign">
+    <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<#%=params[:goal] %> is met<br> within <#%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
+  </div>
+</div>
+<div class="input-field valign-wrapper">
+  <div class="col s11">
+    <#%= f.label 'Product Inventory For Sale*' %>
+    <#%= f.number_field :quantity, :class => 'product-quantity', :required => true %> <br>
+  </div>
+  <div class="col s1 valign">
+    <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>How much inventory you are listing for sale <br> Tip: must be possible to reach $<#%=params[:goal]%> in sales at your<br> discounted price with this amount of inventory.</h6>"><i class="tiny material-icons">live_help</i></a>
+  </div>
+</div> -->

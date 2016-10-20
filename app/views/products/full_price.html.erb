@@ -15,7 +15,7 @@
             <div class="images">
               <div class="row">
                 <div class="col s12">
-                  <%= image_tag @product.main_image.url(:large), :class => 'responsive-img main-image materialboxed' %>
+                  <%= image_tag @product.main_image.url(:large), :class => 'responsive-img main-image materialboxed', :data => {:var => "general-prices"} %>
                 </div>
               </div>
               <div class="row">
@@ -42,6 +42,13 @@
                       <%= image_tag @product.photo_five.url(:large), :class => 'responsive-img alternate-image' %>
                   <% end %>
                 </div>
+                <% if @product.has_variants? %>
+                  <% @product.product_variants.each do |var| %>
+                    <div class="col s2">
+                      <%= image_tag var.image.url(:large), :class => 'responsive-img alternate-image', :data => {:var => var.id} %>
+                    </div>
+                  <% end %>
+                <% end %>
               </div>
             </div>
 
@@ -72,8 +79,19 @@
                     <% end %>
                   </div>
                 <% end %>
-                <h6 class='now-price bold' style="display: inline-block"><%= number_to_currency(@product.price) %></h6>
-                <h6>Suggested Retail Price: <span class='bold'>$<%= '%.2f' % @product.retail_price %></span></h6>
+                <div class="pricing-div general-prices" data-var="general-prices">
+                  <h6 class='was-price' style="display: inline-block"><%= @product.full_price_range %></h6>
+                  <h6 class='now-price bold' style="display: inline-block"><%= @product.discount_price_range %></h6>
+                  <h6>Suggested Retail Price: <span class='bold'><%= @product.suggested_retail_range %></span></h6>
+                </div>
+                <% @product.skus.each do |sku| %>
+                  <div class="pricing-div" style='display: none' data-var="<%=sku.product_variant_id%>">
+                    <h6><%= sku.description %>:</h6>
+                    <h6 class='was-price' style="display: inline-block"><%= number_to_currency(sku.price) %></h6>
+                    <h6 class='now-price bold' style="display: inline-block"><%= number_to_currency(sku.price_with_fee) %></h6>
+                    <h6>Suggested Retail Price: <span class='bold'><%= number_to_currency(sku.suggested_retail) %></span></h6>
+                  </div>
+                <% end %>
               </div>
 
               <div class="row">
@@ -98,77 +116,23 @@
                 </ul>
               </div>
 
-              <div class="row no-bottom-margin center-align">
-                <h6 class='bold'><%= @product.time_to_full_price_expiration %></h6>
-              </div>
-
             </div>
           </div>
 
             <% if current_user.is_retailer? %>
-            <div class="row center-align">
-              <div class="order-box z-depth-1">
-                <% if !flash[:error].nil? %>
-                  <% flash[:error].each do |err| %>
-                    <h6 class='red-text'><%= err %></h6>
-                  <% end %>
-                <% end %>
-
-                <% if current_user.retailer.needs_credit_card? %>
-                  <h6><a href="/retailer/accounts">We need a credit card on file before you can make an order</a></h6>
-                <% elsif current_user.retailer.needs_shipping_info? %>
-                  <h6><a href="/retailer/shipping_addresses">We need your shipping info before you can make an order</a></h6>
-                <% else %>
-
-                <% users_orders = current_user.retailer.commits.where("product_id = ? AND full_price = 't'", @product.id) %>
-                <% if users_orders == [] %>
-                  <h6>Minimum Order Amount: <%= @product.minimum_order %> products</h6>
-                    <form class="commit-step-one">
-                      <div class="input-field">
-                        <label>Order Quantity</label>
-                        <input type="text" class="order-amount" min="<%= @product.minimum_order.to_i %>" required>
-                      </div>
-                      <input type="submit" value="Make Order" class='btn'>
-                    </form>
-                    <div class="hidden real-commit-div">
-                      <!-- <form action="/commits?full_price=t" method="post" class='real-order-amount'> -->
-                      <%= form_for Commit.new, url: '/commits?full_price=t' do |f| %>
-                        <input type="hidden" name="commit[product_id]" value="<%= @product.id %>">
-                        <input type="hidden" name="commit[retailer_id]" value="<%= current_user.retailer.id %>">
-                        <div class="input-field">
-                          <input type="text" name="commit[amount]" class='real-order-amount' readonly>
-                        </div>
-                        <input type="submit" value="Confirm Order" class='btn submit-button real-order-button'>
-                      <% end %>
-                      <!-- </form> -->
-                      <!-- <#%= form_for Commit.new, :class => 'real-order-form' do |f| %>
-                        <#%= f.hidden_field :product_id, :value => @product.id %>
-                        <#%= f.hidden_field :full_price, :value => true %>
-                        <#%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
-                        <label>Order Quantity</label>
-                        <div class="input-field">
-                          <input type="text" name="commit[amount]" class='real-order-amount' readonly>
-                        </div>
-                        <#%= f.button "Confirm Order", :class => 'btn submit-button real-order-button' %>
-                      <#% end %> -->
-                      <button class='btn-flat white black-text waves-effect cancel-order-form'>Cancel</button>
+              <div class="row center-align">
+                <div class="order-box z-depth-1">
+                  <% users_orders = current_user.retailer.commits.where("product_id = ? AND full_price = 't'", @product.id) %>
+                  <% if users_orders.empty? %>
+                    <a href="/last_chance/<%= @product.product_token.token %>/<%= @product.slug %>/order" class='btn'>Make Order</a>
+                  <% else %>
+                    <div class="row">
+                      <h6>You have ordered <%= users_orders.first.amount %> units.</h6>
                     </div>
-                  <% elsif users_orders != [] %>
-                    <h5>Ordered <%= users_orders[0].amount %> units</h5>
-                    <h5><%= number_to_currency(users_orders[0].total_price) %> transaction</h5>
-                    <%
-                      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-                      customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
-                      commit_card = customer.sources.retrieve(users_orders[0].card_id)
-                    %>
-                    <h6>Credit Card to be charged: **** **** **** <%= commit_card.last4 %> (<%=commit_card.brand %>)</h6>
-                    <a href="/retailer/order_history/<%= users_orders[0].id %>" class='btn'>Edit</a>
-                    <button class='cancel-edit' style='display: none'>Cancel Edit</button>
                   <% end %>
-                <% end %>
+                </div>
               </div>
-            </div>
-          <% end %>
+            <% end %>
 
         </div>
       </div>
@@ -176,101 +140,12 @@
 
   </div>
 
-<% if !@company_products.empty? %>
-<div class="row other-products z-depth-1">
-  <h5><a href="/company/<%= @product.wholesaler.user.company.id %>/<%= @product.wholesaler.user.company.company_key %>">More products from <%= @product.wholesaler.user.company.company_name %></a></h5>
-    <% @company_products.each do |product| %>
-      <div class="col s12 m4 center-align no-padding">
-        <div class="product white">
-          <%= link_to "/products/#{product.id}/#{product.slug}" do %>
-            <div class="percent-box col s3 m1 white-text">
-              <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
-            </div>
-            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
-            <div class="content-div" style='margin-bottom: 0px'>
-              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
-              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
-              <h6>
-                <span class="was-price">Was $<%= product.price %></span>
-                <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
-              </h6>
-            </div>
-            <div class="description content-div" style='margin-top: 0px'>
-              <p style='font-size: 12px' style='margin-top: 0px'>
-                <%= product.description %>
-              </p>
-            </div>
-          <% end %>
-
-          <div class="row">
-            <div class="<%= product.percentage["class"] %>">
-              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
-            </div>
-            <div class="row col s12">
-              <div class="col s6">
-                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
-              </div>
-              <div class="col s6">
-                <h6><%= product.time_to_expiration %></h6>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    <% end %>
-  <% end %>
-</div>
-
-<% if !@similar_products.empty? %>
-<div class="row other-products z-depth-1">
-  <h5>Similar Products</h5>
-    <% @similar_products.each do |product| %>
-      <div class="col s12 m4 center-align no-padding">
-        <div class="product white">
-          <%= link_to "/products/#{product.id}/#{product.slug}" do %>
-            <div class="percent-box col s3 m1 white-text">
-              <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
-            </div>
-            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
-            <div class="content-div" style='margin-bottom: 0px'>
-              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
-              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
-              <h6>
-                <span class="was-price">Was $<%= product.price %></span>
-                <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
-              </h6>
-            </div>
-            <div class="description content-div" style='margin-top: 0px'>
-              <p style='font-size: 12px' style='margin-top: 0px'>
-                <%= product.description %>
-              </p>
-            </div>
-          <% end %>
-
-          <div class="row">
-            <div class="<%= product.percentage["class"] %>">
-              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
-            </div>
-            <div class="row col s12">
-              <div class="col s6">
-                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
-              </div>
-              <div class="col s6">
-                <h6><%= product.time_to_expiration %></h6>
-              </div>
-            </div>
-          </div>
-
-        </div>
-      </div>
-    <% end %>
-  <% end %>
-</div>
+  <%= render partial: 'partials/similar_products' %>
 
 </div>
 
 <script>
+
    $('.commit-step-one').submit(function(e){
      e.preventDefault()
      var amount = $(this).find('.order-amount').val()
@@ -314,7 +189,6 @@
   })
 
   $(document).ready(function(){
-    changePayment()
     alternateImage()
     $('.materialboxed').materialbox();
     $('.product').mouseover(function(){
@@ -372,71 +246,19 @@
     }
   }
 
-  function changePayment(){
-    $('.change-payment').submit(function(e){
-      e.preventDefault()
-      var cardId = $(this).find('.card_id').val()
-      var commitId = $(this).find('.commit_id').val()
-      $.ajax({
-        method: 'POST',
-        url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_id=' +commitId,
-        success: function(data){
-          console.log(data);
-          if(data.success){
-            // location.reload()
-          }
-        }
-       })
-    })
-  }
-
-  // var mainImage = $('<img class = "responsive-img main-image materialboxed"/>')
-  // mainImage.attr( "src" , "<%= image_path "#{@product.main_image.url(:large)}" %>" );
-  // mainImage.load(function(){
-  //   console.log('replaced...');
-  //   $('.main-image').replaceWith(mainImage)
-  // })
-  //
-  // if($('#photo-two')){
-  //   var secondImage = $('<img class = "responsive-img alternate-image"/>')
-  //   secondImage.attr("src" , "<%= image_path "#{@product.photo_two.url(:large)}" %>" );
-  //   secondImage.load(function(){
-  //     $('#photo-two').replaceWith(secondImage)
-  //   })
-  // }
-  //
-  // if($('#photo-three')){
-  //   var secondImage = $('<img class = "responsive-img alternate-image"/>')
-  //   secondImage.attr("src" , "<%= image_path "#{@product.photo_three.url(:large)}" %>" );
-  //   secondImage.load(function(){
-  //     $('#photo-three').replaceWith(secondImage)
-  //   })
-  // }
-  //
-  // if($('#photo-four')){
-  //   var secondImage = $('<img class = "responsive-img alternate-image"/>')
-  //   secondImage.attr("src" , "<%= image_path "#{@product.photo_four.url(:large)}" %>" );
-  //   secondImage.load(function(){
-  //     $('#photo-four').replaceWith(secondImage)
-  //   })
-  // }
-  //
-  // if($('#photo-five')){
-  //   var secondImage = $('<img class = "responsive-img alternate-image"/>')
-  //   secondImage.attr("src" , "<%= image_path "#{@product.photo_five.url(:large)}" %>" );
-  //   secondImage.load(function(){
-  //     $('#photo-five').replaceWith(secondImage)
-  //   })
-  // }
-
   function alternateImage(){
     $('.alternate-image').click(function(){
+      console.log($(this).attr('data-var'));
       var makeMain = $(this).attr('src')
+      var makeMainData = $(this).attr('data-var')
       var makeAlternate = $('.main-image').attr('src')
-      // $('.main-image').fadeOut()
+      var makeAlternateData = $('.main-image').attr('data-var')
       $('.main-image').attr('src', makeMain)
+      $('.main-image').attr('data-var', makeMainData)
       $(this).attr('src', makeAlternate)
-      //   $('.main-image').fadeIn()
+      $(this).attr('data-var', makeAlternateData)
+      $('.pricing-div').hide()
+      $('.pricing-div[data-var='+makeMainData+']').css({display: 'inherit'})
     })
   }
 </script>

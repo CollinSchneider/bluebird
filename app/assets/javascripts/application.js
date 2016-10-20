@@ -20,7 +20,30 @@ $(document).ready(function(){
   buttonLoad()
   pagination()
   mouseOvers()
+  productHover()
 })
+
+function productHover(){
+  $('.product').mouseover(function(){
+    var variants = $(this).find('.variant-images')
+    if(variants){
+      variants.css({display: 'inherit'})
+    }
+  })
+  $('.product').mouseleave(function(){
+    var variants = $(this).find('.variant-images')
+    if(variants){
+      variants.css({display: 'none'})
+    }
+  })
+  $('.sub-var-image').mouseover(function(){
+    console.log("sub var hover");
+    var main = $(this).parent().parent().parent().parent().find('.main-prod-image')
+    var thisSrc = $(this).attr('src')
+    $(this).attr('src', main.attr('src'))
+    main.attr('src', thisSrc)
+  })
+}
 
 function slideOut(div){
   var windowWidth = $(window).width()

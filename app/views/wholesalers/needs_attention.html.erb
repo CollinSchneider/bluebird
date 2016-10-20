@@ -18,9 +18,8 @@
             <div class="col s12 m4 center-align">
                 <h5><%= product.title %></h5>
 
-                <h6 class='now-price'>$<%= product.discount %> each</h6>
+                <h6 class='now-price'><%= product.average_discount_price %> each</h6>
                 <h6><%= product.commits.count %> purchase orders</h6>
-                <% total_sales = (product.discount.to_f*product.commits.sum(:amount).to_i) %>
                 <h6><%= number_to_currency(product.current_sales) %> in sales</h6>
                 <h6><%= product.percentage["percent_to_discount"] %>% of your goal</h6>
 
@@ -35,7 +34,7 @@
 
             <div class="col s12 m4">
               <div class="row buttons center-align">
-                <% if total_sales.to_f > 0 %>
+                <% if product.current_sales.to_f > 0 %>
                   <div class="row">
                     <button class='grant-discount button-load green btn' data='<%= product.id %>'>Grant Discount</button><br>
                   </div>

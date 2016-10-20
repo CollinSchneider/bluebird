@@ -1,29 +1,47 @@
 <div class="row center-align">
   <h3><%= @order.product.title.pluralize %></h3>
-  <div class="col s5">
-    <%= image_tag @order.product.main_image.url(:medium), :class => 'responsive-img' %>
-  </div>
-  <div class="col s7">
-    <div class="row">
-      <% product_price = @order.full_price ? @order.product.price : @order.product.price_with_fee %>
-      <h5><%= @order.current_status %></h5>
-      <h5><%= @order.amount %> units x <%=number_to_currency(product_price) %>/each</h5>
-      <% shipping_price = @order.shipping.nil? ? 0 : @order.shipping.shipping_amount %>
-      <% if shipping_price == 0 %>
-        <h5>Shipping is calculated upon shipment departure.</h5>
-      <% else %>
-        <h5>Shipping: <%= number_to_currency(shipping_price) %></h5>
-      <% end %>
-      <% total_price = @order.full_price ? @order.amount*@order.product.price + shipping_price : @order.total_price + shipping_price %>
-      <h5><%= number_to_currency(total_price) %></h5>
+  <h5><%= @order.product.short_description %></h5>
+</div>
+
+
+<div class="center-align col s3 border z-depth-1" style="float: right">
+  <h6>Subtotal: <%= number_to_currency(@order.sale_amount_with_fees) %></h6>
+  <% if @order.shipping_amount.nil? %>
+    <h6 style='border-bottom: 1px solid black'>Shipping: Calculated on Departure</h6>
+  <% else %>
+    <h6 style='border-bottom: 1px solid black'>Shipping: <%= number_to_currency(@order.shipping_amount) %></h6>
+  <% end %>
+  <h6 class='bold'>Order Total: <%= number_to_currency(@order.price_with_shipping) %></h6>
+  <% if !@order.full_price? %>
+    <h6 class='green-text'><%=number_to_currency(@order.amount_saved)%> in savings.</h6>
+  <% end %>
+</div>
+<% @order.purchase_orders.each do |order| %>
+  <div class="col s8 offset-s1 center-align" style='border-bottom: 1px solid black; float: left'>
+    <div class="col s4 left-align">
+      <h6 class='bold'><%= order.sku.description %></h6>
+      <%= image_tag order.sku.image.url(:medium), :class => 'materialboxed thumbnail' %>
     </div>
-    <div class="row">
-      <% if @order.shipping.nil? %>
+    <div class="col s6">
+      <h6><%= order.quantity %> orders<h6>
+      <% sku_price = order.commit.full_price? ? order.sku.price : order.sku.price_with_fee %>
+      <h6><%= number_to_currency(sku_price) %>/unit</h6>
+      <% if order.shipping.nil? %>
         <h6>Order not yet out for shipping, we will update you with the info once it is shipped.</h6>
       <% else %>
-        <h6>Estimated Arrival: <%= DateTime.parse(@shipping_info.est_delivery_date).strftime('%B %d, %Y') %></h6>
-        <h6><a href="<%= @shipping_info.public_url %>" target="_blank">More Info</a>
+        <%
+        EasyPost.api_key = ENV['EASYPOST_API_KEY']
+        shipping_info = EasyPost::Tracker.retrieve(order.shipping.tracking_id)
+        %>
+        <h6>Shipping Cost: <%= number_to_currency(order.shipping.shipping_amount) %></h6>
+        <h6>Tracking Number: <%= shipping_info.tracking_code %></h6>
+        <h6>Estimated Arrival: <%= DateTime.parse(shipping_info.est_delivery_date).strftime('%B %d, %Y') %></h6>
+        <h6><a href="<%= shipping_info.public_url %>" target="_blank">Track Shipment</a>
       <% end %>
     </div>
+    <div class="col s2">
+      <% po_price = order.commit.full_price? ? order.quantity*order.sku.price : order.quantity*order.sku.price_with_fee %>
+      <h6 class='bold'><%= number_to_currency(po_price) %></h6>
+    </div>
   </div>
-</div>
+<% end %>

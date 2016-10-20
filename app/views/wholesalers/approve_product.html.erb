@@ -1,18 +1,22 @@
-<div class="container">
+<div class="container row">
 
   <div class="show-product">
     <div class="row center-align col s10 offset-s1">
       <div class="row">
-        <h5>This product is not yet live. If you like the way things look, go ahead and launch the product</h5>
-        <h6>You would have to sell <%= (@product.goal.to_f/@product.discount.to_f).ceil %> units to reach your goal.</h6>
+        <h4>*This product is not yet live. If you like the way things look, go ahead and launch the product</h4>
+        <!-- <h6>You would have to sell <#%= (@product.goal.to_f/@product.discount.to_f).ceil %> units to reach your goal.</h6> -->
+        <a href="/fix_product/<%= @product.uuid %>" class='btn-flat waves-effect black-text'>Edit Product</a>
       </div>
-      <%= form_for @product, url: "/launch_product/#{@product.id}", method: 'PUT' do |f| %>
-        <%= f.submit "LAUNCH PRODUCT", :class => 'btn submit-button' %>
-      <% end %>
-      <a href="/fix_product/<%= @product.uuid %>" class='btn-flat black-text'>Edit</a>
-      <!-- <#%= form_for @product, url: "/start_over?duration=#{@product.duration}&goal=#{@product.goal}&uuid=#{@product.uuid}", method: 'POST' do |f| %>
-        <#%= f.submit "CANCEL", :class => 'btn-flat submit-button' %>
-      <#% end %> -->
+    </div>
+    <div class="row center-align">
+      <div class="col s12">
+        <h5>Listing Duration: <%= @product.duration.gsub('_', ' ') %></h5>
+        <h5>Sales Goal: <%= number_to_currency(@product.goal) %></h5>
+        <h5>Category: <%= @product.category.gsub('-', ' ').capitalize %></h5>
+        <% if @product.skus.count < 2 %>
+          <h5>Inventory: <%= @product.skus.first.inventory %></h5>
+        <% end %>
+      </div>
     </div>
     <div class="col 12 valign-wrapper">
       <div class="row">
@@ -49,6 +53,11 @@
                     <%= image_tag @product.photo_five.url(:large), :class => 'responsive-img alternate-image' %>
                 <% end %>
               </div>
+              <% @product.product_variants.each do |var| %>
+                <div class="col s2">
+                  <%= image_tag var.image.url(:large), :class => 'responsive-img alternate-image' %>
+                </div>
+              <% end %>
             </div>
           </div>
         </div>
@@ -62,9 +71,17 @@
                 <a class='black-text' href="/company/<%= @product.wholesaler.user.company.id %>/<%=@product.wholesaler.user.company.company_key%>">
                   <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
                 </a>
-                <h6 class='was-price bold' style="display: inline-block"><%= number_to_currency(@product.price) %></h6>
-                <h6 class='now-price bold' style="display: inline-block"><%= number_to_currency(@product.discount) %></h6>
-                <h6 class='bold'>Retails for <%= number_to_currency(@product.retail_price) %></h6>
+                <h6 class='was-price bold' style="display: inline-block"><%= (@product.average_full_price) %></h6>
+                <h6 class='now-price bold' style="display: inline-block"><%= (@product.average_discount_price) %></h6>
+                <h6>When live, product will display for <%= @product.average_price_with_fee %></h6>
+                <h6 class='bold'>Retails for <%= (@product.suggested_retail_range) %></h6>
+                <% if !@product.skus_same_wholesale_price? && !@product.skus_same_retail_price? %>
+                  <h6>Note: Prices are based on an average of all SKUs.</h6>
+                <% elsif !@product.skus_same_retail_price? %>
+                  <h6>Note: Retail price is based on an average of all SKUs.</h6>
+                <% elsif !@product.skus_same_wholesale_price? %>
+                  <h6>Note: Wholesale prices are based on an average of all SKUs.</h6>
+                <% end %>
               </div>
 
               <div class="row">
@@ -99,3 +116,77 @@
   </div>
 
 </div>
+
+<div class="row center-align">
+  <h5>Available SKUs:</h5>
+  <div class="row border">
+    <div class="col s3">
+      <h5 class='bold'>Product Variant:</h5>
+    </div>
+    <div class="col s2">
+      <h5 class='bold'>Full Wholesale Price:</h5>
+    </div>
+    <div class="col s3">
+      <h5 class='bold'>Discounted Wholesale Price (<%= @product.percent_discount %>%):</h5>
+    </div>
+    <div class="col s2">
+      <h5 class='bold'>Suggested Retail Price:</h5>
+    </div>
+  </div>
+  <div class="row">
+    <% total_possible_sales = 0 %>
+    <% @product.skus.order(id: :asc).each do |sku| %>
+      <% total_possible_sales += sku.discount_price*sku.inventory %>
+      <div class="row valign-wrapper" style='border-bottom: 1px solid black'>
+        <div class="col s3">
+          <h5><%= sku.description %></h5>
+          <%= image_tag sku.image.url(:medium), :class => 'responsive-img' %>
+          <h6><%= sku.inventory %> in inventory</h6>
+        </div>
+        <div class="col s2">
+          <h5><%= number_to_currency(sku.price) %></h5>
+        </div>
+        <div class="col s3">
+          <h5><%= number_to_currency(sku.discount_price) %></h5>
+          <h6>(Lists at <%= number_to_currency(sku.price_with_fee) %>)</h6>
+        </div>
+        <div class="col s2">
+          <h5><%= number_to_currency(sku.suggested_retail) %></h5>
+        </div>
+        <div class="col s2 center-align">
+          <a href="/new_product_skus?product=<%=@product.uuid%>&sku=<%=sku.id%>&edit=t" class='btn-flat waves-effect'>EDIT</a>
+          <a class='btn-flat waves-effect remove-sku' data-sku="<%=sku.id%>">Remove SKU</a>
+        </div>
+      </div>
+    <% end %>
+    <div class="right-align">
+      <a href="/new_product_sizing?product=<%=@product.uuid%>" class='btn-flat waves-effect border' style='border-bottom: 1px solid black'>New SKU</a>
+    </div>
+  </div>
+</div>
+
+<div class="center-align">
+  <% if total_possible_sales >= @product.goal %>
+    <%= form_for @product, url: "/launch_product/#{@product.id}", method: 'PUT' do |f| %>
+      <%= f.submit "LAUNCH PRODUCT", :class => 'btn submit-button' %>
+    <% end %>
+  <% else %>
+    <h5>Your sales goal of <%= number_to_currency(@product.goal) %> is not attainable with your current prices and inventory of your SKUs.</h5>
+    <h5>Please edit your SKUs inventory or price, or edit your sales goal.</h5>
+    <a href="/fix_product/<%= @product.uuid %>" class='btn-flat waves-effect black-text'>Edit Goal</a>
+  <% end %>
+</div>
+
+<script>
+alternateImage()
+function alternateImage(){
+  $('.alternate-image').click(function(){
+    var makeMain = $(this).attr('src')
+    var makeAlternate = $('.main-image').attr('src')
+    // $('.main-image').fadeOut()
+    $('.main-image').attr('src', makeMain)
+    $(this).attr('src', makeAlternate)
+    //   $('.main-image').fadeIn()
+  })
+}
+</script>

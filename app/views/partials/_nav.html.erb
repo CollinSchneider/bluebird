@@ -31,21 +31,22 @@
       </div>
     <% end %>
     <div class="col s7 valign hide-on-med-and-down">
+      <!-- <h6> -->
+      <!-- </h6> -->
       <h6>
+        <% link_class = request.fullpath.starts_with?('/discover') ? 'active-nav-link' : 'black-text' %>
+        <a class="<%= link_class %>" href="/discover" style='display: inline-block'>
+          <div class='nav-category-div' style="display: inline-block">
+            <span class="nav-category bold">Discover</span>
+          </div>
+        </a>
         <%
-          items = {
-            'DISCOVER' => '/discover',
-            'ACCESSORIES' => '/accessories',
-            'HOME GOODS' => '/home_goods',
-            'APPAREL' => '/apparel',
-            'TECH' => '/tech'
-          }
-          items.each do |name, url|
-            link_class = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
+          ProductCategory.all.each do |pc|
+            link_class = request.fullpath.include?(pc.key) ? 'active-nav-link' : 'black-text'
         %>
-          <a class="<%= link_class %>" href="<%= url %>">
+          <a class="<%= link_class %>" href="category/<%= pc.key %>">
             <div class='nav-category-div' style="display: inline-block">
-              <span class="nav-category bold"><%= name %></span>
+              <span class="nav-category bold"><%= pc.name %></span>
             </div>
           </a>
         <% end %>

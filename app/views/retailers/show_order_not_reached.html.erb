@@ -1,12 +1,5 @@
 <div class="row">
-  <div class="col s12 m5 center-align" style='margin-top: 50px'>
-    <h5><%= @order.product.title %></h5>
-    <h5><%= @order.product.description %></h5>
-    <div class="col s8 offset-s2 m6 offset-m3 center-align">
-      <%= image_tag @order.product.main_image.url(:large), :class => 'responsive-img' %>
-    </div>
-  </div>
-  <div class="col s12 m7 center-align" style='margin-top: 50px'>
+  <div class="col s12 center-align" style='margin-top: 50px'>
     <% if @order.status == 'past' %>
       <h6>This product did not reach it's sales goal, therefore your order was not made.</h6>
       <% if @order.product.product_token.expiration_datetime > Time.now %>
@@ -14,12 +7,6 @@
         <a href="/last_chance/<%= @order.product.product_token.token %>/<%= @order.product.slug %>" class='btn'>Purchase Here</a>
       <% end %>
     <% elsif @order.status == 'pending' %>
-      <div class="row">
-        <h5><%= @order.amount %> units x  <%= number_to_currency(@order.product.price_with_fee) %>/each</h5>
-        <h5>Shipping: Calculated upon shipment departure.</h5>
-        <hr/>
-        <h5 class='bold'>Total: <%= number_to_currency(@order.total_price) %></h5>
-      </div>
       <div class="row">
         <h5>This product did not reach the discounted price, we are now waiting for the wholesaler to either:</h5>
         <ul>
@@ -31,3 +18,29 @@
     <% end %>
   </div>
 </div>
+
+<div class="center-align col s3 border z-depth-1" style="float: right">
+  <h6>Subtotal: <%= number_to_currency(@order.sale_amount_with_fees) %></h6>
+  <% if @order.shipping_amount.nil? %>
+    <h6 style='border-bottom: 1px solid black'>Shipping: Calculated on Departure</h6>
+  <% else %>
+    <h6 style='border-bottom: 1px solid black'>Shipping: <%= number_to_currency(@order.shipping_amount) %></h6>
+  <% end %>
+  <h6 class='bold'>Order Total: <%= number_to_currency(@order.price_with_shipping) %></h6>
+  <h6 class='green-text'><%=number_to_currency(@order.amount_saved)%> in savings.</h6>
+</div>
+<% @order.purchase_orders.each do |order| %>
+  <div class="col s8 offset-s1 center-align" style='border-bottom: 1px solid black; float: left'>
+    <div class="col s4 left-align">
+      <h6 class='bold'><%= order.sku.description %></h6>
+      <%= image_tag order.sku.image.url(:medium), :class => 'materialboxed thumbnail' %>
+    </div>
+    <div class="col s6">
+      <h6><%= order.quantity %> orders<h6>
+      <h6><%= number_to_currency(order.sku.price_with_fee) %>/unit</h6>
+    </div>
+    <div class="col s2">
+      <h6 class='bold'><%= number_to_currency(order.quantity*order.sku.price_with_fee) %></h6>
+    </div>
+  </div>
+<% end %>

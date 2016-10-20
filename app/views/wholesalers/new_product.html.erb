@@ -1,6 +1,12 @@
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
+<div class="row">
+  <div class="progress col s8 offset-s2">
+    <div class="determinate" style="width: 25%"></div>
+  </div>
+</div>
+
 <div class="row center-align">
   <div class="right-align">
     <a href="/wholesaler" class="btn-flat waves-effect border">Cancel</a>
@@ -70,22 +76,22 @@
       <% end %>
     <% end %>
     <div class="col s12">
-      <%= form_for Product.new, :html => {:class => 'new-product-form'} do |f| %>
-        <%= f.hidden_field :duration, :value => params[:duration] %>
-        <%= f.hidden_field :goal, :value => params[:goal] %>
+      <%= form_tag('', multipart: true) do %>
+        <input type="hidden" name="product[duration]" value="<%= params[:duration] %>">
+        <input type="hidden" name="product[goal]" value="<%= params[:goal] %>">
 
         <div class="col s12 m8 offset-m2">
           <div class="product-form-div z-depth-2">
 
             <h5>Describe your product.</h5>
             <div class="input-field">
-              <%= f.label 'Product Title*' %>
-              <%= f.text_field :title, :required => true %> <br>
+              <label>Product Title*</label>
+              <input type="text" name="product[title]" required>
             </div>
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <label for="short-description">Short Description*</label>
-                <%= f.text_area :description, :id => "short-description", :class => "materialize-textarea", :length => 60, :required => true %> <br>
+                <textarea name="product[short_description]" class='materialize-textarea' id='short-description' rows="8" cols="40" length="60" required></textarea>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Short, 60 character maximum length product description</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -94,40 +100,39 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <label for="long-description">Long Description</label>
-                <%= f.text_area :long_description, :id => "long-description", :class => "materialize-textarea", :required => true %> <br>
+                <textarea name="product[long_description]" class='materialize-textarea' id='long-description' rows="8" cols="40" required></textarea>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Longer, detailed product description</h6>"><i class="tiny material-icons">live_help</i></a>
               </div>
             </div>
             <div class="input-field">
-              <%= f.label "Feature One*" %>
-              <%= f.text_field :feature_one, :required => true %>
+              <label>Feature One*</label>
+              <input type="text" name="product[feature_one]" required>
             </div>
             <div class="input-field">
-              <%= f.label "Feature Two" %>
-              <%= f.text_field :feature_two %>
+              <label>Feature Two</label>
+              <input type="text" name="product[feature_two]">
             </div>
             <div class="input-field">
-              <%= f.label "Feature Three" %>
-              <%= f.text_field :feature_three %>
+              <label>Feature Three</label>
+              <input type="text" name="product[feature_three]">
             </div>
             <div class="input-field">
-              <%= f.label "Feature Four" %>
-              <%= f.text_field :feature_four %>
+              <label>Feature Four</label>
+              <input type="text" name="product[feature_four]">
             </div>
             <div class="input-field">
-              <%= f.label "Feature Five" %>
-              <%= f.text_field :feature_five %>
+              <label>Feature Five</label>
+              <input type="text" name="product[feature_five]">
             </div>
 
             <div class="input-field">
               <select name="product[category]" required>
                 <option selected="selected" disabled>Choose Category*</option>
-                <option value="Home Goods">Home Goods</option>
-                <option value="Accessories">Accessories</option>
-                <option value="Apparel">Apparel</option>
-                <option value="Tech">Tech</option>
+                <% ProductCategory.all.each do |cat| %>
+                  <option value="<%=cat.key%>"><%=cat.name%></option>
+                <% end %>
               </select>
             </div>
 
@@ -138,6 +143,7 @@
           <div class="product-form-div z-depth-2">
             <div class="row">
               <h5>Show off your product.</h5>
+              <h5>These are the generic images of your product, images for variations of your product will be completed in the following steps.</h5>
               <h6 class='bold'>Tips:</h6>
               <h6>Image format <span class='bold'>must</span> be either JPEG, PNG, or GIF.</h6>
               <h6>Product images are displayed as squares, so please upload a 1:1 ratio image for it to not become distorted.</h6>
@@ -145,7 +151,7 @@
             <div class="file-field input-field">
               <div class="btn">
                 <span>Main Image*</span>
-                <%= f.file_field :main_image, :required => true %>
+                <input type="file" name="product[main_image]" required>
               </div>
               <div class="file-path-wrapper">
                 <input class="file-path validate" type="text">
@@ -154,7 +160,7 @@
             <div class="file-field input-field">
               <div class="btn">
                 <span>Image Two</span>
-                <%= f.file_field :photo_two %>
+                <input type="file" name="product[photo_two]">
               </div>
               <div class="file-path-wrapper">
                 <input class="file-path validate" type="text">
@@ -163,7 +169,7 @@
             <div class="file-field input-field">
               <div class="btn">
                 <span>Image Three</span>
-                <%= f.file_field :photo_three %>
+                <input type="file" name="product[photo_three]">
               </div>
               <div class="file-path-wrapper">
                 <input class="file-path validate" type="text">
@@ -172,7 +178,7 @@
             <div class="file-field input-field">
               <div class="btn">
                 <span>Image Four</span>
-                <%= f.file_field :photo_four %>
+                <input type="file" name="product[photo_four]">
               </div>
               <div class="file-path-wrapper">
                 <input class="file-path validate" type="text">
@@ -181,7 +187,8 @@
             <div class="file-field input-field">
               <div class="btn">
                 <span>Image Five</span>
-                <%= f.file_field :photo_five %>
+                <%= file_field_tag :photo_five %>
+                <!-- <input type="file" name="product[photo_five]"> -->
               </div>
               <div class="file-path-wrapper">
                 <input class="file-path validate" type="text">
@@ -195,47 +202,11 @@
             <h5>Set the numbers.</h5>
             <div class="input-field valign-wrapper">
               <div class="col s11">
-                <%= f.label 'Product Full Wholesale Price*' %>
-                <input type="number" name="product[price]" class='product-wholesale-price' step="0.01" required> <br>
+                <label>Percent Discount of Wholesale Price*</label>
+                <input type="number" name="product[percent_discount]" class='product-discount-price' step="0.01" required> <br>
               </div>
               <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the full wholesale price. <br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
-              </div>
-            </div>
-            <div class="input-field valign-wrapper">
-              <div class="col s11">
-                <%= f.label 'Product Discounted Wholesale Price*' %>
-                <input type="number" name="product[discount]" class='product-discount-price' step="0.01" required> <br>
-              </div>
-              <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
-              </div>
-            </div>
-            <div class="input-field valign-wrapper">
-              <div class="col s11">
-                <%= f.label 'Suggested Retail Price*' %>
-                <input type="number" name="product[retail_price]" class='product-retail-price' step="0.01" required> <br>
-              </div>
-              <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
-              </div>
-            </div>
-            <div class="input-field valign-wrapper">
-              <div class="col s11">
-                <%= f.label 'Product Inventory For Sale*' %>
-                <%= f.number_field :quantity, :class => 'product-quantity', :required => true %> <br>
-              </div>
-              <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>How much inventory you are listing for sale <br> Tip: must be possible to reach $<%=params[:goal]%> in sales at your<br> discounted price with this amount of inventory.</h6>"><i class="tiny material-icons">live_help</i></a>
-              </div>
-            </div>
-            <div class="input-field valign-wrapper">
-              <div class="col s11">
-                <%= f.label 'Minimum Allowed Order' %>
-                <%= f.number_field :minimum_order, :required => true %> <br>
-              </div>
-              <div class="col s1 valign">
-                <a class="tooltipped" data-position="top" data-delay="0" data-tooltip="<h6>The lowest number of units a retailer can order.</h6>"><i class="tiny material-icons">live_help</i></a>
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the percentage discount you are offering. <br>This is only the price IF your goal of $<%=params[:goal] %> is met<br> within <%= params[:duration].gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
               </div>
             </div>
 
@@ -245,12 +216,7 @@
         <div class="row col s12">
           <div class="row">
             <div class='red-text front-end-validate'></div>
-            <%= f.submit 'Create Product', :class => 'btn submit-button' %>
-          </div>
-          <div class="row">
-            <div class="col s2 offset-s5">
-              <img src="/images/loading.gif" class='responsive-img loading-wheel hidden' />
-            </div>
+            <input type="submit" value="Create Product" class='btn submit-button'>
           </div>
         </div>
       <% end %>

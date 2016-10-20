@@ -4,6 +4,7 @@ class Wholesaler < ActiveRecord::Base
 
   has_many :products
   has_many :commits
+  has_many :purchase_orders, through: :commits
   has_many :sales
   has_many :shippings
 
@@ -25,6 +26,12 @@ class Wholesaler < ActiveRecord::Base
 
   def products_to_ship
     return self.commits.where("sale_made = 't' AND has_shipped = 'f' AND id NOT IN (
+      select commit_id from sales where card_failed = 't'
+    )")
+  end
+
+  def orders_to_ship
+    return self.purchase_orders.where("(purchase_orders.sale_made = 't' or purchase_orders.full_price = 't') and purchase_orders.has_shipped = 'f' and purchase_orders.refunded = 'f' and commit_id not in (
       select commit_id from sales where card_failed = 't'
     )")
   end

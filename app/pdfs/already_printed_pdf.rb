@@ -9,8 +9,10 @@ class AlreadyPrintedPdf < Prawn::Document
     start_new_page
 
     addresses = ShippingAddress.where("id in (
-      select shipping_address_id from commits where wholesaler_id = ? AND sale_made = 't' AND has_shipped = 'f' AND refunded = 'f' AND id not in (
-        select id from sales where card_failed = 't'
+      select shipping_address_id from commits where wholesaler_id = ? AND id in (
+        select commit_id from purchase_orders where (purchase_orders.sale_made = 't' or purchase_orders.full_price = 't') AND purchase_orders.has_shipped = 'f' AND purchase_orders.refunded = 'f' and commit_id not in (
+          select id from sales where card_failed = 't'
+        )
       )
     )", user.wholesaler.id)
 
@@ -35,9 +37,10 @@ class AlreadyPrintedPdf < Prawn::Document
     stroke_horizontal_rule
     pad_bottom(10) {column_headers}
     order_total = 0
-    address.orders_to_ship.each do |commit|
-      order_total += commit.full_price? ? commit.product.price*commit.amount : commit.product.discount*commit.amount
-      pad_bottom(10) {order_info(commit)}
+    address.orders_to_ship.each do |po|
+      amount = po.full_price? ? po.quantity*po.sku.price : po.quantity*po.sku.price_with_fee
+      order_total += amount
+      pad_bottom(10) {order_info(po)}
       stroke_horizontal_rule
     end
     pad_bottom(10) {shipping_info}
@@ -109,13 +112,13 @@ class AlreadyPrintedPdf < Prawn::Document
     text "Product             Unit Price             Quantity             Total Price", align: :right, style: :bold
   end
 
-  def order_info(commit)
+  def order_info(purchase_order)
     move_down 10
-    "#{image open(commit.product.main_image.url(:medium)), :position => :left, width: 75}"
-    if !commit.full_price
-      text "#{commit.product.title.pluralize}                   $#{'%.2f' % (commit.product.discount)}                    #{commit.amount}                    $#{'%.2f' % (commit.product.discount.to_f*commit.amount.to_f)}", align: :right
+    "#{image open(purchase_order.sku.image.url(:medium)), :position => :left, width: 75}" if !purchase_order.sku.image.content_type.include?('gif')
+    if !purchase_order.commit.full_price
+      text "#{purchase_order.sku.description} #{purchase_order.sku.product.title.pluralize}                   $#{'%.2f' % (purchase_order.sku.price_with_fee)}                    #{purchase_order.quantity}                    $#{'%.2f' % (purchase_order.sku.price_with_fee*purchase_order.quantity)}", align: :right
     else
-      text "#{commit.product.title.pluralize}                   $#{'%.2f' % (commit.product.price)}                    #{commit.amount}                    $#{'%.2f' % (commit.product.price.to_f*commit.amount.to_f)}", align: :right
+      text "#{purchase_order.sku.description} #{purchase_order.sku.product.title.pluralize}                   $#{'%.2f' % (purchase_order.sku.price)}                    #{purchase_order.quantity}                    $#{'%.2f' % (purchase_order.sku.price*purchase_order.quantity)}", align: :right
     end
   end
 

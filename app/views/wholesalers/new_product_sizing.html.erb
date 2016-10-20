@@ -1,0 +1,42 @@
+
+<div class="row">
+  <div class="progress col s8 offset-s2">
+    <div class="determinate" style="width: 50%"></div>
+  </div>
+</div>
+
+
+<div class="row center-align">
+  <div class="row">
+    <h4><%= @product.title %> Sizing</h4>
+    <a href="/new_product_variants?product=<%= @product.uuid %>" class='not-applicable'>Product Has No Sizes</a>
+    <!-- To show with JS  -->
+    <!-- <a href="/new_product_sizing?product=<%= @product.uuid %>&sizing=na" class='btn not-applicable-js'>Sizing Not Applicable</a> -->
+  </div>
+
+
+  <!-- <div class="row"> -->
+    <div class="row col s12 m8 offset-m2 sizes">
+      <% @product.product_sizings.each do |size| %>
+        <h6 class='existing-size' data-size='<%=size.id %>'><%= size.description %> &nbsp&nbsp&nbsp&nbsp<span class='pointer remove-size' data-size='<%=size.id %>'>X</span></h6>
+      <% end %>
+    </div>
+  <!-- </div> -->
+
+  <div class="col s12">
+    <a href="/new_product_variants?product=<%= @product.uuid %>" class='btn next-step'>Next</a>
+  </div>
+  <div class="col s12 m8 offset-m2">
+    <div class="product-form-div z-depth-2">
+      <form class="create-size" data-product='<%= @product.uuid %>'>
+        <div class="input-field">
+          <input type="text" class='full-box-input new-size' placeholder="Size (ie: medium)">
+        </div>
+        <h6 class='red-text errors'></h6>
+        <input type="submit" value="Create Size" class='btn'>
+      </form>
+    </div>
+  </div>
+
+
+</div>

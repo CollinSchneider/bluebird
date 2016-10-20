@@ -8,8 +8,8 @@
 
     <p>You can expect your order(s) of:</p>
     <ul>
-      <% @shipment.commits.each do |commit| %>
-        <li><%= commit.amount %> <%= commit.product.title.pluralize %></li>
+      <% @shipment.purchase_orders.each do |po| %>
+        <li><%= po.quantity %> <%= po.product.title.pluralize %></li>
       <% end %>
     </ul>
     <p>To arrive on <%= @tracking_delivery_date %> (estimated)</p>
@@ -26,7 +26,7 @@
         </p>
       </div>
       <div class="row">
-        <p>  
+        <p>
           Your friends, <br>
           BlueBird.club Team
         </p>

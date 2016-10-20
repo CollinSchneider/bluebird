@@ -1,39 +1,5 @@
 //= require Chart.bundle
 //= require chartkick
-
-
-// $(document).ready(function(){
-//   console.log('script loadeddd');
-//
-//   $('.submit-tracker').click(function(){
-//     // e.preventDefault()
-//     var div = $(this).parent()
-//     var form = div.find($('.tracking-form'))
-//     var trackingInput = div.find($('.tracking-number'))
-//     var trackingNumber = trackingInput.val()
-//     var commitId = trackingInput.attr('data')
-//     var saleAmount = div.find($('.sale-amount')).text()
-//     console.log(saleAmount + ', ' + trackingNumber + ', ' + commitId);
-//     createTracking(commitId, trackingNumber, form, saleAmount, div)
-//     $(this).replaceWith($("<h6 class='button-replacement'>").text("Enter Tracking Number"))
-//   })
-// })
-//
-// function createTracking(commitId, trackingNumber, form, saleAmount, div) {
-//   console.log(commitId);
-//   console.log(trackingNumber);
-//   $.ajax({
-//     method: 'POST',
-//     url: '/api/create_tracking_and_charge?commit_id=' + commitId + '&tracking_number=' + trackingNumber,
-//     success: function(data){
-//       var shippedText = $('<h4>').text('Item has been shipped!')
-//       form.replaceWith(shippedText)
-//       div.find($('.button-replacement')).remove()
-//       Materialize.toast(saleAmount, 4000)
-//     }
-//   })
-// }
-
 $('a[href="/discover"]').mouseover(function(){
   $('.discover-sub-nav').css({
     display: 'inherit'
@@ -58,11 +24,10 @@ $(document).ready(function(){
   removeOrder()
   completeShipment()
   exitErrorDiv()
+  deleteSku()
 })
 
-var orderUuids = [];
-var addressIds = []
-var addressId = null;
+var orders = [];
 
 function completeShipment(){
   $('.complete-shipment').click(function(){
@@ -70,10 +35,11 @@ function completeShipment(){
     var shipment = button.attr('data-shipment')
     button.prop('disabled', true)
     button.text('Shipping Order...')
-    if(orderUuids.length > 0) {
+    console.log(JSON.stringify(orders));
+    if(orders.length > 0) {
       $.ajax({
         method: 'POST',
-        url: '/api/shipping/complete_shipment?shipment='+shipment+'&orders='+orderUuids+'&addresses='+addressIds,
+        url: '/api/shipping/complete_shipment?shipment='+shipment+'&orders='+JSON.stringify(orders),
         success: function(data){
           if(data.success){
             $('.add-order-success').text('Order shipped!')
@@ -82,7 +48,7 @@ function completeShipment(){
             $('.available-orders').remove()
             $('.completion-button-div').append($('<a href="/needs_shipping" class="btn">').text('New Shipment'))
           } else {
-            $('.add-order-error').text(data.message)
+            $('.error').text(data.message)
             button.prop('disabled', false)
             button.text('Complete Shipment')
           }
@@ -118,15 +84,14 @@ function setInitialShipment(){
 function addOrder() {
   $('body').on('click', '.add-order-to-shipment', function(){
     var div = $(this)
-    if(orderUuids.length == 0) {
-      addressId = null
+    for (var i = 0; i < orders.length; i++) {
+      var order = orders[i]
+      if(order.addressId != div.attr('data-address')){
+        return $('.add-order-error-div').fadeIn()
+      }
     }
-    if(addressId == div.attr('data-address') || addressId == null) {
-      $('.add-order-error-div').fadeOut()
-      addOrderClick(div)
-    } else {
-      $('.add-order-error-div').fadeIn()
-    }
+    $('.add-order-error-div').fadeOut()
+    addOrderClick(div)
   })
 }
 
@@ -138,17 +103,18 @@ function exitErrorDiv(){
 
 function addOrderClick(div){
   div.attr('class', 'border remove-order pointer')
-  var commitUuid = div.attr('data-uuid')
-  var retailerId = div.attr('data-retailer')
-  var address = div.attr('data-address')
+  var poId = div.attr('data-po')
+  var addressId = div.attr('data-address')
   var orderDiv = div.parent().clone()
   div.parent().remove()
+  var order = {}
+  order.poId = poId
+  order.addressId = addressId
+  orders.push(order)
   $('.shipment-orders').append(orderDiv)
-  orderUuids.push(commitUuid)
-  addressIds.push(address)
-  if(orderUuids.length == 1){
+  console.log(orders.length);
+  if(orders.length == 1){
     $('.complete-shipment').attr('class', 'btn complete-shipment')
-    addressId = address
     $('.remove-hint').attr('class', 'remove-hint')
   }
 }
@@ -156,17 +122,37 @@ function addOrderClick(div){
 function removeOrder(){
   $('body').on('click', '.remove-order', function(){
     $(this).attr('class', 'border add-order-to-shipment')
-    var commitUuid = $(this).attr('data-commit')
+    var poId = $(this).attr('data-po')
     var addressId = $(this).attr('data-address')
     var orderDiv = $(this).parent().clone()
     $(this).parent().remove()
     $('.available-orders').append(orderDiv)
-    orderUuids.pop(commitUuid)
-    addressIds.pop(addressId)
-    if(orderUuids.length < 1) {
-      addressId = null
+    for (var i = 0; i < orders.length; i++) {
+      var order = orders[i]
+      if(order.poId == poId){
+        orders.pop(order)
+      }
+    }
+    console.log(orders.length);
+    if(orders.length < 1) {
       $('.complete-shipment').attr('class', 'btn complete-shipment hidden')
       $('.remove-hint').attr('class', 'remove-hint hidden')
     }
+  })
+}
+
+function deleteSku(){
+  $('.remove-sku').click(function(){
+    var sku = $(this).attr('data-sku')
+    var div = $(this).parent().parent()
+    $.ajax({
+      method: 'POST',
+      url: '/api/products/remove_sku?sku='+sku,
+      success: function(data){
+        if(data.success){
+          div.remove()
+        }
+      }
+    })
   })
 }

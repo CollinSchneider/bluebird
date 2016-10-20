@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   put 'users/password_reset/:id' => 'users#password_reset'
   resources :products, :except => ['show']
   get '/products/:id/:slug' => 'products#show'
+  get '/products/:id/:slug/order' => 'retailers#order'
+  get '/last_chance/:token/:slug/order' => 'retailers#full_price_order'
   resources :commits
   resources :wholesalers
   resources :retailers
@@ -39,6 +41,9 @@ Rails.application.routes.draw do
   get '/api/users/:action' => 'api/users'
   post '/api/users/:action' => 'api/users'
 
+  get '/api/orders/:action' => 'api/orders'
+  post '/api/orders/:action' => 'api/orders'
+
               #///////////////////#
               # WHOLESALER ROUTES #
               #///////////////////#
@@ -46,7 +51,6 @@ Rails.application.routes.draw do
   get '/wholesaler/profile' => 'wholesalers#profile'
   get '/wholesaler/accounts' => 'wholesalers#accounts'
   get '/wholesaler/company' => 'wholesalers#company'
-  get '/new_product' => 'wholesalers#new_product'
   get '/fix_product/:uuid' => 'wholesalers#fix_product'
   post '/fix_product/:uuid' => 'wholesalers#fix_product'
   get '/approve_product/:id' => 'wholesalers#approve_product'
@@ -67,6 +71,17 @@ Rails.application.routes.draw do
   get '/current_sales' => 'wholesalers#current_sales'
   get '/already_printed.pdf' => 'wholesalers#already_printed'
   get '/relist' => 'wholesalers#relist'
+
+  # WHOLESALER POST PRODUCT
+  get '/new_product' => 'wholesalers/new_product#new_product'
+  post '/new_product' => 'wholesalers/new_product#new_product'
+  get '/new_product_sizing' => 'wholesalers/new_product#new_product_sizing'
+  post '/new_product_sizing' => 'wholesalers/new_product#new_product_sizing'
+  get '/new_product_variants' => 'wholesalers/new_product#new_product_variants'
+  post '/new_product_variants' => 'wholesalers/new_product#new_product_variants'
+  get '/new_product_skus' => 'wholesalers/new_product#new_product_skus'
+  post '/new_product_skus' => 'wholesalers/new_product#new_product_skus'
+  post '/product_has_no_variants' => 'wholesalers/new_product#product_has_no_variants'
 
 
                 #///////////////////#
@@ -99,7 +114,7 @@ Rails.application.routes.draw do
                 #///////////////////#
                 #  PRODUCT ROUTES   #
                 #///////////////////#
-  get '/shop' => 'welcome#shop', as: :shop
+  get '/shop' => 'welcome#shop'
   get '/tech' => 'welcome#tech'
   get '/accessories' => 'welcome#accessories'
   get '/home_goods' => 'welcome#home_goods'
@@ -112,6 +127,7 @@ Rails.application.routes.draw do
   get '/last_chance/:token/:slug' => 'products#full_price'
   get '/discover' => 'products#discover'
   get '/bluebird_choice' => 'products#bluebird_choice'
+  get '/category/:category' => 'products#category'
 
   post '/sessions' => 'sessions#create'
   delete '/sessions' => 'sessions#destroy'

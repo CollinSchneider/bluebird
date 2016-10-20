@@ -48,51 +48,15 @@ class Api::ShippingController < ApiController
     end
   end
 
-  def ship_order
-    commit = Commit.find_by_uuid(params[:commit_uuid])
-    tracking_code = params[:tracking_code].gsub(' ', '')
-    shipping_cost = params[:shipping_amount]
-    tracking_code = tracking_code.gsub('-', '')
-    tracking_code = tracking_code.gsub('.', '')
-    EasyPost.api_key = ENV['EASYPOST_API_KEY']
-    begin
-      tracker = EasyPost::Tracker.create({
-        tracking_code: tracking_code
-      })
-      if !tracker.nil?
-        charge = current_user.collect_shipping_charge(commit, shipping_cost)
-        shipment = Shipping.where('commit_id = ?', commit.id).first
-        shipment.tracking_id = tracker.id
-        shipment.shipped_on = DateTime.now
-        shipment.save!
-        commit.has_shipped = true
-        commit.save(validate: false)
-        if charge[0] == true
-          BlueBirdEmail.retailer_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
-          return render :json => {
-            success: true,
-            charge: charge[1],
-            tracking: tracker
-          }
-        else
-          BlueBirdEmail.retailer_declined_card_sale_shipped(commit.retailer.user, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url, shipping_cost)
-          return render :json => {
-            success: false,
-            error: charge[1]
-          }
-        end
-      end
-    rescue EasyPost::Error => e
-      return render :json => {
-        success: false,
-        error: e.message
-      }
-    end
-  end
-
   def create_initial_shipment
     tracking_code = params[:tracking_code].gsub(' ', '')
     shipping_cost = params[:shipping_amount]
+    if shipping_cost.to_f < 0.5 && shipping_cost.to_f > 0
+      return render :json => {
+        success: false,
+        error: "If you are charging for shipping, you must charge at least $0.50."
+      }
+    end
     tracking_code = tracking_code.gsub('-', '')
     tracking_code = tracking_code.gsub('.', '')
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
@@ -122,37 +86,49 @@ class Api::ShippingController < ApiController
   end
 
   def complete_shipment
-    addresses = params[:addresses].split(',')
-    if addresses.uniq.count > 1
-      return render :json => {
-        success: false,
-        message: "Each order has to be shipped to the same address, please update the shipment's orders."
-      }
+    orders = JSON.parse(params[:orders])
+    order_check = orders.first['addressId']
+    orders.each do |order_address_check|
+      if order_address_check['addressId'] != order_check
+        return render :json => {
+          success: false,
+          message: "Each order has to be shipped to the same address, please update the shipment's orders."
+        }
+      end
     end
-    retailer_id = ShippingAddress.find(addresses.first).retailer_id
-    orders = params[:orders].split(',')
     shipment = Shipping.find(params[:shipment])
-    orders.each do |uuid|
-      order = Commit.find_by(:uuid => uuid)
-      order.has_shipped = true
-      order.shipping_id = shipment.id
-      order.save!
+    purchase_order = PurchaseOrder.find(orders.first['poId'])
+    orders.each do |order|
+      po = PurchaseOrder.find(order['poId'])
+      po.has_shipped = true
+      po.shipping_id = shipment.id
+      po.save!
     end
-    shipment.shipped_on = DateTime.now
-    shipment.retailer_id = retailer_id
+    if purchase_order.commit.shipping_amount.nil?
+      purchase_order.commit.shipping_amount = 0
+    end
+    purchase_order.commit.shipping_amount += shipment.shipping_amount
+    purchase_order.commit.save!
+    shipment.shipped_on = Time.now
+    shipment.retailer_id = purchase_order.commit.retailer_id
     shipment.save!
-    charge = current_user.collect_shipping_charge(shipment)
     EasyPost.api_key = ENV['EASYPOST_API_KEY']
     tracker = EasyPost::Tracker.retrieve(shipment.tracking_id)
-    if charge[0] == true
+    if shipment.shipping_amount == 0
       BlueBirdEmail.retailer_sale_shipped(shipment.retailer.user, shipment, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
+      return render :json => {success: true}
     else
-      BlueBirdEmail.retailer_declined_card_sale_shipped(shipment.retailer.user, shipment, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
+      charge = current_user.collect_shipping_charge(shipment)
+      if charge[0] == true
+        BlueBirdEmail.retailer_sale_shipped(shipment.retailer.user, shipment, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
+      else
+        BlueBirdEmail.retailer_declined_card_sale_shipped(shipment.retailer.user, shipment, tracker.carrier, tracker.tracking_code, tracker.est_delivery_date, tracker.public_url)
+      end
+      return render :json => {
+        success: true,
+        charge: charge[1]
+      }
     end
-    return render :json => {
-      success: true,
-      charge: charge[1]
-    }
   end
 
   def delete_address

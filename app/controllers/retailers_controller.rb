@@ -5,9 +5,22 @@ class RetailersController < ApplicationController
 
   def index
     return redirect_to "/retailer/#{current_user.retailer.declined_order}/card_declined" if current_user.retailer.card_declined?
-    @products = Product.where('id in (
-      select product_id from commits where retailer_id = ? AND (status = ? OR status = ?) AND full_price != ?
-    )', current_user.retailer.id, 'live', 'pending', true)
+    @products = Product.where("id in (
+      select product_id from commits where retailer_id = ? AND (status = ? OR status = ?) AND full_price != 't'
+    )", current_user.retailer.id, 'live', 'pending')
+  end
+
+  def order
+    @product = Product.find_by(:id => params[:id], :slug => params[:slug])
+    return redirect_to "/shop" if @product.nil?
+  end
+
+  def full_price_order
+    @product = Product.where('id in (select product_id from product_tokens where token = ?) AND slug = ?', params[:token], params[:slug]).first
+    return redirect_to "/shop" if @product.status == 'past' || @product.status == 'live' || @product.product_token.expiration_datetime <= Time.now
+
+    commit = current_user.retailer.commits.where("product_id = ? AND full_price = 't'", @product.id)
+    return redirect_to "/retailer/order_history/sale_made/#{commit.first.id}" if !commit.empty?
   end
 
   def order_history
@@ -21,7 +34,7 @@ class RetailersController < ApplicationController
       slug.gsub!('?', '')
       slug.gsub!('!', '')
       @past_orders = current_user.retailer.commits.where('uuid like ? OR product_id in (
-        select id from products where slug LIKE ? OR LOWER(description) LIKE ? OR LOWER(long_description) like ? OR wholesaler_id in (
+        select id from products where slug LIKE ? OR LOWER(short_description) LIKE ? OR LOWER(long_description) like ? OR wholesaler_id in (
           select id from wholesalers where user_id in (
             select user_id from companies where company_key LIKE ?
           )
@@ -35,20 +48,21 @@ class RetailersController < ApplicationController
 
   def show_order_history
     @order = Commit.find(params[:id])
+    return redirect_to "/shop" if @order.nil?
+    return redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     @stripe_customer = Stripe::Customer.retrieve(@order.retailer.stripe_id)
     @commit_card = @stripe_customer.sources.retrieve(@order.card_id)
-    return redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
   end
 
   def show_order_not_reached
     @order = Commit.find(params[:id])
-    return redirect_to "/retailer/order_history" if @order.status != 'pending' && @order.status != 'past'
+    return redirect_to "/retailer/order_history" if (@order.status != 'pending' && @order.status != 'past') || (@order.retailer_id != current_user.retailer.id)
   end
 
   def show_order_sale_made
     @order = Commit.find(params[:id])
-    return redirect_to "/retailer/order_history" if !@order.sale_made
+    return redirect_to "/retailer/order_history" if !@order.sale_made || @order.retailer_id != current_user.retailer.id
     if !@order.shipping.nil?
       EasyPost.api_key = ENV['EASYPOST_API_KEY']
       @shipping_info = EasyPost::Tracker.retrieve(@order.shipping.tracking_id)

@@ -2,12 +2,13 @@ class Util
 
   def self.slug(string)
     slug = string.downcase
-    slug = slug.gsub!(',' '')
-    slug = slug.gsub!("'", "")
-    slug = slug.gsub!('.', '')
-    slug = slug.gsub!(' ', '-')
-    slug = slug.gsub!('!', '')
-    slug = slug.gsub!('?', '')
+    slug = slug.strip
+    slug.gsub!(',' '')
+    slug.gsub!("'", "")
+    slug.gsub!('.', '')
+    slug.gsub!(' ', '-')
+    slug.gsub!('!', '')
+    slug.gsub!('?', '')
     return slug
   end
 

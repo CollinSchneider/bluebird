@@ -3,6 +3,7 @@ class Retailer < ActiveRecord::Base
   belongs_to :user
 
   has_many :commits
+  has_many :purchase_orders, through: :commits
   has_many :shipping_addresses
   has_many :sales
   has_many :shippings
@@ -17,6 +18,10 @@ class Retailer < ActiveRecord::Base
       :description => "Customer for #{self.user.full_name}"
     )
     return customer.id
+  end
+
+  def products_orders(product_id)
+    return self.commits.where('product_id = ?', product_id)
   end
 
   def primary_address

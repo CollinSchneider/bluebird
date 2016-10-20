@@ -28,9 +28,9 @@
           </div>
           <div class="input-field">
             <label>Shipping Cost</label>
-            <input type="text" class="shipping-cost">
+            <input type="number" class="shipping-cost" step="0.01">
           </div>
-          <h6 class='red-text error-message'></h6>
+          <h6 class='red-text errors'></h6>
           <input type="submit" value="Enter Shipment Info" class='submit btn'>
         </form>
       </div>
@@ -49,6 +49,7 @@
       </div>
       <h4 class='green-text add-order-success'></h4>
       <div class="row col s12">
+        <h6 class='red-text error'></h6>
         <button class='btn complete-shipment hidden' data-shipment='<%=@shipment.id %>'>Complete Shipment</button>
       </div>
     <% else %>
@@ -73,43 +74,23 @@
     <div class="available-orders">
       <% @shipments.each_slice(3) do |slice| %>
         <div class="row">
-          <% slice.each do |commit| %>
+          <% slice.each do |po| %>
             <div class="col s12 m6 l4 center-align" style='padding: 10px !important'>
-              <div class='border add-order-to-shipment' data-uuid='<%= commit.uuid %>' data-retailer='<%= commit.retailer_id %>' data-address='<%= commit.shipping_address_id %>' style='min-height: 650px'>
-                <h5><%= commit.product.title %></h5>
-                <%= image_tag commit.product.main_image.url(:medium), :class => 'responsive-img' %>
-                <h5><%= commit.amount %> Orders</h5>
-                <% if !commit.full_price %>
-                  <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.discount.to_f*commit.amount.to_f) %></h5>
-                <% else %>
-                  <h5 class='sale-amount'>$<%= sale_amount = '%.2f' % (commit.product.price.to_f*commit.amount.to_f) %></h5>
-                  <h6>(Purchased for full price)</h6>
-                <% end %>
+              <div class='border add-order-to-shipment' data-po='<%= po.id %>' data-address='<%= po.commit.shipping_address_id %>' style='min-height: 500px'>
+                <h5><%= po.sku.product.title %></h5>
+                <h6><%= po.sku.description %></h6>
+                <%= image_tag po.sku.image.url(:medium), :class => 'responsive-img' %>
+                <h6 class='bold'><%= po.quantity %> orders</h6>
                 <h6>Ship to:</h6>
-                <h6><%= commit.retailer.user.full_name %></h6>
-                <h6><%= commit.retailer.user.company.company_name %></h6>
-                <h6><%= commit.shipping_address.street_address_one %></h6>
-                <% if commit.shipping_address.street_address_two != '' %>
-                  <h6><%= commit.shipping_address.street_address_two %></h6>
+                <h6><%= po.commit.retailer.user.full_name %></h6>
+                <h6><%= po.commit.retailer.user.company.company_name %></h6>
+                <h6><%= po.commit.shipping_address.street_address_one %></h6>
+                <% if po.commit.shipping_address.street_address_two %>
+                  <h6><%= po.commit.shipping_address.street_address_two %></h6>
                 <% end %>
-                <h6><%= commit.shipping_address.city %>, <%= commit.shipping_address.state %></h6>
-                <h6><%= commit.shipping_address.zip %></h6>
-                <!-- <div class="submit-tracking">
-                  <form class="tracking-form">
-                    <div class="input-field">
-                      <input type="hidden" class="sale-amount" value="<%= sale_amount %>">
-                      <label>Tracking Number</label>
-                      <input class="tracking-number" data="<%= commit.uuid %>" type="text" required>
-                    </div>
-                    <div class="input-field">
-                      <label>Shipping Cost</label>
-                      <input class="shipping-amount" type="number" step='0.01' required>
-                    </div>
-                    <input type="submit" value="Enter Tracking Number" class='btn submit-tracking'>
-                  </form>
-                </div> -->
-                <!-- <button class='submit-tracker btn'>Enter Tracking Number</button> -->
-                <h6 class='error-message red-text'></h6>
+                <h6><%= po.commit.shipping_address.zip %></h6>
+                <h6><%= po.commit.shipping_address.city %></h6>
+                <h6><%= po.commit.shipping_address.state %></h6>
               </div>
             </div>
           <% end %>

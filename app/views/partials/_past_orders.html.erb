@@ -19,11 +19,7 @@
           <h6><%= order.product.title %></h6>
         </div>
         <div class="col m2 valign">
-          <% if order.full_price? %>
-            <h6><%= number_to_currency(order.amount.to_i*order.product.price) %></h6>
-          <% else %>
-            <h6><%= number_to_currency(order.amount.to_i*order.product.price_with_fee) %></h6>
-          <% end %>
+          <h6><%= number_to_currency(order.price_with_shipping) %></h6>
         </div>
         <div class="col m2 valign">
           <h6><%= order.product.wholesaler.user.company.company_name %></h6>

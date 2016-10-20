@@ -3,11 +3,6 @@ class WholesalersController < ApplicationController
   layout 'wholesaler'
   before_action :redirect_if_not_logged_in, :authenticate_wholesaler
 
-  def new_product
-    redirect_to '/wholesaler/profile' if current_user.wholesaler.needs_to_ship? || current_user.wholesaler.needs_attention? || current_user.wholesaler.needs_stripe_connect?
-    @product = Product.new
-  end
-
   def approve_product
     @product = Product.find(params[:id])
     redirect_to "/wholesaler/profile" if @product.wholesaler_id != current_user.wholesaler.id
@@ -19,8 +14,15 @@ class WholesalersController < ApplicationController
 
     if request.post?
       product = Product.find_by(:uuid => params[:uuid])
+      og_percent = product.percent_discount
       product.update(product_params)
       if product.save
+        if product.percent_discount != og_percent
+          product.skus.each do |sku|
+            sku.discount_price = sku.price - (sku.price*(product.percent_discount/100))
+            sku.save!
+          end
+        end
         return redirect_to "/approve_product/#{product.id}"
       else
         flash[:error] = product.errors.full_messages
@@ -98,7 +100,7 @@ class WholesalersController < ApplicationController
   end
 
   def needs_shipping
-    return redirect_to '/wholesaler' if !current_user.wholesaler.products_to_ship.any?
+    return redirect_to '/wholesaler' if !current_user.wholesaler.orders_to_ship.any?
     @retailer_orders = Retailer.all.where("id in (
       select retailer_id from commits where wholesaler_id = ? AND has_shipped = 'f' AND refunded = 'f'
     )", current_user.wholesaler.id)
@@ -110,7 +112,7 @@ class WholesalersController < ApplicationController
       return redirect_to "/needs_shipping" if @shipment.nil? || @shipment.wholesaler_id != current_user.wholesaler.id
       EasyPost.api_key = ENV['EASYPOST_API_KEY']
       @ez_shipment = EasyPost::Tracker.retrieve(@shipment.tracking_id)
-      @shipments = current_user.wholesaler.products_to_ship.order(shipping_address_id: :asc)
+      @shipments = current_user.wholesaler.orders_to_ship
     end
 
     respond_to do |format|
@@ -157,7 +159,7 @@ class WholesalersController < ApplicationController
   end
 
   def product_params
-    params.require(:product).permit(:user_id, :percent_discont, :goal, :company_name, :current_sales,
+    params.require(:product).permit(:user_id, :percent_discount, :goal, :company_name, :current_sales,
       :duration, :title, :price, :description, :long_description, :retail_price, :discount, :status, :category, :quantity,
       :feature_one, :feature_two, :feature_three, :feature_four, :feature_five, :minimum_order, :main_image,
       :photo_two, :photo_three, :photo_four, :photo_five)

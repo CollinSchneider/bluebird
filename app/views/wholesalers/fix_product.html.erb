@@ -50,7 +50,7 @@
             <div class="input-field valign-wrapper">
               <div class="col s11">
                 <label for="short-description">Short Description*</label>
-                <textarea name="product[description]" rows="8" cols="40" class="materialize-textarea" required><%= @product.description %></textarea>
+                <textarea name="product[short_description]" rows="8" cols="40" class="materialize-textarea" required><%= @product.short_description %></textarea>
               </div>
               <div class="col s1 valign">
                 <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>Short, 120 character maximum length product description</h6>"><i class="tiny material-icons">live_help</i></a>
@@ -87,7 +87,7 @@
             </div>
 
             <div class="input-field">
-              <select name="product[duration]">
+              <select name="product[category]">
               <%
                 ['Home Goods', 'Accessories', 'Tech', 'Apparel'].each do |cat|
                   if cat == @product.category
@@ -184,47 +184,11 @@
             <h5>Set the numbers.</h5>
             <div class="input-field valign-wrapper">
               <div class="col s11">
-                <%= label_tag 'Product Full Wholesale Price*' %>
-                <input type="number" name="product[price]" class='product-wholesale-price' step="0.01" value="<%= @product.price %>" required> <br>
+                <%= label_tag 'Percent Discount*' %>
+                <input type="number" name="product[percent_discount]" class='product-wholesale-price' step="1" value="<%= @product.percent_discount %>" required> <br>
               </div>
               <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the full wholesale price. <br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
-              </div>
-            </div>
-            <div class="input-field valign-wrapper">
-              <div class="col s11">
-                <%= label_tag 'Product Discounted Wholesale Price*' %>
-                <input type="number" name="product[discount]" class='product-discount-price' step="0.01" value="<%= @product.discount %>" required> <br>
-              </div>
-              <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=@product.goal%> is met<br> within <%= @product.duration.gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
-              </div>
-            </div>
-            <div class="input-field valign-wrapper">
-              <div class="col s11">
-                <%= label_tag 'Suggested Retail Price*' %>
-                <input type="number" name="product[retail_price]" class='product-retail-price' step="0.01" value="<%= @product.retail_price %>" required> <br>
-              </div>
-              <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the discounted price you are offering. <br>This is only the price IF your goal of $<%=@product.goal%> is met<br> within <%= @product.duration.gsub('_', ' ') %></h6>"><i class="tiny material-icons">live_help</i></a>
-              </div>
-            </div>
-            <div class="input-field valign-wrapper">
-              <div class="col s11">
-                <%= label_tag 'Product Inventory For Sale*' %>
-                <input type="number" name="product[quantity]" step="0.01" value="<%= @product.quantity %>" required> <br>
-              </div>
-              <div class="col s1 valign">
-                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>How much inventory you are listing for sale <br> Tip: must be possible to reach $<%=params[:goal]%> in sales at your<br> discounted price with this amount of inventory.</h6>"><i class="tiny material-icons">live_help</i></a>
-              </div>
-            </div>
-            <div class="input-field valign-wrapper">
-              <div class="col s11">
-                <%= label_tag 'Minimum Allowed Order' %>
-                <input type="number" name="product[minimum_order]" step="0.01" value="<%= @product.minimum_order %>" required> <br>
-              </div>
-              <div class="col s1 valign">
-                <a class="tooltipped" data-position="top" data-delay="0" data-tooltip="<h6>The lowest number of units a retailer can order.</h6>"><i class="tiny material-icons">live_help</i></a>
+                <a class="tooltipped" data-position="bottom" data-delay="0" data-tooltip="<h6>This is the percent discount you will offer off of your full wholesale price.<br>IMPORTANT: This will be the price retailers will have the choice to<br> purchase from if your sales goal is not met</h6>"><i class="tiny material-icons">live_help</i></a>
               </div>
             </div>
 

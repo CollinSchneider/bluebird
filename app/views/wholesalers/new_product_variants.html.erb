@@ -1,0 +1,61 @@
+
+<div class="row">
+  <div class="progress col s8 offset-s2">
+    <div class="determinate" style="width: 75%"></div>
+  </div>
+</div>
+
+<div class="row center-align">
+  <div class="row">
+    <h4><%= @product.title %> Variants</h4>
+    <% if @product.product_variants.empty? %>
+      <a href="/new_product_skus?product=<%= @product.uuid %>"><%= @product.title %> has no variations</a>
+    <% end %>
+  </div>
+
+  <% if @product.product_variants.any? %>
+    <div class="row">
+      <div class="col s12 m8 offset-m2 product-form-div z-depth-2">
+        <% @product.product_variants.each do |var| %>
+          <div class="col s6 offset-s3 valign-wrapper border" style='margin-top: 5px; margin-bottom: 5px'>
+            <div class="col s6 m4">
+              <%= image_tag var.image.url(:large), :class => 'responsive-img' %>
+            </div>
+            <div class="col s5 m7">
+              <h5><%= var.description %></h5>
+            </div>
+            <div class="col s1">
+              <p class='pointer remove-variant' data-variant="<%=var.id %>">X</p>
+            </div>
+            <h6 class='red-text error'></h6>
+          </div>
+        <% end %>
+      </div>
+    </div>
+    <div class="col s12">
+      <%= form_tag("/api/products/create_skus?uuid=#{@product.uuid}", method: 'POST') do %>
+        <input type="submit" value="Complete Variants" class='btn submit-button'>
+      <% end %>
+    </div>
+  <% end %>
+  <div class="col s12 m8 offset-m2">
+    <div class="product-form-div z-depth-2">
+      <%= form_tag('', multipart: true) do %>
+        <input type="hidden" name="product_variant[product_id]" value="<%= @product.id %>">
+        <div class="input-field">
+          <input type="text" name="product_variant[description]" class='full-box-input' placeholder='Description (ie: red)'>
+        </div>
+        <div class="file-field input-field">
+          <div class="btn">
+            <span>Image</span>
+            <input type="file" name="product_variant[image]" required>
+          </div>
+          <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+          </div>
+        </div>
+        <input type="submit" value="Create Product Variant" class='btn submit-button'>
+      <% end %>
+    </div>
+  </div>
+</div>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161007223155) do
+ActiveRecord::Schema.define(version: 20161020155916) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 20161007223155) do
   add_index "admins", ["user_id"], name: "index_admins_on_user_id", using: :btree
 
   create_table "commits", force: :cascade do |t|
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
     t.integer  "amount"
     t.string   "status"
     t.integer  "product_id"
@@ -38,9 +38,10 @@ ActiveRecord::Schema.define(version: 20161007223155) do
     t.integer  "shipping_address_id"
     t.boolean  "sale_made"
     t.integer  "wholesaler_id"
-    t.boolean  "has_shipped",         default: false
+    t.boolean  "has_shipped",           default: false
     t.float    "sale_amount"
-    t.integer  "shipping_id"
+    t.float    "shipping_amount"
+    t.float    "sale_amount_with_fees"
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
@@ -63,6 +64,22 @@ ActiveRecord::Schema.define(version: 20161007223155) do
 
   add_index "companies", ["user_id"], name: "index_companies_on_user_id", using: :btree
 
+  create_table "product_categories", force: :cascade do |t|
+    t.string   "name"
+    t.string   "key"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "product_sizings", force: :cascade do |t|
+    t.integer  "product_id"
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "product_sizings", ["product_id"], name: "index_product_sizings_on_product_id", using: :btree
+
   create_table "product_tokens", force: :cascade do |t|
     t.integer  "product_id"
     t.string   "token"
@@ -73,9 +90,21 @@ ActiveRecord::Schema.define(version: 20161007223155) do
 
   add_index "product_tokens", ["product_id"], name: "index_product_tokens_on_product_id", using: :btree
 
+  create_table "product_variants", force: :cascade do |t|
+    t.integer  "product_id"
+    t.string   "description"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.string   "image_file_name"
+    t.string   "image_content_type"
+    t.integer  "image_file_size"
+    t.datetime "image_updated_at"
+  end
+
+  add_index "product_variants", ["product_id"], name: "index_product_variants_on_product_id", using: :btree
+
   create_table "products", force: :cascade do |t|
     t.string   "title"
-    t.string   "description"
     t.datetime "created_at",                               null: false
     t.datetime "updated_at",                               null: false
     t.string   "status"
@@ -105,7 +134,6 @@ ActiveRecord::Schema.define(version: 20161007223155) do
     t.datetime "start_time"
     t.datetime "end_time"
     t.string   "slug"
-    t.string   "percent_discount"
     t.boolean  "featured",                 default: false
     t.string   "uuid"
     t.integer  "wholesaler_id"
@@ -121,7 +149,28 @@ ActiveRecord::Schema.define(version: 20161007223155) do
     t.float    "price"
     t.float    "goal"
     t.float    "current_sales"
+    t.boolean  "has_skus"
+    t.string   "short_description"
+    t.float    "total_bluebird_fee"
+    t.float    "percent_discount"
+    t.float    "current_sales_with_fees"
   end
+
+  create_table "purchase_orders", force: :cascade do |t|
+    t.integer  "sku_id"
+    t.integer  "commit_id"
+    t.integer  "quantity"
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+    t.string   "shipping_id"
+    t.boolean  "has_shipped"
+    t.boolean  "sale_made"
+    t.boolean  "refunded"
+    t.boolean  "full_price",  default: false
+  end
+
+  add_index "purchase_orders", ["commit_id"], name: "index_purchase_orders_on_commit_id", using: :btree
+  add_index "purchase_orders", ["sku_id"], name: "index_purchase_orders_on_sku_id", using: :btree
 
   create_table "retailers", force: :cascade do |t|
     t.integer  "user_id"
@@ -180,6 +229,24 @@ ActiveRecord::Schema.define(version: 20161007223155) do
   add_index "shippings", ["retailer_id"], name: "index_shippings_on_retailer_id", using: :btree
   add_index "shippings", ["wholesaler_id"], name: "index_shippings_on_wholesaler_id", using: :btree
 
+  create_table "skus", force: :cascade do |t|
+    t.integer  "product_id"
+    t.integer  "product_variant_id"
+    t.integer  "product_sizing_id"
+    t.float    "price"
+    t.float    "discount_price"
+    t.float    "suggested_retail"
+    t.datetime "created_at",         null: false
+    t.datetime "updated_at",         null: false
+    t.integer  "inventory"
+    t.string   "code"
+    t.float    "price_with_fee"
+  end
+
+  add_index "skus", ["product_id"], name: "index_skus_on_product_id", using: :btree
+  add_index "skus", ["product_sizing_id"], name: "index_skus_on_product_sizing_id", using: :btree
+  add_index "skus", ["product_variant_id"], name: "index_skus_on_product_variant_id", using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
@@ -207,12 +274,19 @@ ActiveRecord::Schema.define(version: 20161007223155) do
 
   add_foreign_key "admins", "users"
   add_foreign_key "companies", "users"
+  add_foreign_key "product_sizings", "products"
   add_foreign_key "product_tokens", "products"
+  add_foreign_key "product_variants", "products"
+  add_foreign_key "purchase_orders", "commits"
+  add_foreign_key "purchase_orders", "skus"
   add_foreign_key "retailers", "users"
   add_foreign_key "sales", "commits"
   add_foreign_key "sales", "retailers"
   add_foreign_key "sales", "wholesalers"
   add_foreign_key "shippings", "retailers"
   add_foreign_key "shippings", "wholesalers"
+  add_foreign_key "skus", "product_sizings"
+  add_foreign_key "skus", "product_variants"
+  add_foreign_key "skus", "products"
   add_foreign_key "wholesalers", "users"
 end

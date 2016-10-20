@@ -10,8 +10,10 @@ class Commit < ActiveRecord::Base
 
   has_one :sale
 
-  validate :meets_minimum_order
-  validate :enough_inventory
+  has_many :purchase_orders
+
+  # validate :meets_minimum_order
+  # validate :enough_inventory
   # validate :product_live
 
   # before_create(on: :save) do
@@ -22,13 +24,11 @@ class Commit < ActiveRecord::Base
 
   def set_commit(user)
     self.uuid = SecureRandom.uuid
-    self.status = 'live'
     self.refunded = false
     self.retailer_id = user.retailer.id
     self.wholesaler_id = self.product.wholesaler_id
     self.set_primary_card_id_and_address
-    self.set_sale_amount
-    return self.save ? true : false
+    return self.save
   end
 
   def set_primary_card_id_and_address
@@ -36,14 +36,6 @@ class Commit < ActiveRecord::Base
     customer = Stripe::Customer.retrieve(self.retailer.stripe_id)
     self.card_id = customer.default_source
     self.shipping_address_id = self.retailer.primary_address_id
-  end
-
-  def set_sale_amount
-    if self.full_price
-      self.sale_amount = self.product.price.to_f*self.amount
-    else
-      self.sale_amount = self.product.discount.to_f*self.amount
-    end
   end
 
   def destroy_commit
@@ -55,15 +47,28 @@ class Commit < ActiveRecord::Base
   end
 
   def amount_saved
-    return (self.product.price.to_f*self.amount.to_f) - (self.amount.to_f*self.product.discount.to_f)
+    return (self.sale_amount_with_fees*(1+(self.product.percent_discount/100))) - self.sale_amount_with_fees
   end
 
-  def total_price
-    return self.product.discount.to_f*self.amount.to_f + self.amount_saved*Commit::BLUEBIRD_PERCENT_FEE
+  # def total_price
+  #   total = 0
+  #   if self.full_price?
+  #     return self.sale_amount
+  #   else
+  #     self.purchase_orders.each do |po|
+  #       total += po.quantity*po.sku.price_with_fee
+  #     end
+  #     return total
+  #   end
+  # end
+
+  def price_with_shipping
+    shipping_amount = self.shipping_amount.nil? ? 0 : self.shipping_amount
+    return self.sale_amount_with_fees + shipping_amount
   end
 
   def bluebird_fee
-    return self.amount_saved*Commit::BLUEBIRD_PERCENT_FEE
+    self.full_price? ? 0 : self.amount_saved*Commit::BLUEBIRD_PERCENT_FEE
   end
 
   def current_status

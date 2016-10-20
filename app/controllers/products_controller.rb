@@ -3,6 +3,7 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
+    binding.pry
     return redirect_to '/shop' if @product.nil?
     if @product.end_time < Time.now && !@product.is_users?(current_user)
       Product.expire_products
@@ -38,20 +39,19 @@ class ProductsController < ApplicationController
     end
   end
 
-  def create
-    product = Product.create(product_params)
-    product.wholesaler_id = current_user.wholesaler.id
-    if product.goal.nil?
-      product.goal = params[:product][:goal]
-    end
-    if product.save
-      # current_products = current_user.products.where('status = live')
-      # product.create_uuid
-      return redirect_to "/approve_product/#{product.id}"
+  def category
+    if params[:products] == 'discounted'
+      @products = Product.where('status = ? AND category = ? AND end_time > ? AND CAST(current_sales AS decimal) >= CAST(products.goal AS decimal)', 'live', params[:category], Time.now).page(params[:page]).per_page(6)
+    elsif params[:query]
+      @products = Product.category_queried_products(params[:query], params[:category]).page(params[:page]).per_page(6)
+    elsif params[:products] == 'percent_off'
+      @products = Product.where('status = ? AND category = ?', 'live', params[:category]).order(percent_discount: :desc).page(params[:page]).per_page(6)
+    elsif params[:products] == 'high_low'
+      @products = Product.where('status = ? AND category = ?', 'live', params[:category]).order(discount: :desc).page(params[:page]).per_page(6)
+    elsif params[:products] == 'low_high'
+      @products = Product.where('status = ? AND category = ?', 'live', params[:category]).order(discount: :asc).page(params[:page]).per_page(6)
     else
-      binding.pry
-      flash[:error] = product.errors.full_messages
-      return redirect_to request.referrer
+      @products = Product.where('status = ? AND category = ?', 'live', params[:category]).page(params[:page]).per_page(6)
     end
   end
 

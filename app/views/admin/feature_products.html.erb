@@ -1,3 +1,4 @@
+
 <div class="row">
   <a href="/api/admin/expire_products">EXPIRE PRODUCTS</a>
   <% @products.each_slice(3) do |slice| %>
@@ -6,20 +7,20 @@
         <div class="col s12 m4 center-align no-padding">
           <div class="product">
             <div class="col s3 m1 white-text percent-box">
-              <h5><%= '%.0f' % (product.percent_discount*100) %>% Off</h5>
+              <h5><%= '%.0f' % (product.percent_discount) %>% Off</h5>
             </div>
               <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
               <div class="content-div" style='margin-bottom: 0px'>
                 <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
                 <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
                 <h6>
-                  <span class="was-price">Was $<%= product.price %></span>
-                  <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
+                  <span class="was-price no-margin"><%= product.average_full_price %></span>
+                  <span class="now-price"><strong><%= product.average_discount_price %></strong></span>
                 </h6>
               </div>
               <div class="description content-div" style='margin-top: 0px'>
                 <p style='font-size: 12px' style='margin-top: 0px'>
-                  <%= product.description %>
+                  <%= product.short_description %>
                 </p>
               </div>
 
