@@ -24,8 +24,7 @@ class Users::SignupController < UsersController
         retailer.user_id = user.id
         retailer.save!
         BlueBirdEmail.retailer_welcome_email(user)
-        session[:user_id] = user.id
-        return redirect_to '/shop'
+        return redirect_to "/thank_you?_user=#{user.first_name}"
       else
         flash[:error] = user.errors.full_messages
         return redirect_to request.referrer

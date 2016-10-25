@@ -1,0 +1,23 @@
+<div class="row">
+  <div class="row">
+    <h5 class='green-text success'></h5>
+  </div>
+  <div class="row center-align">
+    <h4><%= @admin.user.full_name %></h4>
+  </div>
+
+  <% @applications.each_slice(2) do |slice| %>
+    <div class="row">
+      <% slice.each do |retailer| %>
+        <div class="row border col s6 center-align">
+          <h5><%= retailer.user.full_name %></h5>
+          <h5><%= retailer.user.company.company_name %></h5>
+          <h6><%= retailer.user.phone_number %></h6>
+          <h6><%= retailer.user.email %></h6>
+          <button class='approve-user btn' data='<%=retailer.id %>' data-user="retailer">Approve</button>
+        </div>
+      <% end %>
+  </div>
+<% end %>
+
+</div>

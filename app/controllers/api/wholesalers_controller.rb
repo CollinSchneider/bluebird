@@ -1,22 +1,5 @@
 class Api::WholesalersController < ApiController
 
-  def approve
-    wholesaler = Wholesaler.find(params[:id])
-    wholesaler.approved = true
-    if wholesaler.save
-      BlueBirdEmail.wholesaler_welcome_email(wholesaler.user)
-      render :json => {
-        success: true,
-        message: "Approved #{wholesaler.user.company.company_name}"
-      }
-    else
-      render :json => {
-        success: false,
-        message: "Error: #{wholesaler.user.company.company_name} could not be approved"
-      }
-    end
-  end
-
   def update_account
     current_user.editing_user_info = true
     if current_user.update(update_user_params)

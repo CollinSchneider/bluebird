@@ -30,6 +30,10 @@ class User < ActiveRecord::Base
     self.save!
   end
 
+  def type
+    return self.is_wholesaler? ? 'Wholesaler' : 'Retailer'
+  end
+
   def collect_shipping_charge(shipping)
     shipping_cost = shipping.shipping_amount.to_f
 

@@ -13,15 +13,20 @@ class SessionsController < ApplicationController
       end
 
       if user.is_retailer?
-        session[:user_id] = user.id
-        if user.retailer.needs_credit_card?
-          return redirect_to '/retailer/accounts'
-        elsif user.retailer.needs_shipping_info?
-          return redirect_to '/retailer/shipping_addresses'
-        elsif user.retailer.card_declined?
-          return redirect_to "/retailer/#{user.retailer.declined_order}/card_declined"
+        if user.retailer.approved
+          session[:user_id] = user.id
+          if user.retailer.needs_credit_card?
+            return redirect_to '/retailer/accounts'
+          elsif user.retailer.needs_shipping_info?
+            return redirect_to '/retailer/shipping_addresses'
+          elsif user.retailer.card_declined?
+            return redirect_to "/retailer/#{user.retailer.declined_order}/card_declined"
+          else
+            return redirect_to '/shop'
+          end
         else
-          return redirect_to '/shop'
+          flash[:error] = "Sorry, your application has not been accepted yet."
+          return redirect_to '/users'
         end
 
       elsif user.is_wholesaler?

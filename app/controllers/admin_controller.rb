@@ -3,9 +3,14 @@ class AdminController < ApplicationController
   before_action :redirect_if_not_admin
   layout 'admin'
 
-  def index
+  def wholesalers
     @admin = current_user.admin
     @applications = Wholesaler.where('approved != ? OR approved IS NULL', true)
+  end
+
+  def retailers
+    @admin = current_user.admin
+    @applications = Retailer.where('approved != ? OR approved IS NULL', true)
   end
 
   def feature_products

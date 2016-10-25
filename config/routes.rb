@@ -106,7 +106,9 @@ Rails.application.routes.draw do
                 #   ADMIN ROUTES    #
                 #///////////////////#
 
-  get '/admin' => 'admin#index'
+  get '/admin' => redirect('/admin/wholesalers')
+  get '/admin/wholesalers' => 'admin#wholesalers'
+  get '/admin/retailers' => 'admin#retailers'
   get '/admin/features' => 'admin#feature_products'
   get '/admin/unshipped' => 'admin#unshipped'
   get '/admin/signup' => 'users#admin_signup'

@@ -10,33 +10,16 @@
     <div class="row">
       <% slice.each do |wholesaler| %>
         <div class="row border col s6 center-align">
+          <h5><%= wholesaler.user.type %></h5>
           <h5><%= wholesaler.user.full_name %></h5>
           <h5><%= wholesaler.user.company.company_name %></h5>
           <h6><%= wholesaler.user.phone_number %></h6>
           <h6><%= wholesaler.user.email %></h6>
           <h6><%= wholesaler.user.company.website %></h6>
-          <button class='approve-wholesaler btn' data='<%=wholesaler.id %>'>Approve</button>
+          <button class='approve-user btn' data='<%=wholesaler.id %>' data-user='wholesaler'>Approve</button>
         </div>
       <% end %>
   </div>
 <% end %>
 
 </div>
-
-<script>
-  $('.approve-wholesaler').click(function(){
-    var wholesalerId = $(this).attr('data')
-    var div = $(this).parent()
-    $.ajax({
-      method: 'POST',
-      url: '/api/wholesalers/approve?id=' + wholesalerId,
-      success: function(data){
-        console.log(data);
-        if(data.success) {
-          $('.success').text(data.message)
-          div.fadeOut()
-        }
-      }
-    })
-  })
-</script>

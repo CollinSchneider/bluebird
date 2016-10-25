@@ -6,7 +6,7 @@
         <div class="product white">
           <%= link_to "/products/#{product.id}/#{product.slug}" do %>
             <div class="percent-box col s3 m1 white-text">
-              <h6><%= product.percent_discount %>% discount</h6>
+              <h6><%= '%.0f' % product.percent_discount %>% discount</h6>
             </div>
             <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
             <div class="content-div" style='margin-bottom: 0px'>
@@ -52,7 +52,7 @@
         <div class="product white">
           <%= link_to "/products/#{product.id}/#{product.slug}" do %>
             <div class="percent-box col s3 m1 white-text">
-              <h6><%= '%.0f' % (product.percent_discount*100) %>% discount</h6>
+              <h6><%= '%.0f' % product.percent_discount %>% discount</h6>
             </div>
             <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
             <div class="content-div" style='margin-bottom: 0px'>
