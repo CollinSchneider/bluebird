@@ -27,9 +27,9 @@ class Sku < ActiveRecord::Base
     if !self.product_variant_id.nil? && !self.product_sizing_id.nil?
       return "#{self.product_sizing.description} #{self.product_variant.description}"
     elsif !self.product_sizing_id.nil?
-      return "#{self.product_sizing.description}"
+      return "#{self.product_sizing.description} #{self.product.title}"
     elsif !self.product_variant_id.nil?
-      return "#{self.product_variant.description}"
+      return "#{self.product_variant.description} #{self.product.title}"
     else
       return "#{self.product.title}"
     end
@@ -41,6 +41,11 @@ class Sku < ActiveRecord::Base
 
   def out_of_inventory?
     return self.inventory == 0
+  end
+
+  def remove_sku
+    binding.pry
+    self.product_variant.skus.count
   end
 
   # VALIDATORS

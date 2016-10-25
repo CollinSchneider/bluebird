@@ -116,9 +116,9 @@ class AlreadyPrintedPdf < Prawn::Document
     move_down 10
     "#{image open(purchase_order.sku.image.url(:medium)), :position => :left, width: 75}" if !purchase_order.sku.image.content_type.include?('gif')
     if !purchase_order.commit.full_price
-      text "#{purchase_order.sku.description} #{purchase_order.sku.product.title.pluralize}                   $#{'%.2f' % (purchase_order.sku.price_with_fee)}                    #{purchase_order.quantity}                    $#{'%.2f' % (purchase_order.sku.price_with_fee*purchase_order.quantity)}", align: :right
+      text "#{purchase_order.sku.description}                  $#{'%.2f' % (purchase_order.sku.price_with_fee)}                    #{purchase_order.quantity}                    $#{'%.2f' % (purchase_order.sku.price_with_fee*purchase_order.quantity)}", align: :right
     else
-      text "#{purchase_order.sku.description} #{purchase_order.sku.product.title.pluralize}                   $#{'%.2f' % (purchase_order.sku.price)}                    #{purchase_order.quantity}                    $#{'%.2f' % (purchase_order.sku.price*purchase_order.quantity)}", align: :right
+      text "#{purchase_order.sku.description}                  $#{'%.2f' % (purchase_order.sku.price)}                    #{purchase_order.quantity}                    $#{'%.2f' % (purchase_order.sku.price*purchase_order.quantity)}", align: :right
     end
   end
 

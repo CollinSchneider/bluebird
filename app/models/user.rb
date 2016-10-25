@@ -98,9 +98,10 @@ class User < ActiveRecord::Base
       money_saved = real_total - amount
       bluebird_fee = (money_saved*Commit::BLUEBIRD_PERCENT_FEE).floor
     end
+    bluebird_fee = (commit.sale_amount_with_fees - commit.sale_amount)*100
     commit_charge.sale_amount = commit.sale_amount
     commit_charge.charge_amount = bluebird_fee/100
-    stripe_amount = commit.sale_amount*100 + bluebird_fee
+    stripe_amount = commit.sale_amount_with_fees*100
     commit.product.total_bluebird_fee = bluebird_fee
     commit.product.save!
 
@@ -115,10 +116,11 @@ class User < ActiveRecord::Base
           :currency => "usd",
           :source => token,
           :description => "#{commit.retailer.user.full_name} BlueBird.club purchase of #{commit.product.title}",
-          :application_fee => bluebird_fee # amount in cents
+          :application_fee => bluebird_fee.floor # amount in cents
         },
         {:stripe_account => self.wholesaler.stripe_id}
       )
+
       if !charge.nil?
         commit_charge.stripe_charge_id = charge.id
         commit_charge.card_failed = false

@@ -61,12 +61,6 @@ class Product < ActiveRecord::Base
   end
 
   def percentage
-    # total_sales = 0
-    # Commit.where('product_id = ?', self.id).each do |commit|
-    #   commit.purchase_orders.each do |po|
-    #     total_sales += po.quantity*po.sku.discount_price
-    #   end
-    # end
     percentage = ((self.current_sales/self.goal.to_f)*100)
     if percentage >= 100
       progress = 100
@@ -157,13 +151,21 @@ class Product < ActiveRecord::Base
     end
   end
 
+  def price_with_fee_range
+    if self.skus_same_wholesale_price?
+      "$#{'%.2f' % self.skus.first.price_with_fee}"
+    else
+      skus = self.skus.order(price_with_fee: :asc)
+      return "$#{'%.2f' % skus.first.price_with_fee} - $#{'%.2f' % skus.last.price_with_fee}"
+    end
+  end
+
   def discount_price_range
     if self.skus_same_wholesale_price?
-      return "$#{'%.2f' % (self.skus.first.discount_price + (self.skus.first.price - self.skus.first.discount_price)*Commit::BLUEBIRD_PERCENT_FEE)}"
+      return "$#{'%.2f' % self.skus.first.discount_price}"
     else
       skus = self.skus.order(discount_price: :asc)
-      # TODO: COME BACK TO FIX TO SHOW BLUEBIRD FEE
-      return "$#{'%.2f' % skus.first.price_with_fee} - $#{'%.2f' % skus.last.price_with_fee}"
+      return "$#{'%.2f' % skus.first.discount_price} - $#{'%.2f' % skus.last.discount_price}"
     end
   end
 

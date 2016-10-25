@@ -107,6 +107,29 @@ class Api::ProductsController < ApiController
     end
   end
 
+  def has_no_variants
+    @product = Product.find_by(:uuid => params[:product])
+    missing_skus = @product.product_sizings.where('id not in (
+      select product_sizing_id from skus where product_id = ?
+    )', @product.id)
+    if missing_skus.any?
+      missing_skus.each do |size|
+        sku = Sku.new
+        sku.product_id = @product.id
+        sku.product_sizing_id = size.id
+        sku.code = "#{@product.id}-0-#{size.id}"
+        sku.save!
+      end
+    elsif !@product.skus.any?
+      sku = Sku.new
+      sku.product_id = @product.id
+      sku.code = "#{@product.id}-0-0"
+      sku.save!
+    end
+    sku = @product.skus.where('inventory is null or price is null or suggested_retail is null').first
+    return redirect_to "/new_product_skus?product=#{@product.uuid}&sku=#{sku.id}"
+  end
+
   def remove_sku
     sku = Sku.find(params[:sku])
     if sku.product.wholesaler_id == current_user.wholesaler.id

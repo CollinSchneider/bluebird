@@ -2,17 +2,22 @@
 Your order is on it's way, <%= @user.first_name %>!
 
 You can expect your order(s) of:
-<% @shipment.commits.each do |commit| %>
-  <%= commit.amount %> <%= commit.product.title.pluralize %>
+
+<% @shipment.purchase_orders.each do |po| %>
+  - <%= po.quantity %> <%= po.sku.description.pluralize %>
 <% end %>
-To arrive on <%= @tracking_delivery_date %> (estimated)
+
+To arrive on <%= @tracking_delivery_date.strftime('%m/%d/%Y at %I:%M%p') %> (estimated)
+
+d.strftime("Printed on %m/%d/%Y")   #=> "Printed on 11/19/2007"
+d.strftime("at %I:%M%p")
 
 The shipping carrier is <%= @tracking_carrier %>
 Your tracking number: <%= @tracking_code %>
-Estimated Delivery Date: <%= @tracking_delivery_date %>
 For more information: <%= @tracking_url %>
 
 As always, if you have any questions, feel free to reach out.
 
+
 Your friends,
-BlueBird.club
+BlueBird.club Team

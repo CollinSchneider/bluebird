@@ -71,9 +71,9 @@
                 <a class='black-text' href="/company/<%= @product.wholesaler.user.company.id %>/<%=@product.wholesaler.user.company.company_key%>">
                   <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
                 </a>
-                <h6 class='was-price bold' style="display: inline-block"><%= (@product.average_full_price) %></h6>
-                <h6 class='now-price bold' style="display: inline-block"><%= (@product.average_discount_price) %></h6>
-                <h6>When live, product will display for <%= @product.average_price_with_fee %></h6>
+                <h6 class='was-price bold' style="display: inline-block"><%= (@product.full_price_range) %></h6>
+                <h6 class='now-price bold' style="display: inline-block"><%= (@product.discount_price_range) %></h6>
+                <h6>When live, product will display for <%= @product.price_with_fee_range %></h6>
                 <h6 class='bold'>Retails for <%= (@product.suggested_retail_range) %></h6>
                 <% if !@product.skus_same_wholesale_price? && !@product.skus_same_retail_price? %>
                   <h6>Note: Prices are based on an average of all SKUs.</h6>

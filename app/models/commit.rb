@@ -47,20 +47,14 @@ class Commit < ActiveRecord::Base
   end
 
   def amount_saved
-    return (self.sale_amount_with_fees*(1+(self.product.percent_discount/100))) - self.sale_amount_with_fees
+    total_price = 0
+    total_paid = 0
+    self.purchase_orders.each do |po|
+      total_price += po.sku.price*po.quantity
+      total_paid += po.sku.price_with_fee*po.quantity
+    end
+    return total_price - total_paid
   end
-
-  # def total_price
-  #   total = 0
-  #   if self.full_price?
-  #     return self.sale_amount
-  #   else
-  #     self.purchase_orders.each do |po|
-  #       total += po.quantity*po.sku.price_with_fee
-  #     end
-  #     return total
-  #   end
-  # end
 
   def price_with_shipping
     shipping_amount = self.shipping_amount.nil? ? 0 : self.shipping_amount

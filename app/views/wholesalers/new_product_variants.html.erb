@@ -9,7 +9,7 @@
   <div class="row">
     <h4><%= @product.title %> Variants</h4>
     <% if @product.product_variants.empty? %>
-      <a href="/new_product_skus?product=<%= @product.uuid %>"><%= @product.title %> has no variations</a>
+      <a href="/api/products/has_no_variants?product=<%=@product.uuid%>"><%= @product.title %> has no variations.</a>
     <% end %>
   </div>
 

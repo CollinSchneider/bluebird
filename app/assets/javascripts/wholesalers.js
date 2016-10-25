@@ -144,13 +144,12 @@ function removeOrder(){
 function deleteSku(){
   $('.remove-sku').click(function(){
     var sku = $(this).attr('data-sku')
-    var div = $(this).parent().parent()
     $.ajax({
       method: 'POST',
       url: '/api/products/remove_sku?sku='+sku,
       success: function(data){
         if(data.success){
-          div.remove()
+          location.reload()
         }
       }
     })
