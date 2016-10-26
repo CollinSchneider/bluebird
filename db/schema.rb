@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161026160457) do
+ActiveRecord::Schema.define(version: 20161026202528) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -131,7 +131,6 @@ ActiveRecord::Schema.define(version: 20161026160457) do
     t.string   "photo_five_content_type"
     t.integer  "photo_five_file_size"
     t.datetime "photo_five_updated_at"
-    t.integer  "quantity"
     t.string   "duration"
     t.datetime "start_time"
     t.datetime "end_time"
@@ -146,14 +145,10 @@ ActiveRecord::Schema.define(version: 20161026160457) do
     t.string   "feature_four"
     t.string   "feature_five"
     t.integer  "minimum_order"
-    t.float    "retail_price"
-    t.float    "discount"
-    t.float    "price"
     t.float    "goal"
     t.float    "current_sales"
     t.boolean  "has_skus"
     t.string   "short_description"
-    t.float    "total_bluebird_fee"
     t.float    "percent_discount"
     t.float    "current_sales_with_fees"
   end

@@ -9,10 +9,12 @@ class WelcomeController < ApplicationController
       @products = Product.queried_products(params[:query]).page(params[:page]).per_page(6)
     elsif params[:products] == 'percent_off'
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.current).order(percent_discount: :desc).page(params[:page]).per_page(6)
-    elsif params[:products] == 'high_low'
-      @products = Product.where('status = ?', 'live').order(discount: :desc).page(params[:page]).per_page(6)
-    elsif params[:products] == 'low_high'
-      @products = Product.where('status = ?', 'live').order(discount: :asc).page(params[:page]).per_page(6)
+    # TODO: NEED SQL JOIN TO PULL AVERAGE SKU PRICE
+    # elsif params[:products] == 'high_low'
+    #   @products = Product.where('status = ?', 'live').order(discount: :desc).page(params[:page]).per_page(6)
+    # elsif params[:products] == 'low_high'
+    #   Product.where('status = ?', 'live')
+    #   @products = Product.where('status = ?', 'live').order(discount: :asc).page(params[:page]).per_page(6)
     else
       @products = Product.where('status = ?', 'live').page(params[:page]).per_page(6)
     end

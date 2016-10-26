@@ -59,8 +59,8 @@
               <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
               <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
               <h6>
-                <span class="was-price">Was $<%= product.price %></span>
-                <span class="now-price"><strong>Now $<%= product.discount %></strong></span>
+                <span class="was-price no-margin"><%= product.average_full_price %></span>
+                <span class="now-price"><strong><%= product.average_discount_price %></strong></span>
               </h6>
             </div>
             <div class="description content-div" style='margin-top: 0px'>
