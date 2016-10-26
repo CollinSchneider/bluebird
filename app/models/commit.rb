@@ -70,7 +70,7 @@ class Commit < ActiveRecord::Base
     return 'Sale Still Live' if self.status == 'live'
     return 'Sale Reached' if self.sale_made
     return 'Pending' if self.status == 'pending'
-    return 'Last Chance' if self.status == 'past' && self.product.product_token.expiration_datetime > Time.now
+    return 'Last Chance' if self.status == 'past' && self.product.product_token.expiration_datetime > Time.current
     return 'Sale Not Reached' if self.status = 'past'
   end
 
@@ -96,7 +96,7 @@ class Commit < ActiveRecord::Base
   end
 
   def product_live
-    if self.product.end_time < Time.now
+    if self.product.end_time < Time.current
       errors.add(:Just_missed, " it! This sale ended at #{self.product.calc_end_time}.")
     end
   end

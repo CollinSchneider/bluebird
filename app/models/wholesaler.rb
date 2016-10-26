@@ -49,7 +49,15 @@ class Wholesaler < ActiveRecord::Base
   end
 
   def is_contactable?
-    self.contactable_by_phone || self.contactable_by_email ? true : false
+    (!self.user.company.contact_email.nil? && self.user.company.contact_email != '') || (!self.user.company.contact_number.nil? && self.user.company.contact_number != '')
+  end
+
+  def contactable_by_phone
+    !self.user.company.contact_number.nil? && self.user.company.contact_number != ''
+  end
+
+  def contactable_by_email
+    !self.user.company.contact_email.nil? && self.user.company.contact_number != ''
   end
 
   def total_revenue

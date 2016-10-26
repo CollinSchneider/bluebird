@@ -152,7 +152,7 @@ class Api::ProductsController < ApiController
 
   def extend_product
     product = Product.find_by_uuid(params[:uuid])
-    product.end_time = Time.now + 10.days
+    product.end_time = Time.current + 10.days
     product.status = 'live'
     if product.save(validate: false)
       product.commits.each do |commit|
@@ -195,7 +195,7 @@ class Api::ProductsController < ApiController
     pt = ProductToken.new
     pt.product_id = product.id
     pt.token = SecureRandom.uuid
-    pt.expiration_datetime = (Time.now + 7.days + 1.hour).beginning_of_hour
+    pt.expiration_datetime = (Time.current + 7.days + 1.hour).beginning_of_hour
     pt.save
 
     product.skus.each do |sku|

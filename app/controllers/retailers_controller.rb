@@ -13,11 +13,12 @@ class RetailersController < ApplicationController
   def order
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
     return redirect_to "/shop" if @product.nil?
+    @commit = Commit.find_by(:product_id => @product.id)
   end
 
   def full_price_order
     @product = Product.where('id in (select product_id from product_tokens where token = ?) AND slug = ?', params[:token], params[:slug]).first
-    return redirect_to "/shop" if @product.status == 'past' || @product.status == 'live' || @product.product_token.expiration_datetime <= Time.now
+    return redirect_to "/shop" if @product.status == 'past' || @product.status == 'live' || @product.product_token.expiration_datetime <= Time.current
 
     commit = current_user.retailer.commits.where("product_id = ? AND full_price = 't'", @product.id)
     return redirect_to "/retailer/order_history/sale_made/#{commit.first.id}" if !commit.empty?
@@ -47,7 +48,7 @@ class RetailersController < ApplicationController
   end
 
   def show_order_history
-    @order = Commit.find(params[:id])
+    @order = Commit.find_by(:id => params[:id])
     return redirect_to "/shop" if @order.nil?
     return redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
@@ -121,8 +122,8 @@ class RetailersController < ApplicationController
       select product_id from commits where retailer_id = ?)
     AND id in
       (select product_id from product_tokens where expiration_datetime > ?)
-    ', current_user.retailer.id, Time.now).page(params[:page]).per_page(6)
-    # @products = current_user.retailer.commits.where('product_id in (select product_id from product_tokens where expiration_datetime > ?)', Time.now)
+    ', current_user.retailer.id, Time.current).page(params[:page]).per_page(6)
+    # @products = current_user.retailer.commits.where('product_id in (select product_id from product_tokens where expiration_datetime > ?)', Time.current)
   end
 
   private

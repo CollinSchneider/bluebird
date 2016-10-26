@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161025013334) do
+ActiveRecord::Schema.define(version: 20161025222500) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -60,6 +60,8 @@ ActiveRecord::Schema.define(version: 20161025013334) do
     t.integer  "logo_file_size"
     t.datetime "logo_updated_at"
     t.string   "uuid"
+    t.integer  "contact_number"
+    t.string   "contact_email"
   end
 
   add_index "companies", ["user_id"], name: "index_companies_on_user_id", using: :btree
@@ -264,11 +266,9 @@ ActiveRecord::Schema.define(version: 20161025013334) do
   create_table "wholesalers", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "stripe_id"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
     t.boolean  "approved"
-    t.boolean  "contactable_by_phone"
-    t.boolean  "contactable_by_email"
   end
 
   add_index "wholesalers", ["user_id"], name: "index_wholesalers_on_user_id", using: :btree

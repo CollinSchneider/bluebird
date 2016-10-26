@@ -3,7 +3,7 @@
   <div class="row">
     <% slice.each do |product| %>
       <div class="col s12 m6 l4 center-align no-padding" style="margin-top: 10px">
-        <div class="product">
+        <div class="product hoverable">
           <a href="/products/<%= product.id %>/<%= product.slug %>">
             <div class="col s3 m1 white-text percent-box">
               <h5><%= '%.0f' % (product.percent_discount_with_fee*100) %>% Off</h5>

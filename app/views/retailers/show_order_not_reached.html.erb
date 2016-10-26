@@ -2,7 +2,7 @@
   <div class="col s12 center-align" style='margin-top: 50px'>
     <% if @order.status == 'past' %>
       <h6>This product did not reach it's sales goal, therefore your order was not made.</h6>
-      <% if @order.product.product_token.expiration_datetime > Time.now %>
+      <% if @order.product.product_token.expiration_datetime > Time.current %>
         <h6>You have until <%= @order.product.product_token.expiration_datetime.strftime('%l:%M %P on %B %d') %> to purchase it for <%= number_to_currency(@order.product.price) %></h6>
         <a href="/last_chance/<%= @order.product.product_token.token %>/<%= @order.product.slug %>" class='btn'>Purchase Here</a>
       <% end %>

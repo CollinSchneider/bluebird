@@ -70,7 +70,7 @@ class User < ActiveRecord::Base
       success = false
       shipping.card_failed = true
       shipping.card_failed_reason = e.message
-      shipping.card_failed_date = Time.now
+      shipping.card_failed_date = Time.current
       shipping.save(validate: false)
       return success, e.message
     end
@@ -134,7 +134,7 @@ class User < ActiveRecord::Base
       success = false
       commit_charge.card_failed = true
       commit_charge.card_failed_reason = e.message
-      commit_charge.card_failed_date = Time.now
+      commit_charge.card_failed_date = Time.current
       commit_charge.save(validate: false)
       BlueBirdEmail.card_declined(commit.retailer.user, commit, customer_card)
       return e.message, success

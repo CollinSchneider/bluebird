@@ -1,43 +1,41 @@
 <div class="row center-align">
 
   <div class="row">
-    <div class="left-align">
-      <a href="/products/<%=@product.id%>/<%=@product.slug%>">Back to <%= @product.title%></a>
+    <div class="col s11 offset-s1 left-align">
+      <a href="/products/<%=@product.id%>/<%=@product.slug%>" class='btn-flat black-text waves-effect'><h6>< Back to <%= @product.title%></h6></a>
     </div>
     <h4><%= @product.title %> Purchase Order</h4>
+    <% if !@commit.nil? %>
+      <h5>Ordered <%= @commit.amount %></h5>
+    <% else %>
+      <h6>Must order at least a minimum of <%= @product.minimum_order %> products</h6>
+    <% end %>
     <h6><%= flash[:notice] %></h6>
     <h6 class='green-text'><%= flash[:success] %></h6>
     <h6 class='red-text'><%= flash[:error] %></h6>
-    <h3>Product Current Sales: <%= number_to_currency(@product.current_sales) %></h3>
-    <h3>Product Current Sales With Fees: <%= number_to_currency(@product.current_sales_with_fees) %></h3>
-    <% commit = current_user.retailer.commits.find_by(:product_id => @product.id) %>
-    <% if !commit.nil? %>
-      <h3>Commit quantity: <%= commit.amount %></h3>
-      <h3>Commit sales: <%= number_to_currency(commit.sale_amount) %></h3>
-      <h3>Commit sales with fees: <%= number_to_currency(commit.sale_amount_with_fees) %></h3>
-    <% end %>
   </div>
 
-  <h5 class='green-text message'></h5>
-  <div class="row border center-align">
-    <div class="col s2 offset-s1">
-      <h6 class='bold'>Product SKU</h5>
-    </div>
-    <div class="col s2">
-      <h6 class='bold'>Full Wholesale Price</h6>
-    </div>
-    <div class="col s2">
-      <h6 class='bold'>BlueBird Discounted Price</h6>
-    </div>
-    <div class="col s2">
-      <h6 class='bold'>Suggested Retail Price</h6>
-    </div>
-    <div class="col s2">
-      <h6 class='bold'>Order Amount (units)</h6>
-    </div>
-  </div>
 
   <form class="make-purchase-order" data-product="<%= @product.id %>">
+    <div class="errors center-align"></div>
+    <h5 class='green-text message'></h5>
+    <div class="row border center-align">
+      <div class="col s2 offset-s1">
+        <h6 class='bold'>Product SKU</h5>
+        </div>
+        <div class="col s2">
+          <h6 class='bold'>Full Wholesale Price</h6>
+        </div>
+        <div class="col s2">
+          <h6 class='bold'>BlueBird Discounted Price</h6>
+        </div>
+        <div class="col s2">
+          <h6 class='bold'>Suggested Retail Price</h6>
+        </div>
+        <div class="col s2">
+          <h6 class='bold'>Order Amount (units)</h6>
+        </div>
+      </div>
     <% @product.skus.order(id: :asc).each do |sku| %>
       <div class="row" style='border-bottom: 1px solid black'>
         <% if sku.out_of_inventory? %>
@@ -70,9 +68,13 @@
       </div>
     <% end %>
     <div class="right-align">
-      <div class=".errors"></div>
       <% submit_val = current_user.retailer.products_orders(@product.id) ? "Update Order" : "Make Purchase Order" %>
       <input type="submit" value="<%= submit_val %>" class='btn submit'>
+    </div>
+    <div class="left-align">
+      <% if !@commit.nil? %>
+        <a class='btn-flat white black-text waves-effect' href="/api/orders/delete_commit?commit=<%=@commit.uuid %>">Cancel Entire Order</a>
+      <% end %>
     </div>
   </form>
 

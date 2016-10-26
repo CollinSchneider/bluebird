@@ -109,7 +109,7 @@ class Api::ShippingController < ApiController
     end
     purchase_order.commit.shipping_amount += shipment.shipping_amount
     purchase_order.commit.save!
-    shipment.shipped_on = Time.now
+    shipment.shipped_on = Time.current
     shipment.retailer_id = purchase_order.commit.retailer_id
     shipment.save!
     EasyPost.api_key = ENV['EASYPOST_API_KEY']

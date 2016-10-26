@@ -120,7 +120,7 @@ class WholesalersController < ApplicationController
       format.pdf do
         pdf = AlreadyPrintedPdf.new(current_user)
         send_data pdf.render,
-            filename: "BlueBird_#{Time.now.strftime('%B/%d/%Y')}_Order.pdf",
+            filename: "BlueBird_#{Time.current.strftime('%B/%d/%Y')}_Order.pdf",
             type: 'application/pdf'
       end
     end
@@ -131,7 +131,7 @@ class WholesalersController < ApplicationController
       format.pdf do
         pdf = AlreadyPrintedPdf.new(current_user)
         send_data pdf.render,
-            filename: "#{Time.now.strftime('%B/%d/%Y')}-Order.pdf",
+            filename: "#{Time.current.strftime('%B/%d/%Y')}-Order.pdf",
             type: 'application/pdf'
       end
     end

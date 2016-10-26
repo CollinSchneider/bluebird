@@ -3,6 +3,18 @@ class Api::OrdersController < ApiController
   def make_purchase_order
     orders = JSON.parse(params[:orders])
     product = Product.find(params[:product])
+
+    total_orders = 0
+    orders.each do |obj|
+      total_orders += obj['quantity'].to_i
+    end
+    if total_orders < product.minimum_order
+      return render :json => {
+        success: false,
+        message: "Cannot update order, total quantity must be at least #{product.minimum_order}"
+      }
+    end
+
     find_commit = Commit.find_by(:product_id => product.id, :retailer_id => current_user.retailer.id)
     if find_commit.nil?
       message = create_new_commit(orders, product)
@@ -123,30 +135,45 @@ class Api::OrdersController < ApiController
 
   def delete_purchase_order
     order = PurchaseOrder.find(params[:order])
-    order.delete_order
-    flash[:success] = "#{order.sku.description} deleted."
+    if order.commit.amount - order.quantity >= order.sku.product.minimum_order
+      order.delete_order
+      flash[:success] = "#{order.sku.description} deleted."
+    else
+      flash[:error] = "Total order amount must be at least #{order.sku.product.minimum_order}, deleting this order would result in an order amount of #{order.commit.amount - order.quantity}, you can cancel your entire order at the bottom of this page."
+    end
     return redirect_to request.referrer
   end
 
-end
-
-def new_purchase_order(quantity, sku, commit, full_price)
-  full_price ||= false
-  po = PurchaseOrder.new
-  po.commit_id = commit.id
-  po.sku_id = sku.id
-  if sku.inventory.to_i >= quantity.to_i
-    actual_quantity = quantity.to_i
-    message = "Order completed."
-  else
-    actual_quantity = sku.inventory
-    message = "Only enough inventory for #{actual_quantity} of your order of #{sku.description}, we updated your order to this amount."
+  def delete_commit
+    commit = Commit.find_by(:uuid => params[:commit])
+    if !commit.nil?
+      commit.purchase_orders.each do |po|
+        po.delete_order
+      end
+      flash[:success] = "Order cancelled"
+    end
+    return redirect_to request.referrer
   end
-  po.quantity = actual_quantity
-  sku.inventory -= actual_quantity
-  po.full_price = full_price
-  po.sale_made = full_price
-  sku.save!
-  po.save!
-  return actual_quantity
+
+  def new_purchase_order(quantity, sku, commit, full_price)
+    full_price ||= false
+    po = PurchaseOrder.new
+    po.commit_id = commit.id
+    po.sku_id = sku.id
+    if sku.inventory.to_i >= quantity.to_i
+      actual_quantity = quantity.to_i
+      message = "Order completed."
+    else
+      actual_quantity = sku.inventory
+      message = "Only enough inventory for #{actual_quantity} of your order of #{sku.description}, we updated your order to this amount."
+    end
+    po.quantity = actual_quantity
+    sku.inventory -= actual_quantity
+    po.full_price = full_price
+    po.sale_made = full_price
+    sku.save!
+    po.save!
+    return actual_quantity
+  end
+
 end

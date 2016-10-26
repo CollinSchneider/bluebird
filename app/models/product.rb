@@ -42,20 +42,20 @@ class Product < ActiveRecord::Base
     self.status = 'live'
     self.current_sales = 0
     self.current_sales_with_fees = 0
-    self.start_time = Time.now
+    self.start_time = Time.current
     self.slug = Util.slug(self.title)
     if self.duration == '1_day'
-      self.end_time = Time.now.beginning_of_day + 1.day + 21.hours
+      self.end_time = Time.current.end_of_day + 1.day
     elsif self.duration == '7_days'
-      self.end_time = Time.now.beginning_of_day + 7.days + 21.hours
+      self.end_time = Time.current.end_of_day + 7.days
     elsif self.duration == '10_days'
-      self.end_time = Time.now.beginning_of_day + 10.days + 21.hours
+      self.end_time = Time.current.end_of_day + 10.days
     elsif self.duration == '14_days'
-      self.end_time = Time.now.beginning_of_day + 14.days + 21.hours
+      self.end_time = Time.current.end_of_day + 14.days
     elsif self.duration == '30_days'
-      self.end_time = Time.now.beginning_of_day + 30.days + 21.hours
+      self.end_time = Time.current.end_of_day + 30.days
     elsif self.duration = '5_minutes'
-      self.end_time = (Time.now + 5.minutes)
+      self.end_time = (Time.current + 5.minutes)
     end
     self.save
   end
@@ -229,7 +229,7 @@ class Product < ActiveRecord::Base
   end
 
   def time_to_expiration
-    seconds = self.end_time - Time.now
+    seconds = self.end_time - Time.current
     minutes = seconds/60
     hours = minutes/60
     days = hours/24
@@ -248,7 +248,7 @@ class Product < ActiveRecord::Base
   end
 
   def time_to_full_price_expiration
-    seconds = self.product_token.expiration_datetime - Time.now
+    seconds = self.product_token.expiration_datetime - Time.current
     minutes = seconds/60
     hours = minutes/60
     days = hours/24
@@ -279,15 +279,17 @@ class Product < ActiveRecord::Base
     slug.gsub!('?', '')
     slug.gsub!('!', '')
     @products = Product.where('slug LIKE ? AND end_time > ? AND status = ?
-                              OR LOWER(description) LIKE ? AND end_time > ? AND status = ?
+                              OR LOWER(short_description) LIKE ? AND end_time > ? AND status = ?
+                              OR LOWER(long_description) LIKE ? AND end_time > ? AND status = ?
                               OR wholesaler_id in (
                                 select id from wholesalers where user_id in (
                                   select user_id from companies where company_key like ?
                                 )
                               ) AND end_time > ? AND status = ?',
-                              "%#{slug}%", Time.now, 'live',
-                              "%#{slug}%", Time.now, 'live',
-                              "%#{slug}%", Time.now, 'live')
+                              "%#{slug}%", Time.current, 'live',
+                              "%#{slug}%", Time.current, 'live',
+                              "%#{slug}%", Time.current, 'live',
+                              "%#{slug}%", Time.current, 'live')
   end
 
   def self.category_queried_products(query, category)
@@ -303,15 +305,15 @@ class Product < ActiveRecord::Base
                                   select user_id from companies where company_key like ?
                                 )
                               ) AND end_time > ? AND category = ? AND status = ?',
-                              "%#{slug}%", Time.now, category, 'live',
-                              "%#{slug}%", Time.now, category, 'live',
-                              "%#{slug}%", Time.now, category, 'live')
+                              "%#{slug}%", Time.current, category, 'live',
+                              "%#{slug}%", Time.current, category, 'live',
+                              "%#{slug}%", Time.current, category, 'live')
   end
 
   def self.end_full_priced
     products = Product.where('status = ? AND id in (
       select product_id from product_tokens where expiration_datetime <= ?
-    )', 'full_price', Time.now + 30.seconds)
+    )', 'full_price', Time.current + 30.seconds)
     products.each do |product|
       # Send email to wholesaler
       product.status = 'past'
@@ -320,7 +322,7 @@ class Product < ActiveRecord::Base
   end
 
   def self.expire_products
-    products = Product.where('status = ? AND end_time <= ?', 'live', Time.now + 30.seconds)
+    products = Product.where('status = ? AND end_time <= ?', 'live', Time.current + 30.seconds)
     goal_met_products = 0
     needs_attention_products = 0
     products.each do |product|

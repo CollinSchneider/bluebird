@@ -9,7 +9,7 @@
       <% slice.each do |order| %>
         <div class="col s12 m6">
           <div class="order-div border center-align">
-            <%= ((((Time.now - order.created_at)/60)/60)/24).round(2) %> days past
+            <%= ((((Time.current - order.created_at)/60)/60)/24).round(2) %> days past
             <% if order.full_price? %>
               <h6>Full-price order placed at <%= order.created_at.strftime('%l:%M %P on %b %d, %Y') %></h6>
             <% else %>

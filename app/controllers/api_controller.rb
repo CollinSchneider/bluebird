@@ -37,7 +37,7 @@ class ApiController < ApplicationController
     pt = ProductToken.new
     pt.product_id = product.id
     pt.token = SecureRandom.uuid
-    pt.expiration_datetime = (Time.now + 7.days + 1.hour).beginning_of_hour
+    pt.expiration_datetime = (Time.current + 7.days + 1.hour).beginning_of_hour
     pt.save
 
     original_inventory = product.quantity.to_i
@@ -60,7 +60,7 @@ class ApiController < ApplicationController
     if user
       token = SecureRandom.uuid
       user.password_reset_token = token
-      user.password_reset_expiration = Time.now + 30.minutes
+      user.password_reset_expiration = Time.current + 30.minutes
       user.save(validate: false)
       BlueBirdEmail.forgot_password(user)
       render :json => {message: "Instructions has been sent to #{email}, you have 30 minutes to reset your password."}

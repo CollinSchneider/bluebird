@@ -18,6 +18,10 @@ $('.body-div').mouseover(function(){
 })
 
 $(document).ready(function(){
+  addShippingAddress()
+  addCreditCard()
+  changePayment()
+  changeShippingAddress()
   $('.make-purchase-order').submit(function(e){
     e.preventDefault()
     makePurchaseOrder($(this))
@@ -27,8 +31,10 @@ $(document).ready(function(){
 function makePurchaseOrder(form){
   var purchaseOrders = []
   var product = form.attr('data-product')
+  var submitText = form.find('.submit').val()
   form.find('.submit').prop('disabled', true)
   form.find('.submit').val('Ordering..')
+  form.find('.errors').text('')
   var url = form.attr('data-full-price') == null ? '/api/orders/make_purchase_order' : '/api/orders/full_price_commit'
   form.find('.purchase-order-amount').each(function(i, input){
     if($(this).val() != "") {
@@ -43,19 +49,142 @@ function makePurchaseOrder(form){
     url: url+'?orders='+JSON.stringify(purchaseOrders)+'&product='+product,
     success: function(data){
       if(data.success == true){
-        $('.message').text(msg)
+        // $('.message').text(msg)
         $('html, body').animate({
           scrollTop: 0
         }, 700)
         location.reload()
       } else {
         form.find('.submit').prop('disabled', false)
-        form.find('.submit').val('Make Order')
-        for (var i = 0; i < data.errors.length; i++) {
-          var err = data.errors[i]
-          var msg = $('<h6 class="red-text">').text(err)
-          form.find('.errors').append(msg)
+        form.find('.submit').val(submitText)
+        var msg = $('<h5 class="red-text">').text(data.message)
+        form.find('.errors').append(msg)
+        var offset = $('.make-purchase-order').offset().top
+        console.log(offset);
+        $('html, body').animate({
+          scrollTop: offset
+        })
+      }
+    }
+  })
+}
+
+var submittedForm;
+
+function addCreditCard(){
+  $('.credit-card-form').submit(function(e){
+    e.preventDefault()
+    submittedForm = $(this)
+    var cardName = submittedForm.find($('#card-name')).val();
+    var cardNumber = submittedForm.find($('#card-number')).val();
+    var cardCvc = submittedForm.find($('#card-cvc')).val();
+    var expMonth = submittedForm.find($('#exp-month')).val();
+    var expYear = submittedForm.find($('#exp-year')).val();
+    var billingZip = submittedForm.find($('#billing-zip')).val()
+    var submitButton = submittedForm.find($('.submit'))
+    submitButton.val('Saving Card...')
+    submitButton.prop('disabled', true)
+    console.log(cardName + ', ' + cardNumber);
+    Stripe.card.createToken({
+      // customer: stripeCustomer,
+      name: cardName,
+      number: cardNumber,
+      cvc: cardCvc,
+      exp_month: expMonth,
+      exp_year: expYear,
+      address_zip: billingZip
+    }, stripeResponseHandler);
+  })
+}
+
+
+function stripeResponseHandler(status, response){
+  if(response.error){
+    submittedForm.find('#payment-errors').text(response.error.message)
+    submittedForm.find('.submit').prop("disabled", false)
+    submittedForm.find('.submit').val('Add Credit Card')
+  } else {
+    var token = response.id;
+    $.ajax({
+      method: 'POST',
+      url: '/api/payments/create_credit_card?token=' + token,
+      success: function(data) {
+        if(!data.success) {
+          $('#payment-errors').text(data.error)
+          submittedForm.find('.submit').prop('disabled', false)
+          submittedForm.find('.submit').val('Add Credit Card')
+        } else {
+          changePaymentApiCall(data.card.id)
         }
+      }
+    })
+  }
+}
+
+function addShippingAddress(){
+  $('.add-shipping-address').submit(function(e){
+    e.preventDefault()
+    $('.shipping-errors').text('')
+    var form = $(this)
+    var street_one = form.find('.street-line-one').val()
+    var street_two = form.find('.street-line-two').val()
+    var city = form.find('.city').val()
+    var state = form.find('.state').val()
+    var zip = form.find('.zip').val()
+    form.find('.submit-address').prop('disabled', true)
+    var params = "?street_one=" + street_one + "&street_two=" + street_two + "&city="
+          + city + "&state=" + state + "&zip=" + zip
+    $.ajax({
+      method: 'POST',
+      url: '/api/shipping/create_shipping_address' + params,
+      success: function(data){
+        if(data.success){
+          changeShippingApiCall(data.local_address.id)
+        } else {
+          $('.submit-address').prop('disabled', false)
+        }
+      }
+    })
+  })
+}
+
+function changeShippingAddress(){
+  $('.change-address').submit(function(e){
+    e.preventDefault()
+    var shippingId = $(this).find('.address-id').val()
+    var commitId = $(this).attr('data-commit')
+    changeShippingApiCall(shippingId, commitId)
+  })
+}
+
+function changeShippingApiCall(shippingId, commitId){
+  $.ajax({
+    method: 'POST',
+    url: '/api/shipping/change_commit_shipping?shipping_id=' +shippingId+ '&commit_id='+commitId,
+    success: function(data){
+      if(data.success){
+        location.reload()
+      }
+    }
+  })
+}
+
+function changePayment(){
+  $('.change-payment').submit(function(e){
+    e.preventDefault()
+    var cardId = $(this).find('.card_id').val()
+    var commitUuid = $(this).attr('data-commit')
+    changePaymentApiCall(cardId, commitUuid)
+  })
+}
+
+function changePaymentApiCall(cardId, commitUuid){
+  $.ajax({
+    method: 'POST',
+    url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_uuid='+commitUuid,
+    success: function(data){
+      if(data.success){
+        location.reload()
       }
     }
   })

@@ -16,6 +16,7 @@
         <% if @product.skus.count < 2 %>
           <h5>Inventory: <%= @product.skus.first.inventory %></h5>
         <% end %>
+        <h5>Minimum Order: <%= @product.minimum_order %></h5>
       </div>
     </div>
     <div class="col 12 valign-wrapper">

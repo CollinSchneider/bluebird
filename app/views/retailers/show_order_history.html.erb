@@ -7,6 +7,7 @@
     <% if @order.product.status == 'live' %>
       <div class="center-align">
         <h5 class='green-text message'><%= flash[:success] %></h5>
+        <h5 class='red-text'><%= flash[:error] %></h5>
       </div>
       <div class="col s12 m4 center-align">
         <h5><%= @order.product.time_to_expiration %></h5>
@@ -45,11 +46,11 @@
                 <div class="border">
                   <h6><%= local_address.street_address_one %></h6>
                   <h6><%= local_address.city %>, <%= local_address.state %>, <%= local_address.zip %></h6>
-                  <form class="change-address">
+                  <form class="change-address" data-commit="<%=@order.id%>">
                     <div class="input-field">
                       <input type="hidden" class="address-id" value="<%= local_address.id %>">
                     </div>
-                    <input type="submit" value="Use Address" class='submit-link'>
+                    <input type="submit" value="Use Address" class='submit-link submit-button'>
                   </form>
                 </div>
                 <% end %>
@@ -66,11 +67,11 @@
                   <h6><%= card.brand %></h6>
                   <h6>**** **** **** <%= card.last4 %></h6>
                   <h6>Exp: <%= card.exp_month %>/<%= card.exp_year %></h6>
-                  <form class='change-payment'>
+                  <form class='change-payment' data-commit="<%=@order.uuid%>">
                     <div class="input-field">
                       <input type="hidden" class='card_id' value="<%= card.id %>">
                     </div>
-                    <input type='submit' class="submit-link" value="Use Card" />
+                    <input type='submit' class="submit-link submit-button" value="Use Card" />
                   </form>
                 </div>
                 <% end %>
@@ -146,24 +147,25 @@
         </div>
 
         <div class="col s12 z-depth-2 order-box" id="edit-order">
-          <div class="row border center-align">
-            <div class="col s3">
-              <h6 class='bold'>Product SKU</h5>
-            </div>
-            <div class="col s2">
-              <h6 class='bold'>Full Wholesale Price</h6>
-            </div>
-            <div class="col s2">
-              <h6 class='bold'>BlueBird Discounted Price</h6>
-            </div>
-            <div class="col s2">
-              <h6 class='bold'>Suggested Retail Price</h6>
-            </div>
-            <div class="col s3">
-              <h6 class='bold'>Order Amount (units)</h6>
-            </div>
-          </div>
           <form class="make-purchase-order" data-product="<%= @order.product.id %>">
+            <div class="errors center-align"></div>
+            <div class="row border center-align">
+              <div class="col s3">
+                <h6 class='bold'>Product SKU</h5>
+                </div>
+                <div class="col s2">
+                  <h6 class='bold'>Full Wholesale Price</h6>
+                </div>
+                <div class="col s2">
+                  <h6 class='bold'>BlueBird Discounted Price</h6>
+                </div>
+                <div class="col s2">
+                  <h6 class='bold'>Suggested Retail Price</h6>
+                </div>
+                <div class="col s3">
+                  <h6 class='bold'>Order Amount (units)</h6>
+                </div>
+              </div>
             <% @order.product.skus.order(id: :asc).each do |sku| %>
               <div class="row center-align" style='border-bottom: 1px solid black'>
                 <% if sku.out_of_inventory? %>
@@ -194,9 +196,11 @@
                 </div>
               </div>
             <% end %>
-            <div class="center-align">
-              <div class=".errors"></div>
+            <div class="right-align">
               <input type="submit" value="Update Order" class='btn submit'>
+            </div>
+            <div class="left-align">
+              <a class='btn-flat white black-text waves-effect' href="/api/orders/delete_commit?commit=<%=@order.uuid %>">Cancel Entire Order</a>
             </div>
           </form>
         </div>
@@ -255,7 +259,7 @@
               <li>3.) Expire the product, in which the discount is not given, and you have the opportunity to by it for normal retail price</li>
             </ul>
             <h6>We will update you once the wholesaler has made their decision.</h6>
-          <% elsif @order.product.full_price? && @order.product.product_token.expiration_datetime > Time.now %>
+          <% elsif @order.product.full_price? && @order.product.product_token.expiration_datetime > Time.current %>
             <h5>This product did not hit the discount</h5>
             <h5>You can purchase it <a href ="/last_chance/<%= @order.product.product_token.token %>/<%= @order.product.slug %>">here for <%= number_to_currency(@order.product.price) %></a></h5>
           <% elsif @order.product.status == 'past' %>
@@ -268,142 +272,3 @@
   </div>
 
 </div>
-
-<script>
-  $(document).ready(function(){
-    addShippingAddress()
-    addCreditCard()
-    changePayment()
-    changeShippingAddress()
-  })
-
-  var submittedForm;
-
-  function addCreditCard(){
-    $('.credit-card-form').submit(function(e){
-      e.preventDefault()
-      submittedForm = $(this)
-      var cardName = submittedForm.find($('#card-name')).val();
-      var cardNumber = submittedForm.find($('#card-number')).val();
-      var cardCvc = submittedForm.find($('#card-cvc')).val();
-      var expMonth = submittedForm.find($('#exp-month')).val();
-      var expYear = submittedForm.find($('#exp-year')).val();
-      var billingZip = submittedForm.find($('#billing-zip')).val()
-      var submitButton = submittedForm.find($('.submit'))
-      submitButton.val('Saving Card...')
-      submitButton.prop('disabled', true)
-      console.log(cardName + ', ' + cardNumber);
-      Stripe.card.createToken({
-        // customer: stripeCustomer,
-        name: cardName,
-        number: cardNumber,
-        cvc: cardCvc,
-        exp_month: expMonth,
-        exp_year: expYear,
-        address_zip: billingZip
-      }, stripeResponseHandler);
-    })
-  }
-
-
-function stripeResponseHandler(status, response){
-  if(response.error){
-    submittedForm.find('#payment-errors').text(response.error.message)
-    submittedForm.find('.submit').prop("disabled", false)
-    submittedForm.find('.submit').val('Add Credit Card')
-  } else {
-    var token = response.id;
-    $.ajax({
-      method: 'POST',
-      url: '/api/payments/create_credit_card?token=' + token,
-      success: function(data) {
-        console.log(data);
-        if(!data.success) {
-          $('#payment-errors').text(data.error)
-          submittedForm.find('.submit').prop('disabled', false)
-          submittedForm.find('.submit').val('Add Credit Card')
-        } else {
-          changePaymentApi(data.card.id)
-        }
-      }
-    })
-  }
-}
-
-  function addShippingAddress(){
-    $('.add-shipping-address').submit(function(e){
-      e.preventDefault()
-      $('.shipping-errors').text('')
-      var form = $(this)
-      var street_one = form.find('.street-line-one').val()
-      var street_two = form.find('.street-line-two').val()
-      var city = form.find('.city').val()
-      var state = form.find('.state').val()
-      var zip = form.find('.zip').val()
-      form.find('.submit-address').prop('disabled', true)
-      var params = "?street_one=" + street_one + "&street_two=" + street_two + "&city="
-            + city + "&state=" + state + "&zip=" + zip
-      $.ajax({
-        method: 'POST',
-        url: '/api/shipping/create_shipping_address' + params,
-        success: function(data){
-          if(data.success){
-            changeShippingApi(data.local_address.id)
-          } else {
-            $('.submit-address').prop('disabled', false)
-            console.log('ERROR');
-            console.log(data);
-            // for (var i = 0; i < data.errors.length; i++) {
-            //   var error = data.errors[i]
-            //   var errorText = $('<h6 class="red-text">').text(error.message)
-            //   $('.shipping-errors').append(errorText)
-            // }
-          }
-        }
-      })
-    })
-  }
-
-  function changeShippingAddress(){
-    $('.change-address').submit(function(e){
-      e.preventDefault()
-      var shippingId = $(this).find('.address-id').val()
-      console.log(shippingId);
-      changeShippingApi(shippingId)
-    })
-  }
-
-  function changeShippingApi(shippingId){
-    $.ajax({
-      method: 'POST',
-      url: '/api/shipping/change_commit_shipping?shipping_id=' +shippingId+ '&commit_id=<%= @order.id %>',
-      success: function(data){
-        console.log(data);
-        if(data.success){
-          location.reload()
-        }
-      }
-    })
-  }
-
-  function changePayment(){
-    $('.change-payment').submit(function(e){
-      e.preventDefault()
-      var cardId = $(this).find('.card_id').val()
-      changePaymentApi(cardId)
-    })
-  }
-
-  function changePaymentApi(cardId){
-    $.ajax({
-      method: 'POST',
-      url: '/api/payments/change_commit_card?card_id=' +cardId+ '&commit_uuid=<%= @order.uuid %>',
-      success: function(data){
-        console.log(data);
-        if(data.success){
-          location.reload()
-        }
-      }
-    })
-  }
-</script>

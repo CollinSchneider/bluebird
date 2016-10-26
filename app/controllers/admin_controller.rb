@@ -14,7 +14,7 @@ class AdminController < ApplicationController
   end
 
   def feature_products
-    @products = Product.where('status = ? AND end_time > ?', 'live', Time.now)
+    @products = Product.where('status = ? AND end_time > ?', 'live', Time.current)
   end
 
   def unshipped

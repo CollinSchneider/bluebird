@@ -4,7 +4,7 @@ class ProductsController < ApplicationController
   def show
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
     return redirect_to '/shop' if @product.nil?
-    if @product.end_time < Time.now && !@product.is_users?(current_user)
+    if @product.end_time < Time.current && !@product.is_users?(current_user)
       Product.expire_products
       flash[:notice] = "Sorry about that, #{@product.title} has already expired."
       return redirect_to '/shop'
@@ -40,7 +40,7 @@ class ProductsController < ApplicationController
 
   def category
     if params[:products] == 'discounted'
-      @products = Product.where('status = ? AND category = ? AND end_time > ? AND CAST(current_sales AS decimal) >= CAST(products.goal AS decimal)', 'live', params[:category], Time.now).page(params[:page]).per_page(6)
+      @products = Product.where('status = ? AND category = ? AND end_time > ? AND CAST(current_sales AS decimal) >= CAST(products.goal AS decimal)', 'live', params[:category], Time.current).page(params[:page]).per_page(6)
     elsif params[:query]
       @products = Product.category_queried_products(params[:query], params[:category]).page(params[:page]).per_page(6)
     elsif params[:products] == 'percent_off'
@@ -64,7 +64,7 @@ class ProductsController < ApplicationController
 
   def full_price
     @product = Product.where('id in (select product_id from product_tokens where token = ?) AND slug = ?', params[:token], params[:slug]).first
-    return redirect_to "/shop" if @product.status == 'past' || @product.product_token.expiration_datetime <= Time.now
+    return redirect_to "/shop" if @product.status == 'past' || @product.product_token.expiration_datetime <= Time.current
     @company_products = Product.where('wholesaler_id = ? AND status = ? AND id != ?', @product.wholesaler.id, 'live', @product.id).order(current_sales: :desc).limit(3)
     @similar_products = Product.where('category = ? AND status = ? AND id != ?', @product.category, 'live', @product.id).order(current_sales: :desc).limit(3)
   end
@@ -76,11 +76,11 @@ class ProductsController < ApplicationController
                                 OR user_id in (
                                   select id from users where key like ?
                                 ) AND end_time > ? AND status = ?',
-                                "%#{slug}%", Time.now, 'live',
-                                "%#{slug}%", Time.now, 'live',
-                                "%#{slug}%", Time.now, 'live').page(params[:page]).per_page(6)
+                                "%#{slug}%", Time.current, 'live',
+                                "%#{slug}%", Time.current, 'live',
+                                "%#{slug}%", Time.current, 'live').page(params[:page]).per_page(6)
     else
-      @products = Product.where('status = ? AND end_time > ? AND featured = ?', 'live', Time.now, true).page(params[:page]).per_page(6)
+      @products = Product.where('status = ? AND end_time > ? AND featured = ?', 'live', Time.current, true).page(params[:page]).per_page(6)
     end
   end
 

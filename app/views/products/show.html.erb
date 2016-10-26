@@ -72,16 +72,16 @@
                   <div class="contact-info" style='display: none'>
                     <h6><a href="#" class='contact-info-toggle-off'>Done</a></h6>
                     <% if @product.wholesaler.contactable_by_phone %>
-                      <h6><%= @product.wholesaler.user.phone_number %></h6>
+                      <h6><%= number_to_phone(@product.wholesaler.user.company.contact_number) %></h6>
                     <% end %>
                     <% if @product.wholesaler.contactable_by_email %>
-                      <h6><a href="mailto:<%= @product.wholesaler.user.email %>"><%= @product.wholesaler.user.email %></a></h6>
+                      <h6><a href="mailto:<%= @product.wholesaler.user.email %>"><%= @product.wholesaler.user.company.contact_email %></a></h6>
                     <% end %>
                   </div>
                 <% end %>
                 <div class="pricing-div general-prices" data-var="general-prices">
                   <h6 class='was-price' style="display: inline-block"><%= @product.full_price_range %></h6>
-                  <h6 class='now-price bold' style="display: inline-block"><%= @product.discount_price_range %></h6>
+                  <h6 class='now-price bold' style="display: inline-block"><%= @product.price_with_fee_range %></h6>
                   <h6>Suggested Retail Price: <span class='bold'><%= @product.suggested_retail_range %></span></h6>
                 </div>
                 <% @product.skus.each do |sku| %>
@@ -141,7 +141,14 @@
                     <a href="/products/<%= @product.id %>/<%= @product.slug %>/order" class='btn'>Make Purchase Order</a>
                   <% else %>
                     <div class="row">
+                      <%
+                      Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+                      customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+                      card = customer.sources.retrieve(current_user.retailer.products_orders(@product.id).first.card_id)
+                      %>
                       <h6>You have ordered <%= current_user.retailer.products_orders(@product.id).first.amount %> units.</h6>
+                      <h6>Credit card: <%= card.brand %>: **** <%= card.last4 %></h6>
+                      <h6>Ship to: <%= current_user.retailer.products_orders(@product.id).first.shipping_address.street_address_one.downcase.capitalize %></h6>
                     </div>
                     <a href="/retailer/order_history/<%= current_user.retailer.products_orders(@product.id).first.id %>" class='btn'>Edit Order</a>
                   <% end %>
@@ -217,7 +224,7 @@
   })
 
   function setTime(){
-    var seconds = <%= @product.end_time - Time.now %>;
+    var seconds = <%= @product.end_time - Time.current %>;
     var days        = Math.floor(seconds/24/60/60);
     var hoursLeft   = Math.floor((seconds) - (days*86400));
     var hours       = Math.floor(hoursLeft/3600);
@@ -236,7 +243,7 @@
     document.getElementById('timer').innerHTML = days + ":" + hours + ":" + minutes + ":" + remainingSeconds;
   }
 
-  var seconds = <%= @product.end_time - Time.now %>;
+  var seconds = <%= @product.end_time - Time.current %>;
   function timer() {
     var days        = Math.floor(seconds/24/60/60);
     var hoursLeft   = Math.floor((seconds) - (days*86400));
