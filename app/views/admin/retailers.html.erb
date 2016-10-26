@@ -14,7 +14,7 @@
           <h5><%= retailer.user.company.company_name %></h5>
           <h6><%= retailer.user.phone_number %></h6>
           <h6><%= retailer.user.email %></h6>
-          <button class='approve-user btn' data='<%=retailer.id %>' data-user="retailer">Approve</button>
+          <button class='approve-user btn' data-uuid='<%=retailer.user.uuid %>'>Approve</button>
         </div>
       <% end %>
   </div>

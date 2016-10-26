@@ -7,13 +7,14 @@ class SessionsController < ApplicationController
       flash[:error] = "No users found with this email"
       return redirect_to users_path
     elsif user && user.authenticate(params[:password])
-      if params[:redirect_url]
-        session[:user_id] = user.id
-        return redirect_to "#{params[:redirect_url]}"
-      end
 
-      if user.is_retailer?
-        if user.retailer.approved
+      if user.approved
+        if params[:redirect_url]
+          session[:user_id] = user.id
+          return redirect_to "#{params[:redirect_url]}"
+        end
+
+        if user.is_retailer?
           session[:user_id] = user.id
           if user.retailer.needs_credit_card?
             return redirect_to '/retailer/accounts'
@@ -24,33 +25,28 @@ class SessionsController < ApplicationController
           else
             return redirect_to '/shop'
           end
-        else
-          flash[:error] = "Sorry, your application has not been accepted yet."
-          return redirect_to '/users'
-        end
 
-      elsif user.is_wholesaler?
-        if user.wholesaler.approved
+        elsif user.is_wholesaler?
           session[:user_id] = user.id
           return redirect_to '/wholesaler/profile'
         else
-          flash[:error] = "Sorry, your application has not been accepted yet."
-          return redirect_to '/users'
+          session[:user_id] = user.id
+          return redirect_to '/admin'
         end
       else
-        session[:user_id] = user.id
-        return redirect_to '/admin'
+        flash[:error] = "Your application has not yet been approved."
+        return redirect_to '/users'
       end
 
     else
       flash[:error] = "Incorrect password"
-      return redirect_to users_path
+      return redirect_to '/users'
     end
   end
 
   def destroy
     session[:user_id] = nil
-    redirect_to users_path
+    redirect_to '/users'
   end
 
 end

@@ -16,7 +16,7 @@
           <h6><%= wholesaler.user.phone_number %></h6>
           <h6><%= wholesaler.user.email %></h6>
           <h6><%= wholesaler.user.company.website %></h6>
-          <button class='approve-user btn' data='<%=wholesaler.id %>' data-user='wholesaler'>Approve</button>
+          <button class='approve-user btn' data-uuid='<%=wholesaler.user.uuid %>'>Approve</button>
         </div>
       <% end %>
   </div>

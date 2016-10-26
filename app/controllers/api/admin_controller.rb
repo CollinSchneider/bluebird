@@ -1,24 +1,18 @@
 class Api::AdminController < ApiController
 
   def approve
-    id = params[:id]
-    customer_type = params[:user] === 'wholesaler' ? Wholesaler : Retailer
-    customer = customer_type.find(params[:id])
-    customer.approved = true
-    if customer.save
-      if customer_type == 'wholesaler'
-        BlueBirdEmail.wholesaler_welcome_email(customer.user)
-      else
-        BlueBirdEmail.retailer_welcome_email(customer.user)
+    if current_user.is_admin?
+      user = User.find_by(:uuid => params[:uuid])
+      user.approved = true
+      user.save!
+      if user.is_wholesaler?
+        BlueBirdEmail.wholesaler_welcome_email(user)
+      elsif user.is_retailer?
+        BlueBirdEmail.retailer_welcome_email(user)
       end
       return render :json => {
         success: true,
-        message: "Approved #{customer.user.company.company_name}"
-      }
-    else
-      return render :json => {
-        success: false,
-        message: "Error: #{customer.user.company.company_name} could not be approved"
+        message: "Approved #{user.company.company_name}"
       }
     end
   end
