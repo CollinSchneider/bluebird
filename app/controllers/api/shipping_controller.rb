@@ -133,11 +133,18 @@ class Api::ShippingController < ApiController
 
   def delete_address
     address = ShippingAddress.find(params[:id])
-    address_commits = current_user.retailer.commits.where('shipping_address_id = ?', address.id)
+    address_commits = current_user.retailer.commits.where("shipping_address_id = ? and (status = ? or id not in (
+      select commit_id from purchase_orders where sale_made = 't' and has_shipped = 'f'
+    ))", address.id, 'live')
+    messages = []
+    address_commits.each do |commit|
+      messages << "<a href='/retailer/order_history/#{commit.id}'>#{commit.product.title}</a>".html_safe
+    end
     if address_commits.any?
       return render :json => {
         success: false,
-        addresses: address_commits
+        addresses: address_commits,
+        html: messages
       }
     else
       address.delete

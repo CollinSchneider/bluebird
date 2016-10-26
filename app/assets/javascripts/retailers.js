@@ -22,8 +22,10 @@ $(document).ready(function(){
   addCreditCard()
   changePayment()
   changeShippingAddress()
-  makePrimaryAddress()
   deleteShippingAddress()
+  $('.make-primary-address').click(function(button){
+    makePrimaryAddress(button)
+  })
   $('.make-purchase-order').submit(function(e){
     e.preventDefault()
     makePurchaseOrder($(this))
@@ -142,7 +144,13 @@ function addShippingAddress(){
       success: function(data){
         console.log(data);
         if(data.success){
-          location.reload()
+          var commitId = form.attr('data-change-shipping')
+          if(commitId) {
+            changeShippingApiCall(data.local_address.id, commitId)
+          } else {
+            location.reload()
+          }
+          // location.reload()
           // changeShippingApiCall(data.local_address.id)
         } else {
           var errorDiv = form.find('.errors')
@@ -199,17 +207,17 @@ function changePaymentApiCall(cardId, commitUuid){
   })
 }
 
-function makePrimaryAddress(){
-  $('.make-primary-address').click(function(){
-    $(this).text('Updating...')
-    var addressId = $(this).attr('data')
-    $.ajax({
-      method: 'POST',
-      url: '/api/shipping/make_primary_address?address_id=' + addressId,
-      success: function(data){
-        location.reload()
-      }
-    })
+function makePrimaryAddress(button){
+  if(button){
+    button.text('Updating...')
+  }
+  var addressId = $(this).attr('data')
+  $.ajax({
+    method: 'POST',
+    url: '/api/shipping/make_primary_address?address_id=' + addressId,
+    success: function(data){
+      location.reload()
+    }
   })
 }
 
@@ -221,7 +229,16 @@ function deleteShippingAddress(){
       method: 'POST',
       url: '/api/shipping/delete_address?id=' + id,
       success: function(data){
-        location.reload()
+        console.log(data);
+        if(data.success){
+          location.reload()
+        } else {
+          $('.address-errors').append($('<h6>').text('The following purchase orders are currently using this address you are attempting to delete:'))
+          for (var i = 0; i < data.html.length; i++) {
+            var commit = data.html[i]
+            $('.address-errors').append(commit)
+          }
+        }
       }
     })
   })
