@@ -8,7 +8,9 @@
     <% if !@commit.nil? %>
       <h5>Ordered <%= @commit.amount %></h5>
     <% else %>
-      <h6>Must order at least a minimum of <%= @product.minimum_order %> products</h6>
+      <% if !@product.minimum_order.nil? %>
+        <h6>Must order at least a minimum of <%= @product.minimum_order %> products</h6>
+      <% end %>
     <% end %>
     <h6><%= flash[:notice] %></h6>
     <h6 class='green-text'><%= flash[:success] %></h6>
