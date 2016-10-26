@@ -5,12 +5,12 @@ class AdminController < ApplicationController
 
   def wholesalers
     @admin = current_user.admin
-    @applications = Wholesaler.where('approved != ? OR approved IS NULL', true)
+    @applications = Wholesaler.where('user_id in (select id from users where approved != ?)', true)
   end
 
   def retailers
     @admin = current_user.admin
-    @applications = Retailer.where('approved != ? OR approved IS NULL', true)
+    @applications = Retailer.where('user_id in (select id from users where approved != ?)', true)
   end
 
   def feature_products
