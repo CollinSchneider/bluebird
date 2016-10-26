@@ -25,8 +25,6 @@ class Users::ApplyController < UsersController
         @company.save(validate: false)
         wholesaler = Wholesaler.new
         wholesaler.user_id = user.id
-        wholesaler.contactable_by_phone = false
-        wholesaler.contactable_by_email = false
         wholesaler.save!
         BlueBirdEmail.new_application(user)
         return redirect_to "/thank_you?_user=#{user.first_name}"
@@ -61,10 +59,6 @@ class Users::ApplyController < UsersController
 
   def company_params
     params.require(:company).permit(:bio, :website, :company_name, :location)
-  end
-
-  def step_1_params
-    params.require(:user).permit(:first_name, :last_name, :email, )
   end
 
 end
