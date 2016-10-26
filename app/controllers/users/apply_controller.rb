@@ -25,7 +25,6 @@ class Users::ApplyController < UsersController
         @company.save(validate: false)
         wholesaler = Wholesaler.new
         wholesaler.user_id = user.id
-        wholesaler.approved = false
         wholesaler.contactable_by_phone = false
         wholesaler.contactable_by_email = false
         wholesaler.save!
