@@ -13,7 +13,7 @@
         <h5><%= @order.product.time_to_expiration %></h5>
         <%= image_tag @order.product.main_image.url(:medium), :class => 'responsive-img' %>
           <a href="/products/<%=@order.product.id%>/<%=@order.product.slug%>"><h4 class='bold black-text'><%= @order.product.title %></h4></a>
-          <h6 class='green-text'><%= @order.product.discount_price_range %>/unit</h6>
+          <h6 class='green-text'><%= @order.product.price_with_fee_range %>/unit</h6>
           <div class="row">
             <h6>Ordered <%= @order.amount %> total units.</h6>
             <h6><%= number_to_currency(@order.sale_amount_with_fees) %> total</h6>
