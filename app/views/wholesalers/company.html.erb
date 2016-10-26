@@ -37,15 +37,15 @@
           <label>Location</label>
           <input type="text" name="company[location]" value="<%= @company.location %>">
         </div>
-        <div class="input-field col s12 l6">
+        <div class="input-field">
           <label>Sales Email for Retailers (optional)</label>
           <input type="email" name="company[contact_email]" value="<%= @company.contact_email %>">
         </div>
-        <div class="input-field col s12 l6">
+        <!-- <div class="input-field col s12 l6">
           <label>Sales Phone Number for Retailers (optional)</label>
-          <input type="number" name="company[contact_number]" value="<%= @company.contact_number %>">
-        </div>
-        <input type="submit" value="Update Company Info" class="btn">
+          <input type="number" name="company[contact_number]" value="<#%= @company.contact_number %>" length="10">
+        </div> -->
+        <input type="submit" value="Update Company Info" class="btn submit-button">
       <% end %>
     </div>
   </div>
@@ -65,7 +65,7 @@
             <input class="file-path validate" type="text">
           </div>
         </div>
-        <%= f.submit "Update Logo", :class => 'btn' %>
+        <%= f.submit "Update Logo", :class => 'btn submit-button' %>
       <% end %>
     </div>
   </div>

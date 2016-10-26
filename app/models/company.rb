@@ -1,5 +1,5 @@
 class Company < ActiveRecord::Base
-  after_create :strip_fields
+  before_save :strip_fields
 
   validates :company_name, presence: true
 
@@ -27,7 +27,7 @@ class Company < ActiveRecord::Base
     self.location = self.location.strip if !self.location.nil?
     self.website = self.website.strip if !self.website.nil?
     self.company_key = self.create_company_key
-    self.save!
+    # self.save!
   end
 
 end
