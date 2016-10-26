@@ -1,6 +1,7 @@
 class Api::PaymentsController < ApiController
 
   def create_credit_card
+    binding.pry
     token = params[:token]
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)

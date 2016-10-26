@@ -4,7 +4,76 @@
     <div class="col s11 offset-s1 left-align">
       <a href="/products/<%=@product.id%>/<%=@product.slug%>" class='btn-flat black-text waves-effect'><h6>< Back to <%= @product.title%></h6></a>
     </div>
-    <h4><%= @product.title %> Purchase Order</h4>
+  </div>
+  <h4><%= @product.title %> Purchase Order</h4>
+
+  <% if current_user.retailer.needs_credit_card? %>
+    <div class="col s12 m8 offset-m2 order-box z-depth-2">
+      <h5>Credit Card Info</h5>
+      <form class="row credit-card-form col s8 offset-s2 center-align" autocomplete="off">
+        <div class="input-field">
+          <label>Card Holder Name</label>
+          <input id="card-name" type="text">
+        </div>
+        <div class="input-field">
+          <label>Credit Card Number</label>
+          <input id="card-number" type="text"> <br>
+        </div>
+        <div class="input-field">
+          <label>CVC</label>
+          <input id="card-cvc" type="text"> <br>
+        </div>
+        <div class="input-field">
+          <div class="row">
+            <div class="col s6 m4 offset-m2">
+              <label>Exp Month</label>
+              <input id="exp-month" type="number">
+            </div>
+            <div class="col s6 m4 offset-m2">
+              <label>Exp Year</label>
+              <input id="exp-year" type="number"> <br>
+            </div>
+          </div>
+        </div>
+        <div class="input-field">
+          <label>Billing Zip Code</label>
+          <input id="billing-zip" type="text" value="">
+        </div>
+        <h6 class="red-text" id="payment-errors"></h6>
+        <input class="submit btn" type="submit" value="Add Payment">
+      </form>
+    </div>
+  <% elsif current_user.retailer.needs_shipping_info? %>
+    <div class="col s12 m8 offset-m2 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
+      <h5>Shipping Address</h5>
+      <form class="add-shipping-address">
+        <div class="input-field">
+          <label>Street Address One</label>
+          <input class="street-line-one" type="text">
+        </div>
+        <div class="input-field">
+          <label>Street Address Two</label>
+          <input class="street-line-two" type="text">
+        </div>
+        <div class="input-field">
+          <label>City</label>
+          <input class="city" type="text">
+        </div>
+        <div class="input-field">
+          <label>State</label>
+          <input class="state" type="text">
+        </div>
+        <div class="input-field">
+          <label>Zip</label>
+          <input class="zip" type="text">
+        </div>
+        <div class='errors-div'>
+        </div>
+        <div class="errors"></div>
+        <input class="submit-address btn" type="submit" value="Submit Address">
+      </form>
+    </div>
+  <% else %>
     <% if !@commit.nil? %>
       <h5>Ordered <%= @commit.amount %></h5>
     <% else %>
@@ -15,69 +84,69 @@
     <h6><%= flash[:notice] %></h6>
     <h6 class='green-text'><%= flash[:success] %></h6>
     <h6 class='red-text'><%= flash[:error] %></h6>
-  </div>
 
 
-  <form class="make-purchase-order" data-product="<%= @product.id %>">
-    <div class="errors center-align"></div>
-    <h5 class='green-text message'></h5>
-    <div class="row border center-align">
-      <div class="col s2 offset-s1">
-        <h6 class='bold'>Product SKU</h5>
-        </div>
-        <div class="col s2">
-          <h6 class='bold'>Full Wholesale Price</h6>
-        </div>
-        <div class="col s2">
-          <h6 class='bold'>BlueBird Discounted Price</h6>
-        </div>
-        <div class="col s2">
-          <h6 class='bold'>Suggested Retail Price</h6>
-        </div>
-        <div class="col s2">
-          <h6 class='bold'>Order Amount (units)</h6>
-        </div>
-      </div>
-    <% @product.skus.order(id: :asc).each do |sku| %>
-      <div class="row" style='border-bottom: 1px solid black'>
-        <% if sku.out_of_inventory? %>
-          <h3 style='position: relative; background: rgba(140, 140, 140, 0.5); color: white; top: 35%; text-align: center; width: 100vw'>OUT OF INVENTORY</h3>
-        <% end %>
+    <form class="make-purchase-order" data-product="<%= @product.id %>">
+      <div class="errors center-align"></div>
+      <h5 class='green-text message'></h5>
+      <div class="row border center-align">
         <div class="col s2 offset-s1">
-          <h5><%= sku.description %></h5>
-            <%= image_tag sku.image.url(:thumb), :class => 'responsive-img' %>
-          <h6><%= sku.inventory %> in inventory</h6>
+          <h6 class='bold'>Product SKU</h5>
+          </div>
+          <div class="col s2">
+            <h6 class='bold'>Full Wholesale Price</h6>
+          </div>
+          <div class="col s2">
+            <h6 class='bold'>BlueBird Discounted Price</h6>
+          </div>
+          <div class="col s2">
+            <h6 class='bold'>Suggested Retail Price</h6>
+          </div>
+          <div class="col s2">
+            <h6 class='bold'>Order Amount (units)</h6>
+          </div>
         </div>
-        <div class="col s2">
-          <h6 class='bold'><%= number_to_currency(sku.price) %></h6>
-        </div>
-        <div class="col s2">
-          <h6 class='bold'><%= number_to_currency(sku.price_with_fee) %></h6>
-          <h6><%= number_to_currency(sku.price - sku.price_with_fee) %> off</h6>
-        </div>
-        <div class="col s2">
-          <h6 class='bold'><%= number_to_currency(sku.suggested_retail) %></h6>
-        </div>
-        <div class="col s2">
-          <% if sku.user_ordered?(current_user) || !sku.out_of_inventory? %>
-            <% order = current_user.retailer.purchase_orders.where('sku_id = ?', sku.id) %>
-            <input type="number" class='full-box-input purchase-order-amount' data-sku="<%= sku.id %>" placeholder="Order Amt" min="0" value="<%= order.empty? ? nil : order.first.quantity %>">
-            <% if !order.empty? %>
-              <a href='/api/orders/delete_purchase_order?order=<%= order.first.id %>'><h6 class='black-text pointer'>X Remove Order</h6></a>
-            <% end %>
+      <% @product.skus.order(id: :asc).each do |sku| %>
+        <div class="row" style='border-bottom: 1px solid black'>
+          <% if sku.out_of_inventory? %>
+            <h3 style='position: relative; background: rgba(140, 140, 140, 0.5); color: white; top: 35%; text-align: center; width: 100vw'>OUT OF INVENTORY</h3>
           <% end %>
+          <div class="col s2 offset-s1">
+            <h5><%= sku.description %></h5>
+              <%= image_tag sku.image.url(:thumb), :class => 'responsive-img' %>
+            <h6><%= sku.inventory %> in inventory</h6>
+          </div>
+          <div class="col s2">
+            <h6 class='bold'><%= number_to_currency(sku.price) %></h6>
+          </div>
+          <div class="col s2">
+            <h6 class='bold'><%= number_to_currency(sku.price_with_fee) %></h6>
+            <h6><%= number_to_currency(sku.price - sku.price_with_fee) %> off</h6>
+          </div>
+          <div class="col s2">
+            <h6 class='bold'><%= number_to_currency(sku.suggested_retail) %></h6>
+          </div>
+          <div class="col s2">
+            <% if sku.user_ordered?(current_user) || !sku.out_of_inventory? %>
+              <% order = current_user.retailer.purchase_orders.where('sku_id = ?', sku.id) %>
+              <input type="number" class='full-box-input purchase-order-amount' data-sku="<%= sku.id %>" placeholder="Order Amt" min="0" value="<%= order.empty? ? nil : order.first.quantity %>">
+              <% if !order.empty? %>
+                <a href='/api/orders/delete_purchase_order?order=<%= order.first.id %>'><h6 class='black-text pointer'>X Remove Order</h6></a>
+              <% end %>
+            <% end %>
+          </div>
         </div>
-      </div>
-    <% end %>
-    <div class="right-align">
-      <% submit_val = current_user.retailer.products_orders(@product.id) ? "Update Order" : "Make Purchase Order" %>
-      <input type="submit" value="<%= submit_val %>" class='btn submit'>
-    </div>
-    <div class="left-align">
-      <% if !@commit.nil? %>
-        <a class='btn-flat white black-text waves-effect' href="/api/orders/delete_commit?commit=<%=@commit.uuid %>">Cancel Entire Order</a>
       <% end %>
-    </div>
-  </form>
+      <div class="right-align">
+        <% submit_val = current_user.retailer.products_orders(@product.id) ? "Update Order" : "Make Purchase Order" %>
+        <input type="submit" value="<%= submit_val %>" class='btn submit'>
+      </div>
+      <div class="left-align">
+        <% if !@commit.nil? %>
+          <a class='btn-flat white black-text waves-effect' href="/api/orders/delete_commit?commit=<%=@commit.uuid %>">Cancel Entire Order</a>
+        <% end %>
+      </div>
+    </form>
+  <% end %>
 
 </div>

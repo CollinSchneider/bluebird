@@ -22,6 +22,8 @@ $(document).ready(function(){
   addCreditCard()
   changePayment()
   changeShippingAddress()
+  makePrimaryAddress()
+  deleteShippingAddress()
   $('.make-purchase-order').submit(function(e){
     e.preventDefault()
     makePurchaseOrder($(this))
@@ -84,7 +86,7 @@ function addCreditCard(){
     var submitButton = submittedForm.find($('.submit'))
     submitButton.val('Saving Card...')
     submitButton.prop('disabled', true)
-    console.log(cardName + ', ' + cardNumber);
+    // console.log(cardName + ', ' + cardNumber);
     Stripe.card.createToken({
       // customer: stripeCustomer,
       name: cardName,
@@ -96,7 +98,6 @@ function addCreditCard(){
     }, stripeResponseHandler);
   })
 }
-
 
 function stripeResponseHandler(status, response){
   if(response.error){
@@ -114,7 +115,8 @@ function stripeResponseHandler(status, response){
           submittedForm.find('.submit').prop('disabled', false)
           submittedForm.find('.submit').val('Add Credit Card')
         } else {
-          changePaymentApiCall(data.card.id)
+          location.reload()
+          // changePaymentApiCall(data.card.id)
         }
       }
     })
@@ -124,8 +126,8 @@ function stripeResponseHandler(status, response){
 function addShippingAddress(){
   $('.add-shipping-address').submit(function(e){
     e.preventDefault()
-    $('.shipping-errors').text('')
     var form = $(this)
+    form.find('.errors').text('')
     var street_one = form.find('.street-line-one').val()
     var street_two = form.find('.street-line-two').val()
     var city = form.find('.city').val()
@@ -138,9 +140,16 @@ function addShippingAddress(){
       method: 'POST',
       url: '/api/shipping/create_shipping_address' + params,
       success: function(data){
+        console.log(data);
         if(data.success){
-          changeShippingApiCall(data.local_address.id)
+          location.reload()
+          // changeShippingApiCall(data.local_address.id)
         } else {
+          var errorDiv = form.find('.errors')
+          for (var i = 0; i < data.errors.length; i++) {
+            var e = data.errors[i]
+            errorDiv.append($('<h6 class="red-text">').text(e.message))
+          }
           $('.submit-address').prop('disabled', false)
         }
       }
@@ -187,5 +196,33 @@ function changePaymentApiCall(cardId, commitUuid){
         location.reload()
       }
     }
+  })
+}
+
+function makePrimaryAddress(){
+  $('.make-primary-address').click(function(){
+    $(this).text('Updating...')
+    var addressId = $(this).attr('data')
+    $.ajax({
+      method: 'POST',
+      url: '/api/shipping/make_primary_address?address_id=' + addressId,
+      success: function(data){
+        location.reload()
+      }
+    })
+  })
+}
+
+function deleteShippingAddress(){
+  $('.delete-address').click(function(){
+    var id = $(this).attr('data')
+    $(this).text('Updating...')
+    $.ajax({
+      method: 'POST',
+      url: '/api/shipping/delete_address?id=' + id,
+      success: function(data){
+        location.reload()
+      }
+    })
   })
 }

@@ -2,159 +2,69 @@
 
   <%= render partial: 'partials/retailer_profile_nav' %>
 
-  <% if @retailer.primary_address.nil? %>
+  <% if !@retailer.primary_address.nil? %>
     <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
-      <h5>Before you can make any purchase orders, you must first add a shipping address</h5>
-      <form class="add-shipping-address">
-        <div class="input-field">
-          <label>Street Address One</label>
-          <input id="street-line-one" type="text" name="street_one">
-        </div>
-        <div class="input-field">
-          <label>Street Address Two</label>
-          <input id="street-line-two" type="text" name="street_two">
-        </div>
-        <div class="input-field">
-          <label>City</label>
-          <input id="city" type="text" name="city">
-        </div>
-        <div class="input-field">
-          <label>State</label>
-          <input id="state" type="text" name="state">
-        </div>
-        <div class="input-field">
-          <label>Zip</label>
-          <input id="zip" type="text" name="zip">
-        </div>
-        <div class='errors-div'>
-        </div>
-        <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
+      <h4><%= @retailer.user.first_name %>'s Primary Address:</h4>
+      <div class="row">
+        <h4><%= @retailer.primary_address.street_address_one.capitalize %></h4>
+        <% if @retailer.primary_address.street_address_two != '' %>
+        <h4><%= @retailer.primary_address.street_address_two.capitalize %></h4>
+        <% end %>
+        <h4><%= @retailer.primary_address.city.capitalize %>, <%= @retailer.primary_address.state %> <%= @retailer.primary_address.zip %></h4>
       </div>
-    </form>
+    </div>
+  <% end %>
 
-    <% else %>
-      <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
-        <h4><%= @retailer.user.first_name %>'s Primary Address:</h4>
+  <% if @retailer.shipping_addresses.count > 1 %>
+    <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
+      <% @retailer.shipping_addresses.each_slice(2) do |slice| %>
         <div class="row">
-          <h4><%= @retailer.primary_address.street_address_one.capitalize %></h4>
-          <% if @retailer.primary_address.street_address_two != '' %>
-          <h4><%= @retailer.primary_address.street_address_two.capitalize %></h4>
-          <% end %>
-          <h4><%= @retailer.primary_address.city.capitalize %>, <%= @retailer.primary_address.state %> <%= @retailer.primary_address.zip %></h4>
-        </div>
-      </div>
-
-    <% if @retailer.shipping_addresses.count > 1 %>
-      <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
-        <% @retailer.shipping_addresses.each_slice(2) do |slice| %>
-          <div class="row">
-            <% slice.each do |address| %>
-              <% if address.id != @retailer.primary_address.id %>
-                <div class="col s12 m6 white border">
-                  <h6><%= address.street_address_one %></h6>
-                  <% if address.street_address_two != '' %>
-                    <h6><%= address.street_address_two %></h6>
-                  <% end %>
-                  <h6><%= address.city %>, <%= address.state %> <%= address.zip %></h6>
-                  <a class='pointer make-primary' data='<%= address.id %>'>Make Primary Address</a> <br>
-                  <a class='pointer delete-address red-text' data='<%= address.id %>'>Delete Address</a>
-                </div>
-              <% end %>
+          <% slice.each do |address| %>
+            <% if address.id != @retailer.primary_address.id %>
+              <div class="col s12 m6 white border">
+                <h6><%= address.street_address_one %></h6>
+                <% if address.street_address_two != '' %>
+                  <h6><%= address.street_address_two %></h6>
+                <% end %>
+                <h6><%= address.city %>, <%= address.state %> <%= address.zip %></h6>
+                <a class='pointer make-primary-address' data='<%= address.id %>'>Make Primary Address</a> <br>
+                <a class='pointer delete-address red-text' data='<%= address.id %>'>Delete Address</a>
+              </div>
             <% end %>
-          </div>
-        <% end %>
-      </div>
-    <% end %>
-
-    <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
-      <h5>Upload New Shipping Address</h5>
-      <%= form_tag('/api/shipping/create_shipping_address', method: :post) do %>
-        <div class="input-field">
-          <label>Street Address One</label>
-          <input id="street-line-one" type="text" name="street_one">
-        </div>
-        <div class="input-field">
-          <label>Street Address Two</label>
-          <input id="street-line-two" type="text" name="street_two">
-        </div>
-        <div class="input-field">
-          <label>City</label>
-          <input id="city" type="text" name="city">
-        </div>
-        <div class="input-field">
-          <label>State</label>
-          <input id="state" type="text" name="state">
-        </div>
-        <div class="input-field">
-          <label>Zip</label>
-          <input id="zip" type="text" name="zip">
-        </div>
-        <div class='errors-div'>
-        </div>
-        <% if !flash[:error].nil? %>
-          <% flash[:error].each do |err| %>
-            <h6 class='red-text'><%= err %></h6>
           <% end %>
-        <% end %>
-        <input id="submit-address" class="btn btn-primary" type="submit" value="Create Address">
+        </div>
       <% end %>
     </div>
   <% end %>
 
+  <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
+    <h5>Upload New Shipping Address</h5>
+    <form class="add-shipping-address">
+      <div class="input-field">
+        <label>Street Address One</label>
+        <input class="street-line-one" type="text">
+      </div>
+      <div class="input-field">
+        <label>Street Address Two</label>
+        <input class="street-line-two" type="text">
+      </div>
+      <div class="input-field">
+        <label>City</label>
+        <input class="city" type="text">
+      </div>
+      <div class="input-field">
+        <label>State</label>
+        <input class="state" type="text">
+      </div>
+      <div class="input-field">
+        <label>Zip</label>
+        <input class="zip" type="text">
+      </div>
+      <div class='errors-div'>
+      </div>
+      <div class="errors"></div>
+      <input class="submit-address btn" type="submit" value="Create Address">
+    </form>
+  </div>
 
-<script>
-  $('form').submit(function(e){
-    e.preventDefault()
-    var form = $(this)
-    var street_one = form.find('#street-line-one').val()
-    var street_two = form.find('#street-line-two').val()
-    var city = form.find('#city').val()
-    var state = form.find('#state').val()
-    var zip = form.find('#zip').val()
-    form.find('#submit-address').prop('disabled', true)
-    form.find('#submit-address').text('Saving...')
-    $('.errors-div').text('')
-    $.ajax({
-      method: 'POST',
-      url: '/api/shipping/create_shipping_address?street_one=' +street_one+ '&street_two=' +street_two+
-        '&city=' +city+ '&state=' +state+ '&city=' +city+ '&zip=' +zip,
-      success: function(data){
-        console.log(data);
-        if(!data.success) {
-          form.find('#submit-address').prop('disabled', false)
-          form.find('#submit-address').text('Create Address')
-          for (var i = 0; i < data.errors.length; i++) {
-            var error = data.errors[i]
-            var message = $('<h6 class="red-text">').text("Address Error: " + error.field + " " + error.message)
-            $('.errors-div').append(message)
-          }
-        } else {
-          location.reload()
-        }
-      }
-    })
-  })
-
-  $('.make-primary').click(function(){
-    console.log('click');
-    var addressId = $(this).attr('data')
-    $.ajax({
-      method: 'POST',
-      url: '/api/shipping/make_primary_address?address_id=' + addressId,
-      success: function(data){
-        location.reload()
-      }
-    })
-  })
-
-  $('.delete-address').click(function(){
-    var id = $(this).attr('data')
-    $.ajax({
-      method: 'POST',
-      url: '/api/shipping/delete_address?id=' + id,
-      success: function(data){
-        location.reload()
-      }
-    })
-  })
-</script>
+</div>

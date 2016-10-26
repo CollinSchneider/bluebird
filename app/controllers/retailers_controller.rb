@@ -13,7 +13,7 @@ class RetailersController < ApplicationController
   def order
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
     return redirect_to "/shop" if @product.nil?
-    @commit = Commit.find_by(:product_id => @product.id)
+    @commit = current_user.retailer.commits.find_by(:product_id => @product.id)
   end
 
   def full_price_order
