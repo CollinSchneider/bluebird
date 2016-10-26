@@ -64,7 +64,7 @@
                 <% if @product.featured %>
                   <span class='valign-wrapper center-block'><img src="/images/bluebird-blue-mascot.png" style="height: 20px; display: inline-block" /> <h6 class='truncate bluebird-text bold' style='display: inline-block'>BlueBird Favorite!</h6></span>
                 <% end %>
-                <a class='black-text' href="/company/<%= @product.wholesaler.user.company.id %>/<%=@product.wholesaler.user.company.company_key%>">
+                <a class='black-text link' href="/company/<%= @product.wholesaler.user.company.id %>/<%=@product.wholesaler.user.company.company_key%>">
                   <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
                 </a>
                 <% if @product.wholesaler.is_contactable? %>

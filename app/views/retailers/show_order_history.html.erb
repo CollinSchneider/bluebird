@@ -12,7 +12,7 @@
       <div class="col s12 m4 center-align">
         <h5><%= @order.product.time_to_expiration %></h5>
         <%= image_tag @order.product.main_image.url(:medium), :class => 'responsive-img' %>
-          <a href="/products/<%=@order.product.id%>/<%=@order.product.slug%>"><h4 class='bold black-text'><%= @order.product.title %></h4></a>
+          <h4><a href="/products/<%=@order.product.id%>/<%=@order.product.slug%>" class="black-text link"><%= @order.product.title %></a></h4>
           <h6 class='green-text'><%= @order.product.price_with_fee_range %>/unit</h6>
           <div class="row">
             <h6>Ordered <%= @order.amount %> total units.</h6>

@@ -43,7 +43,7 @@ class Product < ActiveRecord::Base
     self.current_sales = 0
     self.current_sales_with_fees = 0
     self.start_time = Time.current
-    self.slug = Util.slug(self.title)
+    # self.slug = Util.slug(self.title)
     self.minimum_order = self.minimum_order || 1
     if self.duration == '1_day'
       self.end_time = Time.current.end_of_day + 1.day

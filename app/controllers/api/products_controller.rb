@@ -97,6 +97,8 @@ class Api::ProductsController < ApiController
   def remove_variant
     variant = ProductVariant.find(params[:variant])
     if variant.product.wholesaler_id == current_user.wholesaler.id
+      variant.image.clear
+      variant.save!
       variant.delete
       return render :json => {success: true}
     else

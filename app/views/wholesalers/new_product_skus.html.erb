@@ -19,13 +19,13 @@
     <div class="row col s8 offset-s2">
       <%= form_tag("/new_product_skus?sku=#{@sku.id}", method: 'POST') do %>
       <div class="input-field">
-        <input type="number" name="inventory" class='full-box-input' placeholder='Inventory For Sale' step='1' value="<%= @sku.inventory %>">
+        <input type="number" name="inventory" class='full-box-input' placeholder='Inventory For Sale' step='1' value="<%= @sku.inventory %>" required>
       </div>
         <div class="input-field">
-          <input type="number" name="price" class='full-box-input' placeholder='Full Wholesale Price' step='0.01' value="<%= @sku.price %>">
+          <input type="number" name="price" class='full-box-input' placeholder='Full Wholesale Price' step='0.01' value="<%= @sku.price %>" required>
         </div>
         <div class="input-field">
-          <input type="number" name="suggested_retail" class='full-box-input' placeholder='Suggested Retail Price' step='0.01' value="<%= @sku.suggested_retail %>">
+          <input type="number" name="suggested_retail" class='full-box-input' placeholder='Suggested Retail Price' step='0.01' value="<%= @sku.suggested_retail %>" required>
         </div>
         <% if @sku.is_first? && @product.skus.count > 1 %>
           <p class='center-align'>
