@@ -29,6 +29,7 @@ class Users::ApplyController < UsersController
         wholesaler.contactable_by_phone = false
         wholesaler.contactable_by_email = false
         wholesaler.save!
+        BlueBirdEmail.new_application(user)
         return redirect_to "/thank_you?_user=#{user.first_name}"
       else
         flash[:error] = user.errors.full_messages

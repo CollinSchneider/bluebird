@@ -24,6 +24,16 @@ class BlueBirdEmail
     response = sg.client.mail._('send').post(request_body: email.to_json)
   end
 
+  def new_application(user)
+    controller = ActionController::Base.new()
+    content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/new_application.html.erb',
+      :locals => {
+        :@user => user
+      }
+    )
+    self.send_email('application@bluebird.club', COLLIN_EMAIL, 'NEW BLUEBIRD APPLICATION', content)
+  end
+
   def self.retailer_welcome_email(user)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_welcome_email.html.erb',
