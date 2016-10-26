@@ -23,7 +23,6 @@ class Users::SignupController < UsersController
         retailer = Retailer.new
         retailer.user_id = user.id
         retailer.save!
-        BlueBirdEmail.retailer_welcome_email(user)
         return redirect_to "/thank_you?_user=#{user.first_name}"
       else
         flash[:error] = user.errors.full_messages
