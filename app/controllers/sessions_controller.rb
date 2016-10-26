@@ -16,11 +16,11 @@ class SessionsController < ApplicationController
 
         if user.is_retailer?
           session[:user_id] = user.id
-          if user.retailer.needs_credit_card?
-            return redirect_to '/retailer/accounts'
-          elsif user.retailer.needs_shipping_info?
-            return redirect_to '/retailer/shipping_addresses'
-          elsif user.retailer.card_declined?
+          # if user.retailer.needs_credit_card?
+          #   return redirect_to '/retailer/accounts'
+          # elsif user.retailer.needs_shipping_info?
+          #   return redirect_to '/retailer/shipping_addresses'
+          if user.retailer.card_declined?
             return redirect_to "/retailer/#{user.retailer.declined_order}/card_declined"
           else
             return redirect_to '/shop'
