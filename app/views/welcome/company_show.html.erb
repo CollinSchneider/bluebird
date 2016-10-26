@@ -1,27 +1,32 @@
-<div class="container">
+<div class="row">
 
-  <div class="center-align row">
-    <!-- <div class="company-logo-banner"> -->
-    <div class="col s12 m8 offset-m2 company-logo-banner" style='background: url(<%= @company.logo.url(:large) %>)'>
-      <div style='background: rgba(255, 255, 255, .8); z-index: 100'>
-        <h3><%= @company.company_name %></h3>
-        <h5 class='no-bottom-margin pointer about-company'>About Us</h5>
+  <div class="row" style='margin-top: 25px'>
+    <div class="col s12">
+      <div class="hide-on-small-only border col m3 center-align">
+        <%= image_tag @company.logo.url(:medium), :class => 'responsive-img' %>
+        <h5><%= @company.company_name %></h5>
+        <% if !@company.location.nil? %>
+          <h6><i class='tiny material-icons'>location_on</i> <%= @company.location %></h6>
+        <% end %>
+        <p>
+          <%= @company.bio %>
+        </p>
+        <% if @company.contact_email != '' && !@company.contact_email.nil? %>
+          <div class="row">
+            <h6><a href="mailto:<%=@company.contact_email%>"><i class='tiny material-icons'>email</i> <%=@company.contact_email%></a></h6>
+          </div>
+        <% end %>
+        <% if @company.contact_number != '' && !@company.contact_number.nil? %>
+          <div class="row">
+            <h6><i class='tiny material-icons'>phone</i> <%=number_to_phone(@company.contact_number)%></h6>
+          </div>
+        <% end %>
+      </div>
+      <div class="col s12 m8">
+        <%= render partial: 'partials/products' %>
       </div>
     </div>
-
-    <%= render partial: 'partials/products' %>
   </div>
-
-  <% if @company.location || @company.bio %>
-    <div class="company-bio row col s12 m6 offset-m3 border center-align">
-      <% if @company.location %>
-        <h5>Location: <%= @company.location %></h5>
-      <% end %>
-      <% if @company.bio %>
-        <h5><%= simple_format(@company.bio) %></h5>
-      <% end %>
-    </div>
-  <% end %>
 
 </div>
 

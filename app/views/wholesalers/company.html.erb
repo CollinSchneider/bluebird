@@ -20,7 +20,10 @@
     </div>
     <% if @company.logo.present? %>
       <div class="row">
-        <img src="<%= @company.logo %>" class='responsive-img' />
+        <div class="row">
+          <%= image_tag @company.logo.url(:medium), :class => 'responsive-img' %>
+        </div>
+        <a href="/api/company/remove_logo?company=<%=@company.id%>" class='btn-flat red-text waves-effect'>Remove Logo</a>
       </div>
     <% end %>
     <div class="row">
