@@ -194,4 +194,12 @@ class Api::OrdersController < ApiController
     return redirect_to request.referrer
   end
 
+  def delete_rating
+    rating = current_user.retailer.ratings.find_by(:id => params[:id])
+    if !rating.nil?
+      rating.delete
+    end
+    return redirect_to request.referrer
+  end
+
 end

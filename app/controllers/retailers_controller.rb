@@ -25,7 +25,7 @@ class RetailersController < ApplicationController
   end
 
   def ratings
-
+    return redirect_to "/retailer" if current_user.retailer.pending_ratings.empty?
   end
 
   def order_history

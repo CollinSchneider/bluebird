@@ -13,6 +13,7 @@
           <%= image_tag rating.sale.commit.product.main_image.url(:medium), :class => 'responsive-img' %>
         </div>
         <div class="col s6">
+          <h5 class='right-align'><a class='black-text' href="/api/orders/delete_rating?id=<%=rating.id%>">X</a></h5>
           <h5><%= rating.sale.commit.product.title %></h5>
           <h6>Seller: <%= rating.sale.commit.wholesaler.user.company.company_name %></h6>
           <h6>Sale closed on <%= rating.sale.commit.product.end_time.strftime('%b %d, %Y') %></h6>
