@@ -7,7 +7,7 @@ You can expect your order(s) of:
   - <%= po.quantity %> <%= po.sku.description.pluralize %>
 <% end %>
 
-To arrive on <%= @tracking_delivery_date.strftime('%m/%d/%Y at %I:%M%p') %> (estimated)
+To arrive on <%= DateTime.parse(@tracking_delivery_date).strftime('%m/%d/%Y at %I:%M%p') %> (estimated)
 
 d.strftime("Printed on %m/%d/%Y")   #=> "Printed on 11/19/2007"
 d.strftime("at %I:%M%p")

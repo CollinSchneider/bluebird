@@ -1,0 +1,32 @@
+<div class="row">
+  <div class="hide-on-small-only">
+    <%= render partial: 'partials/retailer_profile_nav' %>
+  </div>
+
+  <div class="center-align col s12 m8 offset-m3">
+    <h4>Leave a rating for some of your past orders.</h4>
+    <h5 class='red-text'><%= flash[:error] %></h5>
+
+    <% current_user.retailer.pending_ratings.each do |rating| %>
+      <div class="order-box z-depth-2 row">
+        <div class="col s6">
+          <%= image_tag rating.sale.commit.product.main_image.url(:medium), :class => 'responsive-img' %>
+        </div>
+        <div class="col s6">
+          <h5><%= rating.sale.commit.product.title %></h5>
+          <h6>Seller: <%= rating.sale.commit.wholesaler.user.company.company_name %></h6>
+          <h6>Sale closed on <%= rating.sale.commit.product.end_time.strftime('%b %d, %Y') %></h6>
+          <h6><%= rating.sale.commit.product.short_description %></h6>
+          <%= form_tag("/api/orders/submit_rating?id=#{rating.id}") do %>
+            <p class="range-field">
+              <input type="range" name='rating' min="0" max="5" value="5" />
+            </p>
+            <textarea name="comment" class='materialize-textarea white full-box-input' rows="8" cols="40" placeholder="Comments"></textarea>
+            <input type="submit" value="Submit Rating" class='btn submit-button'>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+</div>

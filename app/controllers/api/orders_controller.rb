@@ -176,4 +176,22 @@ class Api::OrdersController < ApiController
     return actual_quantity
   end
 
+  def submit_rating
+    rating = Rating.find(params[:id])
+    rate = params[:rating].to_i
+    comment = params[:comment]
+    if rate < 4 && (comment.nil? || comment.length < 8)
+      flash[:error] = "If you're rating is less than 4, you must leave a substantial comment."
+      return redirect_to request.referrer
+    end
+    wholesaler = rating.sale.commit.wholesaler
+    wholesaler.total_number_ratings += 1
+    wholesaler.total_rating += rate
+    wholesaler.save!
+    rating.rating = rate
+    rating.comment = comment
+    rating.save!
+    return redirect_to request.referrer
+  end
+
 end

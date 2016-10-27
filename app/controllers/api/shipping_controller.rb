@@ -98,14 +98,22 @@ class Api::ShippingController < ApiController
     end
     shipment = Shipping.find(params[:shipment])
     purchase_order = PurchaseOrder.find(orders.first['poId'])
+    order_complete = false
     orders.each do |order|
       po = PurchaseOrder.find(order['poId'])
       po.has_shipped = true
       po.shipping_id = shipment.id
       po.save!
+      order_complete = po.commit.purchase_orders.where(:has_shipped => true).count == po.commit.purchase_orders.count ? true : false
     end
     if purchase_order.commit.shipping_amount.nil?
       purchase_order.commit.shipping_amount = 0
+    end
+    if order_complete
+      purchase_order.commit.has_shipped = order_complete
+      rating = Rating.new
+      rating.sale_id = purchase_order.commit.sale.id
+      rating.save!
     end
     purchase_order.commit.shipping_amount += shipment.shipping_amount
     purchase_order.commit.save!

@@ -1,6 +1,6 @@
 <% if !@company_products.empty? %>
 <div class="row other-products z-depth-1">
-  <h5><a href="/company/<%= @product.wholesaler.user.company.id %>/<%= @product.wholesaler.user.company.company_key %>">More products from <%= @product.wholesaler.user.company.company_name %></a></h5>
+  <h5><a href="/company/<%= @product.wholesaler.user.company.id %>/<%= @product.wholesaler.user.company.company_key %>" class='black-text link'>More products from <%= @product.wholesaler.user.company.company_name %>:</a></h5>
     <% @company_products.each do |product| %>
       <div class="col s12 m4 center-align no-padding">
         <div class="product white">
@@ -46,7 +46,7 @@
 
 <% if !@similar_products.empty? %>
 <div class="row other-products z-depth-1">
-  <h5>Similar Products</h5>
+  <h5>Similar Products:</h5>
     <% @similar_products.each do |product| %>
       <div class="col s12 m4 center-align no-padding">
         <div class="product white">

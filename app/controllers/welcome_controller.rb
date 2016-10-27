@@ -6,7 +6,7 @@ class WelcomeController < ApplicationController
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND CAST(current_sales AS decimal) >= CAST(products.goal AS decimal)', 'live', Time.current).page(params[:page]).per_page(6)
     elsif params[:query]
-      @products = Product.queried_products(params[:query]).page(params[:page]).per_page(6)
+      @products = Product.queried_products.(params[:query]).page(params[:page]).per_page(6)
     elsif params[:products] == 'percent_off'
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.current).order(percent_discount: :desc).page(params[:page]).per_page(6)
     # TODO: NEED SQL JOIN TO PULL AVERAGE SKU PRICE
@@ -48,60 +48,6 @@ class WelcomeController < ApplicationController
     else
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.current).order(current_sales: :desc).page(params[:page]).per_page(6)
     end
-  end
-
-  def tech
-    if params[:products] == 'discounted'
-      @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.current, 'Tech').page(params[:page]).per_page(6)
-    elsif params[:query]
-        @products = Product.category_queried_products(params[:query], 'Tech').page(params[:page]).per_page(6)
-    elsif params[:products] == 'percent_off'
-      @products = Product.where('status = ? AND end_time > ? AND category = ?', 'live', Time.current, 'Tech').order(percent_discount: :desc).page(params[:page]).per_page(6)
-    else
-      @products = Product.where('status = ? AND category = ?', 'live', 'Tech').page(params[:page]).per_page(6)
-    end
-  end
-
-  def accessories
-    if params[:products] == 'discounted'
-      @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.current, 'Accessories').page(params[:page]).per_page(6)
-    elsif params[:query]
-      @products = Product.category_queried_products(params[:query], 'Accessories').page(params[:page]).per_page(6)
-    elsif params[:products] == 'percent_off'
-      @products = Product.where('status = ? AND end_time > ? AND category = ?', 'live', Time.current, 'Accessories').order(percent_discount: :desc).page(params[:page]).per_page(6)
-    else
-      @products = Product.where('status = ? AND category = ?', 'live', 'Accessories').page(params[:page]).per_page(6)
-    end
-  end
-
-  def home_goods
-    if params[:products] == 'discounted'
-      @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.current, 'Home Goods').page(params[:page]).per_page(6)
-    elsif params[:query]
-      @products = Product.category_queried_products(params[:query], 'Home Goods').page(params[:page]).per_page(6)
-    elsif params[:products] == 'percent_off'
-      @products = Product.where('status = ? AND end_time > ? AND category = ?', 'live', Time.current, 'Home Goods').order(percent_discount: :desc).page(params[:page]).per_page(6)
-    else
-      @products = Product.where('status = ? AND category = ?', 'live', 'Home Goods').page(params[:page]).per_page(6)
-    end
-  end
-
-  def apparel
-    if params[:products] == 'discounted'
-      @products = Product.where('status = ? AND end_time > ? AND current_sales >= products.goal AND category = ?', 'live', Time.current, 'Apparel').page(params[:page]).per_page(6)
-    elsif params[:query]
-      @products = Product.category_queried_products(params[:query], 'Apparel').page(params[:page]).per_page(6)
-    elsif params[:products] == 'percent_off'
-      @products = Product.where('status = ? AND end_time > ? AND category = ?', 'live', Time.current, 'Apparel').order(percent_discount: :desc).page(params[:page]).per_page(6)
-    else
-      @products = Product.where('status = ? AND category = ?', 'live', 'Apparel').page(params[:page]).per_page(6)
-    end
-  end
-
-  def company_show
-    @company = Company.find_by(:company_key => params[:key], :id => params[:id])
-    return redirect_to '/shop' if @company.nil?
-    @products = Product.where('wholesaler_id = ? AND status = ? AND end_time >= ?', @company.user.wholesaler.id, 'live', Time.current)
   end
 
   def regularly_priced

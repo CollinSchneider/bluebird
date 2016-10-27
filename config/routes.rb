@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   resources :wholesalers
   resources :retailers
   resources :companies
+  resources :ratings
 
                   #///////////////////#
                   #     API ROUTES    #
@@ -101,6 +102,7 @@ Rails.application.routes.draw do
   get '/retailer/settings/change_password' => 'retailers#change_password'
   put '/retailer/settings/change_password' => 'retailers#change_password'
   get '/retailer/:order_id/card_declined' => 'retailers#card_declined'
+  get '/retailer/ratings' => 'retailers#ratings'
 
                 #///////////////////#
                 #   ADMIN ROUTES    #
@@ -124,12 +126,13 @@ Rails.application.routes.draw do
   get '/ending_soon' => 'welcome#ending_soon'
   get '/best_sellers' => 'welcome#best_sellers'
   get '/new_arrivals' => 'welcome#new_arrivals'
-  get '/regularly_priced' => 'welcome#regularly_priced'
-  get '/company/:id/:key' => 'welcome#company_show'
   get '/last_chance/:token/:slug' => 'products#full_price'
   get '/discover' => 'products#discover'
   get '/bluebird_choice' => 'products#bluebird_choice'
   get '/category/:category' => 'products#category'
+
+  get '/company/:id/:key' => 'companies#show'
+  get '/company/:id/:key/ratings' => 'companies#ratings'
 
   post '/sessions' => 'sessions#create'
   delete '/sessions' => 'sessions#destroy'

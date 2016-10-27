@@ -6,6 +6,7 @@ class Wholesaler < ActiveRecord::Base
   has_many :commits
   has_many :purchase_orders, through: :commits
   has_many :sales
+  has_many :ratings, through: :sales
   has_many :shippings
 
   # before_create(on: :save) do
@@ -34,6 +35,10 @@ class Wholesaler < ActiveRecord::Base
     return self.purchase_orders.where("(purchase_orders.sale_made = 't' or purchase_orders.full_price = 't') and purchase_orders.has_shipped = 'f' and purchase_orders.refunded = 'f' and commit_id not in (
       select commit_id from sales where card_failed = 't'
     )")
+  end
+
+  def rating
+    return (self.total_rating.to_f/self.total_number_ratings.to_f).to_f
   end
 
   def declined_commits

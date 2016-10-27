@@ -120,13 +120,13 @@ class Api::ProductsController < ApiController
         sku.product_id = @product.id
         sku.product_sizing_id = size.id
         sku.code = "#{@product.id}-0-#{size.id}"
-        sku.save!
+        sku.save(validate: false)
       end
     elsif !@product.skus.any?
       sku = Sku.new
       sku.product_id = @product.id
       sku.code = "#{@product.id}-0-0"
-      sku.save!
+      sku.save(validate: false)
     end
     sku = @product.skus.where('inventory is null or price is null or suggested_retail is null').first
     return redirect_to "/new_product_skus?product=#{@product.uuid}&sku=#{sku.id}"

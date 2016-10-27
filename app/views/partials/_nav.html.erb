@@ -44,7 +44,7 @@
           ProductCategory.all.each do |pc|
             link_class = request.fullpath.include?(pc.key) ? 'active-nav-link' : 'black-text'
         %>
-          <a class="<%= link_class %>" href="category/<%= pc.key %>">
+          <a class="<%= link_class %>" href="/category/<%= pc.key %>">
             <div class='nav-category-div' style="display: inline-block">
               <span class="nav-category bold"><%= pc.name %></span>
             </div>

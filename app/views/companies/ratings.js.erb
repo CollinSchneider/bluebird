@@ -1,0 +1,6 @@
+$('#ratings').append("<%= j render partial: 'partials/ratings' %>")
+<% if @ratings.next_page %>
+  $('.pagination').replaceWith('<%= j will_paginate(@ratings) %>')
+<% else %>
+  $('.pagination').remove()
+<% end %>

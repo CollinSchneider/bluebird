@@ -8,14 +8,18 @@
           'Last Chance' => '/retailer/last_chance',
           'Manage Payments' => '/retailer/accounts',
           'Shipping Addresses' => '/retailer/shipping_addresses',
-          'Settings' => '/retailer/settings',
-          'Logout' => '/logout'
+          'Settings' => '/retailer/settings'
         }
         items.each do |name, url|
           liclass = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
       %>
         <li><a class="<%= liclass %>" href="<%= url %>"><%= name %></a></li>
       <% end %>
+      <% if current_user.retailer.pending_ratings.any? %>
+        <% liclass = request.fullpath.start_with?('/retailer/ratings') ? 'active-nav-link' : 'red-text' %>
+        <li><a href="/retailer/ratings" class='<%= liclass %>'>Pending Ratings</a></li>
+      <% end %>
+      <li><a href="/logout" class='black-text'>Logout</a></li>
     </ul>
   </div>
 </div>

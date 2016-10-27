@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161026202528) do
+ActiveRecord::Schema.define(version: 20161027013845) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -169,6 +169,14 @@ ActiveRecord::Schema.define(version: 20161026202528) do
   add_index "purchase_orders", ["commit_id"], name: "index_purchase_orders_on_commit_id", using: :btree
   add_index "purchase_orders", ["sku_id"], name: "index_purchase_orders_on_sku_id", using: :btree
 
+  create_table "ratings", force: :cascade do |t|
+    t.string   "comment"
+    t.float    "rating"
+    t.integer  "sale_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "retailers", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "stripe_id"
@@ -185,11 +193,12 @@ ActiveRecord::Schema.define(version: 20161026202528) do
     t.float    "sale_amount"
     t.string   "stripe_charge_id"
     t.boolean  "card_failed"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
     t.string   "card_failed_reason"
     t.float    "charge_amount"
     t.datetime "card_failed_date"
+    t.boolean  "has_rating",         default: false
   end
 
   add_index "sales", ["commit_id"], name: "index_sales_on_commit_id", using: :btree
@@ -261,8 +270,10 @@ ActiveRecord::Schema.define(version: 20161026202528) do
   create_table "wholesalers", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "stripe_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.integer  "total_rating",         default: 0
+    t.integer  "total_number_ratings", default: 0
   end
 
   add_index "wholesalers", ["user_id"], name: "index_wholesalers_on_user_id", using: :btree

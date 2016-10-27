@@ -102,7 +102,6 @@ class User < ActiveRecord::Base
     commit_charge.sale_amount = commit.sale_amount
     commit_charge.charge_amount = bluebird_fee/100
     stripe_amount = commit.sale_amount_with_fees*100
-    commit.product.total_bluebird_fee = bluebird_fee
     commit.product.save!
 
     token = Stripe::Token.create(

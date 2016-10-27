@@ -51,7 +51,7 @@ class Sku < ActiveRecord::Base
   # VALIDATORS
 
   def retail_price_is_more
-    if self.suggested_retail.to_f < self.price.to_f
+    if self.suggested_retail.to_f <= self.price.to_f
       errors.add(:Your, " retail price must be higher than your full wholesale price.")
     end
   end

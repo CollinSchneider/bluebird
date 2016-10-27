@@ -12,16 +12,6 @@ class Commit < ActiveRecord::Base
 
   has_many :purchase_orders
 
-  # validate :meets_minimum_order
-  # validate :enough_inventory
-  # validate :product_live
-
-  # before_create(on: :save) do
-  #   self.uuid = SecureRandom.uuid
-  #   self.status = 'live'
-  #   self.refunded = false
-  # end
-
   def set_commit(user)
     self.uuid = SecureRandom.uuid
     self.refunded = false

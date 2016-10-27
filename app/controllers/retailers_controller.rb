@@ -24,6 +24,10 @@ class RetailersController < ApplicationController
     return redirect_to "/retailer/order_history/sale_made/#{commit.first.id}" if !commit.empty?
   end
 
+  def ratings
+
+  end
+
   def order_history
     if params[:query]
       query = params[:query]

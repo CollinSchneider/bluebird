@@ -6,6 +6,7 @@ class Retailer < ActiveRecord::Base
   has_many :purchase_orders, through: :commits
   has_many :shipping_addresses
   has_many :sales
+  has_many :ratings, through: :sales
   has_many :shippings
 
   before_create(on: :save) do
@@ -34,6 +35,10 @@ class Retailer < ActiveRecord::Base
 
   def company
     self.user.company
+  end
+
+  def pending_ratings
+    return self.ratings.where('comment is null and rating is null')
   end
 
   def wholesalers_orders(wholesaler)

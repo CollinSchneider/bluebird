@@ -30,4 +30,8 @@ class Company < ActiveRecord::Base
     # self.save!
   end
 
+  def ratings
+    return self.user.wholesaler.ratings.where('comment is not null')
+  end
+
 end

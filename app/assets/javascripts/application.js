@@ -80,9 +80,7 @@ function pagination(){
     $(window).scroll(function(){
       var url = $('.pagination .next_page').attr('href')
       if(url && $(window).scrollTop() > $(document).height() - $(window).height() - 10) {
-        // replaceWithGif($('.pagination').text())
         $('.pagination').text("Loading...")
-        console.log('getting?');
         $.getScript(url)
       }
     })

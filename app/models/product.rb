@@ -6,7 +6,6 @@ class Product < ActiveRecord::Base
 
   has_many :commits
   has_many :purchase_orders, through: :commits
-  has_many :product_features
   has_many :product_sizings
   has_many :product_variants
   has_many :skus

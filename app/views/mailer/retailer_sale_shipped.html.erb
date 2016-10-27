@@ -12,7 +12,7 @@
         <li><%= po.quantity %> <%= po.sku.description.pluralize %></li>
       <% end %>
     </ul>
-    <p>To arrive on <%= @tracking_delivery_date.strftime('%m/%d/%Y at %I:%M%p') %> (estimated)</p>
+    <p>To arrive on <%= DateTime.parse(@tracking_delivery_date).strftime('%m/%d/%Y at %I:%M%p') %> (estimated)</p>
 
     <div class="center-align">
       <div class="row">
