@@ -45,6 +45,25 @@
           <label>Sales Phone Number for Retailers (optional)</label>
           <input type="number" name="company[contact_number]" value="<#%= @company.contact_number %>" length="10">
         </div> -->
+        <div class="row">
+          <label>Return Policy</label>
+          <% ReturnPolicy.all.each do |pol| %>
+            <p class='center-align'>
+              <% if pol.id === @company.user.wholesaler.return_policy_id %>
+                <input class="with-gap" name="return_policy" type="radio" id="<%=pol.policy_key%>" checked="checked" value="<%=pol.id%>"/>
+              <% else %>
+                <input class="with-gap" name="return_policy" type="radio" id="<%=pol.policy_key%>" value="<%=pol.id %>" />
+              <% end %>
+              <label for="<%=pol.policy_key%>"><%= pol.policy %>: <%= pol.description %></label>
+            </p>
+          <% end %>
+          <h6>*Note: Changing your return policy will change the default policy for all future products, not currently listed products.</h6>
+        </div>
+        <div class="row">
+          <div class="input-field">
+            <textarea name="shipping_policy" rows="8" cols="40" class='materialize-textarea full-box-input' placeholder="Shipping Policy (ie: Ships only to the US)"><%=@company.user.wholesaler.shipping_policy%></textarea>
+          </div>
+        </div>
         <input type="submit" value="Update Company Info" class="btn submit-button">
       <% end %>
     </div>

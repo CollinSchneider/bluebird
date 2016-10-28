@@ -68,7 +68,7 @@
                   <h6>From <%= @product.wholesaler.user.company.company_name %></h6>
                 </a>
                 <% if @product.wholesaler.is_contactable? %>
-                  <h6><a href="#" class='contact-info-toggle-on'>Contact</a></h6>
+                  <h6><a class='contact-info-toggle-on pointer'>Contact</a></h6>
                   <div class="contact-info" style='display: none'>
                     <h6><a href="#" class='contact-info-toggle-off'>Done</a></h6>
                     <% if @product.wholesaler.contactable_by_phone %>
@@ -157,6 +157,34 @@
             <% end %>
 
         </div>
+      </div>
+    </div>
+
+    <div class="row col s12 order-box z-depth-2">
+      <div class="row">
+        <h6 class='bold'>About <%= @product.wholesaler.user.company.company_name %></h6>
+      </div>
+      <div class="row">
+        <h6 class='bold'>Rating:</h6>
+        <h6><%= (@product.wholesaler.wholesaler_stat.rating/5)*100 %>% (<%= @product.wholesaler.wholesaler_stat.total_number_ratings %>)</h6>
+        <div class="star-ratings-css">
+          <div class="star-ratings-css-top" style="width: <%=(@product.wholesaler.wholesaler_stat.rating/5)*100%>%"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+          <div class="star-ratings-css-bottom"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
+        </div>
+      </div>
+      <div class="row">
+        <h6 class='bold'>Return Policy:</h6>
+        <h6><%= @product.wholesaler.return_policy.policy %></h6>
+        <h6><%= @product.wholesaler.return_policy.description %></h6>
+      </div>
+      <div class="row">
+        <h6 class='bold'>Shipping:</h6>
+        <% if @product.wholesaler.wholesaler_stat.total_shipments > 0 %>
+          <h6>Average out for shipping time: <%= @product.wholesaler.wholesaler_stat.average_shipping %></h6>
+        <% end %>
+        <% if !@product.wholesaler.shipping_policy.nil? %>
+          <h6>Shipping Policy: <%= @product.wholesaler.shipping_policy %></h6>
+        <% end %>
       </div>
     </div>
 

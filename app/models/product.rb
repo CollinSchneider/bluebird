@@ -3,6 +3,7 @@ class Product < ActiveRecord::Base
   after_create :make_slug_and_uuid
 
   belongs_to :wholesaler
+  belongs_to :return_policy
 
   has_many :commits
   has_many :purchase_orders, through: :commits

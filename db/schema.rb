@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161027013845) do
+ActiveRecord::Schema.define(version: 20161028165632) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -151,6 +151,7 @@ ActiveRecord::Schema.define(version: 20161027013845) do
     t.string   "short_description"
     t.float    "percent_discount"
     t.float    "current_sales_with_fees"
+    t.integer  "return_policy_id"
   end
 
   create_table "purchase_orders", force: :cascade do |t|
@@ -185,6 +186,14 @@ ActiveRecord::Schema.define(version: 20161027013845) do
   end
 
   add_index "retailers", ["user_id"], name: "index_retailers_on_user_id", using: :btree
+
+  create_table "return_policies", force: :cascade do |t|
+    t.string   "policy"
+    t.string   "policy_key"
+    t.string   "description"
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
 
   create_table "sales", force: :cascade do |t|
     t.integer  "commit_id"
@@ -267,6 +276,15 @@ ActiveRecord::Schema.define(version: 20161027013845) do
     t.boolean  "approved",                  default: false
   end
 
+  create_table "wholesaler_stats", force: :cascade do |t|
+    t.integer  "total_number_ratings",      default: 0
+    t.integer  "total_rating",              default: 0
+    t.integer  "total_shipping_difference", default: 0
+    t.integer  "total_shipments",           default: 0
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
+  end
+
   create_table "wholesalers", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "stripe_id"
@@ -274,6 +292,9 @@ ActiveRecord::Schema.define(version: 20161027013845) do
     t.datetime "updated_at",                       null: false
     t.integer  "total_rating",         default: 0
     t.integer  "total_number_ratings", default: 0
+    t.integer  "return_policy_id"
+    t.integer  "wholesaler_stat_id"
+    t.string   "shipping_policy"
   end
 
   add_index "wholesalers", ["user_id"], name: "index_wholesalers_on_user_id", using: :btree

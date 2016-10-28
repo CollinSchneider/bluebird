@@ -10,9 +10,9 @@
       <div class="row">
         <h5>This product did not reach the discounted price, we are now waiting for the wholesaler to either:</h5>
         <ul>
-          <li>Grant the discount of <%= number_to_currency(@order.product.price_with_fee) %> and proceed with the sale</li>
-          <li>Extend the product 10 more days, in hopes of reaching the discount (your purchase order will continue as planned)</li>
-          <li>Expire the product, in which case you will have the opportunity to purchase for <%= number_to_currency(@order.product.price) %></li>
+          <li>Grant the discounted price and proceed with the sale.</li>
+          <li>Extend the product 10 more days, in hopes of reaching the discount (your purchase order will continue as planned).</li>
+          <li>Expire the product, in which case you will have the opportunity to purchase for normal wholesale price.</li>
         </ul>
       </div>
     <% end %>

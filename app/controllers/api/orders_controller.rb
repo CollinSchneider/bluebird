@@ -184,10 +184,17 @@ class Api::OrdersController < ApiController
       flash[:error] = "If you're rating is less than 4, you must leave a substantial comment."
       return redirect_to request.referrer
     end
-    wholesaler = rating.sale.commit.wholesaler
-    wholesaler.total_number_ratings += 1
-    wholesaler.total_rating += rate
-    wholesaler.save!
+    if rating.sale.commit.wholesaler.wholesaler_stat.nil?
+      stat = WholesalerStat.new
+      stat.save!
+      whole = rating.sale.commit.wholesaler
+      whole = stat.id
+      whole.save!
+    end
+    wholesaler_stat = rating.sale.commit.wholesaler.wholesaler_stat
+    wholesaler_stat.total_number_ratings += 1
+    wholesaler_stat.total_rating += rate
+    wholesaler_stat.save!
     rating.rating = rate
     rating.comment = comment
     rating.save!

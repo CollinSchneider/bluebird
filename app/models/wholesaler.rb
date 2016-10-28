@@ -1,6 +1,8 @@
 class Wholesaler < ActiveRecord::Base
 
   belongs_to :user
+  belongs_to :return_policy
+  belongs_to :wholesaler_stat
 
   has_many :products
   has_many :commits
@@ -8,6 +10,7 @@ class Wholesaler < ActiveRecord::Base
   has_many :sales
   has_many :ratings, through: :sales
   has_many :shippings
+
 
   # before_create(on: :save) do
   #   self.approved = false

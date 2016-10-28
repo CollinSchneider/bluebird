@@ -5,11 +5,11 @@
         items = {
           'Profile' => '/wholesaler/profile',
           'Sell' => '/new_product',
-          'Company' => '/wholesaler/company',
+          'Company Info' => '/wholesaler/company',
           'Current Sales' => '/current_sales',
           'Past Products' => '/past_products',
           # 'Analytics' => '/analytics',
-          'Settings' => '/wholesaler/settings',
+          'Account Settings' => '/wholesaler/settings',
         }
         items.each do |name, url|
           liclass = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'

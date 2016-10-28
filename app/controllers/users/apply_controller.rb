@@ -23,30 +23,16 @@ class Users::ApplyController < UsersController
       if user.save
         @company.user_id = user.id
         @company.save(validate: false)
+        stat = WholesalerStat.new
+        stat.save!
         wholesaler = Wholesaler.new
         wholesaler.user_id = user.id
+        wholesaler.wholesaler_stat = stat
         wholesaler.save!
         BlueBirdEmail.new_application(user)
         return redirect_to "/thank_you?_user=#{user.first_name}"
       else
         flash[:error] = user.errors.full_messages
-        return redirect_to request.referrer
-      end
-    end
-  end
-
-  def step3
-    redirect_to '/apply/step1' if params[:uuid].nil?
-    @user = User.find_by_uuid(params[:uuid])
-    if request.post?
-      @user.update(user_params)
-      if @user.save
-        wholesaler = Wholesaler.new
-        wholesaler.user_id = @user.id
-        wholesaler.save
-        return redirect_to "/thank_you?_user=#{@user.first_name}"
-      else
-        flash[:error] = @user.errors.full_messages
         return redirect_to request.referrer
       end
     end

@@ -7,6 +7,11 @@ class CompaniesController < ApplicationController
       # og_logo = company.logo
       company.update(company_params)
       company.save(validate: false)
+      if company.user.wholesaler.return_policy_id != params[:return_policy].to_i || company.user.wholesaler.shipping_policy != params[:shipping_policy]
+        company.user.wholesaler.shipping_policy = params[:shipping_policy]
+        company.user.wholesaler.return_policy_id = params[:return_policy]
+        company.user.wholesaler.save(validate: false)
+      end
       flash[:success] = "Company updated!"
       return redirect_to request.referrer
     end
