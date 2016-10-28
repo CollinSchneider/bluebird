@@ -6,7 +6,7 @@ class WelcomeController < ApplicationController
     if params[:products] == 'discounted'
       @products = Product.where('status = ? AND end_time > ? AND CAST(current_sales AS decimal) >= CAST(products.goal AS decimal)', 'live', Time.current).page(params[:page]).per_page(6)
     elsif params[:query]
-      @products = Product.queried_products.(params[:query]).page(params[:page]).per_page(6)
+      @products = Product.queried_products(params[:query]).page(params[:page]).per_page(6)
     elsif params[:products] == 'percent_off'
       @products = Product.where('status = ? AND end_time > ?', 'live', Time.current).order(percent_discount: :desc).page(params[:page]).per_page(6)
     # TODO: NEED SQL JOIN TO PULL AVERAGE SKU PRICE

@@ -17,7 +17,7 @@
           At this point you have a few choices:
         </h6>
         <ul>
-          <li><a href="https://www.bluebird.club/uesrs?redirect=/needs_attention">Grant the discount of $<%= @product.discount %>, and receive $<%= @product.current_sales %> in sales</a></li>
+          <li><a href="https://www.bluebird.club/uesrs?redirect=/needs_attention">Grant the discounted price anyway and receive <%= number_to_currency(@product.current_sales) %> in sales</a></li>
           <li><a href="https://www.bluebird.club/users?redirect=/needs_attention">Extend the product 10 more days</a></li>
           <li><a href="https://www.bluebird.club/users?redirect=/needs_attention">Expire the product, receive no sales</a></li>
         </ul>
