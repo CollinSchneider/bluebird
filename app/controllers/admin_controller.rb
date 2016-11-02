@@ -4,20 +4,24 @@ class AdminController < ApplicationController
   layout 'admin'
 
   def wholesalers
+    @title = "Pending Wholesalers"
     @admin = current_user.admin
     @applications = Wholesaler.where('user_id in (select id from users where approved != ?)', true)
   end
 
   def retailers
+    @title = "Pending Retailers"
     @admin = current_user.admin
     @applications = Retailer.where('user_id in (select id from users where approved != ?)', true)
   end
 
   def feature_products
+    @title = "Feature Products"
     @products = Product.where('status = ? AND end_time > ?', 'live', Time.current)
   end
 
   def unshipped
+    @title = "Unshipped Orders"
     orders = Commit.where("sale_made = 't' AND has_shipped = 'f' AND refunded = 'f'")
     if params[:query]
       @orders = orders.where('uuid = ?', params[:query]).order(updated_at: :asc)

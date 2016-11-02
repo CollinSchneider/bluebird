@@ -1,0 +1,47 @@
+<div class="row">
+  <% if current_user.nil? %>
+    <%= render partial: 'partials/signed_out_nav' %>
+  <% else %>
+    <% render partial: 'partials/nav' %>
+  <% end %>
+</div>
+
+<div class="row center-align">
+
+  <h5>Contact BlueBird.club</h5>
+  <h6>Questions? Comments? Concerns? Reach out here.</h6>
+
+  <div class="col s8 m6 offset-s2 offset-m3">
+    <%= form_tag('') do %>
+      <% if current_user.nil? %>
+        <input type="text" name="name" class='name full-box-input' placeholder="Name" required>
+        <input type="email" name="email" class='email full-box-input' placeholder='Email' required>
+      <% end %>
+      <textarea name="message" rows="20" cols="40" class='message full-box-input' placeholder="Message" required></textarea>
+      <h6 class='success green-text bold'></h6>
+      <input class='btn' type="submit" value="Send Message">
+    <% end %>
+  </div>
+</div>
+
+<script>
+  $('form').submit(function(e){
+    e.preventDefault()
+    var email = $(this).find('.email').val()
+    var name = $(this).find('.name').val()
+    var message = $(this).find('.message').val()
+    $(this).find('.btn').prop('disabled', true)
+    $('.success').text()
+    $.ajax({
+      method: 'POST',
+      url: '/contact?email='+email+'&name='+name+'&message='+message,
+      success: function(){
+        $('.success').text("Thanks for reaching out, we'll get back to your shortly!")
+        $('.btn').prop('disabled', false)
+        $('.message').val(null)
+        $('.email').val(null)
+        $('.name').val(null)
+      }
+    })
+  })
+</script>

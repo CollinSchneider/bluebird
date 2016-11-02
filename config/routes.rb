@@ -144,7 +144,6 @@ Rails.application.routes.draw do
   get '/about' => 'users#about'
   get '/faq' => 'users#faq'
   get '/why_bluebird' => 'users#why'
-  # get '/about' => 'users#how'
   get '/apply' => redirect('/users/apply/step1')
   get '/apply/:action' => 'users/apply'
   post '/apply/:action' => 'users/apply'
@@ -153,6 +152,8 @@ Rails.application.routes.draw do
   post '/signup/:action' => 'users/signup'
   get '/thank_you' => 'users#thank_you'
   get '/choose' => 'users#choose'
+  get '/contact' => 'users#contact'
+  post '/contact' => 'users#contact'
 
   # You can have the root of your site routed with "root"
   # root 'welcome#index'

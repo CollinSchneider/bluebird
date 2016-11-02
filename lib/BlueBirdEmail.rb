@@ -6,6 +6,7 @@ class BlueBirdEmail
   COLLIN_EMAIL = "collin@bluebird.club"
   SALES_EMAIL = "sales@bluebird.club"
   SUPPORT_EMAIL = "support@bluebird.club"
+  ADMIN_EMAIL = "admin@bluebird.club"
 
   def self.send_email(from_email, to_email, subject, content)
     email = SendGrid::Mail.new
@@ -32,6 +33,18 @@ class BlueBirdEmail
       }
     )
     self.send_email('application@bluebird.club', COLLIN_EMAIL, 'NEW BLUEBIRD APPLICATION', content)
+  end
+
+  def self.contact_email(name, email, message)
+    controller = ActionController::Base.new()
+    content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/contact_email.html.erb',
+      :locals => {
+        :@name => name,
+        :@email => email,
+        :@message => message
+      }
+    )
+    self.send_email('contact_email@bluebird.club', ADMIN_EMAIL, "New Contact Email", content)
   end
 
   def self.retailer_welcome_email(user)

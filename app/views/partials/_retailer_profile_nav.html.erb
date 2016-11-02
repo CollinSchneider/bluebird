@@ -8,7 +8,8 @@
           'Last Chance' => '/retailer/last_chance',
           'Manage Payments' => '/retailer/accounts',
           'Shipping Addresses' => '/retailer/shipping_addresses',
-          'Settings' => '/retailer/settings'
+          'Settings' => '/retailer/settings',
+          'Contact BlueBird' => '/contact'
         }
         items.each do |name, url|
           liclass = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'

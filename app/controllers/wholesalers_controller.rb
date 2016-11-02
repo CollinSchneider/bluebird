@@ -59,6 +59,7 @@ class WholesalersController < ApplicationController
       @products = current_user.wholesaler.products.where('status = ?', 'live'
         ).order(end_time: :asc).page(params[:page]).per_page(6)
     end
+    @title = "Current Sales"
   end
 
   def past_products
@@ -69,6 +70,7 @@ class WholesalersController < ApplicationController
     else
       @products = current_user.wholesaler.products.where('status != ? AND status != ?', 'live', 'needs_attention').order(end_time: :desc).page(params[:page]).per_page(6)
     end
+    @title = "Past Products"
   end
 
   def needs_attention
@@ -94,6 +96,7 @@ class WholesalersController < ApplicationController
   def company
     @wholesaler = current_user.wholesaler
     @company = current_user.company
+    @title = @company.company_name
     if request.put?
       #
     end

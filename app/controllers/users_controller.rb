@@ -14,6 +14,18 @@ class UsersController < ApplicationController
     @user = User.find_by_password_reset_token(params[:token])
   end
 
+  def contact
+    if request.post?
+      from_email = params[:email]
+      name = params[:name]
+      message = params[:message]
+      from_email = from_email == "undefined" ? current_user.email : from_email
+      name = name == "undefined" ? current_user.full_name : name
+      BlueBirdEmail.contact_email(name, from_email, message)
+      render :json => {success: true}
+    end
+  end
+
   def password_reset
     @user = User.find(params[:id])
     @user.update(user_params)

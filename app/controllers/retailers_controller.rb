@@ -12,6 +12,7 @@ class RetailersController < ApplicationController
 
   def order
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
+    @title = "#{@product.title} Order"
     return redirect_to "/shop" if @product.nil?
     @commit = current_user.retailer.commits.find_by(:product_id => @product.id)
   end
@@ -49,10 +50,12 @@ class RetailersController < ApplicationController
     else
       @past_orders = current_user.retailer.commits.order(created_at: :desc).page(params[:page]).per_page(9)
     end
+    @title = "Past Orders"
   end
 
   def show_order_history
     @order = Commit.find_by(:id => params[:id])
+    @title = "#{@order.product.title} Order"
     return redirect_to "/shop" if @order.nil?
     return redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
@@ -62,11 +65,13 @@ class RetailersController < ApplicationController
 
   def show_order_not_reached
     @order = Commit.find(params[:id])
+    @title = "#{@order.product.title} Order"
     return redirect_to "/retailer/order_history" if (@order.status != 'pending' && @order.status != 'past') || (@order.retailer_id != current_user.retailer.id)
   end
 
   def show_order_sale_made
     @order = Commit.find(params[:id])
+    @title = "#{@order.product.title} Order"
     return redirect_to "/retailer/order_history" if !@order.sale_made || @order.retailer_id != current_user.retailer.id
     if !@order.shipping.nil?
       EasyPost.api_key = ENV['EASYPOST_API_KEY']
@@ -80,6 +85,7 @@ class RetailersController < ApplicationController
     if @stripe_customer.default_source
       @default_card = @stripe_customer.sources.retrieve(@stripe_customer.default_source)
     end
+    @title = "Manage Account"
   end
 
   def change_password

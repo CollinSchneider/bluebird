@@ -3,6 +3,7 @@ class ProductsController < ApplicationController
 
   def show
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
+    @title = @product.title
     return redirect_to '/shop' if @product.nil?
     if @product.end_time < Time.current && !@product.is_users?(current_user)
       Product.expire_products
@@ -52,6 +53,7 @@ class ProductsController < ApplicationController
     else
       @products = Product.where('status = ? AND category = ?', 'live', params[:category]).page(params[:page]).per_page(6)
     end
+    @title = params[:category].capitalize
   end
 
   def destroy
@@ -82,6 +84,7 @@ class ProductsController < ApplicationController
     else
       @products = Product.where('status = ? AND end_time > ? AND featured = ?', 'live', Time.current, true).page(params[:page]).per_page(6)
     end
+    @title = "BlueBird's Favorite"
   end
 
   private

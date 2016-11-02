@@ -333,7 +333,7 @@ class Product < ActiveRecord::Base
         product.status = 'goal_met'
         product.save(validate: false)
         BlueBirdEmail.wholesaler_discount_hit(product.wholesaler.user, product)
-        product.commits.each do |commit|
+        product.commits.where('status = ?', 'live').each do |commit|
           commit.status = 'goal_met'
           commit.sale_made = true
           commit.save(validate: false)
@@ -356,25 +356,6 @@ class Product < ActiveRecord::Base
       end
     end
     return goal_met_products, needs_attention_products
-  end
-
-  # VALIDATIONS
-  def enough_inventory_for_sale
-    if self.goal.to_f > self.discount.to_f*self.quantity.to_f
-      errors.add(:error, ": Your sales goal is not attainable with your current discount price and inventory selling.")
-    end
-  end
-
-  def retail_price_is_more
-    if self.retail_price.to_f < self.price.to_f
-      errors.add(:error, ": Your retail price must be higher than your full wholesale price.")
-    end
-  end
-
-  def discount_price_is_lower
-    if self.discount.to_f >= self.price.to_f
-      errors.add(:error, ": Your discounted wholesale price must be lower than your full wholesale price.")
-    end
   end
 
 end
