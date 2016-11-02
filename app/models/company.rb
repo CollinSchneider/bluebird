@@ -5,7 +5,7 @@ class Company < ActiveRecord::Base
 
   belongs_to :user
 
-  has_attached_file :logo, styles: {large: "600x300!", medium: "400x200!", thumb: "300x150!" }, :s3_protocol => 'https'
+  has_attached_file :logo, styles: {large: "600x400", medium: "450x300", thumb: "300x200" }, :s3_protocol => 'https'
   validates_attachment_content_type :logo, content_type: /\Aimage\/.*\Z/
 
   before_create(on: :save) do

@@ -15,6 +15,14 @@
 
   <div class="col s12 m8 offset-m3 center-align order-box z-depth-2">
     <div class="row">
+      <button class='btn' onclick="copyToClipboard()">Embed your BlueBird store link to your site!</button>
+      <script>
+        function copyToClipboard() {
+          window.prompt("Copy to clipboard: Ctrl+C, Enter", "https://www.bluebird.club/company/<%=@company.id%>/<%=@company.company_key%>");
+        }
+      </script>
+    </div>
+    <div class="row">
       <h4><%= @company.company_name%></h4>
       <h6><a href="/company/<%= @company.id %>/<%= @company.company_key %>">View Store Front</a></h6>
     </div>
