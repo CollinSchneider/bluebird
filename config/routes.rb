@@ -157,6 +157,10 @@ Rails.application.routes.draw do
   get '/contact' => 'users#contact'
   post '/contact' => 'users#contact'
 
+
+  match "/404", :to => "errors#not_found", :via => :all
+  match "/500", :to => "errors#internal_server_error", :via => :all
+
   # You can have the root of your site routed with "root"
   # root 'welcome#index'
 
