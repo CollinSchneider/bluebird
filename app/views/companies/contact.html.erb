@@ -1,0 +1,18 @@
+<div class="row">
+
+  <div class="col s11 offset-s1">
+    <a href="/company/<%=@company.id%>/<%=@company.company_key%>" class='btn-flat white waves-effect'>< Back to <%= @company.company_name%></a>
+  </div>
+
+  <div class="row center-align">
+    <h4>Contact <%= @company.company_name %></h4>
+  </div>
+
+  <div class="row center-align col s8 offset-s2">
+    <form class="contact-company" data-company="<%=@company.id%>">
+      <textarea class='message full-box-input' rows="8" cols="40" placeholder="Message to <%=@company.company_name%>"></textarea>
+      <input type="submit" class='btn' value="Send Message">
+    </form>
+  </div>
+
+</div>

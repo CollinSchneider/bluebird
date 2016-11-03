@@ -26,9 +26,26 @@ class CompaniesController < ApplicationController
 
   def ratings
     @company = Company.find_by(:company_key => params[:key], :id => params[:id])
-    @title = "#{@company.company_name} Ratings"
     return redirect_to '/shop' if @company.nil?
+    @title = "#{@company.company_name} Ratings"
     @ratings = @company.ratings.order(created_at: :desc).page(params[:page]).per_page(6)
+  end
+
+  def contact
+    @company = Company.find_by(:company_key => params[:key], :id => params[:id])
+    return redirect_to '/shop' if @company.nil?
+    return redirect_to "/company/#{@company.id}/#{@company.company_key}" if @company.contact_email.nil? || @company.contact_email.length < 2
+    @title = "Contact #{@company.company_name}"
+
+    if request.post?
+      company = Company.find(params[:company])
+      from_email = current_user.email
+      from_name = current_user.full_name
+      to_email = company.contact_email
+      message = params[:message]
+      BlueBirdEmail.contact_company(from_email, from_name, to_email, message)
+      render :json => {success: true}
+    end
   end
 
   private

@@ -133,6 +133,8 @@ Rails.application.routes.draw do
 
   get '/company/:id/:key' => 'companies#show'
   get '/company/:id/:key/ratings' => 'companies#ratings'
+  get '/company/:id/:key/contact' => 'companies#contact'
+  post '/company/:id/:key/contact' => 'companies#contact'
 
   post '/sessions' => 'sessions#create'
   delete '/sessions' => 'sessions#destroy'

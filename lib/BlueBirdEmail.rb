@@ -47,6 +47,17 @@ class BlueBirdEmail
     self.send_email('contact_email@bluebird.club', ADMIN_EMAIL, "New Contact Email", content)
   end
 
+  def self.contact_company(from_email, from_name, to_email, message)
+    controller = ActionController::Base.new()
+    content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/contact_company.html.erb',
+      :locals => {
+        :@from_email => from_email,
+        :@from_name => from_name,
+        :@message => message
+    })
+    self.send_email('customer-request@bluebird.club', to_email, "BlueBird.club customer request", content)
+  end
+
   def self.retailer_welcome_email(user)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/retailer_welcome_email.html.erb',

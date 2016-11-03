@@ -24,7 +24,7 @@
         </p>
         <% if @company.contact_email != '' && !@company.contact_email.nil? %>
           <div class="row">
-            <h6><a href="mailto:<%=@company.contact_email%>"><i class='tiny material-icons'>email</i> <%=@company.contact_email%></a></h6>
+            <h6><a href="/company/<%=@company.id%>/<%=@company.company_key%>/contact">Contact <%= @company.company_name %></a></h6>
           </div>
         <% end %>
         <% if @company.contact_number != '' && !@company.contact_number.nil? %>
