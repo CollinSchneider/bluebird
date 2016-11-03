@@ -9,13 +9,7 @@
 </div>
 
 <div class="row no-overflow no-bottom-margin">
-  <!-- <div class="col s3 white-text center-align tab current-tab">
-    <h4>Step 1</h4>
-  </div>
-  <div class="col s3 white-text center-align back-tab">
-    <h4>Step 2</h4>
-  </div> -->
-  <div class="white-text center-align col m12 l6" style='background: lightgrey; height: 100vh'>
+  <div class="white-text center-align col m12 l6" style='background: lightgrey; min-height: calc(100vh - 60px)'>
       <h3>Retailer Application</h3>
       <%= form_tag(method: 'POST') do %>
         <div class="input-field col s12">
@@ -70,7 +64,7 @@
     <% end %>
   </div>
 
-  <div class="col l6 hide-on-med-and-down bluebird valign-wrapper white-text" style='height: 100vh'>
+  <div class="col l6 hide-on-med-and-down bluebird valign-wrapper white-text" style='min-height: calc(100vh - 60px)'>
     <h3 class='center-block'>Never pay full price again.</h3>
   </div>
 
