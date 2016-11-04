@@ -36,14 +36,12 @@
             </div>
           </a>
 
-        <div class="row">
           <% if product.is_users?(current_user) %>
-            <%= product.result %>
+            <h6><%= product.result %></h6>
           <% end %>
           <div class="<%= product.percentage["class"] %>">
             <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
           </div>
-        </div>
 
           <div class="row" style="margin-bottom: 0px">
             <div class="col s12 m6">

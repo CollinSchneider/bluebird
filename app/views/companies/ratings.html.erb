@@ -42,12 +42,17 @@
       <% end %>
     </div>
 
-  <div class="row col s12 m8" id="ratings">
-    <%= render partial: 'partials/ratings' %>
-  </div>
-
-  <div class="row col s12 center-align">
-    <%= will_paginate @ratings %>
-  </div>
+    <% if @ratings.any? %>
+      <div class="row col s12 m8" id="ratings">
+        <%= render partial: 'partials/ratings' %>
+      </div>
+      <div class="row col s12 center-align">
+        <%= will_paginate @ratings %>
+      </div>
+    <% else %>
+      <div class="center-align" style='margin-top: 50px'>
+        <h5><%= @company.company_name %> has no written ratings.</h5>
+      </div>
+    <% end %>
 
 </div>
