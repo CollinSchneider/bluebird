@@ -44,7 +44,6 @@ class Sku < ActiveRecord::Base
   end
 
   def remove_sku
-    binding.pry
     self.product_variant.skus.count
   end
 

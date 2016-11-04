@@ -2,16 +2,28 @@
 <div class="row other-products z-depth-1">
   <h5><a href="/company/<%= @product.wholesaler.user.company.id %>/<%= @product.wholesaler.user.company.company_key %>" class='black-text link'>More products from <%= @product.wholesaler.user.company.company_name %>:</a></h5>
     <% @company_products.each do |product| %>
-      <div class="col s12 m4 center-align no-padding">
-        <div class="product white">
-          <%= link_to "/products/#{product.id}/#{product.slug}" do %>
-            <div class="percent-box col s3 m1 white-text">
-              <h6><%= '%.0f' % product.percent_discount %>% discount</h6>
-            </div>
-            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+    <div class="col s12 m6 l4 center-align no-padding">
+      <div class="product hoverable">
+        <a href="/products/<%= product.id %>/<%= product.slug %>">
+          <div class="col s3 m1 white-text percent-box">
+            <h5><%= '%.0f' % (product.percent_discount_with_fee*100) %>% Off</h5>
+          </div>
+            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img main-prod-image' %>
             <div class="content-div" style='margin-bottom: 0px'>
-              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
-              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
+              <% if product.has_variants? %>
+                <div class="row variant-images border" style='display: none; margin: 2px'>
+                  <% product.product_variants.limit(3).each do |var| %>
+                    <div class="col s4">
+                      <%= image_tag var.image.url(:medium), :class => 'responsive-img sub-var-image' %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+              <h6 class="truncate no-margin"><strong><%= product.title.upcase %></strong></h6>
+              <h6 class='truncate no-margin'>From <%= product.wholesaler.user.company.company_name %></h6>
+              <% if product.featured %>
+                <!-- <span class='valign-wrapper center-block no-padding no-margin' style='margin: 0px'><img src="/images/bluebird-blue-mascot.png" style="height: 20px; display: inline-block" /> <h6 class='truncate bluebird-text' style='display: inline-block'>BlueBird Favorite!</h6></span> -->
+              <% end %>
               <h6>
                 <span class="was-price no-margin"><%= product.average_full_price %></span>
                 <span class="now-price"><strong><%= product.average_discount_price %></strong></span>
@@ -22,19 +34,23 @@
                 <%= product.short_description %>
               </p>
             </div>
-          <% end %>
+          </a>
 
-          <div class="row">
-            <div class="<%= product.percentage["class"] %>">
-              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+        <div class="row">
+          <% if product.is_users?(current_user) %>
+            <%= product.result %>
+          <% end %>
+          <div class="<%= product.percentage["class"] %>">
+            <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+          </div>
+        </div>
+
+          <div class="row" style="margin-bottom: 0px">
+            <div class="col s12 m6">
+              <h6><strong><%= '%.0f' % product.percentage["percent_to_discount"] %>%</strong><br> to discount</h6>
             </div>
-            <div class="row col s12">
-              <div class="col s6">
-                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
-              </div>
-              <div class="col s6">
-                <h6><%= product.time_to_expiration %></h6>
-              </div>
+            <div class="col s12 m6">
+              <h6><%= product.time_to_expiration %></h6>
             </div>
           </div>
 
@@ -48,16 +64,28 @@
 <div class="row other-products z-depth-1">
   <h5>Similar Products:</h5>
     <% @similar_products.each do |product| %>
-      <div class="col s12 m4 center-align no-padding">
-        <div class="product white">
-          <%= link_to "/products/#{product.id}/#{product.slug}" do %>
-            <div class="percent-box col s3 m1 white-text">
-              <h6><%= '%.0f' % product.percent_discount %>% discount</h6>
-            </div>
-            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img' %>
+    <div class="col s12 m6 l4 center-align no-padding">
+      <div class="product hoverable">
+        <a href="/products/<%= product.id %>/<%= product.slug %>">
+          <div class="col s3 m1 white-text percent-box">
+            <h5><%= '%.0f' % (product.percent_discount_with_fee*100) %>% Off</h5>
+          </div>
+            <%= image_tag product.main_image.url(:medium), :class => 'responsive-img main-prod-image' %>
             <div class="content-div" style='margin-bottom: 0px'>
-              <h6 class="truncate"><strong><%= product.title.upcase %></strong></h6>
-              <h6 class='truncate'>From <%= product.wholesaler.user.company.company_name %></h6>
+              <% if product.has_variants? %>
+                <div class="row variant-images border" style='display: none; margin: 2px'>
+                  <% product.product_variants.limit(3).each do |var| %>
+                    <div class="col s4">
+                      <%= image_tag var.image.url(:medium), :class => 'responsive-img sub-var-image' %>
+                    </div>
+                  <% end %>
+                </div>
+              <% end %>
+              <h6 class="truncate no-margin"><strong><%= product.title.upcase %></strong></h6>
+              <h6 class='truncate no-margin'>From <%= product.wholesaler.user.company.company_name %></h6>
+              <% if product.featured %>
+                <!-- <span class='valign-wrapper center-block no-padding no-margin' style='margin: 0px'><img src="/images/bluebird-blue-mascot.png" style="height: 20px; display: inline-block" /> <h6 class='truncate bluebird-text' style='display: inline-block'>BlueBird Favorite!</h6></span> -->
+              <% end %>
               <h6>
                 <span class="was-price no-margin"><%= product.average_full_price %></span>
                 <span class="now-price"><strong><%= product.average_discount_price %></strong></span>
@@ -68,19 +96,23 @@
                 <%= product.short_description %>
               </p>
             </div>
-          <% end %>
+          </a>
 
-          <div class="row">
-            <div class="<%= product.percentage["class"] %>">
-              <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+        <div class="row">
+          <% if product.is_users?(current_user) %>
+            <%= product.result %>
+          <% end %>
+          <div class="<%= product.percentage["class"] %>">
+            <span style="<%= product.percentage["progress_bar"] %>"><span></span></span>
+          </div>
+        </div>
+
+          <div class="row" style="margin-bottom: 0px">
+            <div class="col s12 m6">
+              <h6><strong><%= '%.0f' % product.percentage["percent_to_discount"] %>%</strong><br> to discount</h6>
             </div>
-            <div class="row col s12">
-              <div class="col s6">
-                <h6><%= '%.0f' % product.percentage["percent_to_discount"] %>% to discount</h6>
-              </div>
-              <div class="col s6">
-                <h6><%= product.time_to_expiration %></h6>
-              </div>
+            <div class="col s12 m6">
+              <h6><%= product.time_to_expiration %></h6>
             </div>
           </div>
 
