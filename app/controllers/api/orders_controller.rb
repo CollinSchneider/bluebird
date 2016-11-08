@@ -17,14 +17,19 @@ class Api::OrdersController < ApiController
 
     find_commit = Commit.find_by(:product_id => product.id, :retailer_id => current_user.retailer.id)
     if find_commit.nil?
-      message = create_new_commit(orders, product)
+      result = create_new_commit(orders, product)
+      return render :json => {
+        success: true,
+        message: result['message'],
+        commit: result['commit']
+      }
     else
       message = update_commit(find_commit, orders)
+      return render :json => {
+        success: true,
+        message: message
+      }
     end
-    return render :json => {
-      success: true,
-      message: message
-    }
   end
 
   def update_commit(commit, orders)
@@ -105,7 +110,10 @@ class Api::OrdersController < ApiController
     commit.product.current_sales += commit.sale_amount
     commit.product.current_sales_with_fees += commit.sale_amount_with_fees
     commit.product.save(validate: false)
-    message
+    return {
+      'message' => message,
+      'commit' => commit
+    }
   end
 
   def full_price_commit
@@ -135,7 +143,8 @@ class Api::OrdersController < ApiController
 
   def delete_purchase_order
     order = PurchaseOrder.find(params[:order])
-    if order.commit.amount - order.quantity >= order.sku.product.minimum_order
+    new_quantity = order.commit.amount - order.quantity
+    if new_quantity >= order.sku.product.minimum_order || new_quantity === 0
       order.delete_order
       flash[:success] = "#{order.sku.description} deleted."
     else

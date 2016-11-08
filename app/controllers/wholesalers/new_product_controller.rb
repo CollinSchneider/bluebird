@@ -54,7 +54,7 @@ class Wholesalers::NewProductController < WholesalersController
         sku.suggested_retail = suggested_retail
         discount = price.to_f*((100-sku.product.percent_discount.to_f)/100)
         sku.discount_price = discount
-        sku.price_with_fee = discount + ((price.to_f - discount)*Commit::BLUEBIRD_PERCENT_FEE)
+        sku.price_with_fee = (discount + ((price.to_f - discount)*Commit::BLUEBIRD_PERCENT_FEE)).round(2)
 
         if sku.save
           if params['same-inventory'] == "true" || params['same-retail'] == 'true' || params['same-wholesale'] == 'true'
@@ -64,7 +64,7 @@ class Wholesalers::NewProductController < WholesalersController
               if params['same-wholesale'] == 'true'
                 other_sku.price = price
                 other_sku.discount_price = discount
-                other_sku.price_with_fee = discount + ((price.to_f - discount)*Commit::BLUEBIRD_PERCENT_FEE)
+                other_sku.price_with_fee = (discount + ((price.to_f - discount)*Commit::BLUEBIRD_PERCENT_FEE)).round(2)
               end
               other_sku.save!
             end

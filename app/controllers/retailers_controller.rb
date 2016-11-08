@@ -15,6 +15,7 @@ class RetailersController < ApplicationController
     @title = "#{@product.title} Order"
     return redirect_to "/shop" if @product.nil?
     @commit = current_user.retailer.commits.find_by(:product_id => @product.id)
+    return redirect_to "/retailer/order_history/#{@commit.id}" if !@commit.nil?
   end
 
   def full_price_order
@@ -55,9 +56,9 @@ class RetailersController < ApplicationController
 
   def show_order_history
     @order = Commit.find_by(:id => params[:id])
-    @title = "#{@order.product.title} Order"
     return redirect_to "/shop" if @order.nil?
     return redirect_to "/retailer/pending_orders" if @order.retailer.id != current_user.retailer.id
+    @title = "#{@order.product.title} Order"
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
     @stripe_customer = Stripe::Customer.retrieve(@order.retailer.stripe_id)
     @commit_card = @stripe_customer.sources.retrieve(@order.card_id)

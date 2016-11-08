@@ -39,6 +39,7 @@ function makePurchaseOrder(form){
   form.find('.submit').prop('disabled', true)
   form.find('.submit').val('Ordering..')
   form.find('.errors').text('')
+  var edited = window.location.pathname.startsWith('/products') ? false : true
   var url = form.attr('data-full-price') == null ? '/api/orders/make_purchase_order' : '/api/orders/full_price_commit'
   form.find('.purchase-order-amount').each(function(i, input){
     if($(this).val() != "") {
@@ -54,17 +55,28 @@ function makePurchaseOrder(form){
     success: function(data){
       if(data.success == true){
         // $('.message').text(msg)
-        $('html, body').animate({
-          scrollTop: 0
-        }, 700)
-        location.reload()
+        // $('html, body').animate({
+        //   scrollTop: 0
+        // }, 700)
+        if(!edited){
+          var confirmed = $('<h5>').text('Order placed!')
+          var link = $('<a class="btn-flat waves-effect" href="/retailer/order_history/'+data.commit.id+'">').text('View/Edit Order Here')
+          var div = $('<div>')
+          div.append(confirmed)
+          div.append(link)
+          $('.new-order-content').replaceWith(div)
+        } else {
+          form.find('.submit').prop('disabled', false)
+          form.find('.submit').val(submitText)
+          form.find('.errors').append($('<h5 class="green-text">').text(data.message))
+          // location.reload()
+        }
       } else {
         form.find('.submit').prop('disabled', false)
         form.find('.submit').val(submitText)
         var msg = $('<h5 class="red-text">').text(data.message)
         form.find('.errors').append(msg)
         var offset = $('.make-purchase-order').offset().top
-        console.log(offset);
         $('html, body').animate({
           scrollTop: offset
         })
