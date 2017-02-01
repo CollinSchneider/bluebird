@@ -1,0 +1,32 @@
+<div class="row" style='border-bottom: 1px solid black'>
+  <% if sku.out_of_inventory? %>
+    <h3 style='position: relative; background: rgba(140, 140, 140, 0.5); color: white; top: 35%; text-align: center; width: 100vw'>OUT OF INVENTORY</h3>
+  <% end %>
+  <div class="col s2 offset-s1">
+    <h5><%= sku.description %></h5>
+    <%= image_tag sku.image.url(:thumb), :class => 'responsive-img' %>
+    <h6><%= sku.inventory %> in inventory</h6>
+  </div>
+  <div class="col s2">
+    <h6 class='bold'><%= number_to_currency(sku.price) %></h6>
+  </div>
+  <div class="col s2">
+    <h6 class='bold'><%= number_to_currency(sku.price_with_fee) %></h6>
+    <h6><%= number_to_currency(sku.price - sku.price_with_fee) %> off</h6>
+  </div>
+  <div class="col s2">
+    <h6 class='bold'><%= number_to_currency(sku.suggested_retail) %></h6>
+  </div>
+  <div class="col s2">
+    <% if sku.user_ordered?(current_user) || !sku.out_of_inventory? %>
+      <% order = current_user.retailer.purchase_orders.where('sku_id = ?', sku.id) %>
+      <%= f.fields_for :purchase_order do |ff| %>
+        <%= ff.number_field :amount, :class => 'full-box-input', :placeholder => 'Order Quantity' %>
+      <% end %>
+      <!-- <input type="number" class='full-box-input purchase-order-amount' data-sku="<#%= sku.id %>" placeholder="Order Amt" min="0" value="<%= order.empty? ? nil : order.first.quantity %>"> -->
+      <% if !order.empty? %>
+        <a href='/api/orders/delete_purchase_order?order=<%= order.first.id %>'><h6 class='black-text pointer'>X Remove Order</h6></a>
+      <% end %>
+    <% end %>
+  </div>
+</div>

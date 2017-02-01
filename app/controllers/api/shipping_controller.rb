@@ -7,45 +7,25 @@ class Api::ShippingController < ApiController
     city = params[:city]
     state = params[:state]
     zip = params[:zip]
-    EasyPost.api_key = ENV["EASYPOST_API_KEY"]
-    verifiable_address = EasyPost::Address.create(
-      verify: ["delivery"],
-      street1: street_one,
-      street2: street_two,
+    address = ShippingAddress.create(
+      retailer_id: current_user.retailer.id,
+      street_address_one: street_one,
+      street_address_two: street_two,
       city: city,
       state: state,
-      zip: zip,
-      country: "US"
+      zip: zip
     )
-    if verifiable_address.verifications.delivery.success
-      current_user.retailer.shipping_addresses.each do |address|
-        address.primary = false
-        address.save
+    if address.save
+      if params[:shipping_address][:set_to_order].present?
+        order = current_user.retailer.commits.find(params[:set_to_order])
+        order.shipping_address = address
+        order.save(validate: false)
       end
-      local_address = ShippingAddress.new
-      local_address.retailer_id = current_user.retailer.id
-      local_address.address_id = verifiable_address.id
-      local_address.primary = true
-      local_address.street_address_one = verifiable_address.street1
-      local_address.street_address_two = verifiable_address.street2
-      local_address.city = verifiable_address.city
-      local_address.zip =  verifiable_address.zip
-      local_address.state = verifiable_address.state
-      local_address.save
-      # return redirect_to request.referrer
-      return render :json => {
-        success: true,
-        easy_address: verifiable_address,
-        local_address: local_address
-      }
+      flash[:success] = "Address saved!"
     else
-      flash[:error] = verifiable_address.verifications.delivery.errors
-      # return redirect_to request.referrer
-      return render :json => {
-        success: false,
-        errors: verifiable_address.verifications.delivery.errors
-      }
+      flash[:error] = address.errors.full_messages.join("</br>").html_safe
     end
+    return redirect_to request.referrer
   end
 
   def create_initial_shipment

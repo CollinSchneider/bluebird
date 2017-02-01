@@ -25,12 +25,18 @@ class Retailer < ActiveRecord::Base
     return self.commits.where('product_id = ?', product_id)
   end
 
+  def live_orders
+    commits.where('status = ? or status = ?', 'live', 'pending')
+  end
+
   def primary_address
     self.shipping_addresses.where(:primary => true).first
+    # shipping_addresses.first
   end
 
   def primary_address_id
-    self.shipping_addresses.where(:primary => true).first.id
+    # self.shipping_addresses.where(:primary => true).first.id
+    shipping_addresses.first.id
   end
 
   def company

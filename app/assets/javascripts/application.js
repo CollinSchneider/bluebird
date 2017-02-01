@@ -21,7 +21,75 @@ $(document).ready(function(){
   pagination()
   mouseOvers()
   productHover()
+  exitBanner()
+  fadeOutBanner()
 })
+
+var submittedForm;
+
+function addCreditCard(){
+  $('.credit-card-form').submit(function(e){
+    e.preventDefault()
+    submittedForm = $(this)
+    var cardName = submittedForm.find($('#card-name')).val();
+    var cardNumber = submittedForm.find($('#card-number')).val();
+    var cardCvc = submittedForm.find($('#card-cvc')).val();
+    var expMonth = submittedForm.find($('#exp-month')).val();
+    var expYear = submittedForm.find($('#exp-year')).val();
+    var billingZip = submittedForm.find($('#billing-zip')).val()
+    var submitButton = submittedForm.find($('.submit'))
+    submitButton.val('Saving Card...')
+    submitButton.prop('disabled', true)
+    // console.log(cardName + ', ' + cardNumber);
+    Stripe.card.createToken({
+      // customer: stripeCustomer,
+      name: cardName,
+      number: cardNumber,
+      cvc: cardCvc,
+      exp_month: expMonth,
+      exp_year: expYear,
+      address_zip: billingZip
+    }, stripeResponseHandler);
+  })
+}
+
+function stripeResponseHandler(status, response){
+  if(response.error){
+    submittedForm.find('#payment-errors').text(response.error.message)
+    submittedForm.find('.submit').prop("disabled", false)
+    submittedForm.find('.submit').val('Add Credit Card')
+  } else {
+    var token = response.id;
+    $.ajax({
+      method: 'POST',
+      url: '/api/payments/create_credit_card?token=' + token,
+      success: function(data) {
+        if(!data.success) {
+          $('#payment-errors').text(data.error)
+          submittedForm.find('.submit').prop('disabled', false)
+          submittedForm.find('.submit').val('Add Credit Card')
+        } else {
+          location.reload()
+          // changePaymentApiCall(data.card.id)
+        }
+      }
+    })
+  }
+}
+
+function exitBanner(){
+  $('.exit-banner').click(function(){
+    $('.banner').fadeOut('slow')
+  })
+}
+
+function fadeOutBanner(){
+  if($('.banner')){
+    setTimeout(function(){
+      $('.banner').fadeOut('slow')
+    }, 10000)
+  }
+}
 
 function productHover(){
   $('.product').mouseover(function(){
@@ -94,24 +162,25 @@ function replaceWithGif(something) {
 
 function formLoad(){
   $('form').submit(function(){
-    var submitButton = $(this).find('.submit-button')
+    var form = $(this);
+    var submitButton = form.find('.submit-button');
     if(submitButton){
-      var width = submitButton.width()
-      submitButton.val('')
-      submitButton.prop('disabled', true)
-      submitButton.attr('class', 'submitted-button btn')
-      submitButton.width(width)
+      var submitBtn = form.find('.submit-button');
+      var width = submitBtn.width();
+      submitBtn.val('');
+      submitBtn.prop('disabled', true);
+      submitBtn.addClass('submitted-button');
+      submitBtn.width(width);
     }
   })
 }
 
 function buttonLoad(){
   $('.button-load').click(function(){
-    console.log('button click');
     var width = $(this).width()
     $(this).text('')
     $(this).prop('disabled', true)
-    $(this).attr('class', 'submitted-button btn')
+    $(this).addClass('submitted-button')
     $(this).width(width)
   })
 }

@@ -27,6 +27,8 @@
 </head>
 <body>
 
+<%= render partial: 'partials/flash_banners' %>
+
 <% if !current_user.nil? %>
   <%= render partial: 'partials/nav' %>
 <% end %>

@@ -11,12 +11,17 @@ class Wholesaler < ActiveRecord::Base
   has_many :ratings, through: :sales
   has_many :shippings
 
+  scope :alphabetical, -> { includes(:user).order('users.first_name') }
 
   # before_create(on: :save) do
   #   self.approved = false
   #   self.contactable_by_phone = false
   #   self.contactable_by_email = false
   # end
+
+  def pending_products
+    products.where(:status => 'needs_approval')
+  end
 
   def needs_attention?
     return !self.products.where('status = ?', 'needs_attention').empty?
@@ -38,6 +43,10 @@ class Wholesaler < ActiveRecord::Base
     return self.purchase_orders.where("(purchase_orders.sale_made = 't' or purchase_orders.full_price = 't') and purchase_orders.has_shipped = 'f' and purchase_orders.refunded = 'f' and commit_id not in (
       select commit_id from sales where card_failed = 't'
     )")
+  end
+
+  def display_rating
+    "Rating: #{wholesaler_stat.rating/5*100}% (#{wholesaler_stat.total_number_ratings})" if wholesaler_stat.total_rating > 0
   end
 
   def rating

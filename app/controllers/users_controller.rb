@@ -53,7 +53,7 @@ class UsersController < ApplicationController
       flash[:success] = "Info Updated"
       return redirect_to request.referrer
     else
-      flash[:error] = user.errors.full_messages
+      flash[:error] = user.errors.full_messages.join('</br>').html_safe
       return redirect_to request.referrer
     end
   end

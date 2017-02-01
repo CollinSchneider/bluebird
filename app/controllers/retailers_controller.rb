@@ -5,17 +5,24 @@ class RetailersController < ApplicationController
 
   def index
     return redirect_to "/retailer/#{current_user.retailer.declined_order}/card_declined" if current_user.retailer.card_declined?
+    # @product = current_user.retailer.commits.where(:status => ['live', 'pending'], :full_price => [false, nil])
     @products = Product.where("id in (
-      select product_id from commits where retailer_id = ? AND (status = ? OR status = ?) AND full_price != 't'
+      select product_id from commits where retailer_id = ? AND (status = ? OR status = ?) AND full_price = 'f'
     )", current_user.retailer.id, 'live', 'pending')
   end
 
   def order
     @product = Product.find_by(:id => params[:id], :slug => params[:slug])
     @title = "#{@product.title} Order"
-    return redirect_to "/shop" if @product.nil?
-    @commit = current_user.retailer.commits.find_by(:product_id => @product.id)
-    return redirect_to "/retailer/order_history/#{@commit.id}" if !@commit.nil?
+    if params[:edit] == 'true'
+      @commit = current_user.retailer.commits.find_by(:product_id => @product.id)
+      redirect_to "/products/#{@product.id}/#{@product.slug}/order" if @commit.nil?
+    else
+      @commit = Commit.new
+    end
+    # return redirect_to shipping_commit_path(commit.id) if !commit.nil?
+    # return redirect_to "/shop" if @product.nil?
+    # return redirect_to "/retailer/order_history/#{@commit.id}" if !@commit.nil?
   end
 
   def full_price_order
@@ -40,13 +47,13 @@ class RetailersController < ApplicationController
       slug.gsub!(' ', '-')
       slug.gsub!('?', '')
       slug.gsub!('!', '')
-      @past_orders = current_user.retailer.commits.where('uuid like ? OR product_id in (
+      @past_orders = current_user.retailer.commits.where('uuid like ? OR number like ? OR product_id in (
         select id from products where slug LIKE ? OR LOWER(short_description) LIKE ? OR LOWER(long_description) like ? OR wholesaler_id in (
           select id from wholesalers where user_id in (
             select user_id from companies where company_key LIKE ?
           )
         )
-      )', "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%"
+      )', "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%", "%#{slug}%"
       ).order(created_at: :desc).page(params[:page]).per_page(9)
     else
       @past_orders = current_user.retailer.commits.order(created_at: :desc).page(params[:page]).per_page(9)
@@ -126,6 +133,10 @@ class RetailersController < ApplicationController
         fees += fee.amount
       end
     end
+  end
+
+  def shipping_addresses
+    @new_shipping_address = ShippingAddress.new
   end
 
   def last_chance

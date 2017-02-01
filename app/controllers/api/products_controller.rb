@@ -21,7 +21,7 @@ class Api::ProductsController < ApiController
               sku.product_id = product.id
               sku.product_variant_id = var.id
               sku.code = "#{product.id}-#{var.id}-0"
-              sku.save!
+              sku.save(validate: false)
             end
           end
         elsif !product.product_variants.any?
@@ -31,7 +31,7 @@ class Api::ProductsController < ApiController
               sku.product_id = product.id
               sku.product_sizing_id = size.id
               sku.code = "#{product.id}-0-#{size.id}"
-              sku.save!
+              sku.save(validate: false)
             end
           end
         else
@@ -43,7 +43,7 @@ class Api::ProductsController < ApiController
                 sku.product_sizing_id = size.id
                 sku.product_variant_id = var.id
                 sku.code = "#{product.id}-#{var.id}-#{size.id}"
-                sku.save!
+                sku.save(validate: false)
               end
             end
           end
@@ -176,51 +176,16 @@ class Api::ProductsController < ApiController
 
   def grant_discount
     product = Product.find(params[:product_id])
-    product.status = 'discount_granted'
-    product.save
+    product.grant_discount(
+      status: 'discount_granted',
+      user: current_user
+    )
     render :json => {:product => product}
-    product.commits.each do |commit|
-      commit.status = 'discount_granted'
-      commit.sale_made = true
-      commit.purchase_orders.each do |po|
-        po.sale_made = true
-        po.save!
-      end
-      current_user.collect_payment(commit)
-      commit.save(validate: false)
-      BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, product)
-    end
   end
 
   def expire_product
     product = Product.find(params[:product_id])
-    pt = ProductToken.new
-    pt.product_id = product.id
-    pt.token = SecureRandom.uuid
-    pt.expiration_datetime = (Time.current + 7.days + 1.hour).beginning_of_hour
-    pt.save
-
-    product.skus.each do |sku|
-      sku_inventory = 0
-      sku.purchase_orders.each do |po|
-        sku_inventory += po.quantity
-      end
-      sku.inventory += sku_inventory
-    end
-
-    original_inventory = product.quantity.to_i
-    product.commits.each do |commit|
-      original_inventory += commit.amount.to_i
-      BlueBirdEmail.retailer_discount_missed(commit.retailer.user, product)
-      commit.status = 'past'
-      commit.sale_made = false
-      commit.save(validate: false)
-    end
-    product.status = 'full_price'
-    product.current_sales = 0
-    product.current_sales_with_fees = 0
-    product.quantity = original_inventory
-    product.save(validate: false)
+    product.make_full_price!
     render :json => {:product => product}
   end
 

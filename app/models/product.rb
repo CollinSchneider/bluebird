@@ -32,6 +32,68 @@ class Product < ActiveRecord::Base
   has_attached_file :photo_five, styles: {large: "600x600!", medium: "300x300!", thumb: "100x100!" }, :s3_protocol => 'https'
   validates_attachment_content_type :photo_five, content_type: /\Aimage\/.*\Z/
 
+  before_create :generate_number
+
+  scope :live_products, -> { where("status = 'live'") }
+
+  def generate_number
+    loop do
+      self.number = Util.random_string('product')
+      break if Product.find_by(:number => number).nil?
+    end
+  end
+
+  def create_product_token
+    ProductToken.create(
+      product_id: self.id,
+      token: SecureRandom.uuid,
+      expiration_datetime: (Time.current+7.days+1.hour).beginning_of_hour
+    )
+  end
+
+  def make_commit(user, amount = 0)
+    Commit.create(
+      :product_id => id,
+      :retailer_id => user.retailer.id,
+      :wholesaler_id => wholesaler_id,
+      :amount => amount
+    )
+  end
+
+  def reset_to_original_inventory
+    self.skus.each do |sku|
+      sku_inventory = 0
+      sku.purchase_orders.each do |po|
+        sku_inventory += po.quantity
+      end
+      sku.inventory += sku_inventory
+      sku.save!
+    end
+  end
+
+  def set_commit_to_past
+    self.commits.each do |commit|
+      BlueBirdEmail.retailer_discount_missed(commit.retailer.user, self)
+      commit.status = 'past'
+      commit.sale_made = false
+      commit.save(validate: false)
+    end
+  end
+
+  def zero_out_sales
+    self.status = 'full_price'
+    self.current_sales = 0
+    self.current_sales_with_fees = 0
+    self.save(validate: false)
+  end
+
+  def make_full_price!
+    self.create_product_token
+    self.reset_to_original_inventory
+    self.set_commit_to_past
+    self.zero_out_sales
+  end
+
   def make_slug_and_uuid
     self.slug = Util.slug(self.title)
     self.uuid = SecureRandom.uuid
@@ -61,55 +123,55 @@ class Product < ActiveRecord::Base
     self.save
   end
 
-  def percentage
-    percentage = ((self.current_sales/self.goal.to_f)*100)
-    if percentage >= 100
-      progress = 100
-      progress_class = 'meter striped animate col s8 offset-s2 no-padding'
+  def percent_complete
+    (current_sales/goal.to_f)*100
+  end
+
+  def progress_class
+    if percent_to_discount >= 100
+      'meter striped animate col s8 offset-s2 no-padding'
     else
-      progress = percentage
-      progress_class = 'meter col s8 offset-s2 no-padding'
+      'meter col s8 offset-s2 no-padding'
     end
-    return {
-      'progress_bar' => "width: #{progress.floor}%",
-      'percent_to_discount' => percentage.floor,
-      'class' => progress_class
-    }
+  end
+
+  def progress_bar_style
+    progress = percent_to_discount >= 100 ? 100 : percent_complete
+    return "width: #{progress.floor}%"
+  end
+
+  def percent_to_discount
+    percentage = (current_sales/goal.to_f)*100
+    return percentage
   end
 
   def percent_discount_with_fee
-    return (self.skus.first.price - self.skus.first.price_with_fee)/self.skus.first.price
+    return (skus.first.price - skus.first.price_with_fee)/skus.first.price
   end
 
   def orders_to_discount
-    if self.current_sales < self.goal
-      if self.skus_same_wholesale_price?
-        return "#{((self.goal - self.current_sales)/self.skus.first.discount_price).ceil} orders away from discount"
+    if current_sales < goal
+      if skus_same_wholesale_price?
+        return "#{((goal - current_sales)/skus.first.discount_price).ceil} orders away from discount"
       else
         discount = 0
-        self.skus.each do |sku|
+        skus.each do |sku|
           discount += sku.discount_price
         end
-        return "About #{((self.goal - self.current_sales)/(discount/self.skus.count)).ceil} orders away from discount"
+        return "About #{((goal - current_sales)/(discount/skus.count)).ceil} orders away from discount"
       end
     else
       return "Discount reached!"
     end
   end
 
-  def percent_to_discount
-    total_orders = Commit.where('product_id = ?', self.id).sum(:amount).to_i
-    percentage = ((self.total_sales/self.goal.to_f)*100)
-    return percentage
-  end
-
   def average_full_price
-    if self.skus_same_wholesale_price?
-      return "$#{'%.2f' % self.skus.first.price}"
+    if skus_same_wholesale_price?
+      return "$#{'%.2f' % skus.first.price}"
     else
       skus = 0
       price = 0
-      self.skus.each do |sku|
+      skus.each do |sku|
         skus += 1
         price += sku.price
       end
@@ -118,12 +180,12 @@ class Product < ActiveRecord::Base
   end
 
   def average_discount_price
-    if self.skus_same_wholesale_price?
-      return "$#{'%.2f' % self.skus.first.price_with_fee}"
+    if skus_same_wholesale_price?
+      return "$#{'%.2f' % skus.first.price_with_fee}"
     else
       skus = 0
       discount = 0
-      self.skus.each do |sku|
+      skus.each do |sku|
         skus += 1
         discount += sku.price_with_fee
       end
@@ -269,6 +331,28 @@ class Product < ActiveRecord::Base
 
   def full_price?
     return self.status == 'full_price'
+  end
+
+  def is_live?
+    status == 'live'
+  end
+
+  def grant_discount(args)
+    status = args[:status] || 'goal_met'
+    current_user = args[:user]
+    self.status = status
+    self.save
+    self.commits.each do |commit|
+      commit.status = 'discount_granted'
+      commit.sale_made = true
+      commit.purchase_orders.each do |po|
+        po.sale_made = true
+        po.save!
+      end
+      current_user.collect_payment(commit)
+      commit.save(validate: false)
+      BlueBirdEmail.retailer_discount_hit(commit.retailer.user, commit, self)
+    end
   end
 
   def self.queried_products(query)

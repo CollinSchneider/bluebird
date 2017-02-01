@@ -65,11 +65,25 @@ gem 'rails_12factor', group: :production
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 
+gem 'resque', :require => false
+gem 'resque_mailer'
+gem 'resque-loner'
+gem 'resque-scheduler', :require => false
+gem 'resque-retry'
+gem 'resque-cleaner', :require => false
+gem 'resque_spec', group: :test
+gem 'resque-status'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
 
   gem 'pry-rails'
+
+  gem 'rspec-rails'
+  gem 'factory_girl_rails'
+  gem 'capybara'
+  gem 'database_cleaner'
 end
 
 group :development do

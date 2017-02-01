@@ -47,14 +47,14 @@
       <h6><%= simple_format(@product.long_description) %></h6>
     </div>
     <div class="row">
-      <div class="<%= @product.percentage["class"] %>">
-        <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
+      <div class="<%= @product.progress_class%>">
+        <span style="<%= @product.progress_bar_style %>"><span></span></span>
       </div>
     </div>
 
     <div class="row">
       <div class="col s4 offset-s2">
-        <h6><strong><%= '%.0f' % @product.percentage["percent_to_discount"] %>%</strong> of goal</h6>
+        <h6><strong><%= '%.0f' % @product.percent_to_discount %>%</strong> of goal</h6>
       </div>
       <div class="col s4">
         <h6><%= @product.time_to_expiration %></h6>

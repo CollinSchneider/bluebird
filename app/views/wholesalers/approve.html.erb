@@ -1,0 +1,4 @@
+<% @products.each do |product| %>
+  <h5><%= product.title %></h5>
+  <a href="/approve_product/<%=product.id%>">Approve Me</a>
+<% end %>

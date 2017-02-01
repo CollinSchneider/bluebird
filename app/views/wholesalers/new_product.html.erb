@@ -70,11 +70,6 @@
   <div class="row center-align">
     <h5>Duration of Listing: <%= params[:duration].gsub('_', ' ') %></h5>
     <h5>Sales Goal: <%= number_to_currency(params[:goal]) %></h5>
-    <% if !flash[:error].nil? %>
-      <% flash.now[:error].each do |err| %>
-        <h6 class="red-text error-field"><i span="tiny material-icons">error_outline</i> <%= err %></h6>
-      <% end %>
-    <% end %>
     <div class="col s12">
       <%= form_tag('', multipart: true) do %>
         <input type="hidden" name="product[duration]" value="<%= params[:duration] %>">
@@ -84,6 +79,16 @@
           <div class="product-form-div z-depth-2">
 
             <h5>Describe your product.</h5>
+            <% if current_user.is_wholesaler? %>
+              <input type="hidden" name="product[wholesaler_id]" value="<%=current_user.wholesaler.id%>">
+            <% elsif current_user.is_admin? %>
+              <select name="product[wholesaler_id]" required>
+                <option selected="selected" disabled>Wholesaler*</option>
+                <% Wholesaler.alphabetical.all.each do |wholesaler| %>
+                  <option value="<%=wholesaler.id%>"><%=wholesaler.user.full_name%> - <%=wholesaler.user.company.company_name %></option>
+                <% end %>
+              </select>
+            <% end %>
             <div class="input-field">
               <label>Product Title*</label>
               <input type="text" name="product[title]" required>

@@ -1,58 +1,63 @@
 class CommitsController < ApplicationController
   before_action :redirect_if_not_retailer
+  skip_before_filter :verify_authenticity_token, :only => [:create]
 
   def create
-    if current_user.is_retailer?
-      commit = Commit.create(commit_params)
-      if commit.set_commit(current_user)
-        commit.product.quantity -= commit.amount
-        commit.product.current_sales = commit.product.current_sales.to_f + commit.amount.to_f*commit.product.discount.to_f
-        commit.product.save(validate: false)
-
-        if params[:full_price] == 't'
-          commit.full_price = true
-          commit.status = 'full_price'
-          commit.sale_made = true
-          commit.save(validate: false)
-          charge = commit.product.wholesaler.user.collect_payment(commit)
-          if !charge.nil? && !charge[1]
-            return redirect_to "/retailer/#{commit.uuid}/card_declined"
-          else
-            BlueBirdEmail.retailer_full_price_email(commit, commit.retailer.user)
-            BlueBirdEmail.wholesaler_full_price_email(commit, commit.product.wholesaler.user)
-            return redirect_to '/retailer/order_history'
-          end
-        else
-          # Not full price
-        end
-      else
-        # Didn't save
-        flash[:error] = commit.errors.full_messages
-      end
-      # return to same page if it saves or not
+    if current_user.retailer.commits.find_by(:product_id => params[:product_id])
+      raise "User already has an order for this product"
+    end
+    product = Product.find(params[:product_id])
+    total_orders = params[:quantity].values.map(&:to_f).reduce(:+)
+    if !product.minimum_order.nil? && total_orders < product.minimum_order
+      flash[:error] = "Order must be for at least #{product.minimum_order} units."
       return redirect_to request.referrer
     end
+    @commit = product.make_commit(current_user)
+    params[:quantity].each do |sku_id, quantity|
+      create_purchase_order(sku_id, quantity)
+    end
+    redirect_to shipping_commit_path(@commit.id)
   end
 
   def update
-    commit = Commit.find(params[:id])
-    if commit.retailer_id == current_user.retailer.id
-      og_quantity = commit.amount
-      og_sale_amount = commit.sale_amount
-
-      commit.update(commit_params)
-      commit_difference = commit.amount - og_quantity
-      sale_difference = commit_difference*commit.product.discount.to_f
-      commit.sale_amount = og_sale_amount.to_f + sale_difference.to_f
-      if commit.save
-        commit.product.quantity -= commit_difference
-        new_sales = commit.product.current_sales.to_f + sale_difference
-        commit.product.current_sales = new_sales
-        commit.product.save(validate: false)
-      else
-        flash[:error] = commit.errors.full_messages
+    @commit = Commit.find(params[:id])
+    product = Product.find(params[:product_id])
+    total_orders = params[:quantity].values.map(&:to_f).reduce(:+)
+    if !product.minimum_order.nil? && total_orders < product.minimum_order
+      flash[:error] = "Order must be for at least #{product.minimum_order} units."
+      return redirect_to request.referrer
+    end
+    ordered_quantity = ActiveSupport::OrderedHash[*params[:quantity].sort_by{|k,v| v.to_f}.reverse.flatten]
+    ordered_quantity.each do |sku_id, quantity|
+      if quantity.to_f > 0
+        create_or_update_purchase_order(sku_id, quantity)
+      elsif po = PurchaseOrder.find_by(:sku_id => sku_id)
+        po.delete
       end
-      return redirect_to "/products/#{commit.product.id}/#{commit.product.slug}"
+    end
+    flash[:success] = "Order updated."
+    redirect_to "/retailer/order_history/#{@commit.id}"
+  end
+
+  def create_purchase_order(sku_id, quantity)
+    sku = Sku.find(sku_id)
+    amount = sku.inventory - quantity.to_f >= 0 ? quantity.to_f : sku.inventory
+    if amount > 0
+      @commit.add_po(sku, amount)
+    end
+  end
+
+  def create_or_update_purchase_order(sku_id, quantity)
+    sku = Sku.find(sku_id)
+    amount = sku.inventory - quantity.to_f >= 0 ? quantity.to_f : sku.inventory
+    if po = PurchaseOrder.find_by(:commit_id => @commit.id, :sku_id => sku_id)
+      po.update(
+        :quantity => amount,
+        :sale_amount_with_fees => amount*sku.price_with_fee,
+        :sale_amount => amount*sku.discount_price
+      )
+    else
+      create_purchase_order(sku_id, amount)
     end
   end
 
@@ -63,6 +68,53 @@ class CommitsController < ApplicationController
       commit.destroy_commit
       return redirect_to "/products/#{product.id}/#{product.slug}"
     end
+  end
+
+  def shipping
+    @commit = Commit.find(params[:id])
+    return redirect_to '/retailer' if @commit.retailer_id != current_user.retailer.id
+    @new_shipping_address = ShippingAddress.new
+  end
+
+  def set_shipping
+    commit = Commit.find(params[:id])
+    commit.shipping_address_id = params[:shipping_address_id]
+    commit.save!
+    flash[:success] = "Address saved."
+    if params[:edit] == 'true'
+      return redirect_to "/retailer/order_history/#{commit.id}"
+    else
+      return redirect_to payment_commit_path(commit.id)
+    end
+  end
+
+  def payment
+    @commit = Commit.find(params[:id])
+    return redirect_to '/retailer' if @commit.retailer_id != current_user.retailer.id
+    return redirect_to shipping_commit_path(@commit.id) if @commit.shipping_address_id.nil?
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    @stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+  end
+
+  def set_payment
+    commit = Commit.find(params[:id])
+    commit.card_id = params[:card_id]
+    if params[:edit] == 'true'
+      return_path = "/retailer/order_history/#{commit.id}"
+    else
+      commit.status = 'live'
+      return_path = receipt_commit_path(commit.id)
+    end
+    flash[:success] = "Payment saved."
+    commit.save!
+    return redirect_to return_path
+  end
+
+  def receipt
+    @commit = Commit.find(params[:id])
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    stripe_customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+    @card = stripe_customer.sources.retrieve(@commit.card_id)
   end
 
   private

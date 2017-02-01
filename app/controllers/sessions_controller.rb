@@ -9,9 +9,11 @@ class SessionsController < ApplicationController
     elsif user && user.authenticate(params[:password])
 
       if user.approved
-        if params[:redirect_url]
+        if session[:redirect_url]
           session[:user_id] = user.id
-          return redirect_to "#{params[:redirect_url]}"
+          redirect_to "#{session[:redirect_url]}"
+          session[:redirect_url] = nil
+          return true
         end
 
         if user.is_retailer?
@@ -29,7 +31,7 @@ class SessionsController < ApplicationController
         elsif user.is_wholesaler?
           session[:user_id] = user.id
           return redirect_to '/wholesaler/profile'
-        else
+        elsif user.is_admin?
           session[:user_id] = user.id
           return redirect_to '/admin'
         end

@@ -11,6 +11,19 @@ class Sku < ActiveRecord::Base
 
   validate :retail_price_is_more
 
+  before_create :generate_number
+
+  def generate_number
+    loop do
+      self.number = Util.random_string('sku')
+      break if Sku.find_by(:number => number).nil?
+    end
+  end
+
+  def display_inventory
+    inventory < 50 ? "only #{inventory} left in stock" : nil
+  end
+
   def is_first?
     return self.product.skus.count == self.product.skus.where('price IS NULL AND suggested_retail IS NULL AND inventory IS NULL').count
   end
@@ -32,6 +45,14 @@ class Sku < ActiveRecord::Base
       return "#{self.product_variant.description} #{self.product.title}"
     else
       return "#{self.product.title}"
+    end
+  end
+
+  def savings
+    if !product.full_price?
+      price - price_with_fee
+    else
+      0
     end
   end
 

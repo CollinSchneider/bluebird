@@ -13,7 +13,7 @@ class Users::SignupController < UsersController
         BlueBirdEmail.new_application(user)
         return redirect_to "/thank_you?_user=#{user.first_name}"
       else
-        flash[:error] = user.errors.full_messages
+        flash[:error] = user.errors.full_messages.join('<br>').html_safe
         return redirect_to request.referrer
       end
     end

@@ -11,11 +11,26 @@ Rails.application.routes.draw do
   get '/products/:id/:slug' => 'products#show'
   get '/products/:id/:slug/order' => 'retailers#order'
   get '/last_chance/:token/:slug/order' => 'retailers#full_price_order'
-  resources :commits
+  resources :commits do
+    member do
+      get '/shipping' => 'commits#shipping'
+      post '/set_shipping' => 'commits#set_shipping'
+      get '/payment' => 'commits#payment'
+      post '/set_payment' => 'commits#set_payment'
+      get '/receipt' => 'commits#receipt'
+    end
+  end
   resources :wholesalers
   resources :retailers
   resources :companies
   resources :ratings
+  resources :shippings
+  resources :purchase_orders
+  resources :shipping_addresses do
+    member do
+      post '/make_primary' => 'shipping_addresses#make_primary'
+    end
+  end
 
                   #///////////////////#
                   #     API ROUTES    #
@@ -49,6 +64,7 @@ Rails.application.routes.draw do
               # WHOLESALER ROUTES #
               #///////////////////#
   get '/wholesaler' => redirect('/wholesaler/profile')
+  get '/wholesaler/approve' => 'wholesalers#approve'
   get '/wholesaler/profile' => 'wholesalers#profile'
   get '/wholesaler/accounts' => 'wholesalers#accounts'
   get '/wholesaler/company' => 'wholesalers#company'

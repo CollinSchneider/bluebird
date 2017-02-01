@@ -5,7 +5,9 @@
       <div class="row">
         <h4>*This product is not yet live. If you like the way things look, go ahead and launch the product</h4>
         <!-- <h6>You would have to sell <#%= (@product.goal.to_f/@product.discount.to_f).ceil %> units to reach your goal.</h6> -->
-        <a href="/fix_product/<%= @product.uuid %>" class='btn-flat waves-effect black-text'>Edit Product</a>
+        <% if current_user.is_admin? %>
+          <a href="/fix_product/<%= @product.uuid %>" class='btn-flat waves-effect black-text'>Edit Product</a>
+        <% end %>
       </div>
     </div>
     <div class="row center-align">
@@ -154,10 +156,12 @@
         <div class="col s2">
           <h5><%= number_to_currency(sku.suggested_retail) %></h5>
         </div>
-        <div class="col s2 center-align">
-          <a href="/new_product_skus?product=<%=@product.uuid%>&sku=<%=sku.id%>&edit=t" class='btn-flat waves-effect'>EDIT</a>
-          <a class='btn-flat waves-effect remove-sku' data-sku="<%=sku.id%>">Remove SKU</a>
-        </div>
+        <% if current_user.is_admin? %>
+          <div class="col s2 center-align">
+            <a href="/new_product_skus?product=<%=@product.uuid%>&sku=<%=sku.id%>&edit=t" class='btn-flat waves-effect'>EDIT</a>
+            <a class='btn-flat waves-effect remove-sku' data-sku="<%=sku.id%>">Remove SKU</a>
+          </div>
+        <% end %>
       </div>
     <% end %>
     <div class="right-align">

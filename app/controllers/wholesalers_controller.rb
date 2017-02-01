@@ -5,12 +5,12 @@ class WholesalersController < ApplicationController
 
   def approve_product
     @product = Product.find(params[:id])
-    redirect_to "/wholesaler/profile" if @product.wholesaler_id != current_user.wholesaler.id
+    redirect_to "/wholesaler/profile" if !current_user.is_admin? && @product.wholesaler_id != current_user.wholesaler.id
   end
 
   def fix_product
     @product = Product.find_by(:uuid => params[:uuid])
-    return redirect_to "/wholesaler/profile" if @product.nil? || @product.wholesaler_id != current_user.wholesaler.id
+    return redirect_to "/wholesaler/profile" if @product.nil? || (!current_user.is_admin? && @product.wholesaler_id != current_user.wholesaler.id)
 
     if request.post?
       product = Product.find_by(:uuid => params[:uuid])
@@ -35,6 +35,7 @@ class WholesalersController < ApplicationController
     if request.put?
       @product = Product.find(params[:id])
       @product.set_product_start_data
+      flash[:success] = "Product now live!"
       return redirect_to "/products/#{@product.id}/#{@product.slug}"
     end
   end
@@ -102,11 +103,16 @@ class WholesalersController < ApplicationController
     end
   end
 
+  def approve
+    @products = current_user.wholesaler.pending_products
+  end
+
   def needs_shipping
     return redirect_to '/wholesaler' if !current_user.wholesaler.orders_to_ship.any?
     @retailer_orders = Retailer.all.where("id in (
       select retailer_id from commits where wholesaler_id = ? AND has_shipped = 'f' AND refunded = 'f'
     )", current_user.wholesaler.id)
+    @pos_to_ship = current_user.wholesaler.orders_to_ship
     # product_array = current_user.wholesaler.products.where('status = ? OR status = ? OR status = ?', 'goal_met', 'discount_granted', 'full_price').pluck(:id).to_a
     # @need_to_ship = Commit.where('product_id in (?) AND shipping_id IS NULL AND card_declined != ?', product_array, true)
 
