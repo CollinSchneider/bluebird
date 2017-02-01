@@ -29,14 +29,14 @@
       <% if order.shipping.nil? %>
         <h6>Order not yet out for shipping, we will update you with the info once it is shipped.</h6>
       <% else %>
-        <%
+        <!-- <#%
         EasyPost.api_key = ENV['EASYPOST_API_KEY']
         shipping_info = EasyPost::Tracker.retrieve(order.shipping.tracking_id)
-        %>
+        %> -->
         <h6>Shipping Cost: <%= number_to_currency(order.shipping.shipping_amount) %></h6>
-        <h6>Tracking Number: <%= shipping_info.tracking_code %></h6>
-        <h6>Estimated Arrival: <%= DateTime.parse(shipping_info.est_delivery_date).strftime('%B %d, %Y') %></h6>
-        <h6><a href="<%= shipping_info.public_url %>" target="_blank">Track Shipment</a>
+        <h6>Tracking Number: <%= order.shipping.tracking_number %></h6>
+        <!-- <h6>Estimated Arrival: <#%= DateTime.parse(shipping_info.est_delivery_date).strftime('%B %d, %Y') %></h6> -->
+        <h6><a href="<%= order.shipping.easypost_tracking_url %>" target="_blank">Track Shipment</a>
       <% end %>
     </div>
     <div class="col s2">

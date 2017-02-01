@@ -47,6 +47,26 @@ input
 .no-bottom-margin
   margin-bottom: 0px
 
+.error-banner, .success-banner
+  position: fixed
+  color: white
+  font-size: 18px
+  width: 100vw
+  z-index: 10000000
+  text-align: center
+  padding: 15px
+
+.error-banner
+  background: rgba(244, 73, 56, .925)
+
+.success-banner
+  background: rgba(0, 230, 85, .925)
+
+.exit-banner
+  position: absolute
+  right: 15px
+  padding: 0px 15px 0px 15px
+
 .submit-link
   background-color: transparent
   text-decoration: underline
@@ -65,17 +85,16 @@ input
   height: 100px
   width: 100px
 
-form
-  .full-box-input
-    border: 1px solid black
-    border-bottom: 1px solid black !important
-    background: white
-    color: black !important
-    border-radius: 5px
-    padding-left: 10px
-  .full-box-input:focus
-    border-bottom: 1px solid black !important
-    box-shadow: 0 0px 0 0 black !important
+.full-box-input
+  border: 1px solid black !important
+  border-bottom: 1px solid black !important
+  background: white !important
+  color: black !important
+  border-radius: 5px !important
+  padding-left: 10px !important
+.full-box-input:focus
+  border-bottom: 1px solid black !important
+  box-shadow: 0 0px 0 0 black !important
 
 .loading-gif
   width: 2rem

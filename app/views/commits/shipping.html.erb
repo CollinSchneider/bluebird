@@ -1,0 +1,64 @@
+
+<div class="row center-align" style='margin-top: 20px'>
+
+  <% if current_user.retailer.shipping_addresses.any? %>
+    <div class="col s10 offset-s1">
+      <h5>Select your shipping address</h5>
+      <table class='row'>
+        <%= form_for @commit, url: set_shipping_commit_path(@commit), method: :post do |f| %>
+          <% if params[:edit] == 'true' %>
+            <input type="hidden" name="edit" value="true">
+          <% end %>
+          <% current_user.retailer.shipping_addresses.each do |add| %>
+            <% checks = add.id == @commit.shipping_address_id ? 'checked = "checked"'.html_safe : nil %>
+            <tr class='center-align border'>
+              <td class='center-align'>
+                <p>
+                  <input type="radio" name="shipping_address_id" value="<%=add.id%>" id="address_<%=add.id%>" <%=checks%>>
+                  <label for="address_<%=add.id%>">
+                    <%= add.street_address_one %></br>
+                    <% if add.street_address_two != "" %>
+                      <%= add.street_address_two %></br>
+                    <% end %>
+                    <%= add.city %>, <%= add.state %> <%= add.zip %>
+                  </label>
+                </p>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+        <%= f.submit "Use Address", :class => 'btn' %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="col s10 offset-s1 order-box z-depth-2">
+    <h5><%= current_user.retailer.shipping_addresses.any? ? "Use New Address" : "Enter Shipping Address" %></h5>
+    <%= form_for @new_shipping_address do |f| %>
+      <%= f.hidden_field :commit_id, :value => @commit.id %>
+      <%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
+      <div class="input-field">
+        <%= f.label "Street Address One" %>
+        <%= f.text_field :street_address_one %>
+      </div>
+      <div class="input-field">
+        <%= f.label "Street Address Two" %>
+        <%= f.text_field :street_address_two %>
+      </div>
+      <div class="input-field">
+        <%= f.label "City" %>
+        <%= f.text_field :city %>
+      </div>
+      <div class="input-field">
+        <%= f.label "State" %>
+        <%= f.text_field :state %>
+      </div>
+      <div class="input-field">
+        <%= f.label "Zipcode" %>
+        <%= f.text_field :zip %>
+      </div>
+      <%= f.submit "Add Address", :class => 'btn submit-button' %>
+    <% end %>
+  </div>
+
+</div>

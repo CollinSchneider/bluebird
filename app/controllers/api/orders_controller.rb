@@ -146,11 +146,11 @@ class Api::OrdersController < ApiController
     new_quantity = order.commit.amount - order.quantity
     if new_quantity >= order.sku.product.minimum_order || new_quantity === 0
       order.delete_order
-      flash[:success] = "#{order.sku.description} deleted."
+      flash[:success] = "#{order.sku.description} order deleted."
     else
       flash[:error] = "Total order amount must be at least #{order.sku.product.minimum_order}, deleting this order would result in an order amount of #{order.commit.amount - order.quantity}, you can cancel your entire order at the bottom of this page."
     end
-    return redirect_to request.referrer
+    return redirect_to "/retailer/order_history/#{order.commit_id}"
   end
 
   def delete_commit

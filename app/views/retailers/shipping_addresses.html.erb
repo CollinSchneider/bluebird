@@ -2,71 +2,48 @@
 
   <%= render partial: 'partials/retailer_profile_nav' %>
 
-  <% if !@retailer.primary_address.nil? %>
-    <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
-      <h4><%= @retailer.user.first_name %>'s Primary Address:</h4>
-      <div class="row">
-        <h4><%= @retailer.primary_address.street_address_one.capitalize %></h4>
-        <% if @retailer.primary_address.street_address_two != '' %>
-        <h4><%= @retailer.primary_address.street_address_two.capitalize %></h4>
-        <% end %>
-        <h4><%= @retailer.primary_address.city.capitalize %>, <%= @retailer.primary_address.state %> <%= @retailer.primary_address.zip %></h4>
-      </div>
-    </div>
-  <% end %>
-
   <% if @retailer.shipping_addresses.count > 1 %>
     <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
-      <% @retailer.shipping_addresses.each_slice(2) do |slice| %>
-        <div class="row">
-          <% slice.each do |address| %>
-            <% if address.id != @retailer.primary_address.id %>
-              <div class="col s12 m6 white border">
-                <h6><%= address.street_address_one %></h6>
-                <% if address.street_address_two != '' %>
-                  <h6><%= address.street_address_two %></h6>
-                <% end %>
-                <h6><%= address.city %>, <%= address.state %> <%= address.zip %></h6>
-                <a class='pointer make-primary-address' data='<%= address.id %>'>Make Primary Address</a> <br>
-                <a class='pointer delete-address red-text' data='<%= address.id %>'>Delete Address</a>
-              </div>
-            <% end %>
+      <% @retailer.shipping_addresses.each do |address| %>
+        <div class="col s12 white border">
+          <h6><%= address.street_address_one %></h6>
+          <% if address.street_address_two != '' %>
+            <h6><%= address.street_address_two %></h6>
           <% end %>
+          <h6><%= address.city %>, <%= address.state %> <%= address.zip %></h6>
+          <!-- <#%= link_to "Make Default Address", make_primary_shipping_address_path(address.id), method: :post %></br> -->
+          <%= link_to "Delete Address", shipping_address_path(address.id), method: :delete, :class => 'red-text' %></br>
         </div>
       <% end %>
-      <div class="address-errors">
-      </div>
     </div>
   <% end %>
 
   <div class="col s12 m7 offset-m3 center-align order-box z-depth-2" style="margin-top: 50px; padding: 25px">
     <h5>Upload New Shipping Address</h5>
-    <form class="add-shipping-address">
+    <%= form_for @new_shipping_address do |f| %>
+      <%= f.hidden_field :retailer_id, :value => current_user.retailer.id %>
       <div class="input-field">
-        <label>Street Address One</label>
-        <input class="street-line-one" type="text">
-      </div>
-      <div class="input-field">
-        <label>Street Address Two</label>
-        <input class="street-line-two" type="text">
+        <%= f.label "Street Address One" %>
+        <%= f.text_field :street_address_one %>
       </div>
       <div class="input-field">
-        <label>City</label>
-        <input class="city" type="text">
+        <%= f.label "Street Address Two" %>
+        <%= f.text_field :street_address_two %>
       </div>
       <div class="input-field">
-        <label>State</label>
-        <input class="state" type="text">
+        <%= f.label "City" %>
+        <%= f.text_field :city %>
       </div>
       <div class="input-field">
-        <label>Zip</label>
-        <input class="zip" type="text">
+        <%= f.label "State" %>
+        <%= f.text_field :state %>
       </div>
-      <div class='errors-div'>
+      <div class="input-field">
+        <%= f.label "Zipcode" %>
+        <%= f.text_field :zip %>
       </div>
-      <div class="errors"></div>
-      <input class="submit-address btn" type="submit" value="Create Address">
-    </form>
+      <%= f.submit "Add Address", :class => 'btn submit-button' %>
+    <% end %>
   </div>
 
 </div>

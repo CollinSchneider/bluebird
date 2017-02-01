@@ -21,7 +21,40 @@
     <div class="border center-align col s12">
       <h4>New Shipment Info</h4>
       <div class="col s8 offset-s2">
-        <form class='set-initial-shipment'>
+        <%= form_for Shipping.new do |f| %>
+          <%= f.text_field :tracking_number, :placeholder => 'Tracking Number', :value => "EZ3000000003" %>
+          <%= f.number_field :shipping_amount, :step => '0.01', :placeholder => 'Shipping Cost' %>
+          <% @pos_to_ship.each_slice(3) do |slice| %>
+            <div class="row">
+              <% slice.each do |po| %>
+                <div class="col s12 m4">
+                  <input type="hidden" name="[po_address][address_id_<%=po.id%>]" value="<%=po.commit.shipping_address_id %>">
+                  <p class='center-align' style='display:block'>
+                    <input type="checkbox" name="[po][po_id_<%=po.id%>]" id="po_<%=po.id%>" value="<%=po.id%>">
+                    <label for="po_<%=po.id%>">
+                      <%= po.sku.product.title %></br>
+                      <%= po.sku.description %></br>
+                      <%= image_tag po.sku.image.url(:thumb), :style => 'width: 100px' %></br>
+                      <%= po.quantity %> units</br>
+                      Ship to:</br>
+                      <%= po.commit.retailer.user.full_name %></br>
+                      <%= po.commit.retailer.user.company.company_name %></br>
+                      <%= po.commit.shipping_address.street_address_one %></br>
+                      <% if po.commit.shipping_address.street_address_two != '' %>
+                      <%= po.commit.shipping_address.street_address_two %></br>
+                      <% end %>
+                      <%= po.commit.shipping_address.zip %></br>
+                      <%= po.commit.shipping_address.city %></br>
+                      <%= po.commit.shipping_address.state %></br>
+                    </label>
+                  </p>
+                </div>
+              <% end %>
+            </div>
+          <% end %>
+          <%= f.submit "Ship Package", :class => 'btn submit-button' %>
+        <% end %>
+        <!-- <form class='set-initial-shipment'>
           <div class="input-field">
             <label>Tracking Number</label>
             <input type="text" class="tracking-number" value="EZ3000000003">
@@ -32,11 +65,39 @@
           </div>
           <h6 class='red-text errors'></h6>
           <input type="submit" value="Enter Shipment Info" class='submit btn'>
-        </form>
+        </form> -->
       </div>
     </div>
 
+
   <% elsif !params[:shipment].nil? %>
+
+  <!-- <div class="available-orders">
+    <% @shipments.each_slice(3) do |slice| %>
+      <div class="row">
+        <% slice.each do |po| %>
+          <div class="col s12 m6 l4 center-align" style='padding: 10px !important'>
+            <div class='border add-order-to-shipment' data-po='<%= po.id %>' data-address='<%= po.commit.shipping_address_id %>' style='min-height: 500px'>
+              <h5><%= po.sku.product.title %></h5>
+              <h6><%= po.sku.description %></h6>
+              <%= image_tag po.sku.image.url(:medium), :class => 'responsive-img' %>
+              <h6 class='bold'><%= po.quantity %> orders</h6>
+              <h6>Ship to:</h6>
+              <h6><%= po.commit.retailer.user.full_name %></h6>
+              <h6><%= po.commit.retailer.user.company.company_name %></h6>
+              <h6><%= po.commit.shipping_address.street_address_one %></h6>
+              <% if po.commit.shipping_address.street_address_two %>
+                <h6><%= po.commit.shipping_address.street_address_two %></h6>
+              <% end %>
+              <h6><%= po.commit.shipping_address.zip %></h6>
+              <h6><%= po.commit.shipping_address.city %></h6>
+              <h6><%= po.commit.shipping_address.state %></h6>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div> -->
 
   <div class="border col s12 center-align">
     <% if @shipment.stripe_charge_id.nil? %>

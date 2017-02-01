@@ -5,9 +5,6 @@
       <a href="/products/<%=@product.id%>/<%=@product.slug%>">Back to <%= @product.title%></a>
     </div>
     <h4><%= @product.title %> Purchase Order</h4>
-    <h6><%= flash[:notice] %></h6>
-    <h6 class='green-text'><%= flash[:success] %></h6>
-    <h6 class='red-text'><%= flash[:error] %></h6>
     <h3>Product Current Sales: <%= number_to_currency(@product.current_sales) %></h3>
     <h3>Product Current Sales With Fees: <%= number_to_currency(@product.current_sales_with_fees) %></h3>
     <% commit = current_user.retailer.commits.find_by(:product_id => @product.id) %>

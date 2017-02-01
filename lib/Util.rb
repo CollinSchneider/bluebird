@@ -12,13 +12,17 @@ class Util
     return slug
   end
 
-  def generate_token
+  def self.random_string(length = 5, type)
+    "#{type}_#{SecureRandom.hex(length)}"
+  end
+
+  def self.generate_token
     return SecureRandom.uuid
   end
 
   def self.current_environment
     return "http://localhost:3000" if Rails.env == "development"
-    return "https://www..bluebird.club" if Rails.env == "production"
+    return "https://www.bluebird.club" if Rails.env == "production"
     return "https://bluebirdclub-testing.herokuapp.com" if Rails.env == "testing"
   end
 

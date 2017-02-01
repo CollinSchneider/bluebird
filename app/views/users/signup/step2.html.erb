@@ -19,13 +19,6 @@
     <div class="col s12">
       <div class="row col s8 offset-s2">
         <%= form_tag do |f| %>
-          <% if !flash[:error].nil? %>
-            <% flash[:error].each do |err, msg| %>
-              <div class="row">
-                <h6 class='red-text'><%= err %> <%= msg %></h6>
-              </div>
-            <% end %>
-          <% end %>
           <input type="hidden" name="uuid" value="<%= params[:uuid] %>">
           <div class="row">
             <div class="col s6">

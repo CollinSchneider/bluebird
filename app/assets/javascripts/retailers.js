@@ -26,10 +26,10 @@ $(document).ready(function(){
   $('.make-primary-address').click(function(button){
     makePrimaryAddress(button)
   })
-  $('.make-purchase-order').submit(function(e){
-    e.preventDefault()
-    makePurchaseOrder($(this))
-  })
+  // $('.make-purchase-order').submit(function(e){
+  //   e.preventDefault()
+  //   makePurchaseOrder($(this))
+  // })
 })
 
 function makePurchaseOrder(form){

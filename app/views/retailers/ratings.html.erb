@@ -5,7 +5,6 @@
 
   <div class="center-align col s12 m8 offset-m3">
     <h4>Leave a rating for some of your past orders.</h4>
-    <h5 class='red-text'><%= flash[:error] %></h5>
 
     <% current_user.retailer.pending_ratings.each do |rating| %>
       <div class="order-box z-depth-2 row">
@@ -17,7 +16,12 @@
           <h5><%= rating.sale.commit.product.title %></h5>
           <h6>Seller: <%= rating.sale.commit.wholesaler.user.company.company_name %></h6>
           <h6>Sale closed on <%= rating.sale.commit.product.end_time.strftime('%b %d, %Y') %></h6>
-          <h6><%= rating.sale.commit.product.short_description %></h6>
+          <h6>You bought:</h6>
+          <ul class='col s12 m6 offset-m3'>
+            <% rating.sale.commit.purchase_orders.each do |po| %>
+              <li style="list-style-type: square;"><%= po.quantity %> <%= po.sku.description.pluralize %></li>
+            <% end %>
+          </ul>
           <%= form_tag("/api/orders/submit_rating?id=#{rating.id}") do %>
             <p class="range-field">
               <input type="range" name='rating' min="0" max="5" value="5" />

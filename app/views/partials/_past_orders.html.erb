@@ -1,32 +1,34 @@
-
-  <% @past_orders.each do |order| %>
-    <% if order.status == 'live' %>
-      <% link = "/products/#{order.product.id}/#{order.product.slug}" %>
-    <% elsif order.status == 'past' || order.status == 'pending' %>
-      <% link = "/retailer/order_history/not_reached/#{order.id}" %>
-    <% elsif order.sale_made %>
+<table class='centered highlight'>
+  <thead>
+    <tr>
+      <th>Order Number</th>
+      <th>Product</th>
+      <th>Total</th>
+      <th>Vendor</th>
+      <th>Result</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @past_orders.each do |order| %>
+      <% if order.status == 'live' %>
+        <% link = "/products/#{order.product.id}/#{order.product.slug}" %>
+      <% elsif order.status == 'past' || order.status == 'pending' %>
+        <% link = "/retailer/order_history/not_reached/#{order.id}" %>
+      <% elsif order.sale_made %>
       <% link = "/retailer/order_history/sale_made/#{order.id}" %>
-    <% elsif order.refunded %>
+        <% elsif order.refunded %>
       <% order_class = 'blocked-pointer' %>
-      <% link = "#" %>
+        <% link = "" %>
+      <% end %>
+      <a href="<%= link %>">
+        <!-- <div class="row col s12 center-align order-row border black-text valign-wrapper <%= order_class %>"> -->
+          <td><a href="<%=link%>" class="black-text <%=order_class%>"><%= order.number %></a></td>
+          <td><a href="<%=link%>" class="black-text <%=order_class%>"><%= order.product.title %></a></td>
+          <td><a href="<%=link%>" class="black-text <%=order_class%>"><%= number_to_currency(order.price_with_shipping) %></a></td>
+          <td><a href="<%=link%>" class="black-text <%=order_class%>"><%= order.product.wholesaler.user.company.company_name %></a></td>
+          <td><a href="<%=link%>" class="black-text <%=order_class%>"><%= order.current_status %></a></td>
+        <!-- </div> -->
+      </a>
     <% end %>
-    <a href="<%= link %>">
-      <div class="row col s12 center-align order-row border black-text valign-wrapper <%= order_class %>">
-        <div class="col m3 valign">
-          <h6><%= order.uuid %></h6>
-        </div>
-        <div class="col m2 valign">
-          <h6><%= order.product.title %></h6>
-        </div>
-        <div class="col m2 valign">
-          <h6><%= number_to_currency(order.price_with_shipping) %></h6>
-        </div>
-        <div class="col m2 valign">
-          <h6><%= order.product.wholesaler.user.company.company_name %></h6>
-        </div>
-        <div class="col m2 valign">
-          <h6><%= order.current_status %></h6>
-        </div>
-      </div>
-    </a>
-  <% end %>
+  </tbody>
+</table>

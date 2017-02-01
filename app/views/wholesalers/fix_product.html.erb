@@ -6,11 +6,6 @@
 </div>
 
   <div class="row center-align">
-    <% if !flash[:error].nil? %>
-      <% flash[:error].each do |err, msg| %>
-        <h6 class="red-text error-field"><i span="tiny material-icons">error_outline</i> <%= msg.first %></h6>
-      <% end %>
-    <% end %>
     <div class="col s12">
       <%= form_tag("/fix_product/#{@product.uuid}", multipart: true) do %>
         <div class="col s8 offset-s2">

@@ -4,9 +4,6 @@
 <div class="container center-align">
   <%= render partial: 'partials/products_header' %>
   <div id ="products">
-    <% if flash[:notice] %>
-      <h5 class='red-text bold'><%= flash[:notice] %></h5>
-    <% end %>
     <%= render partial: 'partials/products' %>
   </div>
 

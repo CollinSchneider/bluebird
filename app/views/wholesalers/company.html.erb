@@ -2,17 +2,6 @@
 
   <%= render partial: 'partials/wholesaler_profile_nav' %>
 
-  <div class="col s12 m8 offset-m3 center-align">
-    <div class="row center-align">
-      <h6 class='green-text'><%= flash[:success] %></h6>
-      <% if !flash[:error].nil? %>
-        <% flash[:error].each do |err, msg| %>
-          <h6 class='red-text'><%= msg %></h6>
-        <% end %>
-      <% end %>
-    </div>
-  </div>
-
   <div class="col s12 m8 offset-m3 center-align order-box z-depth-2">
     <div class="row">
       <button class='btn' onclick="copyToClipboard()">Embed your BlueBird store link to your site!</button>

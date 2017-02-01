@@ -1,12 +1,14 @@
 class Wholesalers::NewProductController < WholesalersController
 
   def new_product
-    return redirect_to '/wholesaler/profile' if current_user.wholesaler.orders_to_ship.any? || current_user.wholesaler.needs_attention? || current_user.wholesaler.needs_stripe_connect?
+    return redirect_to '/wholesaler/profile' if (current_user.is_wholesaler? && current_user.wholesaler.orders_to_ship.any?) || (current_user.is_wholesaler? && current_user.wholesaler.needs_attention?) || (current_user.is_wholesaler? && current_user.wholesaler.needs_stripe_connect?)
     if request.post?
-      product = Product.create(generic_product_params)
-      product.wholesaler = current_user.wholesaler
-      if product.save
-        return redirect_to "/new_product_sizing?product=#{product.uuid}"
+      @product = Product.create(generic_product_params)
+      # product.wholesaler = current_user.wholesaler
+      if @product.save
+        return redirect_to "/new_product_sizing?product=#{@product.uuid}"
+      else
+        flash[:error] = @product.errors.full_messages
       end
     end
   end
@@ -32,7 +34,7 @@ class Wholesalers::NewProductController < WholesalersController
   def new_product_skus
     if request.get?
       @product = Product.find_by(:uuid => params[:product])
-      return redirect_to '/new_product' if @product.nil? || @product.wholesaler_id != current_user.wholesaler.id
+      return redirect_to '/new_product' if @product.nil? || (!current_user.is_admin? && @product.wholesaler_id != current_user.wholesaler.id)
 
       @sku = Sku.find_by(:id => params[:sku])
       return redirect_to '/new_product' if @sku.nil? || @sku.product_id != @product.id
@@ -45,7 +47,7 @@ class Wholesalers::NewProductController < WholesalersController
 
     if request.post?
       sku = Sku.find_by(:id => params[:sku])
-      if sku.product.wholesaler_id == current_user.wholesaler.id
+      if current_user.is_admin? || sku.product.wholesaler_id == current_user.wholesaler.id
         inventory = params[:inventory]
         price = params[:price]
         suggested_retail = params[:suggested_retail]
@@ -71,6 +73,10 @@ class Wholesalers::NewProductController < WholesalersController
           end
           next_sku = sku.product.skus.where('inventory is null or price is null or suggested_retail is null').first
           url = next_sku.nil? ? "/approve_product/#{sku.product_id}" : "/new_product_skus?product=#{sku.product.uuid}&sku=#{next_sku.id}"
+          if next_sku.nil? && current_user.is_admin?
+            sku.product.status = 'needs_approval'
+            sku.product.save!
+          end
           return redirect_to url
         else
           flash[:error] = sku.errors.full_messages
@@ -87,7 +93,7 @@ class Wholesalers::NewProductController < WholesalersController
 
   private
   def generic_product_params
-    params.require(:product).permit(:goal, :duration, :title, :short_description, :long_description, :percent_discount, :feature_one, :feature_two,
+    params.require(:product).permit(:wholesaler_id, :goal, :duration, :title, :short_description, :long_description, :percent_discount, :feature_one, :feature_two,
       :feature_three, :feature_four, :feature_five, :category, :main_image, :photo_two, :photo_three,
       :photo_four, :photo_five, :minimum_order)
   end

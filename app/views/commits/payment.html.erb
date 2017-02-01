@@ -1,0 +1,72 @@
+
+<div class="center-align">
+
+  <% if @stripe_customer.sources.any? %>
+    <div class="row">
+      <h4>Choose your payment option for your order of <%= @commit.product.title %></h4>
+    </div>
+
+    <div class="row">
+      <table class='row'>
+        <%= form_for @commit, url: set_payment_commit_path(@commit), method: :post do |f| %>
+          <% if params[:edit] == 'true' %>
+            <input type="hidden" name="edit" value="true">
+          <% end %>
+          <% @stripe_customer.sources.each do |card| %>
+            <% checks = card.id == @commit.card_id ? 'checked = "checked"'.html_safe : nil %>
+            <tr class='center-align border'>
+              <td class='center-align'>
+                <p>
+                  <input type="radio" name="card_id" value="<%=card.id%>" id="<%=card.id%>" <%=checks%>>
+                  <!-- <@%= f.radio_button :card_id, card.id, :id => "card_#{card.id}", :checked => (checked) %> -->
+                  <label for="<%=card.id%>">
+                    <%= card.name %> </br>
+                    **** **** **** <%= card.last4 %></br>
+                    <%= card.brand %>: <%= card.exp_month %>/<%= card.exp_year %></br>
+                    Zip: <%= card.address_zip %></br>
+                  </label>
+                </p>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+        <%= f.submit "Use Card", :class => 'submit-button btn' %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="row" style='margin-top: 20px'>
+    <form class="credit-card-form col s8 offset-s2 center-align z-depth-2 order-box" autocomplete="off">
+      <div class="input-field">
+        <label>Card Holder Name</label>
+        <input id="card-name" type="text">
+      </div>
+      <div class="input-field">
+        <label>Credit Card Number</label>
+        <input id="card-number" type="text"> <br>
+      </div>
+      <div class="input-field">
+        <label>CVC</label>
+        <input id="card-cvc" type="text"> <br>
+      </div>
+      <div class="input-field">
+        <div class="row">
+          <div class="col s6 m4 offset-m2">
+            <label>Exp Month</label>
+            <input id="exp-month" type="number">
+          </div>
+          <div class="col s6 m4 offset-m2">
+            <label>Exp Year</label>
+            <input id="exp-year" type="number"> <br>
+          </div>
+        </div>
+      </div>
+      <div class="input-field">
+        <label>Billing Zip Code</label>
+        <input id="billing-zip" type="text" value="">
+      </div>
+      <h6 class="red-text" id="payment-errors"></h6>
+      <input class="submit btn" type="submit" value="Add Payment">
+    </form>
+  </div>
+</div>

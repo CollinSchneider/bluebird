@@ -109,12 +109,12 @@
 
               <div class="row no-bottom-margin">
                 <h6><%= @product.orders_to_discount %></h6>
-                <div class="<%= @product.percentage["class"] %>">
-                  <span style="<%= @product.percentage["progress_bar"] %>"><span></span></span>
+                <div class="<%= @product.progress_class %>">
+                  <span style="<%= @product.progress_bar_style %>"><span></span></span>
                 </div>
                 <div class="row col s12">
                   <div class="col s6">
-                    <h6><%= '%.0f' % @product.percentage["percent_to_discount"] %>% to discount</h6>
+                    <h6><%= '%.0f' % @product.percent_to_discount %>% to discount</h6>
                   </div>
                   <div class="col s6">
                     <h6><%= @product.time_to_expiration %></h6>
@@ -156,8 +156,7 @@
         <h6 class='bold'>About <%= @product.wholesaler.user.company.company_name %></h6>
       </div>
       <div class="row">
-        <h6 class='bold'>Rating:</h6>
-        <h6><%= (@product.wholesaler.wholesaler_stat.rating/5)*100 %>% (<%= @product.wholesaler.wholesaler_stat.total_number_ratings %>)</h6>
+        <h6><%= @product.wholesaler.display_rating %></h6>
         <div class="star-ratings-css">
           <div class="star-ratings-css-top" style="width: <%=(@product.wholesaler.wholesaler_stat.rating/5)*100%>%"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
           <div class="star-ratings-css-bottom"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>

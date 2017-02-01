@@ -14,7 +14,10 @@ class ApplicationController < ActionController::Base
   end
 
   def redirect_if_not_logged_in
-    return redirect_to "/users?redirect_url=#{request.fullpath}" if current_user.nil?
+    if current_user.nil?
+      session[:redirect_url] = request.fullpath
+      return redirect_to "/users"
+    end
   end
 
 end

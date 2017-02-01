@@ -1,6 +1,9 @@
 <div class="col m2 hide-on-small-only">
   <div class="profile-nav">
     <ul>
+      <% if current_user.wholesaler.pending_products.any? %>
+        <li><a href="/wholesaler/approve" class="red-text bold">Approve Your Products</a></li>
+      <% end %>
       <%
         items = {
           'Profile' => '/wholesaler/profile',

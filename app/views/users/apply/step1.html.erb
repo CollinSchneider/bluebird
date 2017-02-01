@@ -19,21 +19,21 @@
       <h3>Wholesaler Application</h3>
       <%= form_tag(method: 'POST') do %>
         <div class="row">
-          <div class="input-field col s12 m6">
+          <div class="input-field col s12">
             <input type="text" name="company[company_name]" class='full-box-input' placeholder='Company Name' required>
           </div>
-          <div class="input-field col s12 m6">
+          <!-- <div class="input-field col s12 m6">
             <input type="text" name="company[location]" class='full-box-input' placeholder='City (ie: New York, NY)' required>
-          </div>
+          </div> -->
         </div>
-        <div class="row">
+        <!-- <div class="row">
           <div class="input-field col s12 m6">
             <input type="text" name="company[website]" class='full-box-input' placeholder='Company Website' required>
           </div>
           <div class="input-field col s12 m6">
             <input type="text" name="company[bio]" class='full-box-input' placeholder='Short Company Bio' required>
           </div>
-        </div>
+        </div> -->
         <div class="row">
           <div class="col s6">
             <div class="input-field">
@@ -72,11 +72,6 @@
         </div>
 
       <%= submit_tag "Apply", :class => 'white black-text submit-button btn' %>
-    <% end %>
-    <% if !flash[:error].nil? %>
-      <% flash[:error].each do |err| %>
-        <h6 class='red-text'><%= err %></h6>
-      <% end %>
     <% end %>
   </div>
 

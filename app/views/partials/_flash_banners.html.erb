@@ -1,0 +1,20 @@
+<% if flash[:error] %>
+  <div class="error-banner banner">
+    <div class="row no-bottom-margin">
+      <div class="col s12">
+        <%= flash[:error] %>
+      </div>
+      <span class='pointer exit-banner'>X</div>
+    </div>
+  </div>
+<% end %>
+<% if flash[:success] %>
+  <div class="success-banner banner">
+    <div class="row no-bottom-margin">
+      <div class="col s12">
+        <%= flash[:success] %>
+      </div>
+        <span class='exit-banner pointer'>X</span>
+    </div>
+  </div>
+<% end %>

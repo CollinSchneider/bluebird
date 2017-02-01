@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161028183303) do
+ActiveRecord::Schema.define(version: 20170126021442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,23 +25,24 @@ ActiveRecord::Schema.define(version: 20161028183303) do
   add_index "admins", ["user_id"], name: "index_admins_on_user_id", using: :btree
 
   create_table "commits", force: :cascade do |t|
-    t.datetime "created_at",                            null: false
-    t.datetime "updated_at",                            null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
     t.integer  "amount"
-    t.string   "status"
+    t.string   "status",                default: "live"
     t.integer  "product_id"
     t.string   "uuid"
     t.integer  "retailer_id"
     t.string   "card_id"
-    t.boolean  "full_price"
-    t.boolean  "refunded"
+    t.boolean  "full_price",            default: false
+    t.boolean  "refunded",              default: false
     t.integer  "shipping_address_id"
-    t.boolean  "sale_made"
+    t.boolean  "sale_made",             default: false
     t.integer  "wholesaler_id"
     t.boolean  "has_shipped",           default: false
-    t.float    "sale_amount"
+    t.float    "sale_amount",           default: 0.0
     t.float    "shipping_amount"
-    t.float    "sale_amount_with_fees"
+    t.float    "sale_amount_with_fees", default: 0.0
+    t.string   "number"
   end
 
   add_index "commits", ["product_id"], name: "index_commits_on_product_id", using: :btree
@@ -152,19 +153,22 @@ ActiveRecord::Schema.define(version: 20161028183303) do
     t.float    "percent_discount"
     t.float    "current_sales_with_fees"
     t.integer  "return_policy_id"
+    t.string   "number"
   end
 
   create_table "purchase_orders", force: :cascade do |t|
     t.integer  "sku_id"
     t.integer  "commit_id"
     t.integer  "quantity"
-    t.datetime "created_at",                  null: false
-    t.datetime "updated_at",                  null: false
+    t.datetime "created_at",                            null: false
+    t.datetime "updated_at",                            null: false
     t.string   "shipping_id"
-    t.boolean  "has_shipped"
-    t.boolean  "sale_made"
-    t.boolean  "refunded"
-    t.boolean  "full_price",  default: false
+    t.boolean  "has_shipped",           default: false
+    t.boolean  "sale_made",             default: false
+    t.boolean  "refunded",              default: false
+    t.boolean  "full_price",            default: false
+    t.float    "sale_amount"
+    t.float    "sale_amount_with_fees"
   end
 
   add_index "purchase_orders", ["commit_id"], name: "index_purchase_orders_on_commit_id", using: :btree
@@ -208,6 +212,7 @@ ActiveRecord::Schema.define(version: 20161028183303) do
     t.float    "charge_amount"
     t.datetime "card_failed_date"
     t.boolean  "has_rating",         default: false
+    t.string   "number"
   end
 
   add_index "sales", ["commit_id"], name: "index_sales_on_commit_id", using: :btree
@@ -215,7 +220,6 @@ ActiveRecord::Schema.define(version: 20161028183303) do
   add_index "sales", ["wholesaler_id"], name: "index_sales_on_wholesaler_id", using: :btree
 
   create_table "shipping_addresses", force: :cascade do |t|
-    t.string   "address_id"
     t.datetime "created_at",         null: false
     t.datetime "updated_at",         null: false
     t.integer  "retailer_id"
@@ -234,11 +238,15 @@ ActiveRecord::Schema.define(version: 20161028183303) do
     t.string   "tracking_id"
     t.string   "stripe_charge_id"
     t.boolean  "card_failed"
-    t.datetime "created_at",         null: false
-    t.datetime "updated_at",         null: false
+    t.datetime "created_at",            null: false
+    t.datetime "updated_at",            null: false
     t.string   "card_failed_reason"
     t.datetime "card_failed_date"
     t.datetime "shipped_on"
+    t.string   "number"
+    t.string   "tracking_number"
+    t.string   "carrier"
+    t.string   "easypost_tracking_url"
   end
 
   add_index "shippings", ["retailer_id"], name: "index_shippings_on_retailer_id", using: :btree
@@ -256,6 +264,7 @@ ActiveRecord::Schema.define(version: 20161028183303) do
     t.integer  "inventory"
     t.string   "code"
     t.float    "price_with_fee"
+    t.string   "number"
   end
 
   add_index "skus", ["product_id"], name: "index_skus_on_product_id", using: :btree

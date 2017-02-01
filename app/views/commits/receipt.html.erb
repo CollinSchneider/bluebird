@@ -1,0 +1,73 @@
+<div class="row">
+
+  <div class="center-align col s10 offset-s1">
+    <h4>Order Complete!</h4>
+    <h5>Summary:</h5>
+    <div class="row">
+      <table class='responsive-table centered highlight'>
+        <thead>
+          <tr class='center-align'>
+            <th>Item</th>
+            <th>Quantity</th>
+            <th>Price/Unit</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <% @commit.purchase_orders.each do |po| %>
+          <tbody>
+            <tr>
+              <td>
+                <h6><%= po.sku.description %></h6></br>
+                <%= image_tag po.sku.image, :style => 'width: 100px; height: auto' %>
+              </td>
+              <td><%= po.quantity %></td>
+              <td><%= number_to_currency(po.price_paid_each) %></td>
+              <td>
+                <span class='bold'><%= number_to_currency(po.total_paid) %></span></br>
+                <span class='green-text'><%= number_to_currency(po.total_saved) %> saved.</span>
+              </td>
+            </tr>
+          <% end %>
+          <tr style='border-top:1px solid black'>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td>
+              <h5 class='bold'><%= number_to_currency(@commit.price_with_shipping) %></h5>
+              <span class='bold green-text'><%= number_to_currency(@commit.amount_saved) %> saved.</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="row">
+      <div class="col s12 m6">
+        <h6 class='bold'>Ship to:</h6>
+        <h6><%= @commit.retailer.user.full_name %></h6>
+        <h6><%= @commit.shipping_address.street_address_one %></h6>
+        <% if @commit.shipping_address.street_address_two != '' %>
+          <h6><%= @commit.shipping_address.street_address_two %></h6>
+        <% end %>
+        <h6><%= @commit.shipping_address.city %>, <%= @commit.shipping_address.state %>, <%= @commit.shipping_address.zip %></h6>
+      </div>
+      <div class="col s12 m6">
+        <h6 class='bold'>Payment:</h6>
+        <h6><%= @card.name %></h6>
+        <h6><%= @card.brand %>: **** **** **** <%= @card.last4 %></h6>
+        <h6><%= @card.exp_month %>/<%=@card.exp_year%></h6>
+      </div>
+    </div>
+
+    <div class="row">
+      <h4>What now:</h4>
+    </div>
+    <div class="row">
+      <h6>This product has about <%= @commit.product.time_to_expiration %> until the sale ends.</h6>
+      <h6>At that point, we'll notify you whether the discount hits or not.</h6>
+      <h6>In the meantime, you can view and edit your order <a href="/retailer/order_history/<%=@commit.id%>">HERE</a></h6>
+    </div>
+
+  </div>
+
+</div>
