@@ -19,6 +19,10 @@ class Wholesaler < ActiveRecord::Base
   #   self.contactable_by_email = false
   # end
 
+  def products_listed_this_month
+    products.where('created_at >= ?', (DateTime.now.beginning_of_day - 30.days))
+  end
+
   def pending_products
     products.where(:status => 'needs_approval')
   end

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+  </head>
+  <body>
+    <p><%= @retailer_name %>,</p>
+
+    <p>
+      <%= @referrer_user.full_name %>, from <%= @referrer_user.company.company_name %> here.
+    </p>
+    <p>
+      I recently signed up for a great new platform called BlueBird.club, a wholesale
+      marketplace for retailers like you to purchase inventory at discounted prices, every time.
+    </p>
+
+    <p>
+      I think this is a great opportunity for your business (Don't worry, it's free)!
+      You can find and discover great wholesalers like myself at unbeatable prices.
+    </p>
+
+    <p>
+      Use this link below to sign up for free and take your business to the next level, no strings attached.
+    </p>
+
+
+    <a href="<%=Util.current_environment%>/signup/step1?referal_key=<%=@referral_code%>"><h4 style='color: rgb(0, 113, 189)'>BlueBird.club</h4></a>
+
+  </body>
+</html>

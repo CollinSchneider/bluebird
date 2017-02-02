@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170126021442) do
+ActiveRecord::Schema.define(version: 20170202002513) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -182,6 +182,17 @@ ActiveRecord::Schema.define(version: 20170126021442) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "referrals", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "referred_email"
+    t.string   "referral_code"
+    t.boolean  "signed_up"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+  end
+
+  add_index "referrals", ["user_id"], name: "index_referrals_on_user_id", using: :btree
+
   create_table "retailers", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "stripe_id"
@@ -313,6 +324,7 @@ ActiveRecord::Schema.define(version: 20170126021442) do
   add_foreign_key "product_variants", "products"
   add_foreign_key "purchase_orders", "commits"
   add_foreign_key "purchase_orders", "skus"
+  add_foreign_key "referrals", "users"
   add_foreign_key "retailers", "users"
   add_foreign_key "sales", "commits"
   add_foreign_key "sales", "retailers"

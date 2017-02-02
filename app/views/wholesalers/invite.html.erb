@@ -1,0 +1,30 @@
+<div class="center-align col s12 m6 offset-m3">
+  <h3>Invite</h3>
+  <h6>Invite retailers to get free bluebird membership!</h6>
+
+  <!-- <form class="" action="index.html" method="post"> -->
+  <%= form_tag('') do %>
+    <div class="input-field-div">
+      <div class="row">
+        <input type="type" class='full-box-input' name="invitee_name" placeholder="Retailer's Name">
+      </div>
+      <div class="row">
+        <input type="email" class="full-box-input" name="invitee_email" placeholder="retailer@gmail.com">
+      </div>
+    </div>
+    <input type="submit" class="btn submit-btn" value="Invite Retailers!">
+  <% end %>
+  <!-- </form> -->
+  </div>
+</div>
+
+
+<!-- <script>
+  function addInput(num){
+    $('.add-more-invite-inputs').click(function(){
+      var newInput = $('<input class="full-box-input" name="invitee_'+num+'" placeholder="retailer@gmail.com"/>')
+      $('.input-field-div').append(newInput)
+    })
+    return num+1
+  }
+</script> -->

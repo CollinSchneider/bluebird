@@ -88,6 +88,8 @@ Rails.application.routes.draw do
   get '/current_sales' => 'wholesalers#current_sales'
   get '/already_printed.pdf' => 'wholesalers#already_printed'
   get '/relist' => 'wholesalers#relist'
+  get '/invite' => 'wholesalers#invite'
+  post '/invite' => 'wholesalers#invite'
 
   # WHOLESALER POST PRODUCT
   get '/new_product' => 'wholesalers/new_product#new_product'
@@ -172,7 +174,6 @@ Rails.application.routes.draw do
   get '/choose' => 'users#choose'
   get '/contact' => 'users#contact'
   post '/contact' => 'users#contact'
-
 
   match "/404", :to => "errors#not_found", :via => :all
   match "/500", :to => "errors#internal_server_error", :via => :all

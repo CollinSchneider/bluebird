@@ -35,6 +35,19 @@ class BlueBirdEmail
     self.send_email('application@bluebird.club', COLLIN_EMAIL, 'NEW BLUEBIRD APPLICATION', content)
   end
 
+  def self.invite_retailer_email(retailer_name, retailer_email, referrer_user, referral_code)
+    controller = ActionController::Base.new()
+    content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/invite_retailer_email.html.erb',
+      :locals => {
+        :@retailer_name => retailer_name,
+        :@email => retailer_email,
+        :@referrer_user => referrer_user,
+        :@referral_code => referral_code
+      }
+    )
+    self.send_email(referrer_user.email, retailer_email, "Let's do business", content)
+  end
+
   def self.contact_email(name, email, message)
     controller = ActionController::Base.new()
     content = controller.render_to_string(:layout => 'mailer', :template => '/mailer/contact_email.html.erb',

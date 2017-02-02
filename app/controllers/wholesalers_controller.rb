@@ -103,6 +103,23 @@ class WholesalersController < ApplicationController
     end
   end
 
+  def invite
+    if request.post?
+      retail_name = params[:invitee_name]
+      retail_email = params[:invitee_email]
+      referral = ReferralGenerator.new(:user_id => current_user.id, :referred_email => retail_email).perform!
+      if !referral[:errors].nil?
+        flash[:error] = referral[:errors].join('<br>').html_safe
+        return redirect_to request.referrer
+      else
+        binding.pry
+        BlueBirdEmail.invite_retailer_email(retail_name, retail_email, current_user, referral[:code])
+        flash[:success] = "Referral sent!"
+        return redirect_to request.referrer
+      end
+    end
+  end
+
   def approve
     @products = current_user.wholesaler.pending_products
   end
