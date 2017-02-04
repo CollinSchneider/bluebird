@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
   include ApplicationHelper
   before_action :set_title
+  # before_action :debug
 
   private
   def set_title
@@ -20,6 +21,10 @@ class ApplicationController < ActionController::Base
       session[:redirect_url] = request.fullpath
       return redirect_to "/users"
     end
+  end
+
+  def debug
+    binding.pry
   end
 
 end

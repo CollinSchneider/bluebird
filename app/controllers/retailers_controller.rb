@@ -93,7 +93,6 @@ class RetailersController < ApplicationController
     if @stripe_customer.default_source
       @default_card = @stripe_customer.sources.retrieve(@stripe_customer.default_source)
     end
-    @title = "Manage Account"
   end
 
   def change_password

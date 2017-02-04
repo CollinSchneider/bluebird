@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   validates :last_name, presence: true
 
   has_many :shipping_addresses
+  has_many :referrals
 
   has_one :wholesaler
   has_one :retailer
@@ -32,6 +33,10 @@ class User < ActiveRecord::Base
 
   def type
     return self.is_wholesaler? ? 'Wholesaler' : 'Retailer'
+  end
+
+  def successful_referrals
+    referrals.where(:signed_up => true)
   end
 
   def collect_shipping_charge(shipping)

@@ -3,10 +3,14 @@ class Api::PaymentsController < ApiController
   def create_credit_card
     token = params[:token]
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']
-    customer = Stripe::Customer.retrieve(current_user.retailer.stripe_id)
+    stripe_id = current_user.is_retailer? ? current_user.retailer.stripe_id : current_user.wholesaler.stripe_customer_id
+    customer = Stripe::Customer.retrieve(stripe_id)
     begin
       card = customer.sources.create(:source => token)
       if !card.nil?
+        if current_user.is_wholesaler?
+          current_user.wholesaler.create_next_month_subscription(card.id)
+        end
         render :json => {
           :success => true,
           :card => card

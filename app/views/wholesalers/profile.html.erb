@@ -3,8 +3,11 @@
 <%= render partial: 'partials/wholesaler_profile_nav' %>
 
 <div class="col s12 m9 offset-m2">
-  <h4 class="center-align">Welcome, <%= current_user.first_name %>!</h4>
-  <h6 class='center-align'>You've listed <%= current_user.wholesaler.products_listed_this_month.count %> products this month</h6>
+  <div class="center-align">
+    <h4>Welcome, <%= current_user.first_name %>!</h4>
+    <h6>You've listed <%= current_user.wholesaler.products_listed_this_month.count %> products this month</h6>
+    <h6>And referred <%= current_user.referrals.count %> retailers, of which <%= current_user.successful_referrals.count %> signed up</h6>
+  </div>
 
   <!-- <#%
     Stripe.api_key = ENV['STRIPE_SECRET_KEY']

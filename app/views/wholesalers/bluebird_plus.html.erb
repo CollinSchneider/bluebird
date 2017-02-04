@@ -1,0 +1,42 @@
+<div class="center-align">
+  <h4>BlueBird Plus+</h4>
+
+  <div class="row border">
+    <% @stripe_customer.sources.each do |card| %>
+      <%= card.last4 %>
+    <% end %>
+  </div>
+  <form class="credit-card-form col s8 offset-s2 center-align" autocomplete="off">
+    <div class="input-field">
+      <label>Card Holder Name</label>
+      <input id="card-name" type="text">
+    </div>
+    <div class="input-field">
+      <label>Credit Card Number</label>
+      <input id="card-number" type="text"> <br>
+    </div>
+    <div class="input-field">
+      <label>CVC</label>
+      <input id="card-cvc" type="text"> <br>
+    </div>
+    <div class="input-field">
+      <div class="row">
+        <div class="col s6 m4 offset-m2">
+          <label>Exp Month</label>
+          <input id="exp-month" type="number">
+        </div>
+        <div class="col s6 m4 offset-m2">
+          <label>Exp Year</label>
+          <input id="exp-year" type="number"> <br>
+        </div>
+      </div>
+    </div>
+    <div class="input-field">
+      <label>Billing Zip Code</label>
+      <input id="billing-zip" type="text" value="">
+    </div>
+    <h6 class="red-text" id="payment-errors"></h6>
+    <input class="submit btn" type="submit" value="Add Payment">
+  </form>
+
+</div>

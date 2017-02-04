@@ -34,4 +34,8 @@ class Company < ActiveRecord::Base
     return self.user.wholesaler.ratings.where('comment is not null')
   end
 
+  def is_favorited_by?(user)
+    user.is_retailer? && !FavoriteSeller.find_by(:retailer_id => user.retailer.id, :wholesaler_id => self.user.wholesaler.id).nil?
+  end
+
 end

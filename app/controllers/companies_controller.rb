@@ -19,8 +19,8 @@ class CompaniesController < ApplicationController
 
   def show
     @company = Company.find_by(:company_key => params[:key], :id => params[:id])
-    @title = @company.company_name
     return redirect_to '/shop' if @company.nil?
+    @title = @company.company_name
     @products = Product.where('wholesaler_id = ? AND status = ? AND end_time >= ?', @company.user.wholesaler.id, 'live', Time.current)
   end
 

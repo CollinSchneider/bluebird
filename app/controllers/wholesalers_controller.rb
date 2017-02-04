@@ -94,6 +94,11 @@ class WholesalersController < ApplicationController
     end
   end
 
+  def analytics
+    @wholesaler = current_user.wholesaler
+    @best_sellers = @wholesaler.products.order(current_sales: :desc)
+  end
+
   def company
     @wholesaler = current_user.wholesaler
     @company = current_user.company
@@ -101,6 +106,11 @@ class WholesalersController < ApplicationController
     if request.put?
       #
     end
+  end
+
+  def bluebird_plus
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    @stripe_customer = Stripe::Customer.retrieve(current_user.wholesaler.stripe_customer_id)
   end
 
   def invite
@@ -112,7 +122,6 @@ class WholesalersController < ApplicationController
         flash[:error] = referral[:errors].join('<br>').html_safe
         return redirect_to request.referrer
       else
-        binding.pry
         BlueBirdEmail.invite_retailer_email(retail_name, retail_email, current_user, referral[:code])
         flash[:success] = "Referral sent!"
         return redirect_to request.referrer

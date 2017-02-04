@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   resources :ratings
   resources :shippings
   resources :purchase_orders
+  resources :favorite_sellers
   resources :shipping_addresses do
     member do
       post '/make_primary' => 'shipping_addresses#make_primary'
@@ -75,7 +76,7 @@ Rails.application.routes.draw do
   post '/start_over' => 'wholesalers#start_over'
   get '/past_products' => 'wholesalers#past_products'
   get '/manage_shipping' => 'wholesalers#manage_shipping'
-  get '/analytics' => 'wholesalers#analytics'
+  get 'wholesaler/analytics' => 'wholesalers#analytics'
   get '/needs_attention' => 'wholesalers#needs_attention'
   get '/account_verify' => 'users#accounts_verify'
   get '/needs_shipping' => 'wholesalers#needs_shipping'
@@ -90,6 +91,7 @@ Rails.application.routes.draw do
   get '/relist' => 'wholesalers#relist'
   get '/invite' => 'wholesalers#invite'
   post '/invite' => 'wholesalers#invite'
+  get '/bluebird-plus' => 'wholesalers#bluebird_plus'
 
   # WHOLESALER POST PRODUCT
   get '/new_product' => 'wholesalers/new_product#new_product'
@@ -121,6 +123,11 @@ Rails.application.routes.draw do
   put '/retailer/settings/change_password' => 'retailers#change_password'
   get '/retailer/:order_id/card_declined' => 'retailers#card_declined'
   get '/retailer/ratings' => 'retailers#ratings'
+
+  get '/retailer/favorites' => 'retailers/favorites#index'
+  get '/retailer/favorites/manage' => 'retailers/favorites#manage'
+  post '/retailer/favorites/remove/:id' => 'retailers/favorites#remove', as: :remove_from_favorites
+  post '/retailer/favorites/add/:wholesaler_id' => 'retailers/favorites#add', as: :add_to_favorites
 
                 #///////////////////#
                 #   ADMIN ROUTES    #

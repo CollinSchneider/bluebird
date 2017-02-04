@@ -3,60 +3,9 @@
 <%= render partial: 'partials/wholesaler_profile_nav' %>
 
   <div class="col s12 m9 offset-m2 center-align">
-
-  <h4>Analytics</h4>
-  <div class="row">
-    <div class="col s6 m3">
-      <h5>Total Purchase Orders:</h5>
-      <h5 class="bold"><strong><%= @sale_commits.sum(:amount) %></strong></h5>
-    </div>
-    <div class="col s6 m3">
-      <h5>Total Sales:</h5>
-      <h5 class="bold"><strong>$<%= @total_sales %></strong></h5>
-    </div>
-    <div class="col s6 m3">
-      <h5>Average Customer Sale</h5>
-      <h5 class="bold"><strong>$<%= '%.2f' % (@total_sales/@sale_commits.sum(:amount)) %></strong></h5>
-    </div>
-    <div class="col s6 m3">
-      <h5>Rate of Goal Hit</h5>
-      <h5><%= current_user.wholesaler.products.count %>/<%= current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').count %></h5>
-      <h5 class="bold"><strong><%= ((current_user.wholesaler.products.where('status = ? OR status = ?', 'goal_met', 'discount_granted').count.to_i)/(current_user.wholesaler.products.count.to_i)) %>%</strong></h5>
-    </div>
-  </div>
-
-  <h5>Top Earners:</h5>
-  <div class="row col s12 offset-m1">
-    <% @top_sellers.each do |product| %>
-    <a href="/wholesaler/product/<%= product.id %>">
-      <div class="col s10 offset-s1 m2">
-        <div class="product">
-          <h5 class="truncate"><%= product.title %></h5>
-          <%= image_tag product.main_image.url(:thumb), :class => 'responsive-img' %>
-          <h5>$<%= product.total_sales %></h5>
-        </div>
-      </div>
-    </a>
+    <% @best_sellers.each do |product| %>
+      <h5><%= product.title %>: <%= number_to_currency(product.current_sales) %></h5>
     <% end %>
   </div>
 
-  <div class="row">
-
-    <div class="col s12 m8 offset-m2">
-      <h4>Orders</h4>
-      <%= line_chart @sale_commits.group_by_day(:created_at).sum(:amount) %>
-    </div>
-  </div>
-
-
-  </div>
 </div>
-
-<script>
-  $('.product').mouseover(function(){
-    $(this).attr('class', 'product z-depth-5')
-  })
-  $('.product').mouseout(function(){
-    $(this).attr('class', 'product')
-  })
-</script>

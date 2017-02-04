@@ -7,7 +7,11 @@ class ReferralGenerator
   end
 
   def perform!
-    if is_new_referral
+    if !is_new_referral
+      return {errors: ["Sorry, you've already referred this user."]}
+    elsif !User.find_by(:email => @referred_email).nil?
+      return {errors: ["This user is already signed up for BlueBird."]}
+    else
       referral = Referral.create(
         :user_id => @user_id,
         :referred_email => @referred_email,
@@ -18,8 +22,6 @@ class ReferralGenerator
       else
         return {errors: referral.errors}
       end
-    else
-      return {errors: ["You've already referred this user!"]}
     end
   end
 

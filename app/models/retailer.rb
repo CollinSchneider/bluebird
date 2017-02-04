@@ -8,6 +8,7 @@ class Retailer < ActiveRecord::Base
   has_many :sales
   has_many :ratings, through: :sales
   has_many :shippings
+  has_many :favorite_sellers
 
   before_create(on: :save) do
     self.stripe_id = make_stripe_customer
@@ -16,7 +17,7 @@ class Retailer < ActiveRecord::Base
   def make_stripe_customer
     Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
     customer = Stripe::Customer.create(
-      :description => "Customer for #{self.user.full_name}"
+      :description => "Customer for retailer #{self.user.full_name}"
     )
     return customer.id
   end

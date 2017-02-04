@@ -7,12 +7,13 @@
           'Order History' => '/retailer/order_history',
           'Last Chance' => '/retailer/last_chance',
           'Manage Payments' => '/retailer/accounts',
+          'Favorite Sellers' => '/retailer/favorites',
           'Shipping Addresses' => '/retailer/shipping_addresses',
           'Settings' => '/retailer/settings',
           'Contact BlueBird' => '/contact'
         }
         items.each do |name, url|
-          liclass = request.fullpath.start_with?(url) ? 'active-nav-link' : 'black-text'
+          liclass = request.fullpath.include?(url) ? 'active-nav-link' : 'black-text'
       %>
         <li><a class="<%= liclass %>" href="<%= url %>"><%= name %></a></li>
       <% end %>

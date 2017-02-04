@@ -1,5 +1,7 @@
 class Wholesaler < ActiveRecord::Base
 
+  SUBSCRIPTION_AMOUNT = 5.00
+
   belongs_to :user
   belongs_to :return_policy
   belongs_to :wholesaler_stat
@@ -10,6 +12,7 @@ class Wholesaler < ActiveRecord::Base
   has_many :sales
   has_many :ratings, through: :sales
   has_many :shippings
+  has_many :subscription_payments
 
   scope :alphabetical, -> { includes(:user).order('users.first_name') }
 
@@ -18,7 +21,32 @@ class Wholesaler < ActiveRecord::Base
   #   self.contactable_by_phone = false
   #   self.contactable_by_email = false
   # end
+  before_create(on: :save) do
+    make_stripe_customer
+  end
 
+  def make_stripe_customer
+    Stripe.api_key = ENV["STRIPE_SECRET_KEY"]
+    customer = Stripe::Customer.create(
+      :description => "Customer for wholesaler #{self.user.full_name}"
+    )
+    self.stripe_customer_id = customer.id
+  end
+
+  # def create_next_month_subscription(card_id)
+  #
+  #   SubscriptionPayment.create(
+  #     wholesaler_id: self.id,
+  #     card_id: card_id,
+  #     charge_amount: SUBSCRIPTION_AMOUNT,
+  #     due_at: (DateTime.now.end_of_month + 1.day).beginning_of_day
+  #   )
+  # end
+  #
+  # def this_months_subscription
+  #   subscription_payments.where("EXTRACT(MONTH FROM due_at)) = ?", Time.zone.now.month)
+  # end
+  #
   def products_listed_this_month
     products.where('created_at >= ?', (DateTime.now.beginning_of_day - 30.days))
   end
@@ -50,7 +78,11 @@ class Wholesaler < ActiveRecord::Base
   end
 
   def display_rating
-    "Rating: #{wholesaler_stat.rating/5*100}% (#{wholesaler_stat.total_number_ratings})" if wholesaler_stat.total_rating > 0
+    "Rating: #{percent_rating}% (#{wholesaler_stat.total_number_ratings})" if wholesaler_stat.total_rating > 0
+  end
+
+  def percent_rating
+    wholesaler_stat.rating/5*100
   end
 
   def rating

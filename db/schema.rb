@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170202002513) do
+ActiveRecord::Schema.define(version: 20170203233553) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -66,6 +66,13 @@ ActiveRecord::Schema.define(version: 20170202002513) do
   end
 
   add_index "companies", ["user_id"], name: "index_companies_on_user_id", using: :btree
+
+  create_table "favorite_sellers", force: :cascade do |t|
+    t.integer  "retailer_id"
+    t.integer  "wholesaler_id"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "product_categories", force: :cascade do |t|
     t.string   "name"
@@ -282,6 +289,20 @@ ActiveRecord::Schema.define(version: 20170202002513) do
   add_index "skus", ["product_sizing_id"], name: "index_skus_on_product_sizing_id", using: :btree
   add_index "skus", ["product_variant_id"], name: "index_skus_on_product_variant_id", using: :btree
 
+  create_table "subscription_payments", force: :cascade do |t|
+    t.integer  "wholesaler_id"
+    t.boolean  "completed",      default: false
+    t.string   "card_id"
+    t.float    "charge_amount"
+    t.datetime "due_at"
+    t.boolean  "card_failed",    default: false
+    t.datetime "card_failed_at"
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+  end
+
+  add_index "subscription_payments", ["wholesaler_id"], name: "index_subscription_payments_on_wholesaler_id", using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
@@ -313,6 +334,7 @@ ActiveRecord::Schema.define(version: 20170202002513) do
     t.integer  "return_policy_id"
     t.integer  "wholesaler_stat_id"
     t.string   "shipping_policy"
+    t.string   "stripe_customer_id"
   end
 
   add_index "wholesalers", ["user_id"], name: "index_wholesalers_on_user_id", using: :btree
@@ -334,5 +356,6 @@ ActiveRecord::Schema.define(version: 20170202002513) do
   add_foreign_key "skus", "product_sizings"
   add_foreign_key "skus", "product_variants"
   add_foreign_key "skus", "products"
+  add_foreign_key "subscription_payments", "wholesalers"
   add_foreign_key "wholesalers", "users"
 end

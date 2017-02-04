@@ -9,19 +9,19 @@ class Users::SignupController < UsersController
       redirect_to '/signup/step1'
     end
     if request.post?
-      user = User.create(user_params)
-      if user.save
-        check_for_referral
+      @user = User.create(user_params)
+      if @user.save
         company = Company.create(company_params)
-        company.user_id = user.id
+        company.user_id = @user.id
         company.save(validate: false)
         retailer = Retailer.new
-        retailer.user_id = user.id
+        retailer.user_id = @user.id
         retailer.save!
-        BlueBirdEmail.new_application(user)
-        return redirect_to "/thank_you?_user=#{user.first_name}"
+        check_for_referral
+        BlueBirdEmail.new_application(@user)
+        return redirect_to "/thank_you?_user=#{@user.first_name}"
       else
-        flash[:error] = user.errors.full_messages.join('<br>').html_safe
+        flash[:error] = @user.errors.full_messages.join('<br>').html_safe
         return redirect_to request.referrer
       end
     end
@@ -29,7 +29,9 @@ class Users::SignupController < UsersController
 
   def check_for_referral
     if session[:referral_code]
-      referral = Referral.find_by(:referral_code => session[:referral_code])
+      referral = Referral.find_by(:referral_code => session[:referral_code], :signed_up => false)
+      binding.pry
+      FavoriteSeller.create(:retailer_id => @user.retailer.id, :wholesaler_id => referral.user.wholesaler.id)
       referral.update_column(:signed_up, true)
       session[:referral_code] = nil
     end

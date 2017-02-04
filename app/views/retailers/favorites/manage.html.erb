@@ -1,0 +1,14 @@
+<%= render partial: 'partials/retailer_profile_nav' %>
+
+<div class="center-align">
+  <div class="col s12 m8 offset-m3">
+    <div class="row">
+      <h4>Manage Favorites</h4>
+    </div>
+
+    <% @favorite_sellers.each do |fav| %>
+      <h5><%= fav.wholesaler.user.company.company_name %> <span style='font-size:14px'><%= link_to 'Remove', remove_from_favorites_path(fav.id), method: :post %></span></h5>
+    <% end %>
+
+  </div>
+</div>

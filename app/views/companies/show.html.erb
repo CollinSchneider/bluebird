@@ -2,43 +2,7 @@
 
   <div class="row" style='margin-top: 25px'>
     <div class="col s12">
-      <div class="hide-on-small-only border col m3 center-align">
-        <%= image_tag @company.logo.url(:medium), :class => 'responsive-img' %>
-        <h5><%= @company.company_name %></h5>
-        <% if @company.user.wholesaler.wholesaler_stat.total_number_ratings > 0 %>
-          <div class="row">
-            <h6 class='bold'><%= (@company.user.wholesaler.wholesaler_stat.rating/5)*100 %>% Rating</h6>
-            <h6>(<%= @company.user.wholesaler.wholesaler_stat.total_number_ratings%> total ratings)</h6>
-            <a href="/company/<%=@company.id%>/<%=@company.company_key%>/ratings">View Ratings</a>
-            <div class="star-ratings-css" style='margin: 0 auto'>
-              <div class="star-ratings-css-top" style="width: <%=(@company.user.wholesaler.wholesaler_stat.rating/5)*100%>%"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-              <div class="star-ratings-css-bottom"><span>★</span><span>★</span><span>★</span><span>★</span><span>★</span></div>
-            </div>
-          </div>
-        <% end %>
-        <% if !@company.location.nil? %>
-          <h6><i class='tiny material-icons'>location_on</i> <%= @company.location %></h6>
-        <% end %>
-        <p>
-          <%= @company.bio %>
-        </p>
-        <% if @company.contact_email != '' && !@company.contact_email.nil? %>
-          <div class="row">
-            <h6><a href="/company/<%=@company.id%>/<%=@company.company_key%>/contact">Contact <%= @company.company_name %></a></h6>
-          </div>
-        <% end %>
-        <% if @company.contact_number != '' && !@company.contact_number.nil? %>
-          <div class="row">
-            <h6><i class='tiny material-icons'>phone</i> <%=number_to_phone(@company.contact_number)%></h6>
-          </div>
-        <% end %>
-        <% if !@company.user.wholesaler.return_policy_id.nil? %>
-          <h6>Average out for shipping time: <%= @company.user.wholesaler.wholesaler_stat.average_shipping %></h6>
-          <h6 class='bold'><%= @company.user.wholesaler.return_policy.policy %></h6>
-          <h6><%= @company.user.wholesaler.return_policy.description %></h6>
-          <h6>*Accept when product is noted otherwise</h6>
-        <% end %>
-      </div>
+      <%= render partial: 'partials/company/company_bio' %>
 
       <div class="col s12 m8">
         <%= render partial: 'partials/products' %>
