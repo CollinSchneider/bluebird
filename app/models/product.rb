@@ -183,13 +183,13 @@ class Product < ActiveRecord::Base
     if skus_same_wholesale_price?
       return "$#{'%.2f' % skus.first.price_with_fee}"
     else
-      skus = 0
+      num_of_skus = 0
       discount = 0
       skus.each do |sku|
-        skus += 1
+        num_of_skus += 1
         discount += sku.price_with_fee
       end
-      return "$#{'%.2f' % (discount/skus)}"
+      return "$#{'%.2f' % (discount/num_of_skus)}"
     end
   end
 
