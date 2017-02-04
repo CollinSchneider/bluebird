@@ -1,5 +1,5 @@
 require 'Util'
-require 'BluebirdEmail'
+require 'BlueBirdEmail'
 require 'ReferralGenerator'
 require 'ShipmentTracker'
 
